@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import {Server as SocketIOServer} from 'socket.io';
+import User from './models/User';
 import authRoutes from './routes/auth';
 import {jwtSecret, mongoURI} from './config/config';
 import Message from './models/Message';
@@ -89,12 +90,15 @@ io.on('connection', async (socket) => {
 
     socket.on('disconnect', async () => {
         console.log('Client disconnected');
+        const username = socket.data.user.username
         const leftMessage = new Message({
             user: "Chat bot",
-            text: socket.data.user.username + " a quitté le chat",
+            text: username + " a quitté le chat",
             createdAt: Date.now()
         });
         await leftMessage.save();
+
+        await User.findOneAndUpdate({username}, {connected: false} )
 
         // Emit the new message to all connected clients
         const messages = await Message.find().sort({ createdAt: 1 }).limit(100);

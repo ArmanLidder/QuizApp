@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 interface IUser {
     username: string;
     password: string;
+    connected: boolean;
 }
 
 interface IUserMethods {
@@ -23,6 +24,7 @@ UserSchema.pre<UserDocument>('save', async function (next) {
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+    this.connected = false
     next();
 });
 
