@@ -61,10 +61,10 @@ io.on('connection', async (socket) => {
         createdAt: Date.now()
     });
     await welcomeMessage.save();
+    const messages = await Message.find().sort({ createdAt: 1 }).limit(100);
 
     // Emit the new message to all connected clients
-    io.emit('message', { welcomeMessage });
-
+    io.emit('allMessages', messages);
 
     // Send all messages to the newly connected client
     await emitAllMessages(socket);
@@ -78,9 +78,6 @@ io.on('connection', async (socket) => {
                 createdAt: Date.now()
             });
             await newMessage.save();
-
-            // Emit the new message to all connected clients
-            io.emit('message', { user: socket.data.user.username, text: msg });
 
             // Send updated message list to all connected clients
             const messages = await Message.find().sort({ createdAt: 1 }).limit(100);
@@ -100,7 +97,8 @@ io.on('connection', async (socket) => {
         await leftMessage.save();
 
         // Emit the new message to all connected clients
-        io.emit('message', { leftMessage });
+        const messages = await Message.find().sort({ createdAt: 1 }).limit(100);
+        io.emit('allMessages', messages);
     });
 });
 
