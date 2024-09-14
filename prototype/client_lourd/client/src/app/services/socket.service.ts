@@ -11,7 +11,7 @@ export class SocketService {
     return this.socket;
   }
   connect(token: string) {
-    this.socket = io('http://localhost:8000', { transports: ['websocket'], upgrade: false, auth: {
+    this.socket = io('http://ec2-35-183-137-76.ca-central-1.compute.amazonaws.com:8000', { transports: ['websocket'], upgrade: false, auth: {
         token: token
       }, });
   }

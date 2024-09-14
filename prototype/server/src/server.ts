@@ -107,3 +107,5 @@ io.on('connection', async (socket) => {
 // Start the server
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.get('/', (req, res) => res.json('Server running'));
+
