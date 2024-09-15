@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import the intl package for formatting dates
 import 'socket_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,11 +26,8 @@ class _ChatScreenState extends State<ChatScreen> {
     _socketService = SocketService();
     _socketService.connect(token);
 
-    print('Token from SharedPreferences: $token');
-    print('see the socket:');
     if (token.isNotEmpty) {
       _socketService.on('allMessages', (data) {
-        print('Received allMessages event: $data');
         setState(() {
           _messages.clear();
           _messages.addAll(List<Map<String, dynamic>>.from(data));
@@ -37,20 +35,16 @@ class _ChatScreenState extends State<ChatScreen> {
       });
 
       _socketService.on('message', (data) {
-        print('Received message event: $data');
         setState(() {
           _messages.add(Map<String, dynamic>.from(data));
         });
       });
-    } else {
-      print('No token found in SharedPreferences');
     }
   }
 
   void _sendMessage() {
     final message = _messageController.text;
     if (message.isNotEmpty) {
-      print('Sending message: $message');
       _socketService.sendMessage('chatMessage', message);
       _messageController.clear();
     }
@@ -58,10 +52,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token'); // Remove token from SharedPreferences
-    _socketService.disconnect();  // Disconnect the socket
+    await prefs.remove('token');
+    _socketService.disconnect();
 
-    // Navigate back to login screen or another screen after logout
     Navigator.pushReplacementNamed(context, '/auth');
   }
 
@@ -72,6 +65,15 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
+  String _formatTimestamp(String timestamp) {
+    try {
+      DateTime parsedDate = DateTime.parse(timestamp);
+      return DateFormat('HH:mm:ss').format(parsedDate);
+    } catch (e) {
+      return ''; // Return empty string if parsing fails
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +82,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: _logout,  // Call the logout function
+            onPressed: _logout,
           ),
         ],
       ),
@@ -91,9 +93,32 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
-                return ListTile(
-                  title: Text(message['user'] ?? 'Unknown'),
-                  subtitle: Text(message['text']),
+                final formattedTime = _formatTimestamp(message['createdAt'] ?? '');
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              message['user'] ?? 'Unknown',
+                              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black),
+                            ),
+                          ),
+                          Text(
+                            formattedTime,
+                            style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold, color: Colors.blue),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                      Text(message['text']),
+                      Divider(),
+                    ],
+                  ),
                 );
               },
             ),
