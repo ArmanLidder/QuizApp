@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   http: ^1.2.2  # Ensure you use a version that supports null safety
   socket_io_client: ^2.0.0  # Ensure you use a version that supports null safety
+  shared_preferences: ^2.1.0
 
 
 dev_dependencies:

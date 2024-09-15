@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'socket_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -7,94 +8,79 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  late SocketService _socketService;
   final TextEditingController _messageController = TextEditingController();
-  late IO.Socket _socket;
-  final List<String> _messages = [];
+  final List<Map<String, dynamic>> _messages = [];
 
   @override
   void initState() {
     super.initState();
-    _socket = IO.io('http://localhost:8000', IO.OptionBuilder()
-        .setTransports(['websocket'])
-        .build());
+    _initializeSocket();
+  }
 
-    _socket.on('connect', (_) {
-      print('Connected to server');
-    });
+  Future<void> _initializeSocket() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
 
-    _socket.on('allMessages', (messages) {
-      setState(() {
-        _messages.clear();
-        _messages.addAll(List<String>.from(messages));
+    _socketService = SocketService();
+    _socketService.connect(token);
+
+    print('Token from SharedPreferences: $token');
+    print('see the socket:');
+    if (token.isNotEmpty) {
+      _socketService.on('allMessages', (data) {
+        print('Received allMessages event: $data');
+        setState(() {
+          _messages.clear();
+          _messages.addAll(List<Map<String, dynamic>>.from(data));
+        });
       });
-    });
 
-    _socket.on('message', (message) {
-      setState(() {
-        _messages.add(message);
+      _socketService.on('message', (data) {
+        print('Received message event: $data');
+        setState(() {
+          _messages.add(Map<String, dynamic>.from(data));
+        });
       });
-    });
+    } else {
+      print('No token found in SharedPreferences');
+    }
   }
 
   void _sendMessage() {
     final message = _messageController.text;
     if (message.isNotEmpty) {
-      _socket.emit('chatMessage', message);
+      print('Sending message: $message');
+      _socketService.sendMessage('chatMessage', message);
       _messageController.clear();
     }
   }
 
-    void _logout() async {
-        print('Logout button pressed');
-        if (_socket != null) {
-            print('Disconnecting socket');
-            await _socket.disconnect();
-        }
-        Navigator.pushReplacementNamed(context, '/auth');
-    }
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token'); // Remove token from SharedPreferences
+    _socketService.disconnect();  // Disconnect the socket
 
-    @override
-    void dispose() {
-        if (_socket != null) {
-            _socket.dispose();
-        }
-        super.dispose();
-    }
+    // Navigate back to login screen or another screen after logout
+    Navigator.pushReplacementNamed(context, '/auth');
+  }
+
+  @override
+  void dispose() {
+    _socketService.disconnect();
+    _messageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
-        actions: <Widget>[
+        title: Text('Chat Room'),
+        actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () {
-              // Show a confirmation dialog before logging out
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Logout'),
-                    content: Text('Are you sure you want to logout?'),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                      ),
-                      TextButton(
-                        child: Text('Logout'),
-                        onPressed: () {
-                          _logout(); // Perform the logout
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
+            onPressed: _logout,  // Call the logout function
           ),
         ],
       ),
@@ -104,23 +90,32 @@ class _ChatScreenState extends State<ChatScreen> {
             child: ListView.builder(
               itemCount: _messages.length,
               itemBuilder: (context, index) {
-                return ListTile(title: Text(_messages[index]));
+                final message = _messages[index];
+                return ListTile(
+                  title: Text(message['user'] ?? 'Unknown'),
+                  subtitle: Text(message['text']),
+                );
               },
             ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  decoration: InputDecoration(labelText: 'Enter message'),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      labelText: 'Enter message',
+                    ),
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(Icons.send),
-                onPressed: _sendMessage,
-              ),
-            ],
+                IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
           ),
         ],
       ),
