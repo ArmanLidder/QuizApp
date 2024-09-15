@@ -98,7 +98,7 @@ io.on('connection', async (socket) => {
         });
         await leftMessage.save();
 
-        await User.findOneAndUpdate({username}, {connected: false} )
+        await User.findOneAndUpdate({username}, {connected: false})
 
         // Emit the new message to all connected clients
         const messages = await Message.find().sort({ createdAt: 1 }).limit(100);
