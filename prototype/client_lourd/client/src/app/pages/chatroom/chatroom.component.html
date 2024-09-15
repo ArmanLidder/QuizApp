@@ -8,8 +8,8 @@
     </div>
     <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
       <input formControlName="message" class="border border-gray-300 p-2 rounded w-full" placeholder="Type a message..." />
-      <button type="submit" class="mt-2 w-full bg-blue-500 text-white p-2 rounded disabled:bg-blue-200" [disabled]="!messageForm.valid">Send</button>
+      <button type="submit" class="mt-2 w-full bg-blue-500 text-white p-2 rounded disabled:bg-blue-200" [disabled]="!messageForm.valid">Envoyer</button>
     </form>
-    <button (click)="logout()" class="mt-2 w-full bg-red-500 text-white p-2 rounded">Logout</button>
+    <button (click)="logout()" class="mt-2 w-full bg-red-500 text-white p-2 rounded">Déconnexion</button>
   </div>
 </div>
