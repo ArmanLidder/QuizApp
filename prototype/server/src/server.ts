@@ -13,7 +13,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
     cors: {
-        origin: "http://localhost:63342", // Replace with the origin of your client
+        origin: "*", // Replace with the origin of your client
         methods: ["GET", "POST"],
         allowedHeaders: ["my-custom-header"],
         credentials: true
