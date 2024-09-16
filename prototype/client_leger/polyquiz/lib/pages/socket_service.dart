@@ -37,6 +37,7 @@ class SocketService {
 
   void disconnect() {
     if (socket.connected) {
+      this.socket.clearListeners();
       this.socket.disconnect();
       print('Socket disconnected');
     } else {
