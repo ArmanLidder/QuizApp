@@ -1,0 +1,4 @@
+#Sun Sep 15 21:56:17 WEST 2024
+base.0=C\:\\Users\\virgi\\Desktop\\ecole\\LOG3990\\polyquiz\\prototype\\client_leger\\polyquiz\\build\\app\\intermediates\\dex\\release\\mergeDexRelease\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
