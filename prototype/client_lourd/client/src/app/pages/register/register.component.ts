@@ -32,7 +32,7 @@ export class RegisterComponent {
         },
         (err) => {
           console.log(err)
-          this.snackBar.open(`Erreur de création : ${err.statusText} (${err.status})`, 'Fermer', {
+          this.snackBar.open(err.error.msg, 'Fermer', {
             duration: 5000,
             verticalPosition: 'bottom',
             horizontalPosition: 'center',
