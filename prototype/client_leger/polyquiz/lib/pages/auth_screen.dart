@@ -75,6 +75,14 @@ class _AuthScreenState extends State<AuthScreen> {
         }),
       );
 
+      final prefs2 = await SharedPreferences.getInstance();
+      final token2 = prefs2.getString('token') ?? '';
+
+      print('this is the data entered');
+      print(_loginUsernameController.text);
+      print(_loginPasswordController.text);
+      print('this is the token in the cache $token2');
+
       print('Login response status code: ${response.statusCode}');
       print('Login response body: ${response.body}');
 

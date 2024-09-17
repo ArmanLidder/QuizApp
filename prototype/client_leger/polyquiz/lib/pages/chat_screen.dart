@@ -22,7 +22,13 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _initializeSocket() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
+    print('verify last time token: $token');
 
+    // if (_socketService.socket.connected) {
+    //     _socketService.disconnect();
+    // }
+
+    // Connect with the new token
     _socketService = SocketService();
     _socketService.connect(token);
 
@@ -70,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
       DateTime parsedDate = DateTime.parse(timestamp);
       return DateFormat('HH:mm:ss').format(parsedDate);
     } catch (e) {
-      return ''; // Return empty string if parsing fails
+      return '';
     }
   }
 

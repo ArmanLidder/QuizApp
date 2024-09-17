@@ -12,12 +12,18 @@ class SocketService {
     this.socket = IO.io(
       'http://ec2-35-183-137-76.ca-central-1.compute.amazonaws.com:8000',
       IO.OptionBuilder()
-          .setTransports(['websocket'])
-          .setAuth({'token': token})
-          .build(),
+        .setTransports(['websocket'])
+        .setAuth({'token': token})
+        .enableAutoConnect()
+        .enableReconnection()
+        .build(),
     );
 
     this.socket.connect();
+
+    socket.onConnect((_) {
+       print('Connected to the socket server ${socket.id}');
+    });
 
     print('Socket connection attempt made');
   }
@@ -37,8 +43,9 @@ class SocketService {
 
   void disconnect() {
     if (socket.connected) {
-      this.socket.clearListeners();
-      this.socket.disconnect();
+      socket.emit('disconnect'); // Notify server explicitly (if needed)
+      socket.clearListeners();
+      socket.disconnect(); // Disconnect socket
       print('Socket disconnected');
     } else {
       print('Socket already disconnected');
