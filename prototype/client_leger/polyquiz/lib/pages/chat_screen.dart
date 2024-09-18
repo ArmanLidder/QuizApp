@@ -1,3 +1,5 @@
+// import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package for formatting dates
 import 'socket_service.dart';
@@ -31,13 +33,15 @@ class _ChatScreenState extends State<ChatScreen> {
     // Connect with the new token
     _socketService = SocketService();
     _socketService.connect(token);
-
     if (token.isNotEmpty) {
       _socketService.on('allMessages', (data) {
-        setState(() {
-          _messages.clear();
-          _messages.addAll(List<Map<String, dynamic>>.from(data));
-        });
+        if (mounted) {
+          print('Fetched messages after login');
+          setState(() {
+            _messages.clear();
+            _messages.addAll(List<Map<String, dynamic>>.from(data));
+          });
+        }
       });
 
       _socketService.on('message', (data) {
@@ -62,14 +66,15 @@ class _ChatScreenState extends State<ChatScreen> {
     _socketService.disconnect();
 
     Navigator.pushReplacementNamed(context, '/auth');
+    print(_socketService.socket.id);
   }
 
-  @override
-  void dispose() {
-    _socketService.disconnect();
-    _messageController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _socketService.disconnect();
+  //   _messageController.dispose();
+  //   super.dispose();
+  // }
 
   String _formatTimestamp(String timestamp) {
     try {
