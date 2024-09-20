@@ -3,7 +3,7 @@
     <h2 class="text-lg font-bold mb-4">Chatroom</h2>
     <div #messagesContainer class="h-60 overflow-y-auto border border-gray-300 p-2 mb-4 rounded">
       <div *ngFor="let msg of messages" class="mb-2">
-        <span class="text-gray-500">({{ msg.createdAt | date:'mediumTime' }})</span> - <strong>{{ msg.user }}</strong>: {{ msg.text }}
+        <span class="text-gray-500">({{ msg.createdAt | date:'HH:mm:ss' }})</span> - <strong>{{ msg.user }}</strong>: {{ msg.text }}
       </div>
     </div>
     <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">

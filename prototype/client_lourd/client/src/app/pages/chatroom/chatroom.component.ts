@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, AfterViewChecked, ViewChild, ElementRef } from '@angular/core';
+import {Component, OnInit, OnDestroy, AfterViewChecked, ViewChild, ElementRef, HostListener} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { SocketService} from "../../services/socket.service";
 import { Router } from '@angular/router';
@@ -13,6 +13,12 @@ export class ChatroomComponent implements OnInit, OnDestroy, AfterViewChecked {
   messageForm: FormGroup;
   messages: { user: string, text: string, createdAt: Date }[] = [];
   public token= localStorage.getItem('token') || '';
+
+  @HostListener('window:beforeunload')
+  removeToken() {
+    localStorage.removeItem('token');
+    this.socketService.disconnect();
+  }
 
   constructor(private fb: FormBuilder, private socketService: SocketService, private router: Router) {
     this.messageForm = this.fb.group({
@@ -64,6 +70,7 @@ export class ChatroomComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnDestroy(): void {
+    localStorage.removeItem('token');
     this.socketService.disconnect();
   }
 
