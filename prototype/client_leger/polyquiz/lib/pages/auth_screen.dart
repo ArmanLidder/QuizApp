@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+import 'token_manager.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -14,6 +15,9 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _loginUsernameController = TextEditingController();
   final TextEditingController _loginPasswordController = TextEditingController();
   final String baseUrl = 'http://ec2-35-183-137-76.ca-central-1.compute.amazonaws.com:8000/api/auth';
+  // final String baseUrl = 'http://10.0.2.2:8000/api/auth'; // LocalServer 
+  TokenSingleton t_storage = TokenSingleton.instance;
+
   bool _isRegistering = true;
 
   void _showDialog(String title, String message) {
@@ -37,7 +41,6 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _register() async {
-    print('Registering...');
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/register'),
@@ -49,22 +52,20 @@ class _AuthScreenState extends State<AuthScreen> {
       );
 
       if (response.statusCode == 200) {
-        _showDialog('Success', 'Registration successful! Please log in.');
+        _showDialog('Succès', 'Le compte a été créé. Veuillez vous connecter.');
         setState(() {
           _isRegistering = true; // Switch to login form after registration
         });
       } else {
         final responseBody = jsonDecode(response.body);
-        _showDialog('Error', 'Registration failed: ${responseBody['error'] ?? 'Unknown error'}');
+        _showDialog("Erreur", '${responseBody['msg']}');
       }
     } catch (e) {
-      print('Register error: $e');
-      _showDialog('Error', 'Registration failed. Please try again.');
+      _showDialog('Error', e.toString());
     }
   }
 
   Future<void> _login() async {
-    print('Logging in...');
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
@@ -75,32 +76,15 @@ class _AuthScreenState extends State<AuthScreen> {
         }),
       );
 
-      final prefs2 = await SharedPreferences.getInstance();
-      final token2 = prefs2.getString('token') ?? '';
-
-      print('this is the data entered');
-      print(_loginUsernameController.text);
-      print(_loginPasswordController.text);
-      print('this is the token in the cache $token2');
-
-      print('Login response status code: ${response.statusCode}');
-      print('Login response body: ${response.body}');
-
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
-        final token = responseBody['token'];
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token);
-        print('Token saved: $token');
-
+        t_storage.token = responseBody['token'];
         Navigator.pushReplacementNamed(context, '/chat');
       } else {
         final responseBody = jsonDecode(response.body);
-        _showDialog('Error', 'Login failed: ${responseBody['error'] ?? 'Invalid username or password'}');
+        _showDialog('Erreur', '${responseBody['msg']}');
       }
     } catch (e) {
-      print('Login error: $e');
       _showDialog('Error', 'Login failed. Please try again.');
     }
   }
