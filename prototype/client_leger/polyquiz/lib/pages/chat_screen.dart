@@ -41,7 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _sendMessage() {
     final message = _messageController.text;
-    if (message.isNotEmpty) {
+    if (message.trim().isNotEmpty) {
       _socketService.sendMessage('chatMessage', message);
       _messageController.clear();
     }
