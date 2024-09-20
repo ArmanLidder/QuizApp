@@ -66,6 +66,15 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
+  void dispose() {
+    if(_socketService.socket != null) {
+      _socketService.disconnect();
+      t_storage.clearToken();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
