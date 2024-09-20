@@ -1,9 +1,10 @@
-// import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import the intl package for formatting dates
+import 'package:intl/intl.dart';
+import 'package:polyquiz/pages/token_manager.dart';
 import 'socket_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -11,9 +12,11 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late SocketService _socketService;
+  var _socketService = SocketService();
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   final List<Map<String, dynamic>> _messages = [];
+  TokenSingleton t_storage = TokenSingleton.instance;
 
   @override
   void initState() {
@@ -21,33 +24,17 @@ class _ChatScreenState extends State<ChatScreen> {
     _initializeSocket();
   }
 
-  Future<void> _initializeSocket() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? '';
-    print('verify last time token: $token');
-
-    // if (_socketService.socket.connected) {
-    //     _socketService.disconnect();
-    // }
-
-    // Connect with the new token
-    _socketService = SocketService();
-    _socketService.connect(token);
-    if (token.isNotEmpty) {
+  void _initializeSocket() {
+    String? token = t_storage.token;
+    if (token == null) print("GARAGE");
+    else _socketService.connect(token);
+    if (_socketService.socket != null) {
       _socketService.on('allMessages', (data) {
-        if (mounted) {
-          print('Fetched messages after login');
           setState(() {
             _messages.clear();
             _messages.addAll(List<Map<String, dynamic>>.from(data));
           });
-        }
-      });
-
-      _socketService.on('message', (data) {
-        setState(() {
-          _messages.add(Map<String, dynamic>.from(data));
-        });
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent + 100); // The offset is added since the newest message is hidden by the chat box
       });
     }
   }
@@ -60,26 +47,19 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Future<void> _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+  void _logout() {
     _socketService.disconnect();
-
+    t_storage.clearToken();
     Navigator.pushReplacementNamed(context, '/auth');
-    print(_socketService.socket.id);
   }
-
-  // @override
-  // void dispose() {
-  //   _socketService.disconnect();
-  //   _messageController.dispose();
-  //   super.dispose();
-  // }
 
   String _formatTimestamp(String timestamp) {
     try {
+      tz.initializeTimeZones();
+      final montreal = tz.getLocation('America/Montreal');
       DateTime parsedDate = DateTime.parse(timestamp);
-      return DateFormat('HH:mm:ss').format(parsedDate);
+      final montrealTime = tz.TZDateTime.from(parsedDate, montreal);
+      return DateFormat('HH:mm:ss').format(montrealTime);
     } catch (e) {
       return '';
     }
@@ -101,6 +81,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: <Widget>[
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
