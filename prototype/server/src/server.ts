@@ -46,7 +46,7 @@ io.use((socket, next) => {
 // Function to emit all messages to a socket
 async function emitAllMessages(socket: any) {
     try {
-        const messages = await Message.find().sort({ createdAt: 1 }).limit(100);
+        const messages = await Message.find().sort({ createdAt: 1 });
         socket.emit('allMessages', messages);
     } catch (err) {
         console.error('Error fetching messages:', err);
@@ -62,13 +62,13 @@ io.on('connection', async (socket) => {
         createdAt: Date.now()
     });
     await welcomeMessage.save();
-    const messages = await Message.find().sort({ createdAt: 1 }).limit(100);
+    const messages = await Message.find().sort({ createdAt: 1 });
 
     // Emit the new message to all connected clients
     io.emit('allMessages', messages);
 
     // Send all messages to the newly connected client
-    await emitAllMessages(socket);
+    // await emitAllMessages(socket);
 
     socket.on('chatMessage', async (msg) => {
         try {
@@ -81,7 +81,7 @@ io.on('connection', async (socket) => {
             await newMessage.save();
 
             // Send updated message list to all connected clients
-            const messages = await Message.find().sort({ createdAt: 1 }).limit(100);
+            const messages = await Message.find().sort({ createdAt: 1 });
             io.emit('allMessages', messages);
         } catch (err) {
             console.error('Error saving message:', err);
@@ -101,13 +101,23 @@ io.on('connection', async (socket) => {
         await User.findOneAndUpdate({username}, {connected: false})
 
         // Emit the new message to all connected clients
-        const messages = await Message.find().sort({ createdAt: 1 }).limit(100);
+        const messages = await Message.find().sort({ createdAt: 1 });
         io.emit('allMessages', messages);
     });
 });
 
 // Start the server
 const PORT = process.env.PORT || 8000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+server.listen(PORT, () => {
+    const address = server.address();
+    let url;
+    if (typeof address === 'string') {
+        url = address;
+    } else {
+        url = address!.address === '::' ? 'localhost' : address!.address;
+    }
+    console.log(`Server running on http://${url}:${PORT}`);
+});
 app.get('/', (req, res) => res.json('Server running'));
 
