@@ -50,7 +50,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
         await User.findOneAndUpdate({username}, {connected: true})
         // Send Auth token if credential are valid
-        const token = jwt.sign({ id: user._id, username: user.username }, jwtSecret, { expiresIn: 3600 });
+        const token = jwt.sign({ id: user._id, username: user.username }, jwtSecret, { expiresIn: 10000000000 });
 
         res.json({ token });
     } catch (err) {
