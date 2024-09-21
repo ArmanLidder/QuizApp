@@ -41,7 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _sendMessage() {
     final message = _messageController.text;
-    if (message.isNotEmpty) {
+    if (message.trim().isNotEmpty) {
       _socketService.sendMessage('chatMessage', message);
       _messageController.clear();
     }
@@ -63,6 +63,15 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       return '';
     }
+  }
+
+  @override
+  void dispose() {
+    if(_socketService.socket != null) {
+      _socketService.disconnect();
+      t_storage.clearToken();
+    }
+    super.dispose();
   }
 
   @override
