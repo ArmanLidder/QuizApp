@@ -35,7 +35,6 @@ export class ChatroomComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.socketService.on<{ user: string, text: string, createdAt: Date }>('message', (msg) => {
       this.messages.push(msg);
-      console.log(this.messages);
     });
 
     this.socketService.on<{ user: string, text: string, createdAt: Date }[]>('allMessages', (messages) => {
@@ -57,7 +56,7 @@ export class ChatroomComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   sendMessage(): void {
     const message = this.messageForm.value.message;
-    if (message) {
+    if (message.trim()) {
       this.socketService.send('chatMessage', message);
       this.messageForm.reset();
     }
