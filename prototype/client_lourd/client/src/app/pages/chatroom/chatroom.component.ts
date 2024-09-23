@@ -22,7 +22,7 @@ export class ChatroomComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   constructor(private fb: FormBuilder, private socketService: SocketService, private router: Router) {
     this.messageForm = this.fb.group({
-      message: ['',  Validators.required]
+      message: ['',  [Validators.required, Validators.maxLength(200)]]
     });
   }
 
