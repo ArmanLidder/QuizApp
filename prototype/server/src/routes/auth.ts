@@ -17,7 +17,7 @@ router.post('/register', async (req: Request, res: Response) => {
         const { username, password } = req.body;
 
         // Validate credential
-        if (!username || !password) return res.status(400).json({ msg: EmptyCredentialError });
+        if (!username.trim() || !password.trim()) return res.status(400).json({ msg: EmptyCredentialError });
         let user = await User.findOne({ username }).exec();
         if (user) return res.status(400).json({ msg: UserExistError });
 
