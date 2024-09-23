@@ -9,8 +9,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      devTools: false
+      nodeIntegration: true
     },
   });
 
@@ -21,8 +20,6 @@ function createWindow() {
       slashes: true,
     }),
   );
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed', function () {
     mainWindow = null;
