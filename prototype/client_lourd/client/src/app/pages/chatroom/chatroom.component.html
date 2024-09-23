@@ -9,7 +9,7 @@
       </div>
     </div>
     <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
-      <input formControlName="message" class="border border-gray-300 p-2 rounded w-full" placeholder="Type a message..." />
+      <input formControlName="message" class="border border-gray-300 p-2 rounded w-full" placeholder="Écrire un message" />
       <div *ngIf="messageForm.get('message')?.errors?.['maxlength']" class="text-red-500 text-sm mt-1">
         Le message ne peut pas dépasser 200 caractères
       </div>
