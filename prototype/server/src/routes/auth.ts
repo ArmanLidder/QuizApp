@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { jwtSecret } from '../config/config';
 
-const EmptyCredentialError = "Le nom utilisateur et mot de passe ne doivent pas être vide";
+const EmptyCredentialError = "Le nom utilisateur ne peut pas être vide";
+const EmptySpaceInNameError = "Le nom d'utilisateur ne peut pas contenir d'espaces vides"
 const UserExistError = "L'utilisateur existe déjà";
 const UserNotFoundError = "Le nom d'utilisateur n'existe pas";
 const WrongPasswordError = "Le mot de passe est incorrect";
@@ -16,8 +17,11 @@ router.post('/register', async (req: Request, res: Response) => {
         // Retrieves credential
         const { username, password } = req.body;
 
-        // Validate credential
-        if (!username.trim() || !password.trim()) return res.status(400).json({ msg: EmptyCredentialError });
+        const usernameRegex = /^[a-zA-Z0-9]+$/;
+        if (!usernameRegex.test(username)) {
+            return res.status(400).json({ msg: "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres, et ne doit pas avoir d'espaces." });
+        }
+
         let user = await User.findOne({ username }).exec();
         if (user) return res.status(400).json({ msg: UserExistError });
 
