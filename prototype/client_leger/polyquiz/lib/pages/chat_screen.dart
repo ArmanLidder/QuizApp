@@ -131,9 +131,25 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    maxLength: 200, // Enforce character limit
                     decoration: InputDecoration(
                       labelText: 'Enter message',
+                      counterStyle: TextStyle(
+                        color: _messageController.text.length > 200
+                            ? Colors.red
+                            : Colors.grey, // Highlight counter in red when over limit
+                      ),
                     ),
+                    buildCounter: (BuildContext context, {int? currentLength, bool? isFocused, int? maxLength}) {
+                      return Text(
+                        '${currentLength ?? 0}/$maxLength',
+                        style: TextStyle(
+                          color: currentLength != null && currentLength >= 200
+                              ? Colors.red // Change counter color to red when maxLength is reached
+                              : Colors.grey,
+                        ),
+                      );
+                    },
                   ),
                 ),
                 IconButton(
