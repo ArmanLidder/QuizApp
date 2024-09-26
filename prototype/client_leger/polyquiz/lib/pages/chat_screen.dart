@@ -5,7 +5,6 @@ import 'socket_service.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
-
 class ChatScreen extends StatefulWidget {
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -15,6 +14,7 @@ class _ChatScreenState extends State<ChatScreen> {
   var _socketService = SocketService();
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  final FocusNode _messageFocusNode = FocusNode(); // Add FocusNode
   final List<Map<String, dynamic>> _messages = [];
   TokenSingleton t_storage = TokenSingleton.instance;
 
@@ -30,11 +30,11 @@ class _ChatScreenState extends State<ChatScreen> {
     else _socketService.connect(token);
     if (_socketService.socket != null) {
       _socketService.on('allMessages', (data) {
-          setState(() {
-            _messages.clear();
-            _messages.addAll(List<Map<String, dynamic>>.from(data));
-          });
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent + 100); // The offset is added since the newest message is hidden by the chat box
+        setState(() {
+          _messages.clear();
+          _messages.addAll(List<Map<String, dynamic>>.from(data));
+        });
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent + 100); // The offset is added since the newest message is hidden by the chat box
       });
     }
   }
@@ -44,6 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
     if (message.trim().isNotEmpty) {
       _socketService.sendMessage('chatMessage', message);
       _messageController.clear();
+      _messageFocusNode.requestFocus(); // Request focus back to the message input
     }
   }
 
@@ -67,10 +68,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    if(_socketService.socket != null) {
+    if (_socketService.socket != null) {
       _socketService.disconnect();
       t_storage.clearToken();
     }
+    _messageFocusNode.dispose(); // Dispose of the FocusNode
     super.dispose();
   }
 
@@ -131,6 +133,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    focusNode: _messageFocusNode, // Attach FocusNode here
                     maxLength: 200, // Enforce character limit
                     decoration: InputDecoration(
                       labelText: 'Enter message',
@@ -149,6 +152,10 @@ class _ChatScreenState extends State<ChatScreen> {
                               : Colors.grey,
                         ),
                       );
+                    },
+                    // Allow sending message with Enter key
+                    onSubmitted: (value) {
+                      _sendMessage();
                     },
                   ),
                 ),
