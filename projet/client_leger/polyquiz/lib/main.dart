@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/login-page.dart';
+import 'pages/auth_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Polyquiz',
       initialRoute: '/',
-      routes: {'/': (context) => LoginPage()},
+      routes: {
+        '/auth': (context) => AuthScreen(),
+        '/': (context) => LoginPage(),
+      },
     );
   }
 }
+
