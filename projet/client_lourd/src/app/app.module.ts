@@ -40,6 +40,12 @@ import { CorrectionQRLComponent } from './components/correction-qrl/correction-q
 import { GameHistoryListComponent } from './components/game-history-list/game-history-list.component';
 import { LeaveButtonComponent } from './components/leave-boutton/leave-boutton.component';
 import { StatisticZoneComponent } from './components/statistic-zone/statistic-zone.component';
+import { LoginPageComponent } from '@app/pages/login-page/login-page.component';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatIconModule} from "@angular/material/icon";
+import {MatInputModule} from "@angular/material/input";
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { RegisterPageComponent } from './pages/register-page/register-page/register-page.component';
 
 /**
  * Main module that is used in main.ts.
@@ -81,6 +87,8 @@ import { StatisticZoneComponent } from './components/statistic-zone/statistic-zo
         LeaveButtonComponent,
         StatisticZoneComponent,
         ConfirmationDialogComponent,
+        LoginPageComponent,
+        RegisterPageComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -94,6 +102,12 @@ import { StatisticZoneComponent } from './components/statistic-zone/statistic-zo
         BrowserAnimationsModule,
         MatTooltipModule,
         MatDialogModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

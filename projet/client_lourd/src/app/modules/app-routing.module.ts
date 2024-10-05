@@ -9,9 +9,12 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { QuizCreationPageComponent } from '@app/pages/quiz-creation-page/quiz-creation-page.component';
 import { WaitingRoomPlayerPageComponent } from '@app/pages/waiting-room-player-page/waiting-room-player-page.component';
 import { WaitingRoomHostPageComponent } from '@app/pages/waiting-room-host-page/waiting-room-host-page.component';
+import {LoginPageComponent} from "@app/pages/login-page/login-page.component";
+import {RegisterPageComponent} from "@app/pages/register-page/register-page/register-page.component";
 
 const routes: Routes = [
-    { path: '', component: MainPageComponent },
+    { path: 'login', component: LoginPageComponent },
+    { path: 'register', component: RegisterPageComponent },
     { path: 'home', component: MainPageComponent },
     { path: 'game/:id', component: GamePageComponent },
     { path: 'game-creation-page', component: GameCreationPageComponent },
@@ -22,7 +25,7 @@ const routes: Routes = [
     { path: 'waiting-room-host-page/:id', component: WaitingRoomHostPageComponent },
     { path: 'waiting-room-player-page', component: WaitingRoomPlayerPageComponent },
     { path: 'game-admin-page', component: GameAdministrationPageComponent, canActivate: [authGuardAuthentification] },
-    { path: '**', redirectTo: '/home' },
+    { path: '**', redirectTo: '/login' },
 ];
 
 @NgModule({
