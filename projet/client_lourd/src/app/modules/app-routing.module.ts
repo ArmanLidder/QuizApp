@@ -11,19 +11,21 @@ import { WaitingRoomPlayerPageComponent } from '@app/pages/waiting-room-player-p
 import { WaitingRoomHostPageComponent } from '@app/pages/waiting-room-host-page/waiting-room-host-page.component';
 import {LoginPageComponent} from "@app/pages/login-page/login-page.component";
 import {RegisterPageComponent} from "@app/pages/register-page/register-page.component";
+import {ProfilePageComponent} from "@app/pages/profile-page/profile-page.component";
 
 const routes: Routes = [
     { path: 'login', component: LoginPageComponent },
     { path: 'register', component: RegisterPageComponent },
-    { path: 'home', component: MainPageComponent },
-    { path: 'game/:id', component: GamePageComponent },
-    { path: 'game-creation-page', component: GameCreationPageComponent },
+    { path: 'profile/:username', component: ProfilePageComponent,  canActivate: [authGuardAuthentification]},
+    { path: 'home', component: MainPageComponent, canActivate: [authGuardAuthentification] },
+    { path: 'game/:id', component: GamePageComponent, canActivate: [authGuardAuthentification] },
+    { path: 'game-creation-page', component: GameCreationPageComponent, canActivate: [authGuardAuthentification] },
     { path: 'quiz-creation', component: QuizCreationPageComponent, canActivate: [authGuardAuthentification] },
     { path: 'quiz-creation/:id', component: QuizCreationPageComponent, canActivate: [authGuardAuthentification] },
-    { path: 'game-admin-prompt', component: PasswordPromptComponent },
-    { path: 'quiz-testing-page/:id', component: GamePageComponent },
-    { path: 'waiting-room-host-page/:id', component: WaitingRoomHostPageComponent },
-    { path: 'waiting-room-player-page', component: WaitingRoomPlayerPageComponent },
+    { path: 'game-admin-prompt', component: PasswordPromptComponent, canActivate: [authGuardAuthentification] },
+    { path: 'quiz-testing-page/:id', component: GamePageComponent, canActivate: [authGuardAuthentification] },
+    { path: 'waiting-room-host-page/:id', component: WaitingRoomHostPageComponent, canActivate: [authGuardAuthentification] },
+    { path: 'waiting-room-player-page', component: WaitingRoomPlayerPageComponent, canActivate: [authGuardAuthentification] },
     { path: 'game-admin-page', component: GameAdministrationPageComponent, canActivate: [authGuardAuthentification] },
     { path: '**', redirectTo: '/login' },
 ];

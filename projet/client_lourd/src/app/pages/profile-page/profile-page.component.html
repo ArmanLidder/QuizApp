@@ -1,0 +1,42 @@
+<div *ngIf="userProfile">
+    <h1>{{ userProfile.username }}'s Profile</h1>
+
+    <img [src]="userProfile.avatar" alt="{{ userProfile.username }}'s avatar" />
+    <p>Email: {{ userProfile.email }}</p>
+
+    <h2>Stats</h2>
+    <div *ngIf="userProfile.stats">
+        <p>Games Played: {{ userProfile.stats.playedGames }}</p>
+        <p>Games Won: {{ userProfile.stats.wonGames }}</p>
+        <p>Good Answers Per Game: {{ userProfile.stats.goodAnswersPerGame }}</p>
+        <p>Average Time Per Game: {{ userProfile.stats.avgTimePerGame }} seconds</p>
+    </div>
+
+    <h2>Friends</h2>
+    <ul>
+        <li *ngFor="let friend of userProfile.friends">{{ friend }}</li>
+    </ul>
+
+    <h2>Achievements</h2>
+    <ul>
+        <li *ngFor="let achievement of userProfile.achievements">{{ achievement }}</li>
+    </ul>
+
+    <h2>Login History</h2>
+    <ul>
+        <li *ngFor="let history of userProfile.login_history">
+            {{ history.connexion_type === 0 ? 'Login' : 'Logout' }} on {{ history.date | date }}
+        </li>
+    </ul>
+
+    <h2>Game History</h2>
+    <ul>
+        <li *ngFor="let game of userProfile.history_game">
+            {{ game.result === 0 ? 'Won' : 'Lost' }} on {{ game.date | date }}
+        </li>
+    </ul>
+</div>
+
+<div *ngIf="!userProfile">
+    <p>Loading profile...</p>
+</div>

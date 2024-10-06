@@ -27,6 +27,8 @@ export interface UserData {
     stats: Statistic;
     login_history: LoginHistory;
     history_game: GameHistory;
+    friend_request: NotificationFriend;
+
 }
 
 export interface UserModificationData {
@@ -39,4 +41,23 @@ export interface UserModificationData {
 export interface UserAuthData {
     username: string;
     password: string;
+}
+
+interface NotificationFriend {
+    sender_username: string;
+}
+
+export interface UserProfile {
+    email: string;
+    username: string;
+    password: string;
+    connected: boolean;
+    avatar: string;
+    friends: string[];
+    blocks: string[];
+    achievements: number[];
+    stats: Statistic;
+    login_history: LoginHistory[];
+    history_game: GameHistory[];
+    friend_request: NotificationFriend[];
 }

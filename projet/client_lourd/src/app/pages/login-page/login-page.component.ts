@@ -37,7 +37,7 @@ export class LoginPageComponent implements OnInit {
               horizontalPosition: 'center',
               panelClass : "my-snack-bar",
             });
-            this.router.navigate(['chatroom']);
+            this.router.navigate(['/home']);
           },
           (err) => {
             console.log(err)

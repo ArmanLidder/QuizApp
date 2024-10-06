@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/for
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AvatarService } from "@app/services/avatar.service/avatar.service";
 import { environment } from "../../../environments/environment";
+import {Router} from "@angular/router";
 
 
 interface AvatarData {
@@ -24,7 +25,7 @@ export class RegisterPageComponent implements OnInit {
     customAvatarUrl: string | ArrayBuffer | null = null;
     passwordVisible: boolean = false;
 
-    constructor(private fb: FormBuilder, private authService: AuthService, private snackBar: MatSnackBar, private avatarService: AvatarService) {
+    constructor(private fb: FormBuilder, private authService: AuthService, private snackBar: MatSnackBar, private avatarService: AvatarService, private router: Router) {
         this.authForm = this.fb.group({
             username: ['', [Validators.required,this.usernameValidator]],
             email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
@@ -120,6 +121,7 @@ export class RegisterPageComponent implements OnInit {
                         horizontalPosition: 'center',
                         panelClass: "my-snack-bar",
                     });
+                    this.router.navigate(['/login']);
                 },
                 (err: { error: { msg: string; }; }) => {
                     console.log(err);

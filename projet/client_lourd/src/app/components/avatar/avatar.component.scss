@@ -1,0 +1,36 @@
+.avatar-item {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #888888;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 50px; /* Adjust based on avatar size */
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 1000;
+  padding: 10px;
+}
+
+.dropdown-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-menu li {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}

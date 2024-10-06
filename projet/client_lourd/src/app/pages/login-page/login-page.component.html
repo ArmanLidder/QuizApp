@@ -14,7 +14,7 @@
         <mat-form-field appearance="fill" class="w-full">
             <mat-label>Mot de passe</mat-label>
             <mat-icon matPrefix>lock</mat-icon>
-            <input matInput type="password" placeholder="Entrez votre mot de passe" formControlName="password" class="custom-input" autocomplete="new-password">
+            <input matInput type="password" placeholder="Entrez votre mot de passe" formControlName="password" class="custom-input">
         </mat-form-field>
 
         <button type="submit" class="w-full border border-slate-200 rounded-md disabled:bg-blue-300 py-2 px-3 bg-blue-700 text-white font-bold" [disabled]="!authForm.valid">

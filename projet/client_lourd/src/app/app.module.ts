@@ -47,6 +47,9 @@ import {MatInputModule} from "@angular/material/input";
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {RegisterPageComponent} from "@app/pages/register-page/register-page.component";
 import { AvatarComponent } from './components/avatar/avatar.component';
+import { HeaderComponent } from './components/header/header.component';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+
 
 /**
  * Main module that is used in main.ts.
@@ -91,6 +94,9 @@ import { AvatarComponent } from './components/avatar/avatar.component';
         LoginPageComponent,
         RegisterPageComponent,
         AvatarComponent,
+        HeaderComponent,
+        ProfilePageComponent,
+
     ],
     imports: [
         AppMaterialModule,
