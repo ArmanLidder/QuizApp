@@ -7,6 +7,8 @@ import { HistoryService } from '@app/services/history.service/history.service';
 import { GameCreationService } from '@app/services/game-creation.service/game-creation.service';
 import { GameManagementService } from '@app/services/game-management.service/game-management.service';
 import { ChatService } from '@app/services/chat.service/chat.service';
+import * as jwt from 'jsonwebtoken';
+
 
 export class SocketManager {
     private sio: io.Server;
@@ -20,16 +22,34 @@ export class SocketManager {
         private historyService: HistoryService,
         server: http.Server,
     ) {
-        this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
+        this.sio = new io.Server(server, {
+            cors: {
+                origin: '*',
+                methods: ['GET', 'POST'],
+                allowedHeaders: ["my-custom-header"], // added
+                credentials: true // added
+            }
+        });
         this.roomManager = new RoomManagingService();
         this.gameCreationService = new GameCreationService();
         this.gameManagementService = new GameManagementService(this.quizService, this.historyService);
         this.chatService = new ChatService();
+
+        // Socket.io middleware for connection
+        this.sio.use((socket, next) => {
+            const token = socket.handshake.auth.token;
+            try {
+                socket.data.user = jwt.verify(token, "karimbenzemaeasteregg") as { id: string, username: string };
+                next();
+            } catch (err) {
+                next(new Error('Authentication error'));
+            }
+        });
+
     }
 
     handleSockets(): void {
         this.sio.on(SocketEvent.CONNECTION, (socket) => {
-
             this.gameCreationService.configureGameCreationSockets(this.roomManager, socket, this.sio);
             this.gameManagementService.configureGameManagingSockets(this.roomManager, socket, this.sio);
             this.chatService.configureChatSockets(this.roomManager, socket, this.sio);

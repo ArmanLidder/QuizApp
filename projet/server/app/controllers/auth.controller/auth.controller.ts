@@ -107,6 +107,9 @@ export class AuthController {
             const filepath = process.cwd() + '/assets/tmp_avatar/' + filename;
             const destinationPath = process.cwd() + '/assets/avatar/' + filename ;
             // Copy the file to the destination
+            await fs.chmod(process.cwd() + '/assets/tmp_avatar/', fs.constants.O_RDWR);
+            await fs.chmod(process.cwd() + '/assets/avatar/', fs.constants.O_RDWR);
+
             await fs.copyFile(filepath, destinationPath);
             await fs.unlink(filepath);
             console.log(`File moved from ${filepath} to ${destinationPath}`);
