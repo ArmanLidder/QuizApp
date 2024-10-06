@@ -9,6 +9,9 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+.my-snack-bar {
+  background-color: #fff;
+}
 .my-snack-bar button {
   font-weight: bold;
 }

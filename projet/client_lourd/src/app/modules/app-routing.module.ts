@@ -10,7 +10,7 @@ import { QuizCreationPageComponent } from '@app/pages/quiz-creation-page/quiz-cr
 import { WaitingRoomPlayerPageComponent } from '@app/pages/waiting-room-player-page/waiting-room-player-page.component';
 import { WaitingRoomHostPageComponent } from '@app/pages/waiting-room-host-page/waiting-room-host-page.component';
 import {LoginPageComponent} from "@app/pages/login-page/login-page.component";
-import {RegisterPageComponent} from "@app/pages/register-page/register-page/register-page.component";
+import {RegisterPageComponent} from "@app/pages/register-page/register-page.component";
 
 const routes: Routes = [
     { path: 'login', component: LoginPageComponent },

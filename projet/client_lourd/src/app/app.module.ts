@@ -45,7 +45,8 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatIconModule} from "@angular/material/icon";
 import {MatInputModule} from "@angular/material/input";
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { RegisterPageComponent } from './pages/register-page/register-page/register-page.component';
+import {RegisterPageComponent} from "@app/pages/register-page/register-page.component";
+import { AvatarComponent } from './components/avatar/avatar.component';
 
 /**
  * Main module that is used in main.ts.
@@ -89,6 +90,7 @@ import { RegisterPageComponent } from './pages/register-page/register-page/regis
         ConfirmationDialogComponent,
         LoginPageComponent,
         RegisterPageComponent,
+        AvatarComponent,
     ],
     imports: [
         AppMaterialModule,
