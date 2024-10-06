@@ -29,6 +29,7 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on(SocketEvent.CONNECTION, (socket) => {
+
             this.gameCreationService.configureGameCreationSockets(this.roomManager, socket, this.sio);
             this.gameManagementService.configureGameManagingSockets(this.roomManager, socket, this.sio);
             this.chatService.configureChatSockets(this.roomManager, socket, this.sio);

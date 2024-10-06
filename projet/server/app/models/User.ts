@@ -18,6 +18,10 @@ interface GameHistory {
     date: Date;
 }
 
+interface NotificationFriend {
+    sender_username: string;
+}
+
 interface IUser {
     email: string;
     username: string;
@@ -30,6 +34,7 @@ interface IUser {
     stats: Statistic;
     login_history: LoginHistory;
     history_game: GameHistory;
+    friend_request: NotificationFriend;
 }
 
 interface IUserMethods {
@@ -63,6 +68,7 @@ const UserSchema = new mongoose.Schema<UserDocument, UserModel>({
         result: Number, // won = 0 and lost = 1
         date: Date,
     }],
+    friend_request : [String]
 });
 
 UserSchema.pre<UserDocument>(
