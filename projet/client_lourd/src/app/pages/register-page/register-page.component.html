@@ -68,7 +68,7 @@
         </div>
     </div>
 
-        <button type="submit" class="w-full border border-slate-200 rounded-md disabled:bg-purple-400 py-2 px-3 bg-blue-700 text-white font-bold" [disabled]="!authForm.valid">
+        <button type="submit" class="w-full border border-slate-200 rounded-md disabled:bg-purple-400 py-2 px-3 bg-blue-700 text-white font-bold" [disabled]="!authForm.valid  || (this.selectedAvatarIndex == null && this.customAvatarUrl==null)">
             S'inscrire
         </button>
 

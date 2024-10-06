@@ -93,6 +93,7 @@ export class RegisterPageComponent implements OnInit {
                 horizontalPosition: 'center',
                 panelClass: "my-snack-bar",
             });
+            return;
         }
         if (this.authForm.valid) {
             const formData = new FormData();
