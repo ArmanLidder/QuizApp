@@ -7,11 +7,13 @@ import { HistoryService } from '@app/services/history.service/history.service';
 import { GameCreationService } from '@app/services/game-creation.service/game-creation.service';
 import { GameManagementService } from '@app/services/game-management.service/game-management.service';
 import { ChatService } from '@app/services/chat.service/chat.service';
-import * as jwt from 'jsonwebtoken';
+import User from "@app/models/User";
+// import {PlayerUsername} from "@common/interfaces/socket-manager.interface";
+// import {ErrorDictionary} from "@common/browser-message/error-message/error-message";
 
 
 export class SocketManager {
-    private sio: io.Server;
+    sio: io.Server;
     private roomManager: RoomManagingService;
     private gameCreationService: GameCreationService;
     private gameManagementService: GameManagementService;
@@ -34,25 +36,25 @@ export class SocketManager {
         this.gameCreationService = new GameCreationService();
         this.gameManagementService = new GameManagementService(this.quizService, this.historyService);
         this.chatService = new ChatService();
-
-        // Socket.io middleware for connection
-        this.sio.use((socket, next) => {
-            const token = socket.handshake.auth.token;
-            try {
-                socket.data.user = jwt.verify(token, "karimbenzemaeasteregg") as { id: string, username: string };
-                next();
-            } catch (err) {
-                next(new Error('Authentication error'));
-            }
-        });
-
     }
 
     handleSockets(): void {
         this.sio.on(SocketEvent.CONNECTION, (socket) => {
+            console.log(`New client socket connection: {socket.data.username}`);
             this.gameCreationService.configureGameCreationSockets(this.roomManager, socket, this.sio);
             this.gameManagementService.configureGameManagingSockets(this.roomManager, socket, this.sio);
             this.chatService.configureChatSockets(this.roomManager, socket, this.sio);
+            socket.on('disconnect', async () => {
+                console.log('Client disconnected');
+                const username = socket.data.user.username
+
+                const logoutData = {
+                    connexion_type: 1, // login = 0 and logout = 1
+                    date: Date.now()
+                }
+                // {connected: true, $push:{login_history: login_data}}
+                await User.findOneAndUpdate({username}, {connected: false, $push:{login_history: logoutData}})
+            });
         });
     }
 }

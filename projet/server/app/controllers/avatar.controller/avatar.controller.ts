@@ -18,10 +18,8 @@ export class AvatarController {
 
 
         this.router.get('/', async (req: Request, res: Response) => {
-            console.log('Arman is getting avatars!')
             try {
                 const avatarDir = path.join(process.cwd(), '/assets/avatar');
-                console.log(avatarDir)
                 fs.readdir(avatarDir, (err, files) => {
                     if (err) return res.status(500).send('Server error while reading directory');
 
