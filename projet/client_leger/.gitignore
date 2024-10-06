@@ -73,7 +73,6 @@ dart_tool/
 .flutter/
 .flutter-plugins
 pubspec.lock
-pubspec.yaml
 
 # Flutter
 .flutter-plugins
