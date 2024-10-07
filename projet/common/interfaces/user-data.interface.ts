@@ -55,7 +55,10 @@ export interface UserProfile {
     avatar: string;
     friends: string[];
     blocks: string[];
-    achievements: number[];
+    achievements: number[];//Each number present in array indicates that the user has that achievement, look at profile page component.ts
+    currency: Number,
+    playerLevel: Number,
+    playerPrestige: Number,
     stats: Statistic;
     login_history: LoginHistory[];
     history_game: GameHistory[];

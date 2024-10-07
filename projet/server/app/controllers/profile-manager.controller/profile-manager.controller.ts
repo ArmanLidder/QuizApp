@@ -20,19 +20,13 @@ export class ProfileManagerController {
         this.router = Router();
 
         this.router.get('/', async (req: Request, res: Response) => {
-            console.log('reveive request');
             try {
                 const token = req.headers['authorization'];
-                console.log('verify token:');
-                console.log(token);
                 const data = jwt.verify(token, process.env.JWT_SECRET) as { id: string, username: string };
-                console.log('after');
                 const username = data.username
-                console.log(username)
                 const profileData: UserProfile = await User.findOne({username});
                 return res.status(200).json(profileData);
             } catch (error) {
-                console.log(error.message)
                 return res.status(500).send('Server error');
             }
         });

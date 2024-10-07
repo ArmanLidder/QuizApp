@@ -54,7 +54,6 @@ export class RegisterPageComponent implements OnInit {
         this.selectedAvatar = this.defaultAvatars[index];
         this.selectedAvatarIndex = index;
         this.authForm.patchValue({ avatar: this.selectedAvatar.name });
-        console.log(`selected image ${this.selectedAvatar.name}`);
     }
 
     onFileSelected(event: Event) {

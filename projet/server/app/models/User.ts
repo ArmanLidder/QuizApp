@@ -31,6 +31,9 @@ interface IUser {
     friends: string[];
     blocks: string[];
     achievements: number[];
+    currency: Number,
+    playerLevel: Number,
+    playerPrestige: Number,
     stats: Statistic;
     login_history: LoginHistory;
     history_game: GameHistory;
@@ -54,12 +57,15 @@ const UserSchema = new mongoose.Schema<UserDocument, UserModel>({
     friends: [String],
     blocks: [String],
     achievements: [String],
-    stats: [{
+    currency: { type: Number, default: 0 },
+    playerLevel: { type: Number, default: 1 },
+    playerPrestige: { type: Number, default: 0 },
+    stats: {
         playedGames: Number,
         wonGames: Number,
         goodAnswersPerGame: Number,
         avgTimePerGame: Number,
-    }],
+    },
     login_history: [{
         connexion_type: Number, // login = 0 and logout = 1
         date: Date,

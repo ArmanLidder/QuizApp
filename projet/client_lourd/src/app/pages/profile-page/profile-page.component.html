@@ -1,42 +1,84 @@
-<div *ngIf="userProfile">
-    <h1>{{ userProfile.username }}'s Profile</h1>
+<div class="bg-gray-100 min-h-screen p-8">
+    <div *ngIf="userProfile" class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white text-center">
+            <div class="relative inline-block">
+                <img [src]="this.avatarUrl" alt="Avatar de {{ userProfile.username }}" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg" />
+                <div class="absolute -bottom-0 -right-1 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
+                    {{ userProfile.playerLevel }}
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold mt-2">Profil de {{ userProfile.username }}</h1>
+            <p class="text-lg mt-2">{{ userProfile.email }}</p>
+            <div class="mt-4 flex justify-center items-center space-x-4">
+                <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                    <span class="font-semibold">Prestige :</span> {{ getPrestigeLabel(userProfile.playerPrestige) }}
+                </div>
+                <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                    <span class="font-semibold">Points :</span> {{ userProfile.currency }}
+                </div>
+            </div>
+        </div>
 
-    <img [src]="userProfile.avatar" alt="{{ userProfile.username }}'s avatar" />
-    <p>Email: {{ userProfile.email }}</p>
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-2xl font-semibold mb-4">Statistiques</h2>
+                    <div *ngIf="userProfile.stats" class="bg-gray-50 p-4 rounded-lg">
+                        <p class="mb-2"><span class="font-semibold">Parties Jouées :</span> {{ userProfile.stats.playedGames }}</p>
+                        <p class="mb-2"><span class="font-semibold">Parties Gagnées :</span> {{ userProfile.stats.wonGames }}</p>
+                        <p class="mb-2"><span class="font-semibold">Bonnes Réponses Par Partie :</span> {{ userProfile.stats.goodAnswersPerGame }}</p>
+                        <p><span class="font-semibold">Temps Moyen Par Partie :</span> {{ userProfile.stats.avgTimePerGame }} secondes</p>
+                    </div>
+                </div>
 
-    <h2>Stats</h2>
-    <div *ngIf="userProfile.stats">
-        <p>Games Played: {{ userProfile.stats.playedGames }}</p>
-        <p>Games Won: {{ userProfile.stats.wonGames }}</p>
-        <p>Good Answers Per Game: {{ userProfile.stats.goodAnswersPerGame }}</p>
-        <p>Average Time Per Game: {{ userProfile.stats.avgTimePerGame }} seconds</p>
+                <div>
+                    <h2 class="text-2xl font-semibold mb-4">Amis</h2>
+                    <ul class="bg-gray-50 p-4 rounded-lg">
+                        <li *ngFor="let friend of userProfile.friends" class="mb-2 last:mb-0">{{ friend }}</li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="mt-8">
+                <h2 class="text-2xl font-semibold mb-4">Exploits</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div *ngFor="let achievement of allAchievements; let i = index"
+                         class="p-4 rounded-lg text-center"
+                         [ngClass]="getAchievementClass(i)">
+                        <span class="text-2xl mb-2 block">{{ getAchievementIcon(i) }}</span>
+                        <p class="text-sm">{{ achievement }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-2xl font-semibold mb-4">Historique des Connexions</h2>
+                <ul class="bg-gray-50 p-4 rounded-lg">
+                    <li *ngFor="let history of userProfile.login_history" class="mb-2 last:mb-0">
+            <span [ngClass]="{'text-green-600': history.connexion_type === 0, 'text-red-600': history.connexion_type !== 0}">
+              {{ history.connexion_type === 0 ? 'Connexion' : 'Déconnexion' }}
+            </span>
+                        le {{ history.date | date:'yyyy-MM-dd HH:mm:ss' }}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-2xl font-semibold mb-4">Historique des Parties</h2>
+                <ul class="bg-gray-50 p-4 rounded-lg">
+                    <li *ngFor="let game of userProfile.history_game" class="mb-2 last:mb-0">
+            <span [ngClass]="{'text-green-600': game.result === 0, 'text-red-600': game.result !== 0}">
+              {{ game.result === 0 ? 'Gagné' : 'Perdu' }}
+            </span>
+                        le {{ game.date | date:'yyyy-MM-dd HH:mm:ss' }}
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <h2>Friends</h2>
-    <ul>
-        <li *ngFor="let friend of userProfile.friends">{{ friend }}</li>
-    </ul>
-
-    <h2>Achievements</h2>
-    <ul>
-        <li *ngFor="let achievement of userProfile.achievements">{{ achievement }}</li>
-    </ul>
-
-    <h2>Login History</h2>
-    <ul>
-        <li *ngFor="let history of userProfile.login_history">
-            {{ history.connexion_type === 0 ? 'Login' : 'Logout' }} on {{ history.date | date }}
-        </li>
-    </ul>
-
-    <h2>Game History</h2>
-    <ul>
-        <li *ngFor="let game of userProfile.history_game">
-            {{ game.result === 0 ? 'Won' : 'Lost' }} on {{ game.date | date }}
-        </li>
-    </ul>
-</div>
-
-<div *ngIf="!userProfile">
-    <p>Loading profile...</p>
+    <div *ngIf="!userProfile" class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
+        <p class="text-xl">Chargement du profil...</p>
+    </div>
 </div>

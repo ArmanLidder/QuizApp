@@ -33,7 +33,6 @@ export class HeaderComponent implements OnInit {
   }
 
   get_user_data(): void {
-    console.log('sending request')
     this.profileService.getUserProfile().subscribe((profile: UserProfile) => {
       this.username = profile.username;
       this.avatarUrl = environment.serverUrl + '/images/' + profile.avatar;

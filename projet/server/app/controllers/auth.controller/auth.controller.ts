@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { Service } from 'typedi';
-import { UserModificationData } from "@common/interfaces/user-data.interface";
+//import { UserModificationData } from "@common/interfaces/user-data.interface";
 import * as jwt from 'jsonwebtoken';
 import User from '../../models/User';
 import * as multer from 'multer';
@@ -86,14 +86,41 @@ export class AuthController {
         let user = await User.findOne({ username }).exec();
         if (user) return res.status(400).json({ msg: UserExistError });
 
-        const userData: UserModificationData = { email, username, password, avatar }
+        // For debug purpose
+
+        const userData = {
+            email,
+            username,
+            password,
+            avatar,
+            friends: ['karim', 'arman', 'test'],
+            blocks: ['karim', 'arman', 'test'],
+            achievements: [1,2,3],
+            currency: 40,
+            playerLevel: 12,
+            playerPrestige: 302,
+            stats: {
+                playedGames: 5,
+                wonGames: 4,
+                goodAnswersPerGame: 10,
+                avgTimePerGame: 100.1,
+            },
+            history_game: [
+                {result: 0, date: Date.now()},
+                {result: 1, date: Date.now()},
+                {result: 1, date: Date.now()},
+                {result: 1, date: Date.now()},
+                {result: 1, date: Date.now()},
+
+            ],
+            friend_request : ['putain', 'de', 'merde']
+        }
         user = new User(userData);
         await user.save();
         if (!avatar.includes('_')) {
-            console.log('saving it!')
             await this.saveValidAvatar(avatar);
         }
-        return res.status(201).json({msg: "Le compte utilisateur a été créer avec succès!"});
+        return res.status(201).json({msg: "Le compte utilisateur a été crée avec succès!"});
     }
 
     private async saveValidAvatar(filename: string) {
@@ -108,7 +135,6 @@ export class AuthController {
             // Copy the file to the destination
             await fs.copyFile(filepath, destinationPath);
             await fs.unlink(filepath);
-            console.log(`File moved from ${filepath} to ${destinationPath}`);
         } catch (error) {
             console.error('Error moving file:', error);
         }

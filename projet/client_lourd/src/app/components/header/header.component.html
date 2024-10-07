@@ -1,9 +1,11 @@
-<header class="bg-gradient-to-r from-purple-500 to-blue-600 text-white py-10 shadow-lg relative">
+<header class="bg-gradient-to-r from-purple-500 to-blue-600 text-white py-10 shadow-lg sticky top-0 z-50">
     <div class="container mx-auto text-center">
-        <h1 class="text-4xl font-extrabold tracking-wide">PolyQuiz</h1>
+        <a [routerLink]="['/home']" class="text-4xl font-extrabold tracking-wide hover:underline">
+            PolyQuiz
+        </a>
     </div>
     <div *ngIf="avatarUrl && this.username" class="absolute top-0 right-0 flex items-center justify-center h-full p-4">
-        <span class="mr-4 text-lg font-bold text-white">{{ this.username }}</span> <!-- Bold and white text -->
+        <span class="mr-4 text-lg font-bold text-white">{{ this.username }}</span>
         <app-avatar [avatarUrl]="avatarUrl" [username]="username" (disconnectUser)='this.resetData($event)'></app-avatar>
     </div>
 </header>

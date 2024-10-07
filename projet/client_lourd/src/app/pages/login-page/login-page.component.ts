@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import {AuthService} from "@app/services/auth.service/auth.service";
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss']
 })
-export class LoginPageComponent implements OnInit {
+export class LoginPageComponent {
   authForm: FormGroup;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private snackBar: MatSnackBar, private router: Router) {
@@ -17,13 +17,6 @@ export class LoginPageComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
-  }
-  ngOnInit(): void {
-    // Check if token exists and redirect to chatroom if already logged in
-    // if (localStorage.getItem('token')) {
-    //   this.router.navigate(['chatroom']);
-    // }
-    console.log("hi")
   }
 
   login() {
