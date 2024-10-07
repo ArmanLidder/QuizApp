@@ -15,4 +15,45 @@ class SocketService {
     return _instance;
   }
 
+  void connect(String token) {
+    if (socket == null) {
+      socket = IO.io(
+        serverUrl,
+        IO.OptionBuilder()
+            .enableForceNew()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .setAuth({'token': token})
+            .build(),
+      );
+
+      socket!.connect();
+
+      socket!.onConnect((_) {
+        print('Connected to the socket server ${socket!.id}');
+      });
+
+      socket?.onDisconnect((_) {
+        print('Disconnected to the socket server');
+      });
+
+    };
+  }
+
+  void sendMessage(String event, String message) {
+    if (socket != null) {
+      socket!.emit(event, message);
+    }
+  }
+
+  void on(String event, Function(dynamic) callback) {
+    if (socket != null) {
+      socket!.on(event, callback);
+    }
+  }
+
+  void disconnect() {
+    socket!.disconnect();
+    socket = null;
+  }
 }
