@@ -22,7 +22,41 @@ class _MessageWindowState extends State<MessageWindow> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Container(
+      child: Column(
+        children: <Widget>[
+          // Cette section est la liste des messages déjà envoyés
+          Expanded(
+              child: ListView.builder(
+                  itemCount: _messages.length,
+                  itemBuilder: (context, index) {
+                    final message = _messages[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Text(message)
+                    );
+                  }
+              )
+          ),
+          Container(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: "input a message...",
+                      border: InputBorder.none,
+                    ),
+                    onSubmitted: (value) => _sendMessage(),
+                  )
+                ),
+                IconButton(onPressed: _sendMessage, icon: Icon(Icons.send, color: Colors.blue,))
+              ]
+            )
+          )
+        ]
+      )
+    );
   }
 }
