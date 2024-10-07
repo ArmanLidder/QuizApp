@@ -23,16 +23,21 @@ export class ProfileManagerController {
             try {
                 const token = req.headers['authorization'];
                 const data = jwt.verify(token, process.env.JWT_SECRET) as { id: string, username: string };
-                const username = data.username
-                const profileData: UserProfile = await User.findOne({username});
+                const profileId = data.id
+                console.log(profileId)
+                const profileData: UserProfile = await User.findById(profileId);
+                console.log(profileData)
                 return res.status(200).json(profileData);
             } catch (error) {
+                console.log(error);
                 return res.status(500).send('Server error');
+
             }
         });
 
         this.router.get('/:username', async (req: Request, res: Response) => {
             try {
+                //
                 const token = req.headers['authorization'];
                 jwt.verify(token, process.env.JWT_SECRET) as { id: string, username: string };
                 const username = req.params.username;

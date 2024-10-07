@@ -1,6 +1,5 @@
 import { Request, Response, Router } from 'express';
 import { Service } from 'typedi';
-//import { UserModificationData } from "@common/interfaces/user-data.interface";
 import * as jwt from 'jsonwebtoken';
 import User from '../../models/User';
 import * as multer from 'multer';
@@ -80,7 +79,7 @@ export class AuthController {
         const username = req.body.username;
         const email = req.body.email;
         const password = req.body.password;
-        const avatar = req.body.avatar;
+        let avatar = req.body.avatar;
 
         // Check if user already exist before continuing
         let user = await User.findOne({ username }).exec();
@@ -115,18 +114,24 @@ export class AuthController {
             ],
             friend_request : ['putain', 'de', 'merde']
         }
+
         user = new User(userData);
+        const user_id = user._id.toHexString();
+        console.log(user_id)
         await user.save();
         if (!avatar.includes('_')) {
-            await this.saveValidAvatar(avatar);
+            const new_avatar =  user_id + '.' + avatar.split(".").pop()
+            await User.findOneAndUpdate({_id: user_id}, {avatar: new_avatar});
+            console.log(`Avatar value before save: ${new_avatar}`);
+            await this.saveValidAvatar(avatar, new_avatar);
         }
         return res.status(201).json({msg: "Le compte utilisateur a été crée avec succès!"});
     }
 
-    private async saveValidAvatar(filename: string) {
+    private async saveValidAvatar(old_filename: string, new_filename: string) {
         try {
-            const filepath = process.cwd() + '/assets/tmp_avatar/' + filename;
-            const destinationPath = process.cwd() + '/assets/avatar/' + filename ;
+            const filepath = process.cwd() + '/assets/tmp_avatar/' + old_filename;
+            const destinationPath = process.cwd() + '/assets/avatar/' + new_filename ;
 
             // Enable read and write permissions
             await fs.chmod(process.cwd() + '/assets/tmp_avatar/', fs.constants.O_RDWR);
@@ -136,6 +141,7 @@ export class AuthController {
             await fs.copyFile(filepath, destinationPath);
             await fs.unlink(filepath);
         } catch (error) {
+            await fs.unlink(process.cwd() + '/assets/tmp_avatar/' + old_filename);
             console.error('Error moving file:', error);
         }
     }
