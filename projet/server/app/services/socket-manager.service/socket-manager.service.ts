@@ -46,14 +46,15 @@ export class SocketManager {
             this.chatService.configureChatSockets(this.roomManager, socket, this.sio);
             socket.on('disconnect', async () => {
                 console.log('Client disconnected');
-                const username = socket.data.user.username
+                const userId = socket.data.user.id
+
 
                 const logoutData = {
                     connexion_type: 1, // login = 0 and logout = 1
                     date: Date.now()
                 }
                 // {connected: true, $push:{login_history: login_data}}
-                await User.findOneAndUpdate({username}, {connected: false, $push:{login_history: logoutData}})
+                await User.findOneAndUpdate({_id: userId}, {connected: false, $push:{login_history: logoutData}})
             });
         });
     }

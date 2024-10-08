@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from '@app/services/profile.service/profile.service';
-import { UserProfile } from '@common/interfaces/user-data.interface';
-import { ActivatedRoute } from '@angular/router';
-import { environment } from "../../../environments/environment";
+import { MatDialog } from "@angular/material/dialog";
+import { UserModificationDialogComponent } from "@app/components/user-modification-dialog/user-modification-dialog.component";
 
 @Component({
   selector: 'app-profile',
@@ -10,10 +9,7 @@ import { environment } from "../../../environments/environment";
   styleUrls: ['./profile-page.component.scss'],
 })
 export class ProfilePageComponent implements OnInit {
-  userProfile: UserProfile | null = null;
-  username: string | null = null;
-  avatarUrl: string;
-  userAchievements: number[];
+  userAchievements: number[] | undefined;
 
   allAchievements: string[] = [
     "Gagner une partie en ligne",
@@ -27,36 +23,18 @@ export class ProfilePageComponent implements OnInit {
   ];
 
   constructor(
-      private profileService: ProfileService,
-      private route: ActivatedRoute
+      public profileService: ProfileService,
+      private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.username = params.get('username');
-      if (this.username) {
-        this.loadUserProfile(this.username);
-      }
-    });
-  }
-
-  loadUserProfile(username: string): void {
-    this.profileService.getUserProfileWithUsername(username).subscribe(
-        (profile: UserProfile) => {
-          this.userProfile = profile;
-          this.avatarUrl = `${environment.serverUrl}/images/${profile.avatar}`;
-          this.userAchievements = profile.achievements.map(achievement => Number(achievement));
-        },
-        (error) => {
-          console.error('Error fetching user profile:', error);
-        }
-    );
+    this.userAchievements = this.profileService.userData?.achievements.map(achievement => Number(achievement));
   }
 
   hasAchievement(index: number): boolean {
-    return this.userAchievements.includes(index+1);
+    if (this.userAchievements) return this.userAchievements.includes(index+1);
+    return false
   }
-
 
   getAchievementClass(index: number): string {
     return this.hasAchievement(index)
@@ -69,11 +47,22 @@ export class ProfilePageComponent implements OnInit {
   }
 
   getPrestigeLabel(prestige: any): string {
-    console.log(this.userProfile?.playerPrestige)
     if (prestige >= 200) return 'Platine';
     if (prestige >= 150) return 'Or';
     if (prestige >= 100) return 'Argent';
     if (prestige >= 50) return 'Bronze';
     return 'Aucun';
+  }
+
+  getPrestigeIcon(prestige: any): string {
+    if (prestige >= 200) return '🏅'; // Platinum medal
+    if (prestige >= 150) return '🥇'; // Gold medal
+    if (prestige >= 100) return '🥈'; // Silver medal
+    if (prestige >= 50) return '🥉';  // Bronze medal
+    return '🔘';  // Default icon
+  }
+
+  openDialog() {
+    this.dialog.open(UserModificationDialogComponent);
   }
 }

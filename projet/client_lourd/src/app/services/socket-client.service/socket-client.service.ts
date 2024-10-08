@@ -25,7 +25,7 @@ export class SocketClientService {
     }
 
     disconnect() {
-        localStorage.removeItem('token')
+        localStorage.clear();
         this.socket.disconnect();
     }
 

@@ -18,6 +18,7 @@ export class AvatarController {
 
 
         this.router.get('/', async (req: Request, res: Response) => {
+            console.log("Receiving avatar request")
             try {
                 const avatarDir = path.join(process.cwd(), '/assets/avatar');
                 fs.readdir(avatarDir, (err, files) => {
@@ -32,6 +33,7 @@ export class AvatarController {
                 });
                 return null;
             } catch (error) {
+                console.log(error.message)
                 return res.status(500).send('Server error');
             }
         });

@@ -37,14 +37,9 @@ export class Server {
         this.socketManager.sio.use((socket, next) => {
             const token = socket.handshake.auth.token;
             try {
-                console.log('Verifying token')
                 socket.data.user = jwt.verify(token, process.env.JWT_SECRET) as { id: string, username: string };
-                console.log('finish Verifying token')
-                console.log(socket.data.user)
                 next();
             } catch (err) {
-                console.log('ERROR')
-                console.log(err.message)
                 next(new Error('Authentication error'));
             }
         });

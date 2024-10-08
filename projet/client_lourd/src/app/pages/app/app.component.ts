@@ -13,12 +13,10 @@ export class AppComponent implements OnDestroy {
 
     @HostListener('window:beforeunload')
     removeToken() {
-        localStorage.removeItem('token');
         this.socketService.disconnect();
     }
 
     ngOnDestroy() {
-        localStorage.removeItem('token');
         this.socketService.disconnect();
     }
 }

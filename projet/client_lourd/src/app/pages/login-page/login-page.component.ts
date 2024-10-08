@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from '@angular/router';
 import {AuthService} from "@app/services/auth.service/auth.service";
+import {ProfileService} from "@app/services/profile.service/profile.service";
 
 @Component({
   selector: 'app-login.page',
@@ -12,7 +13,12 @@ import {AuthService} from "@app/services/auth.service/auth.service";
 export class LoginPageComponent {
   authForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private snackBar: MatSnackBar, private router: Router) {
+  constructor(
+      private fb: FormBuilder,
+      private authService: AuthService,
+      private snackBar: MatSnackBar,
+      private router: Router,
+      private profileService: ProfileService) {
     this.authForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -30,6 +36,7 @@ export class LoginPageComponent {
               horizontalPosition: 'center',
               panelClass : "my-snack-bar",
             });
+            this.profileService.fetchUserProfile();
             this.router.navigate(['/home']);
           },
           (err) => {

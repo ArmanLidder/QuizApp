@@ -1,6 +1,8 @@
-import {Component, Input, Output, EventEmitter} from '@angular/core';
+import {Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
+import {ProfileService} from "@app/services/profile.service/profile.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-avatar',
@@ -8,15 +10,21 @@ import {SocketClientService} from "@app/services/socket-client.service/socket-cl
   styleUrls: ['./avatar.component.scss']
 })
 export class AvatarComponent {
-  @Input() avatarUrl: string | null = '';
-  @Input() username: string | null = '';
+  // @Input() avatarUrl: string | null = '';
+  // @Input() username: string | null = '';
   @Input() isChat: boolean;
-  @Output() disconnectUser = new EventEmitter<void>();
+  // @Output() disconnectUser = new EventEmitter<void>();
 
   isMenuOpen: boolean = false;
   menuEnabled: boolean = false;
 
-  constructor(private router: Router, private socketService: SocketClientService) {}
+  constructor(
+      private router: Router,
+      private socketService: SocketClientService,
+      public profileService: ProfileService,
+  ) {
+    this.profileService.fetchUserProfile();
+  }
 
   toggleMenu() {
     if (!this.isChat) {
@@ -26,15 +34,18 @@ export class AvatarComponent {
 
   goToProfile() {
     this.toggleMenu()
-    this.router.navigate([`/profile/${this.username}`]);
+    this.router.navigate([`/profile`]);
   }
 
   logout() {
     this.toggleMenu()
-    this.username = null;
-    this.avatarUrl = null;
-    this.disconnectUser.emit();
+    // this.username = null;
+    // this.avatarUrl = null;
+    // this.disconnectUser.emit();
     this.socketService.disconnect();
+    this.profileService.clear();
     this.router.navigate(['/login']);
   }
+
+  protected readonly environment = environment;
 }

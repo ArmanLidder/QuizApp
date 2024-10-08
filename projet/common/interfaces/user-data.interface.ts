@@ -32,9 +32,7 @@ export interface UserData {
 }
 
 export interface UserModificationData {
-    email: string;
     username: string;
-    password: string;
     avatar: string;
 }
 

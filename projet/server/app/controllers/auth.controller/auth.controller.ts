@@ -21,8 +21,6 @@ const storage = multer.diskStorage({
     destination: path.join(process.cwd() , '/assets/tmp_avatar'),
     filename: function(req, file, cb){
         const username = req.body.username;
-
-
         cb(null, username + path.extname(file.originalname))
     }
 });
@@ -41,14 +39,17 @@ export class AuthController {
         this.router = Router();
 
         this.router.post('/register', upload.single('file'), async (req: any, res: any) => {
+            console.log("Receiving register request")
             try {
                 await this.register(req, res);
             } catch (err) {
+                console.log(err.message)
                 return res.status(500).json({ msg: ServerError });
             }
         });
 
         this.router.post('/login', async (req: Request, res: Response) => {
+            console.log("Receiving login request")
             try {
                 // Retrieves credential
                 const { username, password } = req.body;
@@ -65,11 +66,10 @@ export class AuthController {
                     date: Date.now(),
                 }
                 await User.findOneAndUpdate({username}, {connected: true, $push:{login_history: login_data}})
-                // Send Auth token if credential are valid
-                const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: 10000000000 });
+                const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: 10000000000 });
                 return res.status(200).json({ token });
             } catch (err) {
-                // console.error(err); // For Debug purpose
+                console.log(err.message)
                 return res.status(500).json({ msg: ServerError });
             }
         });
@@ -117,7 +117,6 @@ export class AuthController {
 
         user = new User(userData);
         const user_id = user._id.toHexString();
-        console.log(user_id)
         await user.save();
         if (!avatar.includes('_')) {
             const new_avatar =  user_id + '.' + avatar.split(".").pop()

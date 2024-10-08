@@ -49,6 +49,8 @@ import {RegisterPageComponent} from "@app/pages/register-page/register-page.comp
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+import { UserModificationDialogComponent } from './components/user-modification-dialog/user-modification-dialog.component';
+import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.component';
 
 
 /**
@@ -96,6 +98,8 @@ import { ProfilePageComponent } from './pages/profile-page/profile-page.componen
         AvatarComponent,
         HeaderComponent,
         ProfilePageComponent,
+        UserModificationDialogComponent,
+        AvatarPickerComponent,
 
     ],
     imports: [

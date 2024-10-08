@@ -16,7 +16,7 @@ import {ProfilePageComponent} from "@app/pages/profile-page/profile-page.compone
 const routes: Routes = [
     { path: 'login', component: LoginPageComponent },
     { path: 'register', component: RegisterPageComponent },
-    { path: 'profile/:username', component: ProfilePageComponent,  canActivate: [authGuardAuthentification]},
+    { path: 'profile', component: ProfilePageComponent,  canActivate: [authGuardAuthentification]},
     { path: 'home', component: MainPageComponent, canActivate: [authGuardAuthentification] },
     { path: 'game/:id', component: GamePageComponent, canActivate: [authGuardAuthentification] },
     { path: 'game-creation-page', component: GameCreationPageComponent, canActivate: [authGuardAuthentification] },
