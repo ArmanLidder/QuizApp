@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/quiz.dart';
 import '../services/quiz_service.dart';
+import './waiting_room_screen.dart';
 
 class QuizListPage extends StatefulWidget {
   @override
@@ -52,7 +53,12 @@ class _QuizListPageState extends State<QuizListPage> {
                       title: Text(quiz.title),
                       subtitle: Text('Duration: ${quiz.duration} minutes'),
                       onTap: () {
-                        // Navigate to the quiz details or start page
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WaitingRoomScreen(quiz: quiz),
+                          ),
+                        );
                       },
                     );
                   },
