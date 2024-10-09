@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'pages/login-page.dart';
 import 'pages/auth_screen.dart';
 import 'pages/room_list_page.dart';
+import 'pages/quiz_list_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,11 +16,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Polyquiz',
-      initialRoute: '/',
+      initialRoute: '/quizz',
       routes: {
         '/auth': (context) => AuthScreen(),
         '/': (context) => LoginPage(),
         '/room': (context) => RoomListPage(),
+        '/quizz': (context) => QuizListPage(),
       },
     );
   }
