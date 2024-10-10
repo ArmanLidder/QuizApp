@@ -31,10 +31,7 @@ class _MessageWindowState extends State<MessageWindow> {
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
                     final message = _messages[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: Text(message)
-                    );
+                    return buildMessageBlock(message, "me");
                   }
               )
           ),
@@ -55,6 +52,31 @@ class _MessageWindowState extends State<MessageWindow> {
               ]
             )
           )
+        ]
+      )
+    );
+  }
+
+  Widget buildMessageBlock(String content, String author) {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget> [
+          Text(
+            author,
+            style: TextStyle(
+              fontSize: 12.0,
+              fontWeight: FontWeight.bold
+            ),
+          ),
+          // Il faudrait avoir un espace
+          Text(
+            content,
+            style: TextStyle(
+              fontSize: 16.0,
+            )
+          ),
         ]
       )
     );
