@@ -10,7 +10,6 @@ class QuizService {
       final response = await http.get(Uri.parse('$baseUrl/quiz'));
 
       if (response.statusCode == 200) {
-        print('Response body: ${response.body}');
         List<dynamic> jsonList = json.decode(response.body);
         return jsonList.map((json) => Quiz.fromJson(json)).toList();
       } else {

@@ -1,5 +1,6 @@
+import 'dart:ffi';
 import 'package:flutter/material.dart';
-import '../services/waiting_room_service.dart'; // Service to manage waiting room logic
+import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
 
 class WaitingRoomScreen extends StatefulWidget {
@@ -17,6 +18,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   String roomId = "nothing";
   bool isRoomLocked = false;
   bool isGameStarting = false;
+  String? newPlayerName;
+  bool showPopup = false;
 
   @override
   void initState() {
@@ -49,16 +52,26 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   void _configureSocketListeners() {
     WaitingRoomService.socket?.on('newPlayer', (data) {
-      setState(() {
-        players = List<String>.from(data['players']);
+        if (data is List) {
+          newPlayerName = data.last; 
+          setState(() {
+            players.add(newPlayerName!);
+            showPopup = true;
+          });
+        } else {
+          print('Unexpected data format: $data');
+        }
       });
-    });
 
-    WaitingRoomService.socket?.on('playerLeft', (data) {
+    WaitingRoomService.socket?.on('removedPlayer', (username) {
+    if (username is String) {
       setState(() {
-        players.remove(data['username']);
+        players.remove(username);
       });
-    });
+    } else {
+      print('Unexpected data format for playerLeft: $username');
+    }
+  });
 
     WaitingRoomService.socket?.on('startGame', (_) {
       setState(() {
@@ -129,6 +142,31 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             ElevatedButton(
               onPressed: _startGame,
               child: Text('Start Game'),
+            ),
+          if (widget.isHost)
+            IconButton(
+              icon: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.circle,
+                ),
+                padding: EdgeInsets.all(8),
+                child: Icon(Icons.close, color: Colors.white),
+              ),
+              onPressed: _leaveRoom,
+            ),
+          if (showPopup && newPlayerName != null)
+            Container(
+              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'The player $newPlayerName has joined the room',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
         ],
       ),

@@ -21,7 +21,7 @@ class LoginPage extends StatelessWidget {
             backgroundColor: const Color.fromRGBO(53, 121, 246, 1), // Button color
           ),
           child: const Text(
-            'Go to Quiz List',
+            'Create a room',
             style: TextStyle(color: Colors.white), // Text color
           ),
         ),

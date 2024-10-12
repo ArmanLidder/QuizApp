@@ -4,22 +4,18 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class WaitingRoomService {
   static IO.Socket? socket;
 
-  // Check if the socket is connected
   static bool isSocketAlive() {
     return socket != null && socket!.connected;
   }
 
-  // Connect to the socket server
   static Future<void> connectToSocket(String roomId) async {
     socket = IO.io('http://192.168.56.1:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
 
-    // Connect to the socket
     socket?.connect();
 
-    // Listen for the connection event
     socket?.on('connect', (_) {
       print('Connected to WebSocket');
       joinRoom(roomId);
@@ -27,12 +23,11 @@ class WaitingRoomService {
 
     socket?.on('disconnect', (_) => print('Disconnected from WebSocket'));
 
-    // Handle custom events
     socket?.on('newPlayer', (data) {
       print('New player joined: $data');
     });
 
-    socket?.on('playerLeft', (data) {
+    socket?.on('removedPlayer', (data) {
       print('Player left: $data');
     });
   }
@@ -45,17 +40,15 @@ class WaitingRoomService {
     socket?.emit('toggleLock', {'roomId': roomId, 'locked': isLocked});
   }
 
-  // Create a room for a given quiz
   static Future<String> createRoom(String quizId) async {
     final completer = Completer<String>();
     print('Creating room for quiz: $quizId');
 
     if (!isSocketAlive()) {
       print("Socket is not connected. Attempting to connect...");
-      await connectToSocket("roomId"); // Replace with the appropriate room ID or logic
+      await connectToSocket("roomId");
     }
 
-    // Emit event to create a room
     socket?.emitWithAck('createRoom', quizId, ack: (roomCode) {
       if (roomCode != null) {
         print("Room created with ID: $roomCode");
@@ -69,7 +62,6 @@ class WaitingRoomService {
     return completer.future;
   }
 
-  // Join an existing room
   static void joinRoom(String roomId) {
     if (isSocketAlive()) {
       socket?.emit('joinRoom', {'roomId': roomId});
@@ -78,7 +70,6 @@ class WaitingRoomService {
     }
   }
 
-  // Additional methods like startGame, toggleRoomLock, etc. can remain unchanged
 
   static void disconnect() {
     socket?.disconnect();
