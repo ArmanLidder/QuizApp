@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/room.dart';
 
 class RoomService {
-  final String baseUrl = 'http://your-node-server-url.com'; // Replace with your server's URL
+  final String baseUrl =
+      'http://localhost:3000'; // Replace with your server's URL
 
   Future<List<Room>> fetchRooms() async {
     try {
