@@ -51,6 +51,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
 import { UserModificationDialogComponent } from './components/user-modification-dialog/user-modification-dialog.component';
 import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.component';
+import {AngularFireModule} from "@angular/fire/compat";
+import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 
 
 /**
@@ -100,7 +102,6 @@ import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.
         ProfilePageComponent,
         UserModificationDialogComponent,
         AvatarPickerComponent,
-
     ],
     imports: [
         AppMaterialModule,
@@ -120,6 +121,15 @@ import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.
         MatInputModule,
         ReactiveFormsModule,
         MatSnackBarModule,
+        AngularFireModule.initializeApp({
+            apiKey: "AIzaSyDyZJZmbrP_Phc8C9SNoqZWrioatX89Pzk",
+            authDomain: "polyquiz-103.firebaseapp.com",
+            projectId: "polyquiz-103",
+            storageBucket: "polyquiz-103.appspot.com",
+            messagingSenderId: "278944080772",
+            appId: "1:278944080772:web:3b2c748ffd601ee94a73d1"
+        }),
+        AngularFireAuthModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
