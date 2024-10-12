@@ -4,17 +4,19 @@ import '../models/quiz.dart';
 
 class WaitingRoomScreen extends StatefulWidget {
   final Quiz quiz;
+  final bool isHost;
 
-  const WaitingRoomScreen({Key? key, required this.quiz}) : super(key: key);
+  const WaitingRoomScreen({Key? key, required this.quiz, required this.isHost}) : super(key: key);
 
   @override
   _WaitingRoomScreenState createState() => _WaitingRoomScreenState();
 }
 
 class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
-  List<String> players = []; // List to store player names
-  String roomId = ""; // Room ID
-  bool isRoomLocked = false; // Lock status
+  List<String> players = [];
+  String roomId = "nothing";
+  bool isRoomLocked = false;
+  bool isGameStarting = false;
 
   @override
   void initState() {
@@ -22,23 +24,75 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     _initRoom();
   }
 
+  @override
+  void dispose() {
+    _leaveRoom();
+    WaitingRoomService.disconnect();
+    super.dispose();
+  }
+
   Future<void> _initRoom() async {
-    // Initialize the room with a unique ID
-    roomId = await WaitingRoomService.createRoom(widget.quiz.id);
-    setState(() {});
+    try {
+      if (widget.isHost) {
+        roomId = await WaitingRoomService.createRoom(widget.quiz.id);
+      } else {
+        roomId = widget.quiz.id;
+        WaitingRoomService.joinRoom(roomId);
+      }
+      WaitingRoomService.connectToSocket(roomId);
+      _configureSocketListeners();
+      setState(() {});
+    } catch (e) {
+      print('Error initializing room: $e');
+    }
+  }
+
+  void _configureSocketListeners() {
+    WaitingRoomService.socket?.on('newPlayer', (data) {
+      setState(() {
+        players = List<String>.from(data['players']);
+      });
+    });
+
+    WaitingRoomService.socket?.on('playerLeft', (data) {
+      setState(() {
+        players.remove(data['username']);
+      });
+    });
+
+    WaitingRoomService.socket?.on('startGame', (_) {
+      setState(() {
+        isGameStarting = true;
+      });
+      _startGame();
+    });
   }
 
   void _toggleRoomLock() {
     setState(() {
       isRoomLocked = !isRoomLocked;
     });
-    // Optionally, update the lock status in the server
+    WaitingRoomService.toggleRoomLock(roomId, isRoomLocked);
     WaitingRoomService.updateRoomLockStatus(roomId, isRoomLocked);
   }
 
+  void _banPlayer(String username) {
+    setState(() {
+      players.remove(username);
+    });
+  }
+
+  void _leaveRoom() {
+    final event = widget.isHost ? 'hostLeft' : 'playerLeft';
+    WaitingRoomService.socket?.emit(event, {'roomId': roomId});
+    WaitingRoomService.disconnect();
+  }
+
   void _startGame() {
-    // Start the game logic here
-    // Navigate to the quiz screen or start the quiz
+    if (widget.isHost) {
+      WaitingRoomService.startGame(roomId);
+    }
+    Navigator.pushNamed(context, '/gameScreen', arguments: roomId);
   }
 
   @override
@@ -48,11 +102,12 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       body: Column(
         children: [
           Text('Room ID: $roomId'),
-          SwitchListTile(
-            title: Text('Lock Room'),
-            value: isRoomLocked,
-            onChanged: (bool value) => _toggleRoomLock(),
-          ),
+          if (widget.isHost)
+            SwitchListTile(
+              title: Text('Lock Room'),
+              value: isRoomLocked,
+              onChanged: (bool value) => _toggleRoomLock(),
+            ),
           Text('Players:'),
           Expanded(
             child: ListView.builder(
@@ -60,20 +115,21 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(players[index]),
-                  trailing: IconButton(
-                    icon: Icon(Icons.remove),
-                    onPressed: () {
-                      // Optionally remove player
-                    },
-                  ),
+                  trailing: widget.isHost
+                      ? IconButton(
+                          icon: Icon(Icons.remove),
+                          onPressed: () => _banPlayer(players[index]),
+                        )
+                      : null,
                 );
               },
             ),
           ),
-          ElevatedButton(
-            onPressed: _startGame,
-            child: Text('Start Game'),
-          ),
+          if (widget.isHost)
+            ElevatedButton(
+              onPressed: _startGame,
+              child: Text('Start Game'),
+            ),
         ],
       ),
     );

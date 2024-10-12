@@ -56,7 +56,7 @@ class _QuizListPageState extends State<QuizListPage> {
                         Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => WaitingRoomScreen(quiz: quiz),
+                          builder: (context) => WaitingRoomScreen(quiz: quiz, isHost: true),
                           ),
                         );
                       },
