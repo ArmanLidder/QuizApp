@@ -18,7 +18,7 @@ export class Server {
         private readonly databaseService: DatabaseService,
         private readonly quizService: QuizService,
         private readonly historyService: HistoryService,
-    ) {}
+    ) { }
 
     private static normalizePort(val: number | string): number | string | boolean {
         const port: number = typeof val === 'string' ? parseInt(val, this.baseDix) : val;
@@ -67,6 +67,7 @@ export class Server {
      */
     private onListening(): void {
         const addr = this.server.address() as AddressInfo;
+        console.log(addr);
         const bind: string = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
         // eslint-disable-next-line no-console
         console.log(`Listening on ${bind}`);

@@ -10,6 +10,7 @@ class GamePage extends StatefulWidget {
 
 class _MyWidgetState extends State<GamePage> {
   bool isHost = true;
+  num time = 10;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +23,12 @@ class _MyWidgetState extends State<GamePage> {
         child: Column(
           children: [
             Column(
-              children: [TimerWidget(isHost: isHost)],
+              children: [
+                TimerWidget(
+                  isHost: isHost,
+                  time: time,
+                )
+              ],
             )
           ],
         ),
