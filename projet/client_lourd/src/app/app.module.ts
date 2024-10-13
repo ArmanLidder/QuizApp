@@ -53,6 +53,7 @@ import { UserModificationDialogComponent } from './components/user-modification-
 import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.component';
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
+import { ChatComponent } from './components/chat/chat.component';
 
 
 /**
@@ -102,6 +103,7 @@ import {AngularFireAuthModule} from "@angular/fire/compat/auth";
         ProfilePageComponent,
         UserModificationDialogComponent,
         AvatarPickerComponent,
+        ChatComponent,
     ],
     imports: [
         AppMaterialModule,
