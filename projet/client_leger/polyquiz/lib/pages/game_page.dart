@@ -25,6 +25,7 @@ class _MyWidgetState extends State<GamePage> {
       ),
       body: ListView(children: [
         Visibility(
+          // Vue du joueur commence ici
           visible: !isHost,
           child: Column(
             children: [
@@ -52,7 +53,47 @@ class _MyWidgetState extends State<GamePage> {
                   )
                 ],
               ),
-              Container(height: 800, child: PlayerQcmWidget())
+              Container(height: 500, child: PlayerQcmWidget()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Confirm',
+                      style: TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 1),
+                          fontSize: 20),
+                    ),
+                    style: TextButton.styleFrom(
+                        textStyle: TextStyle(fontWeight: FontWeight.normal),
+                        splashFactory: NoSplash.splashFactory,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+                  ),
+                  SizedBox(
+                    width: 20.0,
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Quit',
+                      style: TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 1),
+                          fontSize: 20),
+                    ),
+                    style: TextButton.styleFrom(
+                        textStyle: TextStyle(fontWeight: FontWeight.normal),
+                        splashFactory: NoSplash.splashFactory,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        backgroundColor: Color.fromRGBO(246, 53, 53, 1)),
+                  ),
+                ],
+              )
             ],
           ),
         ),
