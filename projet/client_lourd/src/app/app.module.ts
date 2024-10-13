@@ -56,6 +56,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import {environment} from "../environments/environment";
+import {ChatComponent} from "@app/components/chat/chat.component";
 
 /**
  * Main module that is used in main.ts.
@@ -104,7 +105,7 @@ import {environment} from "../environments/environment";
         ProfilePageComponent,
         UserModificationDialogComponent,
         AvatarPickerComponent,
-
+        ChatComponent,
     ],
     imports: [
         AppMaterialModule,
