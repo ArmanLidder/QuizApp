@@ -28,8 +28,14 @@ class _TimerWidgetState extends State<TimerWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Time left: '),
-          Text('${widget.time}'),
+          Text(
+            'Time left: ',
+            style: TextStyle(fontSize: 20),
+          ),
+          Text(
+            '${widget.time}',
+            style: TextStyle(fontSize: 28),
+          ),
           widget.isHost == true
               ? IconButton(
                   onPressed: () {
@@ -37,7 +43,9 @@ class _TimerWidgetState extends State<TimerWidget> {
                       timerIcon = changeIcon(timerIcon);
                     });
                   },
-                  icon: Icon(timerIcon))
+                  icon: Icon(timerIcon),
+                  iconSize: 40,
+                )
               : SizedBox.shrink() // abscence de widget
         ],
       ),

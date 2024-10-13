@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/pages/game_page.dart';
+import 'package:polyquiz/pages/player_game_page.dart';
 // import 'pages/login-page.dart';
 import 'pages/auth_screen.dart';
 import 'pages/room_list_page.dart';
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/auth': (context) => AuthScreen(),
-        '/': (context) => GamePage(), // remettre login page
+        '/': (context) => PlayerGamePage(), // remettre login page
         '/room': (context) => RoomListPage(),
       },
     );
