@@ -9,12 +9,12 @@ import { Service } from 'typedi';
 import { QuizController } from '@app/controllers/quiz.controller/quiz.controller';
 import { AdminAuthController } from './controllers/admin-auth.controller/admin-auth.controller';
 import { GameHistoryController } from '@app/controllers/game-history.controller/game-history.controller';
-import { AuthController } from "@app/controllers/auth.controller/auth.controller";
-import { AvatarController } from "@app/controllers/avatar.controller/avatar.controller";
-import { ProfileManagerController } from "@app/controllers/profile-manager.controller/profile-manager.controller";
-import * as path from 'path';
-import * as process from "process";
-import mongoose from "mongoose";
+// import { AuthController } from "@app/controllers/auth.controller/auth.controller";
+// import { AvatarController } from "@app/controllers/avatar.controller/avatar.controller";
+// import { ProfileManagerController } from "@app/controllers/profile-manager.controller/profile-manager.controller";
+// import * as path from 'path';
+// import * as process from "process";
+// import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -28,15 +28,15 @@ export class Application {
         private readonly quizController: QuizController,
         private readonly adminAuthController: AdminAuthController,
         private readonly historyController: GameHistoryController,
-        private readonly avatarController: AvatarController,
-        private readonly authController: AuthController,
-        private readonly  profileController: ProfileManagerController,
+        // private readonly avatarController: AvatarController,
+        // private readonly authController: AuthController,
+        // private readonly  profileController: ProfileManagerController,
     ) {
         this.app = express();
 
-        mongoose.connect(process.env.DATABASE_URL)
-            .then(() => console.log('MongoDB connected'))
-            .catch((err) => console.log('MongoDB connection error:', err));
+        // mongoose.connect(process.env.DATABASE_URL)
+        //     .then(() => console.log('MongoDB connected'))
+        //     .catch((err) => console.log('MongoDB connection error:', err));
 
         this.swaggerOptions = {
             swaggerDefinition: {
@@ -59,10 +59,11 @@ export class Application {
         this.app.use('/api/quiz', this.quizController.router);
         this.app.use('/api/history', this.historyController.router);
         this.app.use('/api/auth/admin-password', this.adminAuthController.router);
-        this.app.use('/api/auth', this.authController.router);
-        this.app.use('/api/avatar', this.avatarController.router);
-        this.app.use('/api/profile', this.profileController.router);
-        this.app.use('/api/images', express.static(path.join(process.cwd(), '/assets/avatar')))
+        // Removed unused route since move to firebase
+        // this.app.use('/api/auth', this.authController.router);
+        // this.app.use('/api/avatar', this.avatarController.router);
+        // this.app.use('/api/profile', this.profileController.router);
+        // this.app.use('/api/images', express.static(path.join(process.cwd(), '/assets/avatar')))
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });
