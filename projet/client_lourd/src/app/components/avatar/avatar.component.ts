@@ -1,8 +1,10 @@
-import {Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
-import {ProfileService} from "@app/services/profile.service/profile.service";
-import {environment} from "../../../environments/environment";
+import {UsersService} from "@app/services/users.service/users.service";
+import { environment } from "../../../environments/environment";
+import { Observable } from 'rxjs';
+import { User } from "@common/interfaces/user-data.interface";
+import {AuthService} from "@app/services/auth.service/auth.service";
 
 @Component({
   selector: 'app-avatar',
@@ -10,20 +12,20 @@ import {environment} from "../../../environments/environment";
   styleUrls: ['./avatar.component.scss']
 })
 export class AvatarComponent {
-  // @Input() avatarUrl: string | null = '';
-  // @Input() username: string | null = '';
   @Input() isChat: boolean;
-  // @Output() disconnectUser = new EventEmitter<void>();
+
+  currentUser$: Observable<User | null>;
 
   isMenuOpen: boolean = false;
   menuEnabled: boolean = false;
 
   constructor(
       private router: Router,
-      private socketService: SocketClientService,
-      public profileService: ProfileService,
+      private authService: AuthService,
+      private usersService: UsersService,
   ) {
-    this.profileService.fetchUserProfile();
+    // Get the current user profile
+    this.currentUser$ = this.usersService.currentUserProfile$;
   }
 
   toggleMenu() {
@@ -33,19 +35,17 @@ export class AvatarComponent {
   }
 
   goToProfile() {
-    this.toggleMenu()
+    this.toggleMenu();
     this.router.navigate([`/profile`]);
   }
 
-  logout() {
-    this.toggleMenu()
-    // this.username = null;
-    // this.avatarUrl = null;
-    // this.disconnectUser.emit();
-    this.socketService.disconnect();
-    this.profileService.clear();
+  async logout() {
+    this.toggleMenu();
+    await this.authService.logout();
     this.router.navigate(['/login']);
+    console.log("navigation done")
   }
+
 
   protected readonly environment = environment;
 }

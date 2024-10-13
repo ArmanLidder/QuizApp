@@ -4,10 +4,7 @@
             PolyQuiz
         </a>
     </div>
-<!--    <div *ngIf="avatarUrl || this.username" class="absolute top-0 right-0 flex items-center justify-center h-full p-4">-->
     <div class="absolute top-0 right-0 flex items-center justify-center h-full p-4">
-<!--        <span class="mr-4 text-lg font-bold text-white">{{ this.username }}</span>-->
-<!--        <app-avatar [avatarUrl]="avatarUrl" [username]="username" (disconnectUser)='this.resetData($event)'></app-avatar>-->
-        <app-avatar *ngIf="this.profileService.userData"></app-avatar>
+        <app-avatar *ngIf="currentUser$ | async"></app-avatar>
     </div>
 </header>

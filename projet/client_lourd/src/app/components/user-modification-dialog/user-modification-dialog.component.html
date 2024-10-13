@@ -1,29 +1,29 @@
-<div class="p-4">
-    <h2 class="text-xl font-bold mb-4">Modifier le profil</h2>
+<!--<div class="p-4">-->
+<!--    <h2 class="text-xl font-bold mb-4">Modifier le profil</h2>-->
 
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-        <!-- Username input -->
-        <div class="mb-4">
-            <label for="username" class="block">Nom d'utilisateur :</label>
-            <input id="username" formControlName="username" class="border p-2 w-full" type="text" placeholder="Entrez un nouveau nom d'utilisateur">
-            <div *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched" class="text-red-500 text-sm">
-                <p *ngIf="profileForm.get('username')?.errors?.required">Le nom d'utilisateur est requis.</p>
-                <p *ngIf="profileForm.get('username')?.errors?.invalidUsername">Le nom d'utilisateur n'est pas valide.</p>
-            </div>
-        </div>
+<!--    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">-->
+<!--        &lt;!&ndash; Username input &ndash;&gt;-->
+<!--        <div class="mb-4">-->
+<!--            <label for="username" class="block">Nom d'utilisateur :</label>-->
+<!--            <input id="username" formControlName="username" class="border p-2 w-full" type="text" placeholder="Entrez un nouveau nom d'utilisateur">-->
+<!--            <div *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched" class="text-red-500 text-sm">-->
+<!--                <p *ngIf="profileForm.get('username')?.errors?.required">Le nom d'utilisateur est requis.</p>-->
+<!--                <p *ngIf="profileForm.get('username')?.errors?.invalidUsername">Le nom d'utilisateur n'est pas valide.</p>-->
+<!--            </div>-->
+<!--        </div>-->
 
-        <!-- Avatar upload -->
-        <div class="mb-4">
-            <label for="avatar" class="block">Avatar :</label>
-            <input id="avatar" type="file" (change)="onFileSelected($event)" class="border p-2 w-full">
-            <div *ngIf="customAvatarUrl" class="mt-4">
-                <img [src]="customAvatarUrl" alt="Aperçu de l'avatar" class="w-24 h-24 object-cover rounded-full">
-            </div>
-        </div>
+<!--        &lt;!&ndash; Avatar upload &ndash;&gt;-->
+<!--        <div class="mb-4">-->
+<!--            <label for="avatar" class="block">Avatar :</label>-->
+<!--            <input id="avatar" type="file" (change)="onFileSelected($event)" class="border p-2 w-full">-->
+<!--            <div *ngIf="customAvatarUrl" class="mt-4">-->
+<!--                <img [src]="customAvatarUrl" alt="Aperçu de l'avatar" class="w-24 h-24 object-cover rounded-full">-->
+<!--            </div>-->
+<!--        </div>-->
 
-        <!-- Submit button -->
-        <button type="submit" [disabled]="profileForm.invalid" class="bg-blue-500 text-white py-2 px-4 rounded">
-            Enregistrer
-        </button>
-    </form>
-</div>
+<!--        &lt;!&ndash; Submit button &ndash;&gt;-->
+<!--        <button type="submit" [disabled]="profileForm.invalid" class="bg-blue-500 text-white py-2 px-4 rounded">-->
+<!--            Enregistrer-->
+<!--        </button>-->
+<!--    </form>-->
+<!--</div>-->

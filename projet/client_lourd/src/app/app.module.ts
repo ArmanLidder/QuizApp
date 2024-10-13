@@ -51,7 +51,11 @@ import { HeaderComponent } from './components/header/header.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
 import { UserModificationDialogComponent } from './components/user-modification-dialog/user-modification-dialog.component';
 import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.component';
-
+import {initializeApp, provideFirebaseApp} from "@angular/fire/app";
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import {environment} from "../environments/environment";
 
 /**
  * Main module that is used in main.ts.
@@ -120,6 +124,10 @@ import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.
         MatInputModule,
         ReactiveFormsModule,
         MatSnackBarModule,
+        provideFirebaseApp(() => initializeApp(environment.firebase)),
+        provideAuth(() => getAuth()),
+        provideFirestore(() => getFirestore()),
+        provideStorage(() => getStorage()),
     ],
     providers: [],
     bootstrap: [AppComponent],

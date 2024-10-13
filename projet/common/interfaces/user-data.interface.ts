@@ -1,64 +1,48 @@
-interface Statistic {
-    playedGames: number;
-    wonGames: number;
-    goodAnswersPerGame: number;
-    avgTimePerGame: number;
+export interface User {
+    uid: string;
+    email: string;
+    username: string;
+    avatar: string;
+    friends: string[];
+    currency: number;
+    achievements: number[];
+    level: number;
+    prestige: number;
+    isConnected: boolean;
+    stats: UserStats;
+    loginHistory: LoginHistory[];
+    gameHistory: GameHistory[];
+    friendRequests: FriendRequest[];
+    settings: UserSettings;
+}
+
+interface UserStats {
+    gamesPlayed: number;
+    gamesWon: number;
+    avgCorrectAnswers: number;
+    avgGameTime: number;
 }
 
 interface LoginHistory {
-    connexion_type: number; // login = 0 and logout = 1
-    date: Date;
+    eventType: 'login' | 'logout';
+    timestamp: Date;
 }
 
 interface GameHistory {
-    result: number; // won = 0 and lost = 1
-    date: Date;
+    result: 'win' | 'loss';
+    timestamp: Date;
+    score: number;
+    gameMode: string;
 }
 
-export interface UserData {
-    email: string;
-    username: string;
-    password: string;
-    connected: boolean;
-    avatar: string;
-    friends: string[];
-    blocks: string[];
-    achievements: number[];
-    stats: Statistic;
-    login_history: LoginHistory;
-    history_game: GameHistory;
-    friend_request: NotificationFriend;
-
+interface FriendRequest {
+    fromUserId: string;
+    toUserId: string;
+    status: 'pending' | 'accepted' | 'rejected';
 }
 
-export interface UserModificationData {
-    username: string;
-    avatar: string;
-}
-
-export interface UserAuthData {
-    username: string;
-    password: string;
-}
-
-interface NotificationFriend {
-    sender_username: string;
-}
-
-export interface UserProfile {
-    email: string;
-    username: string;
-    password: string;
-    connected: boolean;
-    avatar: string;
-    friends: string[];
-    blocks: string[];
-    achievements: number[];//Each number present in array indicates that the user has that achievement, look at profile page component.ts
-    currency: Number,
-    playerLevel: Number,
-    playerPrestige: Number,
-    stats: Statistic;
-    login_history: LoginHistory[];
-    history_game: GameHistory[];
-    friend_request: NotificationFriend[];
+interface UserSettings {
+    theme: 'light' | 'dark';
+    language: 'en' | 'fr';
+    notificationsEnabled: boolean;
 }

@@ -1,36 +1,74 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {Observable, tap} from 'rxjs';
-import {environment} from "../../../environments/environment";
-import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
-// import {UserModificationData} from "@common/interfaces/user-data.interface";
+import {Injectable} from '@angular/core';
+import {firstValueFrom, from, Observable, of, switchMap, throwError} from 'rxjs';
+
+import {
+    Auth, authState,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+} from '@angular/fire/auth';
+import {UsersService} from "@app/services/users.service/users.service";
+import {User} from "@common/interfaces/user-data.interface";
+
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.serverUrl;
 
-  constructor(private http: HttpClient, private socketService: SocketClientService) {}
+    user$ = authState(this.auth);
 
-  register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/register`, userData);
-  }
+    constructor(private auth: Auth, private usersService: UsersService) {
+    }
 
-  login(userData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/login`, userData).pipe(
-        tap(response => {
-          if (response.token) {
-            console.log(response);
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('username', userData.username)
-            this.socketService.connect();
-          }
-        })
-    );
-  }
+    register(username: string, email: string, password: string): Observable<any> {
+        return this.usersService.isUsernameTaken(username).pipe(
+            switchMap(isTaken => {
+                if (isTaken) return throwError(() => new Error(`Le nom "${username}" est déja utilisé`));
+                return from(createUserWithEmailAndPassword(this.auth, email, password));
+            })
+        );
+    }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
+    login(email: string, password: string): Observable<void> {
+        return this.usersService.getUserByEmail(email).pipe(  // Get user data by email first
+            switchMap((userData) => {
+                if (userData?.isConnected) {
+                    // If user is already connected, throw an error and don't attempt login
+                    return throwError(() => new Error('Cet utilisateur est déjà connecté.'));
+                }
+                // If user is not connected, proceed with the login
+                return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
+                    switchMap((userCredential) => {
+                        const uid = userCredential.user.uid;
+                        // Set isConnected to true after a successful login
+                        return this.usersService.updateUser({uid: uid, isConnected: true});
+                    })
+                );
+            })
+        );
+    }
+
+
+    async logout() {
+        // return this.user$.pipe(
+        //     switchMap(user => {
+        //         if (user) {
+        //             console.log("changing is")
+        //             const updatedUser: Partial<User> = { uid: user.uid, isConnected: false };
+        //             return this.usersService.updateUser(updatedUser).pipe(
+        //                 switchMap(() => {
+        //                     this.user$ = of(null);
+        //                     return from(this.auth.signOut());
+        //                 })
+        //             );
+        //         }
+        //         return from(this.auth.signOut());
+        //     })
+        // );
+        const user = await firstValueFrom(this.usersService.currentUserProfile$)
+        const updatedUser: Partial<User> = {uid: user?.uid, isConnected: false};
+        await firstValueFrom(this.usersService.updateUser(updatedUser));
+        this.user$ = of(null);
+        await this.auth.signOut();
+    }
 }

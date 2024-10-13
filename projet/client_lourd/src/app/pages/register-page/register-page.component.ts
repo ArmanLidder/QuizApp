@@ -1,16 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from "@app/services/auth.service/auth.service";
-import { FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { AvatarService } from "@app/services/avatar.service/avatar.service";
-import { environment } from "../../../environments/environment";
+import {Component, inject, OnInit} from '@angular/core';
+import {AuthService} from "@app/services/auth.service/auth.service";
+import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
 import {Router} from "@angular/router";
-
-
-interface AvatarData {
-    name: string,
-    url: string,
-}
+import {catchError, Observable, of, switchMap} from "rxjs";
+import {UsersService} from "@app/services/users.service/users.service";
+import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
+import {AvatarService} from "@app/services/avatar.service/avatar.service";
 
 @Component({
     selector: 'app-register-page',
@@ -19,18 +14,23 @@ interface AvatarData {
 })
 export class RegisterPageComponent implements OnInit {
     authForm: FormGroup;
-    defaultAvatars: AvatarData[] = [];
-    selectedAvatar: AvatarData;
-    selectedAvatarIndex: number | null = null;
-    customAvatarUrl: string | ArrayBuffer | null = null;
+    defaultAvatars: string[] = [];
     passwordVisible: boolean = false;
+    selectedAvatar: string | File | null = null;
 
-    constructor(private fb: FormBuilder, private authService: AuthService, private snackBar: MatSnackBar, private avatarService: AvatarService, private router: Router) {
+
+    private usersService = inject(UsersService);
+    private authService = inject(AuthService);
+    private snackbarService = inject(SnackbarService);
+    private avatarService = inject(AvatarService)
+    private fb = inject(FormBuilder);
+    private router = inject(Router);
+
+    constructor() {
         this.authForm = this.fb.group({
-            username: ['', [Validators.required,this.usernameValidator]],
+            username: ['', [Validators.required, this.usernameValidator]],
             email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
-            password: ['', Validators.required],
-            avatar: [null],
+            password: ['', [Validators.required, Validators.minLength(6)]],
         });
     }
 
@@ -41,99 +41,60 @@ export class RegisterPageComponent implements OnInit {
     usernameValidator(control: AbstractControl): { [key: string]: boolean } | null {
         const usernameRegex = /^[a-zA-Z0-9]+$/;
         if (control.value && !usernameRegex.test(control.value)) {
-            return { invalidUsername: true };
+            return {invalidUsername: true};
         }
         return null;
     }
 
-    selectAvatar(index: number) {
-        if (index == -1) {
-            this.selectedAvatarIndex = null;
-            return;
-        }
-        this.selectedAvatar = this.defaultAvatars[index];
-        this.selectedAvatarIndex = index;
-        this.authForm.patchValue({ avatar: this.selectedAvatar.name });
+    onAvatarSelected(avatar: string | File): void {
+        console.log(typeof avatar)
+        this.selectedAvatar = avatar; //(URL (defaultavatar) or File (uploaded)
     }
 
-    onFileSelected(event: Event) {
-        const file = (event.target as HTMLInputElement).files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.customAvatarUrl = e.target?.result as string;
-                this.selectedAvatarIndex = null;
-                this.authForm.patchValue({ avatar: file });
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    ngOnInit() {
-        this.avatarService.getDefaultAvatars().subscribe(
-            (res: any) => {
-                for (let avatar of res.defaultAvatars) {
-                    this.defaultAvatars.push({
-                        name: avatar,
-                        url: `${environment.serverUrl}/images/${avatar}`
-                    });
-                }
-            },
-            (error: Error) => {
-                console.error('Error fetching avatars:', error);
-            }
-        );
+    ngOnInit(): void {
+        this.avatarService.getDefaultAvatarUrls().subscribe((urls: string[]) => {
+            this.defaultAvatars = urls;
+            console.log(this.defaultAvatars);
+        });
     }
 
     register() {
-        if (!this.selectedAvatar && !this.customAvatarUrl) {
-            this.snackBar.open('Aucun avatar sélectionné', 'Fermer', {
-                duration: 5000,
-                verticalPosition: 'bottom',
-                horizontalPosition: 'center',
-                panelClass: "my-snack-bar",
-            });
-            return;
+        if (this.authForm.valid && this.selectedAvatar !== null) {
+            const { username, email, password } = this.authForm.value;
+
+            this.authService
+                .register(username, email, password)
+                .pipe(
+                    // After successful registration, add the user to Firestore
+                    switchMap(({ user: { uid } }) =>
+                        this.usersService.addUser({ uid, email, username }).pipe(
+                            // Once the user is added, handle the avatar
+                            switchMap(() => this.handleAvatar(uid))
+                        )
+                    ),
+                    catchError((err) => {
+                        console.log(err);
+                        this.snackbarService.show(err.message || 'An error occurred');
+                        return of(null);
+                    })
+                )
+                .subscribe((result) => {
+                    if (result !== null) {
+                        this.snackbarService.show('Compte créé');
+                        this.router.navigate(['/login']);
+                    }
+                });
         }
-        if (this.authForm.valid) {
-            const formData = new FormData();
+    }
 
-            formData.set('username', this.authForm.controls['username'].value);
-            formData.set('email', this.authForm.controls['email'].value);
-            formData.set('password', this.authForm.controls['password'].value);
-            if (this.customAvatarUrl && this.authForm.controls['avatar'].value instanceof File) {
-                formData.set('file', this.authForm.controls['avatar'].value);
-                const file = this.authForm.controls['avatar'].value;
-                const fileExt = file.name.split('.').pop();
-                const fileName = this.authForm.controls['username'].value + '.' + fileExt
-                formData.set('avatar', fileName);
-                this.authForm.patchValue({ avatar: fileName });
-            } else {
-                formData.set('avatar', this.authForm.controls['avatar'].value)
-            }
-
-            this.authService.register(formData).subscribe(
-                () => {
-                    this.snackBar.open("Compte crée", 'Fermer', {
-                        duration: 5000,
-                        verticalPosition: 'bottom',
-                        horizontalPosition: 'center',
-                        panelClass: "my-snack-bar",
-                    });
-                    this.router.navigate(['/login']);
-                },
-                (err: { error: { msg: string; }; }) => {
-                    console.log(err);
-                    this.snackBar.open(err.error.msg, 'Fermer', {
-                        duration: 5000,
-                        verticalPosition: 'bottom',
-                        horizontalPosition: 'center',
-                        panelClass: "my-snack-bar",
-                    });
-                }
+    handleAvatar(uid: string): Observable<void> {
+        if (typeof this.selectedAvatar === 'string') {
+            console.log("1")
+            return this.usersService.updateUserAvatar(uid, this.selectedAvatar);
+        } else  { //File type
+            return this.avatarService.uploadAvatar(uid, this.selectedAvatar as File).pipe(
+                switchMap((avatarUrl) => this.usersService.updateUserAvatar(uid, avatarUrl))
             );
-        } else {
-            console.log('Form is invalid');
         }
     }
 }

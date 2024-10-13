@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UserProfile } from "@common/interfaces/user-data.interface";
+import { User } from "@common/interfaces/user-data.interface";
 import { environment } from "../../../environments/environment";
 
 @Injectable({
@@ -8,13 +8,13 @@ import { environment } from "../../../environments/environment";
 })
 
 export class ProfileService {
-  userProfile : UserProfile | null;
+  userProfile : User | null;
   avatarLink: string;
 
   private apiUrl = environment.serverUrl;
   constructor(private http: HttpClient) {}
 
-  get userData() : UserProfile | null {
+  get userData() : User | null {
     return this.userProfile;
   }
 
@@ -25,8 +25,8 @@ export class ProfileService {
 
   fetchUserProfile(): void {
     const token = localStorage.getItem('token');
-    this.http.get<UserProfile>(`${this.apiUrl}/profile`, {headers: {Authorization: token ? token : ''}}).subscribe(
-        (data:UserProfile) => {
+    this.http.get<User>(`${this.apiUrl}/profile`, {headers: {Authorization: token ? token : ''}}).subscribe(
+        (data:User) => {
           this.userProfile = data;
           this.avatarLink = environment.serverUrl+'/images/'+this.userProfile.avatar
         }
@@ -36,8 +36,8 @@ export class ProfileService {
   updateUserProfile(modifiedData: any): void {
     const token = localStorage.getItem('token');
     console.log("sending patch")
-    this.http.patch<UserProfile>(`${this.apiUrl}/profile`, modifiedData, {headers: {Authorization: token ? token : ''}}).subscribe(
-        (data: UserProfile) => {
+    this.http.patch<User>(`${this.apiUrl}/profile`, modifiedData, {headers: {Authorization: token ? token : ''}}).subscribe(
+        (data: User) => {
           this.userProfile = data;
           this.avatarLink = environment.serverUrl+'/images/'+this.userProfile.avatar
           console.log(JSON.stringify(this.userProfile, null, 2));
