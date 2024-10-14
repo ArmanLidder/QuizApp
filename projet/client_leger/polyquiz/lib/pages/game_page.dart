@@ -5,6 +5,8 @@ import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_notice.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_legend_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_widget.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -139,7 +141,12 @@ class _MyWidgetState extends State<GamePage> {
                     ),
                     QuitBtn()
                   ],
-                )
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                HistogramLegend(),
+                Histogram(),
               ],
             ))
       ]),
