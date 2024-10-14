@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {firstValueFrom, from, Observable, switchMap, throwError} from 'rxjs';
+import {firstValueFrom} from 'rxjs';
 import {Timestamp} from "firebase/firestore";
 
 import {
@@ -30,54 +30,65 @@ export class AuthService {
     constructor(private auth: Auth, private usersService: UsersService, private servertimeService : ServerTimeService) {
     }
 
-    register(username: string, email: string, password: string): Observable<any> {
-        return this.usersService.isUsernameTaken(username).pipe(
-            switchMap(isTaken => {
-                if (isTaken) return throwError(() => new Error(`Le nom "${username}" est déja utilisé`));
-                return from(createUserWithEmailAndPassword(this.auth, email, password));
-            })
-        );
+    async register(username: string, email: string, password: string): Promise<any> {
+        const isTaken = await this.usersService.isUsernameTaken(username);
+        if (isTaken) throw new Error(`Le nom "${username}" est déjà utilisé`);
+
+        try {
+            return await createUserWithEmailAndPassword(this.auth, email, password);
+        } catch (error:any) {
+            throw new Error('Erreur de création du utilisateur' + error.message);
+        }
     }
 
-    async login(email: string, password: string): Promise<void> {
 
-        const userData = await firstValueFrom(this.usersService.getUserByEmail(email));
-        if (userData?.isConnected)throw new Error('Cet utilisateur est déjà connecté.');
+    async login(email: string, password: string): Promise<void> {
+        // Get the user data by email
+        const userData = await this.usersService.getUserByEmail(email);
+        if (userData?.isConnected) {
+            throw new Error('Cet utilisateur est déjà connecté.');
+        }
 
         const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-        const uid = userCredential.user.uid;
-
         const time = await this.servertimeService.getServerTime();
+
         const loginEvent: LoginHistory = {
             eventType: 'login',
             timestamp: time,
-        };;
+        };
 
-        await firstValueFrom(this.usersService.updateUser({
-            uid: uid,
+        await this.usersService.updateUser({
+            uid: userCredential.user.uid,
             isConnected: true,
             loginHistory: [...(userData?.loginHistory || []), loginEvent], // Append the new login event
-        }));
+        });
     }
 
 
-
     async logout(): Promise<void> {
-        const user = await firstValueFrom(this.usersService.currentUserProfile$);
+        // Get the current user profile
+        const user = await firstValueFrom(this.usersService.currentUserProfile$) ;
         if (user) {
+            // Get the server timestamp
             const time = await this.servertimeService.getServerTime();
+
+            // Create a logout event
             const logoutEvent: LoginHistory = {
                 eventType: 'logout',
                 timestamp: time,
             };
 
-            await firstValueFrom(this.usersService.updateUser({
+            // Update the user document with the new logout event
+            await this.usersService.updateUser({
                 uid: user.uid,
                 isConnected: false,
                 loginHistory: [...(user.loginHistory || []), logoutEvent], // Append the new logout event
-            }));
+            });
         }
+
+        // Sign out the user from Firebase
         await this.auth.signOut();
     }
+
 
 }

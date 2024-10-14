@@ -67,7 +67,7 @@ export class ProfilePageComponent implements OnInit {
     if (prestige >= 150) return '🥇'; // Gold medal
     if (prestige >= 100) return '🥈'; // Silver medal
     if (prestige >= 50) return '🥉';  // Bronze medal
-    return '🔘';  // Default icon
+    return '🚫';  // Default icon
   }
 
   openDialog() {

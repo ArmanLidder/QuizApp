@@ -2,7 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {AuthService} from "@app/services/auth.service/auth.service";
 import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
 import {Router} from "@angular/router";
-import {catchError, Observable, of, switchMap} from "rxjs";
+import { firstValueFrom} from "rxjs";
 import {UsersService} from "@app/services/users.service/users.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
@@ -40,61 +40,49 @@ export class RegisterPageComponent implements OnInit {
 
     usernameValidator(control: AbstractControl): { [key: string]: boolean } | null {
         const usernameRegex = /^[a-zA-Z0-9]+$/;
-        if (control.value && !usernameRegex.test(control.value)) {
-            return {invalidUsername: true};
-        }
+        if (control.value && !usernameRegex.test(control.value)) return {invalidUsername: true};
         return null;
     }
 
     onAvatarSelected(avatar: string | File): void {
-        console.log(typeof avatar)
-        this.selectedAvatar = avatar; //(URL (defaultavatar) or File (uploaded)
+        this.selectedAvatar = avatar;
     }
 
     ngOnInit(): void {
         this.avatarService.getDefaultAvatarUrls().subscribe((urls: string[]) => {
             this.defaultAvatars = urls;
-            console.log(this.defaultAvatars);
         });
     }
 
-    register() {
+    async register(): Promise<void> {
         if (this.authForm.valid && this.selectedAvatar !== null) {
             const { username, email, password } = this.authForm.value;
+            try {
+                const { user } = await this.authService.register(username, email, password);
 
-            this.authService
-                .register(username, email, password)
-                .pipe(
-                    // After successful registration, add the user to Firestore
-                    switchMap(({ user: { uid } }) =>
-                        this.usersService.addUser({ uid, email, username }).pipe(
-                            // Once the user is added, handle the avatar
-                            switchMap(() => this.handleAvatar(uid))
-                        )
-                    ),
-                    catchError((err) => {
-                        console.log(err);
-                        this.snackbarService.show(err.message || 'An error occurred');
-                        return of(null);
-                    })
-                )
-                .subscribe((result) => {
-                    if (result !== null) {
-                        this.snackbarService.show('Compte créé');
-                        this.router.navigate(['/login']);
-                    }
-                });
+                await this.usersService.addUser({ uid: user.uid, email, username });
+
+                await this.handleAvatar(user.uid);
+
+                this.snackbarService.show('Compte créé');
+                this.router.navigate(['/login']);
+
+            } catch (error: any) {
+                console.log(error);
+                this.snackbarService.show(error.message || 'Une erreur est survenue');
+            }
         }
     }
 
-    handleAvatar(uid: string): Observable<void> {
+
+    async handleAvatar(uid: string): Promise<void> {
         if (typeof this.selectedAvatar === 'string') {
-            console.log("1")
-            return this.usersService.updateUserAvatar(uid, this.selectedAvatar);
-        } else  { //File type
-            return this.avatarService.uploadAvatar(uid, this.selectedAvatar as File).pipe(
-                switchMap((avatarUrl) => this.usersService.updateUserAvatar(uid, avatarUrl))
-            );
+            await this.usersService.updateUserAvatar(uid, this.selectedAvatar);
+        } else if (this.selectedAvatar instanceof File) {
+            const avatarUrl = await firstValueFrom(this.avatarService.uploadAvatar(uid, this.selectedAvatar));
+            await this.usersService.updateUserAvatar(uid, avatarUrl);
+        } else {
+            this.snackbarService.show('Aucun avatar sélectionné');
         }
     }
 }
