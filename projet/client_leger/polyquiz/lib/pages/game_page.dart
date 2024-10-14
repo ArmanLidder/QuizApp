@@ -3,6 +3,7 @@ import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.d
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_notice.dart';
+import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 
 class GamePage extends StatefulWidget {
@@ -93,27 +94,12 @@ class _MyWidgetState extends State<GamePage> {
                   SizedBox(
                     width: 100.0,
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Quit',
-                      style: TextStyle(
-                          color: Color.fromRGBO(255, 255, 255, 1),
-                          fontSize: 20),
-                    ),
-                    style: TextButton.styleFrom(
-                        textStyle: TextStyle(fontWeight: FontWeight.normal),
-                        splashFactory: NoSplash.splashFactory,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        backgroundColor: Color.fromRGBO(246, 53, 53, 1)),
-                  ),
+                  QuitBtn()
                 ],
               )
             ],
           ),
-        ),
+        ), //////////////////// Fin de la vue du joueur et debut de la vue de l'organisateur
         Visibility(
             visible: isHost,
             child: Column(
@@ -151,22 +137,7 @@ class _MyWidgetState extends State<GamePage> {
                     SizedBox(
                       width: 100.0,
                     ),
-                    TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Quit',
-                        style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: 20),
-                      ),
-                      style: TextButton.styleFrom(
-                          textStyle: TextStyle(fontWeight: FontWeight.normal),
-                          splashFactory: NoSplash.splashFactory,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          backgroundColor: Color.fromRGBO(246, 53, 53, 1)),
-                    ),
+                    QuitBtn()
                   ],
                 )
               ],
