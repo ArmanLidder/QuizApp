@@ -17,7 +17,7 @@
             <h3>{{ currentCanal.name }}</h3>
             <div class="message" *ngFor="let msg of currentCanal.messages">
                 <strong>{{ msg.userUid }}</strong>: {{ msg.message }}
-                <small>{{ msg.createdAt | date:'short' }}</small>
+                <small>{{ msg.createdAt.toDate() | date:'short' }}</small>
             </div>
         </div>
 

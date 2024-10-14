@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CanalService, Canal, Message } from "@app/services/canal.service/canal.service";
+import { CanalService } from "@app/services/canal.service/canal.service";
+import { Message, Canal } from "@common/interfaces/message.interface";
 import { Observable, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -38,8 +39,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.canalSubscription) this.canalSubscription.unsubscribe();
     this.canalSubscription = this.canalService.getCanal(canalId).subscribe(canal => {
       if (canal) this.currentCanal = canal;
-      console.log(canal)
-      console.log(this.currentCanal)
     });
   }
 
@@ -49,7 +48,6 @@ export class ChatComponent implements OnInit, OnDestroy {
       const newMessage: Message = {
         userUid: 'test', // Replace with actual user UID
         message: messageContent,
-        createdAt: new Date(Date.now()).toString(),
       };
       try {
         await this.canalService.addMessage(this.currentCanal.id!, newMessage);
