@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {firstValueFrom, from, Observable, switchMap, throwError} from 'rxjs';
-import {serverTimestamp } from "firebase/firestore";
 import {Timestamp} from "firebase/firestore";
 
 import {
@@ -11,6 +10,7 @@ import {
 
 import {UsersService} from "@app/services/users.service/users.service";
 import {LoginHistory} from "@app/interfaces/user/user-data.interface";
+import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
 export const timestampToDate = (timestamp: Timestamp) => {
     const unixTimestamp = (timestamp.seconds + timestamp.nanoseconds * 10**-9) * 1000;
     return new Date(unixTimestamp);
@@ -27,7 +27,7 @@ export class AuthService {
 
     user$ = authState(this.auth);
 
-    constructor(private auth: Auth, private usersService: UsersService) {
+    constructor(private auth: Auth, private usersService: UsersService, private servertimeService : ServerTimeService) {
     }
 
     register(username: string, email: string, password: string): Observable<any> {
@@ -47,10 +47,11 @@ export class AuthService {
         const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
         const uid = userCredential.user.uid;
 
-        const loginEvent:LoginHistory = {
+        const time = await this.servertimeService.getServerTime();
+        const loginEvent: LoginHistory = {
             eventType: 'login',
-            timestamp: serverTimestamp(),
-        };
+            timestamp: time,
+        };;
 
         await firstValueFrom(this.usersService.updateUser({
             uid: uid,
@@ -64,9 +65,10 @@ export class AuthService {
     async logout(): Promise<void> {
         const user = await firstValueFrom(this.usersService.currentUserProfile$);
         if (user) {
+            const time = await this.servertimeService.getServerTime();
             const logoutEvent: LoginHistory = {
                 eventType: 'logout',
-                timestamp: serverTimestamp(),
+                timestamp: time,
             };
 
             await firstValueFrom(this.usersService.updateUser({
