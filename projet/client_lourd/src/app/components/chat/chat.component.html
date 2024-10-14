@@ -1,1 +1,29 @@
-<p>chat works!</p>
+<div class="chat-container">
+    <div class="canal-list">
+        <h2>Canals</h2>
+        <ul>
+            <li *ngFor="let canal of canals$ | async"
+                [class.active]="canal.id === currentCanal?.id"
+                (click)="loadCanal(canal.id!)">
+                {{ canal.name }}
+                <button *ngIf="canal.name !== 'general'" (click)="deleteCanal(canal.id!)">X</button>
+            </li>
+        </ul>
+        <button (click)="createNewCanal()">New Canal</button>
+    </div>
+
+    <div class="chat-area">
+        <div class="messages" *ngIf="currentCanal">
+            <h3>{{ currentCanal.name }}</h3>
+            <div class="message" *ngFor="let msg of currentCanal.messages">
+                <strong>{{ msg.userUid }}</strong>: {{ msg.message }}
+                <small>{{ msg.createdAt | date:'short' }}</small>
+            </div>
+        </div>
+
+        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="message-form">
+            <input type="text" formControlName="message" placeholder="Type a message...">
+            <button type="submit" [disabled]="!messageForm.valid">Send</button>
+        </form>
+    </div>
+</div>
