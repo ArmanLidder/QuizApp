@@ -28,8 +28,8 @@
                         *ngFor="let msg of currentCanal.messages"
                         [ngClass]="{'message sent': currentUser?.uid === msg.userUid , 'message received': currentUser?.uid !== msg.userUid}"
                 >
+                    <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
                     <div class="bubble">
-                        <strong>{{ msg.userUid }}</strong>
                         <span>{{ msg.message }}</span>
                         <small>{{ msg.createdAt.toDate() | date: 'short' }}</small>
                     </div>

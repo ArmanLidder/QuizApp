@@ -8,7 +8,7 @@ import {
     query,
     collection,
     getDocs,
-    where, getDoc,
+    where,
 } from '@angular/fire/firestore';
 import {from, map, Observable, of, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
@@ -62,17 +62,9 @@ export class UsersService {
         );
     }
 
-    getUser(uid: string): Observable<User | undefined> {
+    getUser(uid: string): Observable<User | null> {
         const userDocRef = doc(this.firestore, `users/${uid}`);
-        return from(getDoc(userDocRef)).pipe(
-            map((docSnapshot) => {
-                if (docSnapshot.exists()) {
-                    return docSnapshot.data() as User; // Return user data if document exists
-                } else {
-                    return undefined; // Return undefined if no document is found
-                }
-            })
-        );
+        return docData(userDocRef, { idField: 'uid' }) as Observable<User | null>;
     }
 
     updateUserAvatar(uid: string, avatarUrl: string): Observable<void> {

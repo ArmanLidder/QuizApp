@@ -13,8 +13,9 @@ import {AuthService} from "@app/services/auth.service/auth.service";
 })
 export class AvatarComponent {
   @Input() isChat: boolean;
+  @Input() uid: string | null;
 
-  currentUser$: Observable<User | null>;
+  currentUser$: Observable<User | undefined>;
 
   isMenuOpen: boolean = false;
   menuEnabled: boolean = false;
@@ -25,7 +26,8 @@ export class AvatarComponent {
       private usersService: UsersService,
   ) {
     // Get the current user profile
-    this.currentUser$ = this.usersService.currentUserProfile$;
+    if (this.uid) this.currentUser$ = this.usersService.getUser(this.uid) as Observable<User>
+    this.currentUser$ = this.usersService.currentUserProfile$ as Observable<User>;
   }
 
   toggleMenu() {

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CanalService } from "@app/services/canal.service/canal.service";
 import { Message, Canal } from "@common/interfaces/message.interface";
-import { Observable, Subscription} from 'rxjs';
+import {firstValueFrom, Observable, Subscription} from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {UsersService} from "@app/services/users.service/users.service";
 import {User} from "@app/interfaces/user/user-data.interface";
@@ -41,10 +41,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.canalService.ensureGeneralCanal();
-    this.userSubscription = this.usersService.currentUserProfile$.subscribe(
-        (user) => {
-          this.currentUser = user;
-        });
   }
 
   ngOnDestroy() {
@@ -64,6 +60,19 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
+  // en attendant l'integration avec le composant avater
+  async getUsernameById(uid:string) {
+    if (!this.currentUser) {
+      this.currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
+      this.userSubscription = this.usersService.currentUserProfile$.subscribe(
+          (user) => {
+            this.currentUser = user;
+          });
+    }
+    if (this.currentUser?.uid === uid) return this.currentUser?.username;
+    else return (await firstValueFrom(this.usersService.getUser(uid)))?.username
+  }
+
   loadCanal(canalId: string) {
     if (this.canalSubscription) this.canalSubscription.unsubscribe();
     this.toggleIsChat();
@@ -78,6 +87,13 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async sendMessage(message?: string) {
     const messageContent = message || this.messageForm.get('message')?.value;
+    if (!this.currentUser) {
+      this.currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
+      this.userSubscription = this.usersService.currentUserProfile$.subscribe(
+          (user) => {
+            this.currentUser = user;
+          });
+    }
     if (messageContent && this.currentCanal) {
       const newMessage: Message = {
         userUid: this.currentUser?.uid ?? "test", // Replace with actual user UID
