@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_question_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 
@@ -12,6 +13,7 @@ class GamePage extends StatefulWidget {
 
 class _MyWidgetState extends State<GamePage> {
   bool isHost = false;
+  bool isQcm = false; // Il faudra remplacer par un enum par la suite
   int time = 10;
   int questionNum = 1;
   int questionPts = 50;
@@ -53,7 +55,10 @@ class _MyWidgetState extends State<GamePage> {
                   )
                 ],
               ),
-              Container(height: 500, child: PlayerQcmWidget()),
+              Visibility(
+                  visible: isQcm,
+                  child: Container(height: 500, child: PlayerQcmWidget())),
+              Visibility(visible: !isQcm, child: PlayerQrlWidget()),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
