@@ -6,33 +6,56 @@
 
     <div class="chat-content" *ngIf="state !== 0">
         <div *ngIf="!isChatFocused" class="canal-list">
-            <h2>Canaux</h2>
-            <ul>
-                <li *ngFor="let canal of canals$ | async; trackBy: trackById"
-                    [class.active]="canal.id === currentCanal?.id"
-                    (click)="loadCanal(canal.id!)">
-                    {{ canal.name }}
-                    <button *ngIf="canal.name !== 'general'" (click)="deleteCanal(canal.id!); $event.stopPropagation()">X</button>
-                </li>
-            </ul>
-            <button (click)="createNewCanal()">Ajouter un Canal</button>
+                <h2>Canaux</h2>
+                <ul>
+                    <li *ngFor="let canal of canals$ | async; trackBy: trackById"
+                        (click)="loadCanal(canal.id!)">
+                        {{ canal.name }}
+                        <button *ngIf="canal.name !== 'general'" (click)="deleteCanal(canal.id!); $event.stopPropagation()">X</button>
+                    </li>
+                </ul>
+                <button (click)="createNewCanal()">Ajouter un Canal</button>
         </div>
 
         <div *ngIf="isChatFocused" class="chat-area">
-            <div class="messages" *ngIf="currentCanal">
+            <div class="messages" *ngIf="currentCanal$ | async as canal">
                 <div class="canal-header">
                     <button (click)="toggleIsChat()"><i style ="color:#007bff" class="bi bi-caret-left-fill">Canaux</i></button>
-                    <h3><strong>{{ currentCanal.name }}</strong></h3>
+                    <h3><strong>{{ canal.name }}</strong></h3>
                 </div>
-                <div
-                        *ngFor="let msg of currentCanal.messages"
-                        [ngClass]="{'message sent': currentUser?.uid === msg.userUid , 'message received': currentUser?.uid !== msg.userUid}"
-                >
-                    <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
-                    <div class="bubble">
-                        <span>{{ msg.message }}</span>
-                        <small>{{ msg.createdAt.toDate() | date: 'short' }}</small>
-                    </div>
+<!--                <div-->
+<!--                        *ngFor="let msg of canal.messages"-->
+<!--                        [ngClass]="{'message sent': currentUser?.uid === msg.userUid , 'message received': currentUser?.uid !== msg.userUid}"-->
+<!--                >-->
+<!--                    <div *ngIf="msg.userUid as userId">-->
+<!--                        <app-avatar [isChat]="true" [uid]="userId"></app-avatar>-->
+<!--                    </div>-->
+<!--                    <div class="bubble">-->
+<!--                        <span>{{ msg.message }}</span>-->
+<!--                        <small>{{ msg.createdAt.toDate() | date: 'short' }}</small>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div *ngIf="canal.messages.length > 0">
+                    <ng-container *ngIf="user$ | async as user">
+                        <ng-container *ngFor="let msg of canal.messages">
+                            <div [ngClass]="['message', getMessageClass(msg, user)]">
+                                <ng-container *ngIf="getMessageClass(msg, user) == 'received'">
+                                    <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
+                                        <div class="bubble">
+                                        <span>{{ msg.message }}</span>
+                                        <small>{{ msg.createdAt.toDate() | date: 'short' }}</small>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="getMessageClass(msg, user) == 'sent'">
+                                    <div class="bubble">
+                                        <span>{{ msg.message }}</span>
+                                        <small style="color:antiquewhite">{{ msg.createdAt.toDate() | date: 'short' }}</small>
+                                    </div>
+                                    <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
                 </div>
             </div>
 

@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CanalService } from "@app/services/canal.service/canal.service";
 import { Message, Canal } from "@common/interfaces/message.interface";
-import {firstValueFrom, Observable, Subscription} from 'rxjs';
+import {firstValueFrom, Observable } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {UsersService} from "@app/services/users.service/users.service";
 import {User} from "@app/interfaces/user/user-data.interface";
@@ -17,16 +17,13 @@ export enum State {
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit {
   canals$: Observable<Canal[]>;
-  currentCanal: Canal | null = null;
+  user$: Observable<User>;
+  currentCanal$: Observable<Canal | undefined>;
   messageForm: FormGroup;
   isChatFocused: boolean = false;
   state: State = State.closed;
-  currentUser: User | null = null;
-  private userSubscription!: Subscription;
-  private canalSubscription: Subscription | null = null;
-
 
   constructor(
       private canalService: CanalService,
@@ -34,6 +31,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       public usersService: UsersService,
   ) {
     this.canals$ = this.canalService.canals$;
+    this.user$ = this.usersService.currentUserProfile$ as Observable<User>;
     this.messageForm = this.fb.group({
       message: ['', Validators.required]
     });
@@ -41,11 +39,6 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.canalService.ensureGeneralCanal();
-  }
-
-  ngOnDestroy() {
-    if (this.canalSubscription) this.canalSubscription.unsubscribe();
-    if (this.userSubscription) this.userSubscription.unsubscribe();
   }
 
   trackById(index: number, canal: Canal): string {
@@ -60,50 +53,34 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
-  // en attendant l'integration avec le composant avater
-  async getUsernameById(uid:string) {
-    if (!this.currentUser) {
-      this.currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
-      this.userSubscription = this.usersService.currentUserProfile$.subscribe(
-          (user) => {
-            this.currentUser = user;
-          });
-    }
-    if (this.currentUser?.uid === uid) return this.currentUser?.username;
-    else return (await firstValueFrom(this.usersService.getUser(uid)))?.username
+  // Check who is the sender for css style
+  getMessageClass(msg: Message, user: User): string {
+    return user.uid === msg.userUid ? 'sent' : 'received';
   }
 
   loadCanal(canalId: string) {
-    if (this.canalSubscription) this.canalSubscription.unsubscribe();
     this.toggleIsChat();
-    this.canalSubscription = this.canalService.getCanal(canalId).subscribe(canal => {
-      if (canal) this.currentCanal = canal;
-      setTimeout(() => {
-        const input = document.querySelector('input[formControlName="message"]') as HTMLElement;
-        input?.focus();
-      }, 0);
-    });
+    this.currentCanal$ = this.canalService.getCanal(canalId);
+    setTimeout(() => {
+      const input = document.querySelector('input[formControlName="message"]') as HTMLElement;
+      input?.focus();
+    }, 0);
   }
 
   async sendMessage(message?: string) {
     const messageContent = message || this.messageForm.get('message')?.value;
-    if (!this.currentUser) {
-      this.currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
-      this.userSubscription = this.usersService.currentUserProfile$.subscribe(
-          (user) => {
-            this.currentUser = user;
-          });
-    }
-    if (messageContent && this.currentCanal) {
+    const uid = (await firstValueFrom(this.user$)).uid;
+    const canalId = (await firstValueFrom(this.currentCanal$))?.id as string;
+    if (messageContent && this.currentCanal$) {
       const newMessage: Message = {
-        userUid: this.currentUser?.uid ?? "test", // Replace with actual user UID
+        userUid: uid, // Replace with actual user UID
         message: messageContent,
       };
       try {
-        await this.canalService.addMessage(this.currentCanal.id!, newMessage);
+        await this.canalService.addMessage(canalId, newMessage);
         this.messageForm.reset();
       } catch (error) {
-        console.error('Error sending message:', error);
+        // console.error('Error sending message:', error);
       }
     }
   }
@@ -114,7 +91,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       try {
         await this.canalService.createCanal(canalName, false, []);
       } catch (error) {
-        console.error('Error creating canal:', error);
+        // console.error('Error creating canal:', error);
       }
     }
   }
