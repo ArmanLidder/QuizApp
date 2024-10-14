@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PasswordPromptComponent } from '@app/components/password-prompt/password-prompt.component';
-import {AuthGuard, redirectUnauthorizedTo} from "@angular/fire/auth-guard";
+import {AuthGuard, canActivate, redirectLoggedInTo, redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { GameCreationPageComponent } from '@app/pages/game-creation-page/game-creation-page.component';
 import { GameAdministrationPageComponent } from '@app/pages/game-administration-page/game-administration-page.component';
@@ -14,10 +14,11 @@ import {RegisterPageComponent} from "@app/pages/register-page/register-page.comp
 import {ProfilePageComponent} from "@app/pages/profile-page/profile-page.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
+const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
 
 const routes: Routes = [
-    { path: 'login', component: LoginPageComponent },
-    { path: 'register', component: RegisterPageComponent },
+    { path: 'login', component: LoginPageComponent, ...canActivate(redirectLoggedInToHome) },
+    { path: 'register', component: RegisterPageComponent, ...canActivate(redirectLoggedInToHome) },
     { path: 'profile', component: ProfilePageComponent,  canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin}},
     { path: 'home', component: MainPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
     { path: 'game/:id', component: GamePageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
