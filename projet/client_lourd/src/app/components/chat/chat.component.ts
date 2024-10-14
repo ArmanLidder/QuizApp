@@ -1,8 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CanalService } from "@app/services/canal.service/canal.service";
 import { Message, Canal } from "@common/interfaces/message.interface";
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription} from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {UsersService} from "@app/services/users.service/users.service";
+import {User} from "@app/interfaces/user/user-data.interface";
+
+export enum State {
+  closed,
+  opened,
+  outside,
+}
 
 @Component({
   selector: 'app-chat',
@@ -13,11 +21,17 @@ export class ChatComponent implements OnInit, OnDestroy {
   canals$: Observable<Canal[]>;
   currentCanal: Canal | null = null;
   messageForm: FormGroup;
+  isChatFocused: boolean = false;
+  state: State = State.closed;
+  currentUser: User | null = null;
+  private userSubscription!: Subscription;
   private canalSubscription: Subscription | null = null;
+
 
   constructor(
       private canalService: CanalService,
-      private fb: FormBuilder
+      private fb: FormBuilder,
+      public usersService: UsersService,
   ) {
     this.canals$ = this.canalService.canals$;
     this.messageForm = this.fb.group({
@@ -27,26 +41,46 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.canalService.ensureGeneralCanal();
+    this.userSubscription = this.usersService.currentUserProfile$.subscribe(
+        (user) => {
+          this.currentUser = user;
+        });
   }
 
   ngOnDestroy() {
-    if (this.canalSubscription) {
-      this.canalSubscription.unsubscribe();
+    if (this.canalSubscription) this.canalSubscription.unsubscribe();
+    if (this.userSubscription) this.userSubscription.unsubscribe();
+  }
+
+  trackById(index: number, canal: Canal): string {
+    return canal.id!;
+  }
+
+  toggleChatState() {
+    if (this.state === State.closed) {
+      this.state = State.opened;
+    } else if (this.state === State.opened) {
+      this.state = State.closed;
     }
   }
 
   loadCanal(canalId: string) {
     if (this.canalSubscription) this.canalSubscription.unsubscribe();
+    this.toggleIsChat();
     this.canalSubscription = this.canalService.getCanal(canalId).subscribe(canal => {
       if (canal) this.currentCanal = canal;
+      setTimeout(() => {
+        const input = document.querySelector('input[formControlName="message"]') as HTMLElement;
+        input?.focus();
+      }, 0);
     });
   }
 
-  async sendMessage() {
-    if (this.messageForm.valid && this.currentCanal) {
-      const messageContent = this.messageForm.get('message')?.value;
+  async sendMessage(message?: string) {
+    const messageContent = message || this.messageForm.get('message')?.value;
+    if (messageContent && this.currentCanal) {
       const newMessage: Message = {
-        userUid: 'test', // Replace with actual user UID
+        userUid: this.currentUser?.uid ?? "test", // Replace with actual user UID
         message: messageContent,
       };
       try {
@@ -73,12 +107,15 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (confirm('Are you sure you want to delete this canal?')) {
       try {
         await this.canalService.deleteCanal(canalId);
-        if (this.currentCanal?.id === canalId) {
-          this.loadCanal('general');
-        }
       } catch (error) {
         console.error('Error deleting canal:', error);
       }
     }
   }
+
+  toggleIsChat() {
+    this.isChatFocused = !this.isChatFocused;
+  }
+
+  protected readonly console = console;
 }
