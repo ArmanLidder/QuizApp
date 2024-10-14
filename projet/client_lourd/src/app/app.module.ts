@@ -57,6 +57,8 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import {environment} from "../environments/environment";
 import {ChatComponent} from "@app/components/chat/chat.component";
+import {FIREBASE_OPTIONS} from "@angular/fire/compat";
+import {CanalService} from "@app/services/canal.service/canal.service";
 
 /**
  * Main module that is used in main.ts.
@@ -130,7 +132,10 @@ import {ChatComponent} from "@app/components/chat/chat.component";
         provideFirestore(() => getFirestore()),
         provideStorage(() => getStorage()),
     ],
-    providers: [],
+    providers: [
+        CanalService,
+        { provide: FIREBASE_OPTIONS, useValue: environment.firebase }
+    ],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
