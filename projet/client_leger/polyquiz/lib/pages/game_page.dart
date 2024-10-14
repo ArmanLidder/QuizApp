@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_question_info_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/player_widgets/player_notice.dart';
 import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 
 class GamePage extends StatefulWidget {
@@ -13,10 +14,12 @@ class GamePage extends StatefulWidget {
 
 class _MyWidgetState extends State<GamePage> {
   bool isHost = false;
-  bool isQcm = false; // Il faudra remplacer par un enum par la suite
+  bool isQcm = true; // Il faudra remplacer par un enum par la suite
+  bool noticeReceived = false;
   int time = 10;
   int questionNum = 1;
   int questionPts = 50;
+  String message = 'Please wait while the host grades the answers...';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +51,7 @@ class _MyWidgetState extends State<GamePage> {
                       padding: EdgeInsets.all(10.0),
                       decoration: BoxDecoration(border: Border.all()),
                       child: Text(
-                        'Score: 200',
+                        'Score: 0',
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
@@ -56,27 +59,36 @@ class _MyWidgetState extends State<GamePage> {
                 ],
               ),
               Visibility(
-                  visible: isQcm,
+                  visible: isQcm && !noticeReceived,
                   child: Container(height: 500, child: PlayerQcmWidget())),
-              Visibility(visible: !isQcm, child: PlayerQrlWidget()),
+              Visibility(
+                  visible: !isQcm && !noticeReceived, child: PlayerQrlWidget()),
+              Visibility(
+                  visible: noticeReceived,
+                  child: PlayerNotice(
+                    message: message,
+                  )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Confirm',
-                      style: TextStyle(
-                          color: Color.fromRGBO(255, 255, 255, 1),
-                          fontSize: 20),
+                  Visibility(
+                    visible: !noticeReceived,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Confirm',
+                        style: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 1),
+                            fontSize: 20),
+                      ),
+                      style: TextButton.styleFrom(
+                          textStyle: TextStyle(fontWeight: FontWeight.normal),
+                          splashFactory: NoSplash.splashFactory,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
                     ),
-                    style: TextButton.styleFrom(
-                        textStyle: TextStyle(fontWeight: FontWeight.normal),
-                        splashFactory: NoSplash.splashFactory,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
                   ),
                   SizedBox(
                     width: 20.0,

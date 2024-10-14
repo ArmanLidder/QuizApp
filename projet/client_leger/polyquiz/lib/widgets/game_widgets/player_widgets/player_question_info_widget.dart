@@ -26,9 +26,12 @@ class _MyWidgetState extends State<PlayerQuestionInfoWidget> {
             'Q${widget.questionNum}',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
-          Text('${widget.questionPts} pts'),
           Text(
-            'How do I center this text in the column?',
+            '${widget.questionPts} pts',
+            style: TextStyle(fontSize: 16),
+          ),
+          Text(
+            'Question question question  question?',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
