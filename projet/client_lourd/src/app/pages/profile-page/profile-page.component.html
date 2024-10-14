@@ -1,99 +1,89 @@
-<!--&lt;!&ndash;<div class="absolute -bottom-0 -left-1 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">&ndash;&gt;-->
+<div class="bg-gray-100 min-h-screen p-8">
+    <!-- Display user data when available -->
+    <ng-container *ngIf="currentUser$ | async as user">
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white text-center">
+                <div class="relative inline-block">
+                    <div class="absolute -top-2 -left-2 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
+                        {{ user.level }}
+                    </div>
+                    <img [src]="user.avatar" alt="Avatar de {{ user.username }}"
+                         class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg"/>
+                    <div class="text-4xl absolute -bottom-0 -right-1 flex items-center justify-center border-none">
+                        {{ getPrestigeIcon(user.prestige) }}
+                    </div>
+                </div>
+                <h1 class="text-3xl font-bold mt-2">Profil de {{ user.username }}</h1>
+                <p class="text-lg mt-2">{{ user.email }}</p>
+                <div class="mt-4 flex justify-center items-center space-x-4">
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center">
+                        <span class="font-semibold mr-2">Prestige :</span>
+                        <span class="text-2xl mr-1">{{ getPrestigeIcon(user.prestige) }}</span>
+                        {{ getPrestigeLabel(user.prestige) }}
+                    </div>
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                        <span class="font-semibold">Argent :</span> {{ user.currency }}
+                    </div>
+                    <button class="absolute top-0 right-0 m-4 p-2 bg-white text-blue-500 rounded-full shadow-md hover:bg-gray-200"
+                            (click)="openDialog()">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
+            </div>
 
-<!--<div class="bg-gray-100 min-h-screen p-8">-->
-<!--    <div *ngIf="this.profileService.userData" class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">-->
-<!--        <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white text-center">-->
-<!--            <div class="relative inline-block">-->
-<!--                <div class="absolute -top-2 -left-2 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">-->
-<!--                    {{ this.profileService.userData.level }}-->
-<!--                </div>-->
-<!--                <img [src]="this.profileService.avatarUrl" alt="Avatar de {{ this.profileService.userData.username }}" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg" />-->
-<!--                <div class="text-4xl absolute -bottom-0 -right-1 flex items-center justify-center border-none">-->
-<!--                    {{ getPrestigeIcon(this.profileService.userData.prestige) }}-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <h1 class="text-3xl font-bold mt-2">Profil de {{ this.profileService.userData.username }}</h1>-->
-<!--            <p class="text-lg mt-2">{{ this.profileService.userData.email  }}</p>-->
-<!--            <div class="mt-4 flex justify-center items-center space-x-4">-->
-<!--                <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center">-->
-<!--                    <span class="font-semibold mr-2">Prestige :</span>-->
-<!--                    <span class="text-2xl mr-1">{{ getPrestigeIcon(this.profileService.userData.prestige) }}</span>-->
-<!--                    {{ getPrestigeLabel(this.profileService.userData.prestige) }}-->
-<!--                </div>-->
-<!--                <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">-->
-<!--                    <span class="font-semibold">Argent :</span> {{ this.profileService.userData.currency }}-->
-<!--                </div>-->
-<!--                <button class="absolute top-0 right-0 m-4 p-2 bg-white text-blue-500 rounded-full shadow-md hover:bg-gray-200" (click)="openDialog()">-->
-<!--                    <i class="fas fa-pen"></i> &lt;!&ndash; Font Awesome pen icon &ndash;&gt;-->
-<!--                </button>-->
-<!--            </div>-->
-<!--        </div>-->
+            <!-- Display statistics -->
+            <div class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h2 class="text-2xl font-semibold mb-4">Statistiques</h2>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="mb-2"><span
+                                    class="font-semibold">Parties Jouées :</span> {{ user.stats.gamesPlayed }}</p>
+                            <p class="mb-2"><span
+                                    class="font-semibold">Parties Gagnées :</span> {{ user.stats.gamesWon }}</p>
+                            <p class="mb-2"><span
+                                    class="font-semibold">Bonnes Réponses Par Partie :</span> {{ user.stats.avgCorrectAnswers }}
+                            </p>
+                            <p><span class="font-semibold">Temps Moyen Par Partie :</span> {{ user.stats.avgGameTime }}
+                                secondes</p>
+                        </div>
+                    </div>
 
-<!--        <div class="p-8">-->
-<!--            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">-->
-<!--                <div>-->
-<!--                    <h2 class="text-2xl font-semibold mb-4">Statistiques</h2>-->
-<!--                    <div *ngIf="this.profileService.userData.stats" class="bg-gray-50 p-4 rounded-lg">-->
-<!--                        <p class="mb-2"><span class="font-semibold">Parties Jouées :</span> {{ this.profileService.userData.stats.playedGames }}</p>-->
-<!--                        <p class="mb-2"><span class="font-semibold">Parties Gagnées :</span> {{ this.profileService.userData.stats.wonGames }}</p>-->
-<!--                        <p class="mb-2"><span class="font-semibold">Bonnes Réponses Par Partie :</span> {{ this.profileService.userData.stats.goodAnswersPerGame  }}</p>-->
-<!--                        <p><span class="font-semibold">Temps Moyen Par Partie :</span> {{ this.profileService.userData.stats.avgTimePerGame  }} secondes</p>-->
-<!--                    </div>-->
-<!--                </div>-->
+                    <div>
+                        <h2 class="text-2xl font-semibold mb-4">Amis</h2>
+                        <ul class="bg-gray-50 p-4 rounded-lg">
+                            <li *ngFor="let friend of user.friends" class="mb-2 last:mb-0">{{ friend }}</li>
+                        </ul>
+                    </div>
+                </div>
 
-<!--                <div>-->
-<!--                    <h2 class="text-2xl font-semibold mb-4">Amis</h2>-->
-<!--                    <ul class="bg-gray-50 p-4 rounded-lg">-->
-<!--                        <li *ngFor="let friend of this.profileService.userData.friends " class="mb-2 last:mb-0">{{ friend }}</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
+                <!-- Achievements -->
+                <div class="mt-8">
+                    <h2 class="text-2xl font-semibold mb-4">Exploits</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                        <div *ngFor="let achievement of allAchievements; let i = index"
+                             class="p-4 rounded-lg text-center" [ngClass]="getAchievementClass(i)">
+                            <span class="text-2xl mb-2 block">{{ getAchievementIcon(i) }}</span>
+                            <p class="text-sm">{{ achievement }}</p>
+                        </div>
+                    </div>
+                </div>
 
-
-<!--            <div class="mt-8">-->
-<!--                <h2 class="text-2xl font-semibold mb-4">Exploits</h2>-->
-<!--                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">-->
-<!--                    <div *ngFor="let achievement of allAchievements; let i = index"-->
-<!--                         class="p-4 rounded-lg text-center"-->
-<!--                         [ngClass]="getAchievementClass(i)">-->
-<!--                        <span class="text-2xl mb-2 block">{{ getAchievementIcon(i) }}</span>-->
-<!--                        <p class="text-sm">{{ achievement }}</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div class="mt-8">-->
-<!--                <h2 class="text-2xl font-semibold mb-4">Historique des Connexions</h2>-->
-<!--                <ul class="bg-gray-50 p-4 rounded-lg">-->
-<!--                    <li *ngFor="let history of this.profileService.userData.loginHistory " class="mb-2 last:mb-0">-->
-<!--            <span [ngClass]="{'text-green-600': history.connexion_type === 0, 'text-red-600': history.connexion_type !== 0}">-->
-<!--              {{ history.connexion_type === 0 ? 'Connexion' : 'Déconnexion' }}-->
-<!--            </span>-->
-<!--                        le {{ history.date | date:'yyyy-MM-dd HH:mm:ss' }}-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
-
-<!--            <div class="mt-8">-->
-<!--                <h2 class="text-2xl font-semibold mb-4">Historique des Parties</h2>-->
-<!--                <ul class="bg-gray-50 p-4 rounded-lg">-->
-<!--                    <li *ngFor="let game of this.profileService.userData.gameHistory" class="mb-2 last:mb-0">-->
-<!--            <span [ngClass]="{'text-green-600': game.result === 0, 'text-red-600': game.result !== 0}">-->
-<!--              {{ game.result === 0 ? 'Gagné' : 'Perdu' }}-->
-<!--            </span>-->
-<!--                        le {{ game.date | date:'yyyy-MM-dd HH:mm:ss' }}-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--    <div>-->
-<!--        <button (click)="openDialog()">Click me!</button>-->
-<!--    </div>-->
+                <!-- Connection history -->
+                <div class="mt-8">
+                    <h2 class="text-2xl font-semibold mb-4">Historique des Connexions</h2>
+                    <ul class="bg-gray-50 p-4 rounded-lg">
+                        <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
+              <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
+                {{ history.eventType === 'login' ? 'Connexion' : 'Déconnexion' }}
+              </span>
+                            le {{ history.timestamp | date:'yyyy-MM-dd HH:mm:ss' }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>
 
 
-<!--    <div *ngIf="!this.profileService.userData" class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">-->
-<!--        <p class="text-xl">Chargement du profil...</p>-->
-<!--    </div>-->
-<!--</div>-->

@@ -7,7 +7,7 @@ import {
     createUserWithEmailAndPassword,
 } from '@angular/fire/auth';
 import {UsersService} from "@app/services/users.service/users.service";
-import {User} from "@common/interfaces/user-data.interface";
+import {LoginHistory} from "@common/interfaces/user-data.interface";
 
 
 @Injectable({
@@ -33,36 +33,43 @@ export class AuthService {
         );
     }
 
-    async login(email: string, password: string) {
-        // return this.usersService.getUserByEmail(email).pipe(  // Get user data by email first
-        //     switchMap((userData) => {
-        //         if (userData?.isConnected) {
-        //             // If user is already connected, throw an error and don't attempt login
-        //             return throwError(() => new Error('Cet utilisateur est déjà connecté.'));
-        //         }
-        //         // If user is not connected, proceed with the login
-        //         return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
-        //             switchMap((userCredential) => {
-        //                 const uid = userCredential.user.uid;
-        //                 // Set isConnected to true after a successful login
-        //                 return this.usersService.updateUser({uid: uid, isConnected: true});
-        //             })
-        //         );
-        //     })
-        // );
+    async login(email: string, password: string): Promise<void> {
+
         const userData = await firstValueFrom(this.usersService.getUserByEmail(email));
-        if (userData?.isConnected) throw new Error('Cet utilisateur est déjà connecté.');
+        if (userData?.isConnected)throw new Error('Cet utilisateur est déjà connecté.');
+
         const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
         const uid = userCredential.user.uid;
-        await firstValueFrom(this.usersService.updateUser({ uid: uid, isConnected: true }));
 
+        const loginEvent: LoginHistory = {
+            eventType: 'login',
+            timestamp: new Date(),
+        };
+
+        await firstValueFrom(this.usersService.updateUser({
+            uid: uid,
+            isConnected: true,
+            loginHistory: [...(userData?.loginHistory || []), loginEvent], // Append the new login event
+        }));
     }
 
 
-    async logout() {
-        const user = await firstValueFrom(this.usersService.currentUserProfile$)
-        const updatedUser: Partial<User> = {uid: user?.uid, isConnected: false};
-        await firstValueFrom(this.usersService.updateUser(updatedUser));
+
+    async logout(): Promise<void> {
+        const user = await firstValueFrom(this.usersService.currentUserProfile$);
+        if (user) {
+            const logoutEvent: LoginHistory = {
+                eventType: 'logout',
+                timestamp: new Date(),
+            };
+
+            await firstValueFrom(this.usersService.updateUser({
+                uid: user.uid,
+                isConnected: false,
+                loginHistory: [...(user.loginHistory || []), logoutEvent], // Append the new logout event
+            }));
+        }
         await this.auth.signOut();
     }
+
 }

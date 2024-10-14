@@ -23,7 +23,7 @@ interface UserStats {
     avgGameTime: number;
 }
 
-interface LoginHistory {
+export interface LoginHistory {
     eventType: 'login' | 'logout';
     timestamp: Date;
 }
