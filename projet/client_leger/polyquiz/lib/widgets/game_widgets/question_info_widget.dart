@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class PlayerQuestionInfoWidget extends StatefulWidget {
+class QuestionInfoWidget extends StatefulWidget {
   final int questionNum;
   final int questionPts;
 
-  const PlayerQuestionInfoWidget({
+  const QuestionInfoWidget({
     Key? key,
     required this.questionNum,
     required this.questionPts,
   }) : super(key: key);
 
   @override
-  State<PlayerQuestionInfoWidget> createState() => _MyWidgetState();
+  State<QuestionInfoWidget> createState() => _MyWidgetState();
 }
 
-class _MyWidgetState extends State<PlayerQuestionInfoWidget> {
+class _MyWidgetState extends State<QuestionInfoWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,7 +31,7 @@ class _MyWidgetState extends State<PlayerQuestionInfoWidget> {
             style: TextStyle(fontSize: 16),
           ),
           Text(
-            'Question question question  question?',
+            'Question question question question?',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,

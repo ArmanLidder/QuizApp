@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
-import 'package:polyquiz/widgets/game_widgets/player_widgets/player_question_info_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_notice.dart';
 import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 
@@ -13,8 +13,8 @@ class GamePage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<GamePage> {
-  bool isHost = false;
-  bool isQcm = true; // Il faudra remplacer par un enum par la suite
+  bool isHost = true;
+  bool isQcm = false; // Il faudra remplacer par un enum par la suite
   bool noticeReceived = false;
   int time = 10;
   int questionNum = 1;
@@ -42,7 +42,7 @@ class _MyWidgetState extends State<GamePage> {
                       time: time,
                     ),
                   ),
-                  PlayerQuestionInfoWidget(
+                  QuestionInfoWidget(
                       questionNum: questionNum, questionPts: questionPts),
                   Expanded(
                     child: Container(
@@ -91,7 +91,7 @@ class _MyWidgetState extends State<GamePage> {
                     ),
                   ),
                   SizedBox(
-                    width: 20.0,
+                    width: 100.0,
                   ),
                   TextButton(
                     onPressed: () {},
@@ -114,7 +114,63 @@ class _MyWidgetState extends State<GamePage> {
             ],
           ),
         ),
-        Visibility(visible: isHost, child: Text('host view'))
+        Visibility(
+            visible: isHost,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    TimerWidget(isHost: isHost, time: time),
+                    QuestionInfoWidget(
+                        questionNum: questionNum, questionPts: questionPts),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Visibility(
+                      visible: !noticeReceived,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Next Question',
+                          style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20),
+                        ),
+                        style: TextButton.styleFrom(
+                            textStyle: TextStyle(fontWeight: FontWeight.normal),
+                            splashFactory: NoSplash.splashFactory,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 100.0,
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Quit',
+                        style: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 1),
+                            fontSize: 20),
+                      ),
+                      style: TextButton.styleFrom(
+                          textStyle: TextStyle(fontWeight: FontWeight.normal),
+                          splashFactory: NoSplash.splashFactory,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          backgroundColor: Color.fromRGBO(246, 53, 53, 1)),
+                    ),
+                  ],
+                )
+              ],
+            ))
       ]),
     );
   }

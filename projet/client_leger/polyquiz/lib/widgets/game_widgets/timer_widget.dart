@@ -16,6 +16,8 @@ class TimerWidget extends StatefulWidget {
 
 class _TimerWidgetState extends State<TimerWidget> {
   IconData timerIcon = Icons.pause_circle_outline;
+  IconData panicModeIcon =
+      Icons.fireplace_outlined; // Changer pour coherence avec client lourd
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,17 +38,28 @@ class _TimerWidgetState extends State<TimerWidget> {
             '${widget.time}',
             style: TextStyle(fontSize: 28),
           ),
-          widget.isHost == true
-              ? IconButton(
+          Visibility(
+            visible: widget.isHost,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
                   onPressed: () {
                     setState(() {
                       timerIcon = changeIcon(timerIcon);
                     });
                   },
                   icon: Icon(timerIcon),
-                  iconSize: 40,
+                  iconSize: 35,
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(panicModeIcon),
+                  iconSize: 35,
                 )
-              : SizedBox.shrink() // abscence de widget
+              ],
+            ),
+          )
         ],
       ),
     );
