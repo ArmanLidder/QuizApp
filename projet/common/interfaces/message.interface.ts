@@ -1,9 +1,9 @@
 // old will not use
-// export interface Message {
-//     sender: string;
-//     content: string;
-//     time: string;
-// }
+export interface Message_Old {
+    sender: string;
+    content: string;
+    time: string;
+}
 
 export interface Message {
     userUid: string;
