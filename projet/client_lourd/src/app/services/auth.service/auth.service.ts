@@ -1,14 +1,20 @@
 import {Injectable} from '@angular/core';
 import {firstValueFrom, from, Observable, switchMap, throwError} from 'rxjs';
+import {serverTimestamp } from "firebase/firestore";
+import {Timestamp} from "firebase/firestore";
 
 import {
     Auth, authState,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
 } from '@angular/fire/auth';
-import {UsersService} from "@app/services/users.service/users.service";
-import {LoginHistory} from "@common/interfaces/user-data.interface";
 
+import {UsersService} from "@app/services/users.service/users.service";
+import {LoginHistory} from "@app/interfaces/user/user-data.interface";
+export const timestampToDate = (timestamp: Timestamp) => {
+    const unixTimestamp = (timestamp.seconds + timestamp.nanoseconds * 10**-9) * 1000;
+    return new Date(unixTimestamp);
+};
 
 @Injectable({
     providedIn: 'root'
@@ -41,9 +47,9 @@ export class AuthService {
         const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
         const uid = userCredential.user.uid;
 
-        const loginEvent: LoginHistory = {
+        const loginEvent:LoginHistory = {
             eventType: 'login',
-            timestamp: new Date(),
+            timestamp: serverTimestamp(),
         };
 
         await firstValueFrom(this.usersService.updateUser({
@@ -60,7 +66,7 @@ export class AuthService {
         if (user) {
             const logoutEvent: LoginHistory = {
                 eventType: 'logout',
-                timestamp: new Date(),
+                timestamp: serverTimestamp(),
             };
 
             await firstValueFrom(this.usersService.updateUser({

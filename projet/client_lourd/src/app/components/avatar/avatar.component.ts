@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import {UsersService} from "@app/services/users.service/users.service";
 import { environment } from "../../../environments/environment";
 import { Observable } from 'rxjs';
-import { User } from "@common/interfaces/user-data.interface";
+import { User } from "@app/interfaces/user/user-data.interface";
 import {AuthService} from "@app/services/auth.service/auth.service";
 
 @Component({

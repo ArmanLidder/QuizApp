@@ -77,7 +77,7 @@
               <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
                 {{ history.eventType === 'login' ? 'Connexion' : 'Déconnexion' }}
               </span>
-                            le {{ history.timestamp | date:'yyyy-MM-dd HH:mm:ss' }}
+                            le {{ timestampToDate(history.timestamp)| date:'yyyy-MM-dd HH:mm:ss' }}
                         </li>
                     </ul>
                 </div>

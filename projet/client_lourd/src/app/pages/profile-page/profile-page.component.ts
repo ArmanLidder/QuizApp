@@ -3,7 +3,8 @@ import { UsersService} from "@app/services/users.service/users.service";
 import { MatDialog } from "@angular/material/dialog";
 import { UserModificationDialogComponent } from "@app/components/user-modification-dialog/user-modification-dialog.component";
 import { Observable } from 'rxjs';
-import { User } from '@common/interfaces/user-data.interface';
+import { User } from '@app/interfaces/user/user-data.interface';
+import {timestampToDate} from "@app/services/auth.service/auth.service";
 
 @Component({
   selector: 'app-profile',
@@ -34,6 +35,7 @@ export class ProfilePageComponent implements OnInit {
     // Fetch user achievements when the component is initialized
     this.currentUser$.subscribe((user) => {
       if (user) {
+        console.log(user);
         this.userAchievements = user.achievements.map((achievement) => Number(achievement));
       }
     });
@@ -71,4 +73,6 @@ export class ProfilePageComponent implements OnInit {
   openDialog() {
     this.dialog.open(UserModificationDialogComponent);
   }
+
+  protected readonly timestampToDate = timestampToDate;
 }

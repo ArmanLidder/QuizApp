@@ -11,7 +11,7 @@ import {
     where, getDoc,
 } from '@angular/fire/firestore';
 import {from, map, Observable, of, switchMap} from 'rxjs';
-import {User} from "@common/interfaces/user-data.interface";
+import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
 
 

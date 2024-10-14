@@ -25,7 +25,7 @@ interface UserStats {
 
 export interface LoginHistory {
     eventType: 'login' | 'logout';
-    timestamp: Date;
+    timestamp: any;
 }
 
 interface GameHistory {
