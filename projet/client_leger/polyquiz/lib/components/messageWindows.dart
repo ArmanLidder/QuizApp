@@ -24,10 +24,17 @@ class _MessageWindowState extends State<MessageWindow> {
   Widget build(BuildContext context) {
     return Container(
         child: Column(children: <Widget>[
+      Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            "Zone de Clavardage",
+            style: TextStyle(
+              fontSize: 24.0,
+            ),
+            textAlign: TextAlign.center,
+          )),
       // Cette section est la liste des messages déjà envoyés
-      Expanded(
-          child: buildMessageContainer()
-      ),
+      Expanded(child: buildMessageContainer()),
       Container(
           padding: EdgeInsets.all(5.0),
           child: Row(children: <Widget>[
@@ -52,24 +59,24 @@ class _MessageWindowState extends State<MessageWindow> {
 
   Widget buildMessageContainer() {
     return Container(
-      padding: EdgeInsets.all(30.0),
+        padding: EdgeInsets.all(30.0),
         child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.blue,
-            width: 2.0,
-          ),
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: ListView.builder(
-            itemCount: _messages.length,
-            itemBuilder: (context, index) {
-              final message = _messages[index];
-              return buildInputBox(message, "me");
-            })));
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.blue,
+                width: 2.0,
+              ),
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: ListView.builder(
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  return buildSingleMessage(message, "me");
+                })));
   }
 
-  Widget buildInputBox(String content, String author) {
+  Widget buildSingleMessage(String content, String author) {
     return Container(
         padding: EdgeInsets.all(18.0),
         child: Container(
@@ -91,5 +98,9 @@ class _MessageWindowState extends State<MessageWindow> {
                         fontSize: 16.0,
                       )),
                 ])));
+  }
+
+  Widget buildInputBox() {
+    throw UnimplementedError();
   }
 }
