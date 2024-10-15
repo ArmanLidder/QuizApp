@@ -7,23 +7,40 @@
 
         <div class="chat-content" *ngIf="state !== 0">
             <div *ngIf="!isChatFocused" class="canal-list">
-                    <h2>Canaux</h2>
-                    <ul>
-                        <ng-container *ngFor="let canal of canals$ | async; trackBy: trackById">
-                            <li *ngIf="canal.permittedUsers.includes(user.uid) || canal.name === 'general'"
-                                (click)="loadCanal(canal.id!)">
-                                {{ canal.name }}
-                                <button *ngIf="canal.name !== 'general'" (click)="deleteCanal(canal.id!); $event.stopPropagation()">X</button>
-                            </li>
-                        </ng-container>
-                    </ul>
-                    <button (click)="createNewCanal()">Ajouter un Canal</button>
+                <div>
+                    <mat-form-field>
+                        <input matInput
+                               placeholder="Chercher un canal ..."
+                               [formControl]="searchControl"
+                               [matAutocomplete]="users"
+                        />
+                    </mat-form-field>
+                    <mat-autocomplete #users="matAutocomplete" class="bg-white opacity-100">
+                        <mat-option *ngFor="let canal of canalsSearch$ | async" (click)="joinChat(canal.id)" class="bg-white opacity-100 hover:bg-white opacity-100 active:bg-white opacity-100">
+                            {{ canal.name }}
+                        </mat-option>
+                    </mat-autocomplete>
+                </div>
+                <h2>Mes canaux</h2>
+                <ul>
+                    <ng-container *ngFor="let canal of canals$ | async; trackBy: trackById">
+                        <li *ngIf="canal.permittedUsers.includes(user.uid) || canal.name === 'general'"
+                            (click)="loadCanal(canal.id!)">
+                            {{ canal.name }}
+                            <button *ngIf="canal.name !== 'general'"
+                                    (click)="deleteCanal(canal.id!); $event.stopPropagation()">X
+                            </button>
+                        </li>
+                    </ng-container>
+                </ul>
+                <button (click)="createNewCanal()">Ajouter un Canal</button>
             </div>
 
             <div *ngIf="isChatFocused" class="chat-area">
                 <div class="messages" *ngIf="currentCanal$ | async as canal">
                     <div class="canal-header">
-                        <button (click)="toggleIsChat()"><i style ="color:#007bff" class="bi bi-caret-left-fill">Canaux</i></button>
+                        <button (click)="toggleIsChat()"><i style="color:#007bff"
+                                                            class="bi bi-caret-left-fill">Canaux</i></button>
                         <h3><strong>{{ canal.name }}</strong></h3>
                     </div>
                     <div *ngIf="canal.messages.length > 0">
@@ -44,7 +61,8 @@
                                     <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
                                 </ng-container>
                             </div>
-                        </ng-container></div>
+                        </ng-container>
+                    </div>
                 </div>
 
                 <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="message-form">
