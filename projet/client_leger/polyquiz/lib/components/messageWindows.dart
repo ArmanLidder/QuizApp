@@ -26,54 +26,70 @@ class _MessageWindowState extends State<MessageWindow> {
         child: Column(children: <Widget>[
       // Cette section est la liste des messages déjà envoyés
       Expanded(
-          child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                return buildMessageBlock(message, "me");
-              })),
+          child: buildMessageContainer()
+      ),
       Container(
+          padding: EdgeInsets.all(5.0),
           child: Row(children: <Widget>[
-        Expanded(
-            child: TextField(
-          controller: _messageController,
-          decoration: InputDecoration(
-            hintText: "input a message...",
-            border: InputBorder.none,
-          ),
-          onSubmitted: (value) => _sendMessage(),
-        )),
-        IconButton(
-            onPressed: _sendMessage,
-            icon: Icon(
-              Icons.send,
-              color: Colors.blue,
-            ))
-      ]))
+            Expanded(
+                child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: "input a message...",
+                border: InputBorder.none,
+              ),
+              onSubmitted: (value) => _sendMessage(),
+            )),
+            IconButton(
+                onPressed: _sendMessage,
+                icon: Icon(
+                  Icons.send,
+                  color: Colors.blue,
+                ))
+          ]))
     ]));
   }
 
-  Widget buildMessageBlock(String content, String author) {
+  Widget buildMessageContainer() {
+    return Container(
+      padding: EdgeInsets.all(30.0),
+        child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.blue,
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: ListView.builder(
+            itemCount: _messages.length,
+            itemBuilder: (context, index) {
+              final message = _messages[index];
+              return buildInputBox(message, "me");
+            })));
+  }
+
+  Widget buildInputBox(String content, String author) {
     return Container(
         padding: EdgeInsets.all(18.0),
         child: Container(
             padding: EdgeInsets.all(10.0),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(12.0)
-            ),
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(12.0)),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-              Text(
-                author,
-                style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold),
-              ),
-              // Il faudrait avoir un espace
-              Text(content,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                  )),
-            ])));
+                  Text(
+                    "$author:",
+                    style:
+                        TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold),
+                  ),
+                  // Il faudrait avoir un espace
+                  Text(content,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      )),
+                ])));
   }
 }
