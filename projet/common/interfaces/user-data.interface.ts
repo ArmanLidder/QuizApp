@@ -30,15 +30,14 @@ export interface LoginHistory {
 
 interface GameHistory {
     result: 'win' | 'loss';
-    timestamp: Date;
+    timestamp: any;
     score: number;
     gameMode: string;
 }
 
-interface FriendRequest {
+export interface FriendRequest {
     fromUserId: string;
     toUserId: string;
-    status: 'pending' | 'accepted' | 'rejected';
 }
 
 interface UserSettings {

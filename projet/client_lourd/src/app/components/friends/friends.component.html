@@ -1,0 +1,51 @@
+<mat-tab-group>
+    <!-- Friends Tab -->
+    <mat-tab label="Amis">
+        <div class="p-6">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800">Liste des Amis</h3>
+            <div *ngIf="(friends$ | async) as friends; else noFriends">
+                <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
+                    <li *ngFor="let friend of friends" class="p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <app-avatar-with-level [user]="friend"></app-avatar-with-level>
+                            <span class="font-medium text-gray-700">{{ friend.username }}</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <ng-template #noFriends>
+                <p class="text-center text-gray-600 mt-4">Vous n'avez pas encore d'amis.</p>
+            </ng-template>
+        </div>
+    </mat-tab>
+
+    <!-- Pending Friend Requests Tab -->
+    <mat-tab label="Demandes d'Amis en Attente">
+        <div class="p-6">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800">Demandes en Attente</h3>
+            <div *ngIf="(pendingRequests$ | async) as requests; else noRequests">
+                <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
+                    <li *ngFor="let request of requests" class="p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <app-avatar-with-level [user]="request"></app-avatar-with-level>
+                            <span class="font-medium text-gray-700">{{ request.username }}</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="text-green-600 hover:text-green-700 transition duration-300 ease-in-out"
+                                    (click)="acceptFriendRequest(request.uid)">
+                                <mat-icon>check_circle</mat-icon>
+                            </button>
+                            <button class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out"
+                                    (click)="denyFriendRequest(request.uid)">
+                                <mat-icon>cancel</mat-icon>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <ng-template #noRequests>
+                <p class="text-center text-gray-600 mt-4">Pas de demandes d'amis en attente.</p>
+            </ng-template>
+        </div>
+    </mat-tab>
+</mat-tab-group>

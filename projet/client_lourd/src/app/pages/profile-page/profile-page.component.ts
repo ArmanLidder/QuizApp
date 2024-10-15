@@ -11,6 +11,7 @@ import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service"
 import {
   UsernameModificationDialogComponent
 } from "@app/components/username-modification-dialog/username-modification-dialog.component";
+import {UserSearchDialogComponent} from "@app/components/user-search-dialog/user-search-dialog.component";
 
 @Component({
   selector: 'app-profile',
@@ -92,8 +93,10 @@ export class ProfilePageComponent implements OnInit {
   }
 
   usernameModificationDialog() {
-    // const dialogRef = this.dialog.open(UsernameModificationDialogComponent);
     this.dialog.open(UsernameModificationDialogComponent);
+  }
 
+  openUserSearch() {
+    this.dialog.open(UserSearchDialogComponent);
   }
 }

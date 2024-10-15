@@ -52,10 +52,14 @@
                     </div>
 
                     <div>
-                        <h2 class="text-2xl font-semibold mb-4">Amis</h2>
-                        <ul class="bg-gray-50 p-4 rounded-lg">
-                            <li *ngFor="let friend of user.friends" class="mb-2 last:mb-0">{{ friend }}</li>
-                        </ul>
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-2xl font-semibold mb-4">Amis</h2>
+                            <button (click)="openUserSearch()" class="bg-white text-blue-600 hover:text-blue-400 font-semibold py-2 px-4 transition duration-300 ease-in-out flex mb-4">
+                                <mat-icon class="mr-2">person_add</mat-icon>
+                                Ajouter
+                            </button>
+                        </div>
+                        <app-friends></app-friends>
                     </div>
                 </div>
 

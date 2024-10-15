@@ -8,7 +8,7 @@ import {
     query,
     collection,
     getDocs,
-    where,
+    where, collectionData,
 } from '@angular/fire/firestore';
 import {firstValueFrom, Observable, of, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
@@ -64,6 +64,11 @@ export class UsersService {
     getUser(uid: string): Observable<User | null> {
         const userDocRef = doc(this.firestore, `users/${uid}`);
         return docData(userDocRef, { idField: 'uid' }) as Observable<User | null>;
+    }
+
+    getAllUsers() : Observable<User[] | null> {
+        const userCollectionRef = collection(this.firestore, `users`);
+        return collectionData(userCollectionRef) as Observable<User[] | null>;
     }
 
     async getUserByEmail(email: string): Promise<User | undefined> {
