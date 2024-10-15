@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {ApplicationRef, Component, OnInit, ViewChild} from '@angular/core';
 import {CanalService} from "@app/services/canal.service/canal.service";
 import {Message, Canal} from "@common/interfaces/message.interface";
 import {combineLatest, firstValueFrom, map, Observable, startWith} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from "@app/services/users.service/users.service";
 import {User} from "@app/interfaces/user/user-data.interface";
+import {PopoutWindowComponent} from "angular-popout-window";
 
 export enum State {
     closed,
@@ -18,6 +19,7 @@ export enum State {
     styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
+    @ViewChild('popupWindow') popWindow: PopoutWindowComponent;
     searchControl = new FormControl('')
     canals$: Observable<Canal[]>;
     user$: Observable<User>;
@@ -30,14 +32,14 @@ export class ChatComponent implements OnInit {
     constructor(
         private canalService: CanalService,
         private fb: FormBuilder,
-        public usersService: UsersService,
+        private appRef: ApplicationRef,
+        public usersService: UsersService
     ) {
         this.canals$ = this.canalService.canals$;
         this.user$ = this.usersService.currentUserProfile$ as Observable<User>;
         this.messageForm = this.fb.group({
             message: ['', Validators.required]
         });
-
         this.canalsSearch$ = combineLatest([
             this.canalService.canals$,
             this.searchControl.valueChanges.pipe(startWith('')),
@@ -49,16 +51,28 @@ export class ChatComponent implements OnInit {
             }),
             map(canals => canals || []),
         );
+    }
 
+    closingPopOut(isClosed: boolean) {
+        if (isClosed) {
+            this.state = State.closed;
+            this.popWindow.popIn();
+            this.appRef.tick(); // This triggers a cycle of change detection for rendering back the component
+        }
+    }
+
+    async ngOnInit() {
+        await this.canalService.ensureGeneralCanal();
+    }
+
+    popOut() {
+        this.state = State.outside;
+        this.popWindow.popOut();
     }
 
     async joinChat(canalId: any) {
         const user = await firstValueFrom(this.user$);
         await this.canalService.addUser(canalId, user.uid);
-    }
-
-    async ngOnInit() {
-        await this.canalService.ensureGeneralCanal();
     }
 
     trackById(index: number, canal: Canal): string {
