@@ -74,4 +74,11 @@ export class CanalService {
       messages: arrayUnion(messageWithTimestamp)
     });
   }
+
+  async addUser(canalId: string, userId: string) {
+    const canalRef = this.canalsCollection.doc(canalId).ref;
+    await updateDoc(canalRef, {
+      permittedUsers: arrayUnion(userId)
+    });
+  }
 }
