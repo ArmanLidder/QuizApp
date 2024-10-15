@@ -63,6 +63,7 @@ import { AvatarModificationDialogComponent } from './components/avatar-modificat
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatListModule} from "@angular/material/list";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import { PopoutWindowModule } from 'angular-popout-window';
 
 /**
  * Main module that is used in main.ts.
@@ -139,6 +140,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
         MatProgressSpinnerModule,
         MatListModule,
         MatAutocompleteModule,
+        PopoutWindowModule,
     ],
     providers: [
         CanalService,
