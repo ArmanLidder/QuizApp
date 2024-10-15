@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/widgets/game_widgets/host_widgets/host_grading_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_legend_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
@@ -21,6 +22,7 @@ class _MyWidgetState extends State<GamePage> {
   bool isHost = true;
   bool isQcm = false; // Il faudra remplacer par un enum par la suite
   bool noticeReceived = false;
+  bool isGrading = true;
   int time = 10;
   int questionNum = 1;
   int questionPts = 50;
@@ -70,9 +72,7 @@ class _MyWidgetState extends State<GamePage> {
                   visible: !isQcm && !noticeReceived, child: PlayerQrl()),
               Visibility(
                   visible: noticeReceived,
-                  child: PlayerNotice(
-                    message: message,
-                  )),
+                  child: PlayerNotice(message: message)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -90,14 +90,11 @@ class _MyWidgetState extends State<GamePage> {
                           textStyle: TextStyle(fontWeight: FontWeight.normal),
                           splashFactory: NoSplash.splashFactory,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
+                              borderRadius: BorderRadius.circular(20.0)),
                           backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
                     ),
                   ),
-                  SizedBox(
-                    width: 100.0,
-                  ),
+                  SizedBox(width: 100.0),
                   QuitBtn()
                 ],
               )
@@ -133,8 +130,7 @@ class _MyWidgetState extends State<GamePage> {
                             textStyle: TextStyle(fontWeight: FontWeight.normal),
                             splashFactory: NoSplash.splashFactory,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
+                                borderRadius: BorderRadius.circular(20.0)),
                             backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
                       ),
                     ),
@@ -145,8 +141,14 @@ class _MyWidgetState extends State<GamePage> {
                   ],
                 ),
                 SizedBox(height: 20.0),
-                HistogramLegend(),
-                Histogram(),
+                Visibility(visible: isQcm, child: HistogramLegend()),
+                Visibility(visible: isQcm, child: Histogram()),
+                Visibility(
+                    visible: isGrading,
+                    child: HostGrading(
+                      playerName: 'Player1',
+                      playerAnswer: 'Answer answer answer',
+                    )),
                 PlayersDataTableLegend(),
                 SizedBox(height: 20.0),
                 PlayersDataTable()
