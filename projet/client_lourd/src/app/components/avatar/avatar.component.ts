@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import { Router } from '@angular/router';
 import {UsersService} from "@app/services/users.service/users.service";
 import { environment } from "../../../environments/environment";
@@ -13,8 +13,9 @@ import {AuthService} from "@app/services/auth.service/auth.service";
 })
 export class AvatarComponent {
   @Input() isChat: boolean;
+  @Input() uid: string;
 
-  currentUser$: Observable<User | null>;
+  currentUser$: Observable<User | undefined>;
 
   isMenuOpen: boolean = false;
   menuEnabled: boolean = false;
@@ -23,10 +24,20 @@ export class AvatarComponent {
       private router: Router,
       private authService: AuthService,
       private usersService: UsersService,
-  ) {
-    // Get the current user profile
-    this.currentUser$ = this.usersService.currentUserProfile$;
+  ) {}
+
+  ngOnInit(): void {
+    if (this.uid) {
+      this.loadUserProfile(this.uid);
+    } else if (!this.isChat) {
+      this.currentUser$ = this.usersService.currentUserProfile$ as Observable<User>;
+    }
   }
+
+  private loadUserProfile(uid: string): void {
+    this.currentUser$ = this.usersService.getUser(uid) as Observable<User>;
+  }
+
 
   toggleMenu() {
     if (!this.isChat) {

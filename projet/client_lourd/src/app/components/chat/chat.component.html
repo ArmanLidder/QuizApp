@@ -1,29 +1,57 @@
-<div class="chat-container">
-    <div class="canal-list">
-        <h2>Canals</h2>
-        <ul>
-            <li *ngFor="let canal of canals$ | async"
-                [class.active]="canal.id === currentCanal?.id"
-                (click)="loadCanal(canal.id!)">
-                {{ canal.name }}
-                <button *ngIf="canal.name !== 'general'" (click)="deleteCanal(canal.id!)">X</button>
-            </li>
-        </ul>
-        <button (click)="createNewCanal()">New Canal</button>
-    </div>
-
-    <div class="chat-area">
-        <div class="messages" *ngIf="currentCanal">
-            <h3>{{ currentCanal.name }}</h3>
-            <div class="message" *ngFor="let msg of currentCanal.messages">
-                <strong>{{ msg.userUid }}</strong>: {{ msg.message }}
-                <small>{{ msg.createdAt.toDate() | date:'short' }}</small>
-            </div>
+<ng-container *ngIf="user$ | async as user">
+    <div class="chat-container" [ngClass]="{'closed': state === 0, 'opened': state === 1, 'outside': state === 2}">
+        <div class="chat-header" (click)="toggleChatState()">
+            <span><i class="bi bi-chat-dots-fill"></i> Clavardage</span>
+            <button (click)="console.log('openWindow')"><i class="bi bi-box-arrow-up-right"></i></button>
         </div>
 
-        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="message-form">
-            <input type="text" formControlName="message" placeholder="Type a message...">
-            <button type="submit" [disabled]="!messageForm.valid">Send</button>
-        </form>
+        <div class="chat-content" *ngIf="state !== 0">
+            <div *ngIf="!isChatFocused" class="canal-list">
+                    <h2>Canaux</h2>
+                    <ul>
+                        <ng-container *ngFor="let canal of canals$ | async; trackBy: trackById">
+                            <li *ngIf="canal.permittedUsers.includes(user.uid) || canal.name === 'general'"
+                                (click)="loadCanal(canal.id!)">
+                                {{ canal.name }}
+                                <button *ngIf="canal.name !== 'general'" (click)="deleteCanal(canal.id!); $event.stopPropagation()">X</button>
+                            </li>
+                        </ng-container>
+                    </ul>
+                    <button (click)="createNewCanal()">Ajouter un Canal</button>
+            </div>
+
+            <div *ngIf="isChatFocused" class="chat-area">
+                <div class="messages" *ngIf="currentCanal$ | async as canal">
+                    <div class="canal-header">
+                        <button (click)="toggleIsChat()"><i style ="color:#007bff" class="bi bi-caret-left-fill">Canaux</i></button>
+                        <h3><strong>{{ canal.name }}</strong></h3>
+                    </div>
+                    <div *ngIf="canal.messages.length > 0">
+                        <ng-container *ngFor="let msg of canal.messages">
+                            <div [ngClass]="['message', getMessageClass(msg, user)]">
+                                <ng-container *ngIf="getMessageClass(msg, user) == 'received'">
+                                    <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
+                                    <div class="bubble">
+                                        <span>{{ msg.message }}</span>
+                                        <small>{{ msg.createdAt.toDate() | date: 'short' }}</small>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="getMessageClass(msg, user) == 'sent'">
+                                    <div class="bubble">
+                                        <span>{{ msg.message }}</span>
+                                        <small style="color:antiquewhite">{{ msg.createdAt.toDate() | date: 'short' }}</small>
+                                    </div>
+                                    <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
+                                </ng-container>
+                            </div>
+                        </ng-container></div>
+                </div>
+
+                <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="message-form">
+                    <input type="text" formControlName="message" placeholder="Saisir un message..." required>
+                    <button type="submit" [disabled]="!messageForm.valid"><i class="bi bi-send-fill"></i></button>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
+</ng-container>
