@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_legend_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
@@ -143,11 +144,11 @@ class _MyWidgetState extends State<GamePage> {
                     QuitBtn()
                   ],
                 ),
-                SizedBox(
-                  height: 20.0,
-                ),
+                SizedBox(height: 20.0),
                 HistogramLegend(),
                 Histogram(),
+                PlayersDataTableLegend(),
+                SizedBox(height: 20.0),
                 PlayersDataTable()
               ],
             ))
