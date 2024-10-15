@@ -94,7 +94,7 @@ class _MessageWindowState extends State<MessageWindow> {
               color: Colors.grey,
               width: 2.0,
             ),
-          color: Colors.red[100],
+          color: Colors.red[50],
           borderRadius: BorderRadius.circular(12.0),
         ),
             child: Container(
