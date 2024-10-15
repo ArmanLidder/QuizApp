@@ -37,15 +37,17 @@ export class CanalService {
     canals.map((canal: Canal) => {
       canal_names.push(canal.name);
     });
-    if (canal_names.includes(name)) throw new Error("Le nom de canal est déjà utiliser");
-    const newCanal: Canal = {
-      name,
-      isPrivate,
-      permittedUsers,
-      messages: []
-    };
-    const docRef = await this.canalsCollection.add(newCanal);
-    return docRef.id;
+    if (!canal_names.includes(name)) {
+      const newCanal: Canal = {
+        name,
+        isPrivate,
+        permittedUsers,
+        messages: []
+      };
+      const docRef = await this.canalsCollection.add(newCanal);
+      return docRef.id;
+    }
+    return '';
   }
 
   async deleteCanal(canalId: string): Promise<void> {
