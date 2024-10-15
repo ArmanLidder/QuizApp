@@ -35,25 +35,7 @@ class _MessageWindowState extends State<MessageWindow> {
           )),
       // Cette section est la liste des messages déjà envoyés
       Expanded(child: buildMessageContainer()),
-      Container(
-          padding: EdgeInsets.all(5.0),
-          child: Row(children: <Widget>[
-            Expanded(
-                child: TextField(
-              controller: _messageController,
-              decoration: InputDecoration(
-                hintText: "input a message...",
-                border: InputBorder.none,
-              ),
-              onSubmitted: (value) => _sendMessage(),
-            )),
-            IconButton(
-                onPressed: _sendMessage,
-                icon: Icon(
-                  Icons.send,
-                  color: Colors.blue,
-                ))
-          ]))
+      buildInputBox(),
     ]));
   }
 
@@ -73,7 +55,10 @@ class _MessageWindowState extends State<MessageWindow> {
                 itemBuilder: (context, index) {
                   final message = _messages[index];
                   return buildSingleMessage(message, "me");
-                })));
+                }
+                )
+        )
+    );
   }
 
   Widget buildSingleMessage(String content, String author) {
@@ -101,6 +86,36 @@ class _MessageWindowState extends State<MessageWindow> {
   }
 
   Widget buildInputBox() {
-    throw UnimplementedError();
+    return Container(
+      padding: EdgeInsets.all(30.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey,
+              width: 2.0,
+            ),
+          color: Colors.red[100],
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+            child: Container(
+                padding: EdgeInsets.all(12.0),
+                child:
+    Row(children: <Widget>[
+      Expanded(
+          child: TextField(
+            controller: _messageController,
+            decoration: InputDecoration(
+              hintText: "input a message...",
+              border: InputBorder.none,
+            ),
+            onSubmitted: (value) => _sendMessage(),
+          )),
+      IconButton(
+          onPressed: _sendMessage,
+          icon: Icon(
+            Icons.send,
+            color: Colors.blue,
+          ))
+    ]))));
   }
 }
