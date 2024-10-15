@@ -14,7 +14,6 @@ export class UsernameModificationDialogComponent {
     private snackbar = inject(SnackbarService);
 
     newUsername: string = '';
-    isSubmitting: boolean = false;
 
     cancel() {
         this.dialogRef.close();
@@ -30,15 +29,14 @@ export class UsernameModificationDialogComponent {
             return;
         }
 
-        this.isSubmitting = true;
         try {
-            await this.usersService.updateUsername(this.newUsername); // Call the service to update the username
+            await this.usersService.updateUsername(this.newUsername);
             this.snackbar.show('Nom d’utilisateur modifié avec succès');
             this.dialogRef.close({ updatedUsername: this.newUsername });
+            return;
         } catch (error:any) {
             this.snackbar.show(error.message);
-        } finally {
-            this.isSubmitting = false;
+            return;
         }
     }
 }

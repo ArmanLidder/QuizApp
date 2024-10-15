@@ -103,24 +103,19 @@ export class UsersService {
     }
 
     async isUsernameTaken(username: string): Promise<boolean> {
-        const lowerCaseUsername = username.toLowerCase();
         const usersRef = collection(this.firestore, 'users');
-
-        const q = query(usersRef, where('username', '>=', lowerCaseUsername), where('username', '<=', lowerCaseUsername + '\uf8ff'));
+        const q = query(usersRef, where('username', '==', username));
         const querySnapshot = await getDocs(q);
-
-        return querySnapshot.docs.some(doc =>
-            (doc.data().username as string).toLowerCase() === lowerCaseUsername
-        );
+        return !querySnapshot.empty;
     }
 
+
     async updateUsername(newUsername: string): Promise<void> {
-        const lowerCaseUsername = newUsername.toLowerCase();
-        const isTaken = await this.isUsernameTaken(lowerCaseUsername);
+        const isTaken = await this.isUsernameTaken(newUsername);
         if (isTaken) throw new Error('Ce nom est déja utilisé');
         if (this.auth.currentUser?.uid){
             const userDocRef = doc(this.firestore, `users/${this.auth.currentUser?.uid}`);
-            await updateDoc(userDocRef, {username: lowerCaseUsername});
+            await updateDoc(userDocRef, {username: newUsername});
         } else throw new Error('Erreur: essayez de vous reconnectez.');
     }
 }
