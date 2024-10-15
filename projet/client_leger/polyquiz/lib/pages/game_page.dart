@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
@@ -63,9 +64,9 @@ class _MyWidgetState extends State<GamePage> {
               ),
               Visibility(
                   visible: isQcm && !noticeReceived,
-                  child: Container(height: 500, child: PlayerQcmWidget())),
+                  child: Container(height: 500, child: PlayerQcm())),
               Visibility(
-                  visible: !isQcm && !noticeReceived, child: PlayerQrlWidget()),
+                  visible: !isQcm && !noticeReceived, child: PlayerQrl()),
               Visibility(
                   visible: noticeReceived,
                   child: PlayerNotice(
@@ -147,6 +148,7 @@ class _MyWidgetState extends State<GamePage> {
                 ),
                 HistogramLegend(),
                 Histogram(),
+                PlayersDataTable()
               ],
             ))
       ]),

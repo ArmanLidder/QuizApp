@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class PlayerQrlWidget extends StatefulWidget {
-  const PlayerQrlWidget({super.key});
+class PlayerQrl extends StatefulWidget {
+  const PlayerQrl({super.key});
 
   @override
-  State<PlayerQrlWidget> createState() => _PlayerQrlWidgetState();
+  State<PlayerQrl> createState() => _PlayerQrlWidgetState();
 }
 
-class _PlayerQrlWidgetState extends State<PlayerQrlWidget> {
+class _PlayerQrlWidgetState extends State<PlayerQrl> {
   int counter = 0;
   var inputText = '';
   @override

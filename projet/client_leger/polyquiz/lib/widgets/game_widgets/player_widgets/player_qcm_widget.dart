@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_choice_widget.dart';
 
-class PlayerQcmWidget extends StatefulWidget {
-  const PlayerQcmWidget({super.key});
+class PlayerQcm extends StatefulWidget {
+  const PlayerQcm({super.key});
 
   @override
-  State<PlayerQcmWidget> createState() => _PlayerQcmWidgetState();
+  State<PlayerQcm> createState() => _PlayerQcmWidgetState();
 }
 
-class _PlayerQcmWidgetState extends State<PlayerQcmWidget> {
+class _PlayerQcmWidgetState extends State<PlayerQcm> {
   List<String> choices = ['choice1', 'choice2', 'choice3'];
   Color textBtnColor = Color.fromRGBO(0, 0, 0, 0);
   @override
@@ -22,7 +22,7 @@ class _PlayerQcmWidgetState extends State<PlayerQcmWidget> {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       children: List.generate(choices.length, (index) {
-        return PlayerQcmChoiceWidget(index: index, choice: choices[index]);
+        return PlayerQcmChoice(index: index, choice: choices[index]);
       }),
     );
   }

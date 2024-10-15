@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class PlayerQcmChoiceWidget extends StatefulWidget {
+class PlayerQcmChoice extends StatefulWidget {
   final int index;
   final String choice;
 
-  const PlayerQcmChoiceWidget({
+  const PlayerQcmChoice({
     Key? key,
     required this.index,
     required this.choice,
   }) : super(key: key);
 
   @override
-  State<PlayerQcmChoiceWidget> createState() => _PlayerQcmChoiceWidgetState();
+  State<PlayerQcmChoice> createState() => _PlayerQcmChoiceWidgetState();
 }
 
-class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoiceWidget> {
+class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   Color textBtnColor = Color.fromRGBO(0, 0, 0, 0);
   @override
   Widget build(BuildContext context) {
