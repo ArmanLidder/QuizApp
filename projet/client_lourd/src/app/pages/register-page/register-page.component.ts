@@ -2,7 +2,6 @@ import {Component, inject, OnInit} from '@angular/core';
 import {AuthService} from "@app/services/auth.service/auth.service";
 import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
 import {Router} from "@angular/router";
-import { firstValueFrom} from "rxjs";
 import {UsersService} from "@app/services/users.service/users.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
@@ -59,13 +58,10 @@ export class RegisterPageComponent implements OnInit {
             const { username, email, password } = this.authForm.value;
             try {
                 const { user } = await this.authService.register(username, email, password);
-
                 await this.usersService.addUser({ uid: user.uid, email, username });
-
-                await this.handleAvatar(user.uid);
-
+                await this.avatarService.handleAvatarModification(this.selectedAvatar);
                 this.snackbarService.show('Compte créé');
-                this.router.navigate(['/login']);
+                this.router.navigate(['/home']);
 
             } catch (error: any) {
                 console.log(error);
@@ -74,15 +70,4 @@ export class RegisterPageComponent implements OnInit {
         }
     }
 
-
-    async handleAvatar(uid: string): Promise<void> {
-        if (typeof this.selectedAvatar === 'string') {
-            await this.usersService.updateUserAvatar(uid, this.selectedAvatar);
-        } else if (this.selectedAvatar instanceof File) {
-            const avatarUrl = await firstValueFrom(this.avatarService.uploadAvatar(uid, this.selectedAvatar));
-            await this.usersService.updateUserAvatar(uid, avatarUrl);
-        } else {
-            this.snackbarService.show('Aucun avatar sélectionné');
-        }
-    }
 }

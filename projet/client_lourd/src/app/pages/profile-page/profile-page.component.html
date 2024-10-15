@@ -1,19 +1,26 @@
-<div class="bg-gray-100 min-h-screen p-8">
+<div class="min-h-screen p-8">
     <!-- Display user data when available -->
     <ng-container *ngIf="currentUser$ | async as user">
         <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white text-center">
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white text-center relative">
                 <div class="relative inline-block">
-                    <div class="absolute -top-2 -left-2 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
+                    <div class="absolute -top-2 -left-0.5 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
                         {{ user.level }}
                     </div>
                     <img [src]="user.avatar" alt="Avatar de {{ user.username }}"
-                         class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg"/>
-                    <div class="text-4xl absolute -bottom-0 -right-1 flex items-center justify-center border-none">
-                        {{ getPrestigeIcon(user.prestige) }}
-                    </div>
+                         class="w-32 h-32 rounded-full mx-auto mb-4 border-2 border-white shadow-lg"/>
+                    <button class="absolute -bottom-0 -right-0 mb-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-10 h-10"
+                            (click)="avatarModificationDialog()">
+                        <mat-icon class="text-xl">edit</mat-icon>
+                    </button>
                 </div>
-                <h1 class="text-3xl font-bold mt-2">Profil de {{ user.username }}</h1>
+                <div class="flex items-center justify-center mt-2">
+                    <h1 class="text-3xl font-bold">{{ user.username }}</h1>
+                    <button class="ml-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-6 h-6"
+                            (click)="usernameModificationDialog()">
+                        <mat-icon class="text-base">edit</mat-icon>
+                    </button>
+                </div>
                 <p class="text-lg mt-2">{{ user.email }}</p>
                 <div class="mt-4 flex justify-center items-center space-x-4">
                     <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center">
@@ -24,14 +31,9 @@
                     <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
                         <span class="font-semibold">Argent :</span> {{ user.currency }}
                     </div>
-                    <button class="absolute top-0 right-0 m-4 p-2 bg-white text-blue-500 rounded-full shadow-md hover:bg-gray-200"
-                            (click)="openDialog()">
-                        <i class="fas fa-pen"></i>
-                    </button>
                 </div>
             </div>
 
-            <!-- Display statistics -->
             <div class="p-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
@@ -58,7 +60,7 @@
                 </div>
 
                 <!-- Achievements -->
-                <div class="mt-8">
+                <div class="mt-8 mb-8">
                     <h2 class="text-2xl font-semibold mb-4">Exploits</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <div *ngFor="let achievement of allAchievements; let i = index"
@@ -69,21 +71,45 @@
                     </div>
                 </div>
 
-                <!-- Connection history -->
-                <div class="mt-8">
-                    <h2 class="text-2xl font-semibold mb-4">Historique des Connexions</h2>
-                    <ul class="bg-gray-50 p-4 rounded-lg">
-                        <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
-              <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
-                {{ history.eventType === 'login' ? 'Connexion' : 'Déconnexion' }}
-              </span>
-                            le {{ history.timestamp.toDate()| date:'yyyy-MM-dd HH:mm:ss' }}
-                        </li>
-                    </ul>
-                </div>
+                <!-- Connection history (inside expansion panel) -->
+                <mat-accordion class="mt-8 space-y-4">
+                    <!-- Connection History Panel -->
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header class="p-4 bg-white hover:bg-gray-300">
+                            <mat-panel-title class="p-4 text-lg font-bold text-gray-700">
+                                Historique des Connexions
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <ul class="bg-gray-50 p-4 rounded-lg">
+                            <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
+                <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
+                    {{ history.eventType === 'login' ? 'Connexion' : 'Déconnexion' }}
+                </span>
+                                le {{ history.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }}
+                            </li>
+                        </ul>
+                    </mat-expansion-panel>
+
+                    <!-- Game History Panel -->
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header class="p-4 bg-white hover:bg-gray-300">
+                            <mat-panel-title class="p-4 text-lg font-bold text-gray-700">
+                                Historique des Parties
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <ul class="bg-gray-50 p-4 rounded-lg">
+                            <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
+                <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
+                    {{ game.result === 'win' ? 'Gagné' : 'Perdu' }}
+                </span>
+                                le {{ game.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }},
+                                Mode de jeu: {{ game.gameMode }},
+                                Score: {{ game.score }}
+                            </li>
+                        </ul>
+                    </mat-expansion-panel>
+                </mat-accordion>
             </div>
         </div>
     </ng-container>
 </div>
-
-

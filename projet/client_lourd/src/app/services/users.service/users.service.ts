@@ -114,14 +114,13 @@ export class UsersService {
         );
     }
 
-    async updateUsername(newUsername: string): Promise<string> {
+    async updateUsername(newUsername: string): Promise<void> {
         const lowerCaseUsername = newUsername.toLowerCase();
         const isTaken = await this.isUsernameTaken(lowerCaseUsername);
-        if (isTaken) throw new Error('This username is already taken.');
+        if (isTaken) throw new Error('Ce nom est déja utilisé');
         if (this.auth.currentUser?.uid){
             const userDocRef = doc(this.firestore, `users/${this.auth.currentUser?.uid}`);
             await updateDoc(userDocRef, {username: lowerCaseUsername});
-            return 'Username updated successfully.';
-        } else throw new Error('User not found or not authenticated.');
+        } else throw new Error('Erreur: essayez de vous reconnectez.');
     }
 }

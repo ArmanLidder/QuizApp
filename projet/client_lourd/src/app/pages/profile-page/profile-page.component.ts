@@ -1,10 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { UsersService} from "@app/services/users.service/users.service";
 import { MatDialog } from "@angular/material/dialog";
-import { UserModificationDialogComponent } from "@app/components/user-modification-dialog/user-modification-dialog.component";
-import { Observable } from 'rxjs';
+import { Observable} from 'rxjs';
 import { User } from '@app/interfaces/user/user-data.interface';
-import {timestampToDate} from "@app/services/auth.service/auth.service";
+import {
+  AvatarModificationDialogComponent
+} from "@app/components/avatar-modification-dialog/avatar-modification-dialog.component";
+import {AvatarService} from "@app/services/avatar.service/avatar.service";
+import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
+import {
+  UsernameModificationDialogComponent
+} from "@app/components/username-modification-dialog/username-modification-dialog.component";
 
 @Component({
   selector: 'app-profile',
@@ -12,6 +18,11 @@ import {timestampToDate} from "@app/services/auth.service/auth.service";
   styleUrls: ['./profile-page.component.scss'],
 })
 export class ProfilePageComponent implements OnInit {
+  private usersService = inject(UsersService);
+  private dialog = inject(MatDialog);
+  private avatarService= inject(AvatarService);
+  private snackbar = inject(SnackbarService);
+
   currentUser$: Observable<User | null>; // Using an observable to get user data
   userAchievements: number[] | undefined;
 
@@ -26,16 +37,11 @@ export class ProfilePageComponent implements OnInit {
     "Atteindre le prestige platine"
   ];
 
-  constructor(private usersService: UsersService, private dialog: MatDialog) {
-    // Get the current user profile observable from UsersService
-    this.currentUser$ = this.usersService.currentUserProfile$;
-  }
-
   ngOnInit(): void {
     // Fetch user achievements when the component is initialized
+    this.currentUser$ = this.usersService.currentUserProfile$;
     this.currentUser$.subscribe((user) => {
       if (user) {
-        console.log(user);
         this.userAchievements = user.achievements.map((achievement) => Number(achievement));
       }
     });
@@ -70,9 +76,24 @@ export class ProfilePageComponent implements OnInit {
     return '🚫';  // Default icon
   }
 
-  openDialog() {
-    this.dialog.open(UserModificationDialogComponent);
+  avatarModificationDialog() {
+    const dialogRef = this.dialog.open(AvatarModificationDialogComponent);
+
+    dialogRef.afterClosed().subscribe(async (res) => {
+      if (res) {
+        try {
+          await this.avatarService.handleAvatarModification(res.data);
+          this.snackbar.show('Avatar modifié avec succès');
+        } catch {
+          this.snackbar.show('Erreur de modification');
+        }
+      }
+    });
   }
 
-  protected readonly timestampToDate = timestampToDate;
+  usernameModificationDialog() {
+    // const dialogRef = this.dialog.open(UsernameModificationDialogComponent);
+    this.dialog.open(UsernameModificationDialogComponent);
+
+  }
 }

@@ -66,19 +66,15 @@ export class AuthService {
 
 
     async logout(): Promise<void> {
-        // Get the current user profile
         const user = await firstValueFrom(this.usersService.currentUserProfile$) ;
         if (user) {
-            // Get the server timestamp
             const time = await this.servertimeService.getServerTime();
 
-            // Create a logout event
             const logoutEvent: LoginHistory = {
                 eventType: 'logout',
                 timestamp: time,
             };
 
-            // Update the user document with the new logout event
             await this.usersService.updateUser({
                 uid: user.uid,
                 isConnected: false,
@@ -86,7 +82,6 @@ export class AuthService {
             });
         }
 
-        // Sign out the user from Firebase
         await this.auth.signOut();
     }
 

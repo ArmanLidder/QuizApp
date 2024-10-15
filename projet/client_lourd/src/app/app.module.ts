@@ -49,7 +49,7 @@ import {RegisterPageComponent} from "@app/pages/register-page/register-page.comp
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
-import { UserModificationDialogComponent } from './components/user-modification-dialog/user-modification-dialog.component';
+import { UsernameModificationDialogComponent } from '@app/components/username-modification-dialog/username-modification-dialog.component';
 import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.component';
 import {initializeApp, provideFirebaseApp} from "@angular/fire/app";
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -59,6 +59,8 @@ import {environment} from "../environments/environment";
 import {ChatComponent} from "@app/components/chat/chat.component";
 import {FIREBASE_OPTIONS} from "@angular/fire/compat";
 import {CanalService} from "@app/services/canal.service/canal.service";
+import { AvatarModificationDialogComponent } from './components/avatar-modification-dialog/avatar-modification-dialog.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 /**
  * Main module that is used in main.ts.
@@ -105,9 +107,10 @@ import {CanalService} from "@app/services/canal.service/canal.service";
         AvatarComponent,
         HeaderComponent,
         ProfilePageComponent,
-        UserModificationDialogComponent,
+        UsernameModificationDialogComponent,
         AvatarPickerComponent,
         ChatComponent,
+        AvatarModificationDialogComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -131,6 +134,7 @@ import {CanalService} from "@app/services/canal.service/canal.service";
         provideAuth(() => getAuth()),
         provideFirestore(() => getFirestore()),
         provideStorage(() => getStorage()),
+        MatProgressSpinnerModule,
     ],
     providers: [
         CanalService,

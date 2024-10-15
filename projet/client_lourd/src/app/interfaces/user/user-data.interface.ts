@@ -30,7 +30,7 @@ export interface LoginHistory {
 
 interface GameHistory {
     result: 'win' | 'loss';
-    timestamp: Date;
+    timestamp: any;
     score: number;
     gameMode: string;
 }
