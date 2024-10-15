@@ -61,6 +61,8 @@ import {FIREBASE_OPTIONS} from "@angular/fire/compat";
 import {CanalService} from "@app/services/canal.service/canal.service";
 import { AvatarModificationDialogComponent } from './components/avatar-modification-dialog/avatar-modification-dialog.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatListModule} from "@angular/material/list";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 /**
  * Main module that is used in main.ts.
@@ -135,6 +137,8 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
         provideFirestore(() => getFirestore()),
         provideStorage(() => getStorage()),
         MatProgressSpinnerModule,
+        MatListModule,
+        MatAutocompleteModule,
     ],
     providers: [
         CanalService,
