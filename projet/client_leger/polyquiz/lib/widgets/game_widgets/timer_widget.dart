@@ -31,7 +31,7 @@ class _TimerWidgetState extends State<TimerWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Time left: ',
+            'Temps restant: ',
             style: TextStyle(fontSize: 20),
           ),
           Text(

@@ -26,7 +26,7 @@ class _MyWidgetState extends State<GamePage> {
   int time = 10;
   int questionNum = 1;
   int questionPts = 50;
-  String message = 'Please wait while the host grades the answers...';
+  String message = "Attendez pendant que l'hôte corrige les réponses...";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +81,7 @@ class _MyWidgetState extends State<GamePage> {
                     child: TextButton(
                       onPressed: () {},
                       child: Text(
-                        'Confirm',
+                        'Confirmer',
                         style: TextStyle(
                             color: Color.fromRGBO(255, 255, 255, 1),
                             fontSize: 20),
@@ -121,7 +121,7 @@ class _MyWidgetState extends State<GamePage> {
                       child: TextButton(
                         onPressed: () {},
                         child: Text(
-                          'Next Question',
+                          'Prochaine question',
                           style: TextStyle(
                               color: Color.fromRGBO(255, 255, 255, 1),
                               fontSize: 20),

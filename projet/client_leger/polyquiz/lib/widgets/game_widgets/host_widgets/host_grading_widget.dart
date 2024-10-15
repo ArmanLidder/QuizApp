@@ -18,10 +18,10 @@ class _HostGradingState extends State<HostGrading> {
       child: Column(
         children: [
           Divider(),
-          Text('Grading of question:',
+          Text('Correction de la réponse:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          Text('Player: ${widget.playerName}', style: TextStyle(fontSize: 16)),
-          Text('Answer: ${widget.playerAnswer}',
+          Text('Joueur: ${widget.playerName}', style: TextStyle(fontSize: 16)),
+          Text('Réponse: ${widget.playerAnswer}',
               style: TextStyle(fontSize: 16)),
           SizedBox(height: 20.0),
           DropdownMenu(dropdownMenuEntries: <DropdownMenuEntry<int>>[

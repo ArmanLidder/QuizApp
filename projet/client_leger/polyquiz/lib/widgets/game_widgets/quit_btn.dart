@@ -8,7 +8,7 @@ class QuitBtn extends StatelessWidget {
     return TextButton(
       onPressed: () {},
       child: Text(
-        'Quit',
+        'Quitter',
         style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
       ),
       style: TextButton.styleFrom(

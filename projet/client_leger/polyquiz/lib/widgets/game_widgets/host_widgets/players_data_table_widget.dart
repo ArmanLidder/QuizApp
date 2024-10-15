@@ -53,7 +53,7 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
     List<DataColumn> columns = [
       DataColumn(
         onSort: (columnIndex, isAscending) => onSort(columnIndex, isAscending),
-        label: Expanded(child: Center(child: Text('Name'))),
+        label: Expanded(child: Center(child: Text('Nom'))),
       ),
       DataColumn(
         onSort: (columnIndex, isAscending) => onSort(columnIndex, isAscending),
