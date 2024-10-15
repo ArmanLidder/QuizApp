@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/components/messageWindows.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -11,6 +12,8 @@ class LoginPage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Color.fromRGBO(53, 121, 246, 1),
       ),
-    );
+      body: MessageWindow(),
+    )
+    ;
   }
 }
