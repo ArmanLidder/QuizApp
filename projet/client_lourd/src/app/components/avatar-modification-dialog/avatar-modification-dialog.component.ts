@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import { MatDialogRef} from "@angular/material/dialog";
-import {AvatarService} from "@app/services/avatar.service/avatar.service";
+import { AvatarService } from "@app/services/avatar.service/avatar.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 
 @Component({
