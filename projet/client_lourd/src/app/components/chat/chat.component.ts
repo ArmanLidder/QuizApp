@@ -87,9 +87,10 @@ export class ChatComponent implements OnInit {
 
   async createNewCanal() {
     const canalName = prompt('Enter new canal name:');
+    const userId = (await firstValueFrom(this.user$)).uid;
     if (canalName) {
       try {
-        await this.canalService.createCanal(canalName, false, []);
+        await this.canalService.createCanal(canalName, false, [userId]);
       } catch (error) {
         // console.error('Error creating canal:', error);
       }
