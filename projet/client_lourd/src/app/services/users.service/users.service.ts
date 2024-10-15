@@ -10,7 +10,7 @@ import {
     getDocs,
     where,
 } from '@angular/fire/firestore';
-import {Observable, of, switchMap} from 'rxjs';
+import {firstValueFrom, Observable, of, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
 
@@ -83,8 +83,10 @@ export class UsersService {
         await updateDoc(userDoc, { avatar: avatarUrl });
     }
 
-    async updateUser(user: Partial<User>): Promise<void> { // This function needs uid in user input or errors will happen.
-        const ref = doc(this.firestore, 'users', user.uid as string);
+    async updateUser(user: Partial<User>): Promise<void> {
+        const currentUser = await firstValueFrom(this.user$);
+        const uid = currentUser?.uid;
+        const ref = doc(this.firestore, 'users', uid as string);
         await updateDoc(ref, { ...user });
     }
 

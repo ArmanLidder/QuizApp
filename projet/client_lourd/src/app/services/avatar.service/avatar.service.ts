@@ -23,7 +23,7 @@ export class AvatarService {
         const currentUser = await firstValueFrom(this.usersService.user$);
         const uid = currentUser?.uid;
         if (typeof avatarData === 'string') {
-            await this.usersService.updateUser({uid: uid, avatar: avatarData});
+            await this.usersService.updateUser({avatar: avatarData});
             const avataraFileRef = ref(this.storage, `user_avatars/${uid}/avatar.png`);
             try {
                 await deleteObject(avataraFileRef);
@@ -31,7 +31,7 @@ export class AvatarService {
             }
         } else {
             const newAvatarUrl = await this.uploadAvatar(avatarData as File);
-            await this.usersService.updateUser({uid: uid, avatar: newAvatarUrl});
+            await this.usersService.updateUser({avatar: newAvatarUrl});
         }
     }
 
