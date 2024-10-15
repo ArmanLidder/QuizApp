@@ -10,7 +10,7 @@ import {
     getDocs,
     where,
 } from '@angular/fire/firestore';
-import {from, map, Observable, of, switchMap} from 'rxjs';
+import {Observable, of, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
 
