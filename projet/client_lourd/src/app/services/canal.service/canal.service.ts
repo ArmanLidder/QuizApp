@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { updateDoc, arrayUnion } from '@angular/fire/firestore';
+import {updateDoc, arrayUnion, arrayRemove} from '@angular/fire/firestore';
 import {Observable, firstValueFrom} from 'rxjs';
 import { map } from 'rxjs/operators';
 import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
@@ -81,6 +81,13 @@ export class CanalService {
     const canalRef = this.canalsCollection.doc(canalId).ref;
     await updateDoc(canalRef, {
       permittedUsers: arrayUnion(userId)
+    });
+  }
+
+  async removeUser(canalId: string, userId: string) {
+    const canalRef = this.canalsCollection.doc(canalId).ref;
+    await updateDoc(canalRef, {
+      permittedUsers: arrayRemove(userId)
     });
   }
 }

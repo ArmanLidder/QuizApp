@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ApplicationRef, Component, inject, OnInit, ViewChild} from '@angular/core';
 import {CanalService} from "@app/services/canal.service/canal.service";
 import {Message, Canal} from "@common/interfaces/message.interface";
 import {combineLatest, firstValueFrom, map, Observable, startWith} from 'rxjs';
@@ -19,40 +19,36 @@ export enum State {
     styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
+    private canalService: CanalService = inject(CanalService)
+    private fb: FormBuilder = inject(FormBuilder)
+    private appRef: ApplicationRef = inject(ApplicationRef)
+    public usersService: UsersService = inject(UsersService)
+
     @ViewChild('popupWindow') popWindow: PopoutWindowComponent;
-    searchControl = new FormControl('')
+    messageForm: FormGroup;
+
+    // Observables from firestore
     canals$: Observable<Canal[]>;
     user$: Observable<User>;
     currentCanal$: Observable<Canal | undefined>;
-    messageForm: FormGroup;
-    isChatFocused: boolean = false;
-    state: State = State.closed;
+
+    isCreateCanal: boolean;
+    isJoiningCanal: boolean;
+    canalNameForm: FormGroup;
+    searchControl = new FormControl('');
     canalsSearch$: Observable<Canal[]>;
+    feedback: string = '';
 
-    constructor(
-        private canalService: CanalService,
-        private fb: FormBuilder,
-        private appRef: ApplicationRef,
-        public usersService: UsersService
-    ) {
-        this.canals$ = this.canalService.canals$;
-        this.user$ = this.usersService.currentUserProfile$ as Observable<User>;
-        this.messageForm = this.fb.group({
-            message: ['', Validators.required]
-        });
-        this.canalsSearch$ = combineLatest([
-            this.canalService.canals$,
-            this.searchControl.valueChanges.pipe(startWith('')),
-            this.usersService.currentUserProfile$,
-        ]).pipe(
-            map(([canals, search, user]) => {
-                const str = (search ?? '').toLowerCase();
-                return canals.filter(canal => canal.name.toLowerCase().includes(str) && canal.name !== 'general' && !canal.permittedUsers.includes((user as User).uid));
-            }),
-            map(canals => canals || []),
-        );
-    }
+    // properties to control Chat component state => opened, closed or contextual
+    state: State = State.closed;
+    isChatFocused: boolean = false;
 
+
+    constructor() { this.setUp();}
+
+    async ngOnInit() { await this.canalService.ensureGeneralCanal(); }
+
+    // Pop out Window methods
     closingPopOut(isClosed: boolean) {
         if (isClosed) {
             this.state = State.closed;
@@ -61,20 +57,12 @@ export class ChatComponent implements OnInit {
         }
     }
 
-    async ngOnInit() {
-        await this.canalService.ensureGeneralCanal();
-    }
-
     popOut() {
         this.state = State.outside;
         this.popWindow.popOut();
     }
 
-    async joinChat(canalId: any) {
-        const user = await firstValueFrom(this.user$);
-        await this.canalService.addUser(canalId, user.uid);
-    }
-
+    // Methods for UI
     trackById(index: number, canal: Canal): string {
         return canal.id!;
     }
@@ -87,9 +75,40 @@ export class ChatComponent implements OnInit {
         }
     }
 
+    toggleIsChat() {
+        this.isChatFocused = !this.isChatFocused;
+    }
+
     // Check who is the sender for css style
     getMessageClass(msg: Message, user: User): string {
         return user.uid === msg.userUid ? 'sent' : 'received';
+    }
+
+    // Chat logic method calling appropiate services
+    async joinChat(canalId: any) {
+        const user = await firstValueFrom(this.user$);
+        await this.canalService.addUser(canalId, user.uid);
+        this.returnToMenu();
+    }
+
+    async leaveChat(canalId: any) {
+        const user = await firstValueFrom(this.user$);
+        await this.canalService.removeUser(canalId, user.uid);
+    }
+
+    async createCanal() {
+        const canalName = this.canalNameForm.get('canalName')?.value;
+        const userId = (await firstValueFrom(this.usersService.currentUserProfile$) as User).uid;
+        if (canalName) {
+            try {
+                this.feedback = '';
+                const docRef: string = await this.canalService.createCanal(canalName, false, [userId]);
+                if (docRef === '') this.feedback = `Le nom ${canalName} est déjà utilisé. Veuillez choisir un autre nom.`;
+                else this.returnToMenu();
+            } catch (error) {
+                this.feedback = `Le nom ${canalName} est déjà utilisé. Veuillez choisir un autre nom.`;
+            }
+        }
     }
 
     loadCanal(canalId: string) {
@@ -119,16 +138,19 @@ export class ChatComponent implements OnInit {
         }
     }
 
-    async createNewCanal() {
-        const canalName = prompt('Enter new canal name:');
-        const userId = (await firstValueFrom(this.user$)).uid;
-        if (canalName) {
-            try {
-                await this.canalService.createCanal(canalName, false, [userId]);
-            } catch (error) {
-                // console.error('Error creating canal:', error);
-            }
-        }
+    createNewCanal() {
+        this.isCreateCanal = true;
+    }
+
+    joinNewCanal() {
+       this.isJoiningCanal = true;
+    }
+
+    returnToMenu() {
+        this.canalNameForm.reset('');
+        this.feedback = '';
+        this.isCreateCanal = false;
+        this.isJoiningCanal = false;
     }
 
     async deleteCanal(canalId: string) {
@@ -141,8 +163,26 @@ export class ChatComponent implements OnInit {
         }
     }
 
-    toggleIsChat() {
-        this.isChatFocused = !this.isChatFocused;
+    private setUp() {
+        this.canals$ = this.canalService.canals$;
+        this.user$ = this.usersService.currentUserProfile$ as Observable<User>;
+        this.messageForm = this.fb.group({
+            message: ['', Validators.required]
+        });
+        this.canalNameForm = this.fb.group({
+            canalName: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]]
+        });
+        this.canalsSearch$ = combineLatest([
+            this.canalService.canals$,
+            this.searchControl.valueChanges.pipe(startWith('')),
+            this.usersService.currentUserProfile$,
+        ]).pipe(
+            map(([canals, search, user]) => {
+                const str = (search ?? '').toLowerCase();
+                return canals.filter(canal => canal.name.toLowerCase().includes(str) && canal.name !== 'general' && !canal.permittedUsers.includes((user as User).uid));
+            }),
+            map(canals => canals || []),
+        );
     }
 
     protected readonly console = console;
