@@ -36,32 +36,40 @@ export class AuthService {
 
         try {
             return await createUserWithEmailAndPassword(this.auth, email, password);
-        } catch (error:any) {
-            throw new Error('Erreur de création du utilisateur' + error.message);
+        } catch (error: any) {
+            const frenchErrorMessage = this.mapFirebaseAuthError(error.code);
+            throw new Error(frenchErrorMessage);
         }
     }
+
 
 
     async login(email: string, password: string): Promise<void> {
-        // Get the user data by email
-        const userData = await this.usersService.getUserByEmail(email);
-        if (userData?.isConnected) {
-            throw new Error('Cet utilisateur est déjà connecté.');
+        try {
+            // Get the user data by email
+            const userData = await this.usersService.getUserByEmail(email);
+            if (userData?.isConnected) {
+                throw new Error('Cet utilisateur est déjà connecté.');
+            }
+
+            await signInWithEmailAndPassword(this.auth, email, password);
+            const time = await this.servertimeService.getServerTime();
+
+            const loginEvent: LoginHistory = {
+                eventType: 'login',
+                timestamp: time,
+            };
+
+            await this.usersService.updateUser({
+                isConnected: true,
+                loginHistory: [...(userData?.loginHistory || []), loginEvent],
+            });
+        } catch (error: any) {
+            const frenchErrorMessage = this.mapFirebaseAuthError(error.code);
+            throw new Error(frenchErrorMessage);
         }
-
-        await signInWithEmailAndPassword(this.auth, email, password);
-        const time = await this.servertimeService.getServerTime();
-
-        const loginEvent: LoginHistory = {
-            eventType: 'login',
-            timestamp: time,
-        };
-
-        await this.usersService.updateUser({
-            isConnected: true,
-            loginHistory: [...(userData?.loginHistory || []), loginEvent], // Append the new login event
-        });
     }
+
 
 
     async logout(): Promise<void> {
@@ -76,12 +84,39 @@ export class AuthService {
 
             await this.usersService.updateUser({
                 isConnected: false,
-                loginHistory: [...(user.loginHistory || []), logoutEvent], // Append the new logout event
+                loginHistory: [...(user.loginHistory || []), logoutEvent],
             });
         }
 
         await this.auth.signOut();
     }
 
+    private mapFirebaseAuthError(errorCode: string): string {
+        switch (errorCode) {
+            case 'auth/invalid-email':
+                return "L'adresse e-mail est invalide.";
+            case 'auth/invalid-credential':
+                return "Courriel et/ou mot de passe incorrect";
+            case 'auth/user-disabled':
+                return "Le compte de cet utilisateur est désactivé.";
+            case 'auth/user-not-found':
+                return "Aucun utilisateur trouvé avec cet e-mail.";
+            case 'auth/wrong-password':
+                return "Le mot de passe est incorrect.";
+            case 'auth/email-already-in-use':
+                return "Ce courriel est déjà utilisé par un autre compte.";
+            case 'auth/weak-password':
+                return "Le mot de passe est trop faible.";
+            case 'auth/operation-not-allowed':
+                return "Cette opération n'est pas autorisée.";
+            case 'auth/network-request-failed':
+                return "La connexion au réseau a échoué.";
+            case 'auth/requires-recent-login':
+                return "Veuillez vous reconnecter avant d'effectuer cette opération.";
+            default:
+                console.log(errorCode);
+                return "Une erreur inconnue s'est produite.";
+        }
+    }
 
 }
