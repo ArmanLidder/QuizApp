@@ -101,7 +101,7 @@
                                 Historique des Connexions
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <ul class="bg-gray-50 p-4 rounded-lg">
+                        <ul class="bg-gray-50 p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
                             <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
                 <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
                     {{ history.eventType === 'login' ? 'Connexion' : 'Déconnexion' }}
@@ -110,6 +110,7 @@
                             </li>
                         </ul>
                     </mat-expansion-panel>
+
                     <!-- Game History Panel -->
                     <mat-expansion-panel>
                         <mat-expansion-panel-header class="p-4 bg-white hover:bg-gray-300">
@@ -117,7 +118,7 @@
                                 Historique des Parties
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <ul class="bg-gray-50 p-4 rounded-lg">
+                        <ul class="bg-gray-50 p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
                             <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
                 <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
                     {{ game.result === 'win' ? 'Gagné' : 'Perdu' }}

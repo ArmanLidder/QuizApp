@@ -1,9 +1,10 @@
 <mat-tab-group class="h-full">
+    <!-- Friends Tab -->
     <mat-tab label="Amis">
         <div class="p-4 h-60 flex flex-col">
-            <div *ngIf="(friends$ | async) as friends; else noFriends" class="h-full">
+            <div *ngIf="(friends$ | async) as friends; else noFriends" class="flex-grow overflow-y-auto">
                 <ng-container *ngIf="friends.length > 0; else noFriends">
-                    <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200 h-full overflow-y-auto">
+                    <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
                         <li *ngFor="let friend of friends" class="p-4 flex items-center justify-between">
                             <div class="flex items-center space-x-4">
                                 <app-avatar-with-level [user]="friend"></app-avatar-with-level>
@@ -19,17 +20,18 @@
             </div>
             <ng-template #noFriends>
                 <div class="flex justify-center items-center h-full">
-                    <p class="text-center text-gray-600">Vous n'avez pas encore d'amis.</p>
+                    <p class="text-center text-gray-600">Votre liste d'amis est vide pour le moment.</p>
                 </div>
             </ng-template>
         </div>
     </mat-tab>
 
-    <mat-tab label="En Attente">
+    <!-- Pending Requests Tab -->
+    <mat-tab label="Demandes Reçues">
         <div class="p-4 h-60 flex flex-col">
-            <div *ngIf="(pendingRequests$ | async) as requests; else noRequests" class="h-full">
+            <div *ngIf="(pendingRequests$ | async) as requests; else noRequests" class="flex-grow overflow-y-auto">
                 <ng-container *ngIf="requests.length > 0; else noRequests">
-                    <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200 h-full overflow-y-auto">
+                    <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
                         <li *ngFor="let request of requests" class="p-4 flex items-center justify-between">
                             <div class="flex items-center space-x-4">
                                 <app-avatar-with-level [user]="request"></app-avatar-with-level>
@@ -51,7 +53,7 @@
             </div>
             <ng-template #noRequests>
                 <div class="flex justify-center items-center h-full">
-                    <p class="text-center text-gray-600">Pas de demandes d'amis en attente.</p>
+                    <p class="text-center text-gray-600">Vous n'avez reçu aucune demande d'ami.</p>
                 </div>
             </ng-template>
         </div>

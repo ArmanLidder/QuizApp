@@ -98,6 +98,9 @@ export class ProfilePageComponent implements OnInit {
   }
 
   openUserSearch() {
-    this.dialog.open(UserSearchDialogComponent);
+    this.dialog.open(UserSearchDialogComponent, {
+      width:'20%',
+      maxWidth:'80vw'
+    });
   }
 }
