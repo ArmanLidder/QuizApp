@@ -21,8 +21,9 @@ export class UserSearchDialogComponent implements OnInit, OnDestroy {
 
     searchControl = new FormControl('');
     filteredUsers$: Observable<User[]>;
-
+    currentUser$: Observable<User|null>
     ngOnInit() {
+        this.currentUser$ = this.usersService.currentUserProfile$;
         this.filteredUsers$ = this.searchControl.valueChanges.pipe(
             startWith(''),
             debounceTime(300), // Wait for 300ms to reduce unnecessary calls
@@ -64,16 +65,11 @@ export class UserSearchDialogComponent implements OnInit, OnDestroy {
         }
     }
 
-    cancelFriendRequest(user: User) {
+    hasPendingRequest(user: User, pendingUser: User | null): boolean {
+        if (!pendingUser) return false;
+        return user.friendRequests.some(request =>
+            request.fromUserId === pendingUser.uid && request.toUserId === user.uid
+        );
     }
 
-    // Check if the user is already a friend
-    isFriend(user: User): boolean {
-        return false;
-    }
-
-    // Check if a friend request is pending for the user
-    hasPendingRequest(user: User): boolean {
-        return false;
-    }
 }

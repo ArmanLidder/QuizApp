@@ -7,6 +7,8 @@ import {
     doc,
     Firestore,
     runTransaction,
+    arrayRemove,
+    updateDoc,
 } from '@angular/fire/firestore';
 
 @Injectable({
@@ -56,9 +58,6 @@ export class FriendService {
             })
         );
     }
-
-
-
 
     async sendFriendRequest(toUserId: string) {
         const currentUser = await firstValueFrom(this.usersService.currentUserProfile$); // Get current user
@@ -129,13 +128,34 @@ export class FriendService {
         });
     }
 
+    async denyFriendRequest(deniedUserId: string) {
+        const currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
+        if (!currentUser) throw new Error('Erreur d\'authentification. Veuillez vous reconnecter.');
+        const uid = currentUser.uid;
+        const currentUserDocRef = doc(this.firestore, `users/${uid}`);
+        return runTransaction(this.firestore, async (transaction) => {
+            const currentUserDoc = await transaction.get(currentUserDocRef);
 
-    async denyFriendRequest(userId: string) {
+            const currentFriendRequests = currentUserDoc.data()?.friendRequests || [];
 
+            const updatedFriendRequests = currentFriendRequests.filter(
+                (req: FriendRequest) => req.fromUserId !== deniedUserId //Keep every friend request exceptt the one from userId
+            );
+
+            transaction.update(currentUserDocRef, {
+                friendRequests: updatedFriendRequests,
+            });
+        });
     }
 
-    async removeFriend(userId: string) {
-
+    async removeFriend(unfriendedUserId: string) {
+        const currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
+        if (!currentUser) throw new Error('Erreur d\'authentification. Veuillez vous reconnecter.');
+        const toUserId = currentUser.uid;
+        const currentUserDocRef = doc(this.firestore, `users/${toUserId}`);
+        const unfriendedUserDocRef = doc(this.firestore, `users/${unfriendedUserId}`);
+        await updateDoc(currentUserDocRef, {friends: arrayRemove(unfriendedUserId)});
+        await updateDoc(unfriendedUserDocRef, {friends: arrayRemove(toUserId)});
     }
 
 }

@@ -13,11 +13,19 @@
                 <h3 class="text-base font-medium text-gray-900">{{ user.username }}</h3>
             </div>
             <div class="items-center">
-                <ng-container *ngIf="!isFriend(user) ">
+                <ng-container *ngIf="!hasPendingRequest(user, currentUser$ | async); else pendingRequestIcon">
                     <button (click)="sendFriendRequest(user)" class="items-center text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex">
-                        <mat-icon class="mr-2">person_add</mat-icon>
+                        <mat-icon class="mr-2" matTooltip="Envoyer une requête d'ami"
+                                  matTooltipClass="custom-tooltip">person_add</mat-icon>
                     </button>
                 </ng-container>
+                <ng-template #pendingRequestIcon>
+                    <mat-icon
+                            class="mr-2 items-center text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex"
+                            matTooltip="Requête en attente"
+                            matTooltipClass="custom-tooltip"
+                    >hourglass_empty</mat-icon>
+                </ng-template>
             </div>
         </div>
     </div>
