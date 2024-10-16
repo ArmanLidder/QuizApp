@@ -13,6 +13,8 @@ import {
 import {firstValueFrom, Observable, of, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
+import {LoginHistory} from "@common/interfaces/user-data.interface";
+import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
 
 
 const defaultUser: User = {
@@ -48,7 +50,7 @@ const defaultUser: User = {
 export class UsersService {
     user$ = authState(this.auth);
 
-    constructor(private firestore: Firestore, private auth: Auth) {
+    constructor(private firestore: Firestore, private auth: Auth,private serverTimeService: ServerTimeService) {
     }
 
     get currentUserProfile$(): Observable<User | null> {
@@ -71,23 +73,6 @@ export class UsersService {
         return collectionData(userCollectionRef) as Observable<User[] | null>;
     }
 
-    async getUserByEmail(email: string): Promise<User | undefined> {
-        const usersRef = collection(this.firestore, 'users');
-        const q = query(usersRef, where('email', '==', email));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-            const userDoc = querySnapshot.docs[0]; // Assuming email is unique
-            return userDoc.data() as User;
-        } else return undefined;
-    }
-
-
-    async updateUserAvatar(uid: string, avatarUrl: string): Promise<void> {
-        const userDoc = doc(this.firestore, `users/${uid}`);
-        await updateDoc(userDoc, { avatar: avatarUrl });
-    }
-
     async updateUser(user: Partial<User>): Promise<void> {
         const currentUser = await firstValueFrom(this.user$);
         const uid = currentUser?.uid;
@@ -108,7 +93,6 @@ export class UsersService {
         return !querySnapshot.empty;
     }
 
-
     async updateUsername(newUsername: string): Promise<void> {
         const isTaken = await this.isUsernameTaken(newUsername);
         if (isTaken) throw new Error('Ce nom est déja utilisé');
@@ -116,5 +100,19 @@ export class UsersService {
             const userDocRef = doc(this.firestore, `users/${this.auth.currentUser?.uid}`);
             await updateDoc(userDocRef, {username: newUsername});
         } else throw new Error('Erreur: essayez de vous reconnectez.');
+    }
+
+    async addLogEvent(event : 'login' | 'logout'): Promise<void> {
+        const currentUser = await firstValueFrom(this.currentUserProfile$)
+        const time = await this.serverTimeService.getServerTime();
+
+        const loginEvent: LoginHistory = {
+            eventType: event,
+            timestamp: time,
+        };
+        await this.updateUser({
+            isConnected: true,
+            loginHistory: [...currentUser?.loginHistory || [], loginEvent], // Append new login event
+        });
     }
 }

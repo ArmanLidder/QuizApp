@@ -1,6 +1,4 @@
 import {Injectable} from '@angular/core';
-import {firstValueFrom} from 'rxjs';
-import {Timestamp} from "firebase/firestore";
 
 import {
     Auth, authState,
@@ -9,12 +7,8 @@ import {
 } from '@angular/fire/auth';
 
 import {UsersService} from "@app/services/users.service/users.service";
-import {LoginHistory} from "@app/interfaces/user/user-data.interface";
-import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
-export const timestampToDate = (timestamp: Timestamp) => {
-    const unixTimestamp = (timestamp.seconds + timestamp.nanoseconds * 10**-9) * 1000;
-    return new Date(unixTimestamp);
-};
+import {AvatarService} from "@app/services/avatar.service/avatar.service";
+
 
 @Injectable({
     providedIn: 'root'
@@ -27,67 +21,39 @@ export class AuthService {
 
     user$ = authState(this.auth);
 
-    constructor(private auth: Auth, private usersService: UsersService, private servertimeService : ServerTimeService) {
+    constructor(private auth: Auth,
+                private usersService: UsersService,
+                private avatarService: AvatarService) {
     }
 
-    async register(username: string, email: string, password: string): Promise<any> {
+    async register(username: string, email: string, password: string, selectedAvatar: string | File): Promise<void> {
         const isTaken = await this.usersService.isUsernameTaken(username);
         if (isTaken) throw new Error(`Le nom "${username}" est déjà utilisé`);
-
         try {
-            return await createUserWithEmailAndPassword(this.auth, email, password);
+            const {user} = await createUserWithEmailAndPassword(this.auth, email, password);
+            await this.usersService.addUser({uid: user.uid, email, username});
+            await this.avatarService.handleAvatarModification(selectedAvatar);
+            await this.usersService.addLogEvent('login');
         } catch (error: any) {
             const frenchErrorMessage = this.mapFirebaseAuthError(error.code);
             throw new Error(frenchErrorMessage);
         }
     }
-
 
 
     async login(email: string, password: string): Promise<void> {
         try {
-            // Get the user data by email
-            const userData = await this.usersService.getUserByEmail(email);
-            if (userData?.isConnected) {
-                throw new Error('Cet utilisateur est déjà connecté.');
-            }
-
             await signInWithEmailAndPassword(this.auth, email, password);
-            const time = await this.servertimeService.getServerTime();
-
-            const loginEvent: LoginHistory = {
-                eventType: 'login',
-                timestamp: time,
-            };
-
-            await this.usersService.updateUser({
-                isConnected: true,
-                loginHistory: [...(userData?.loginHistory || []), loginEvent],
-            });
+            await this.usersService.addLogEvent('login');
         } catch (error: any) {
-            const frenchErrorMessage = this.mapFirebaseAuthError(error.code);
-            throw new Error(frenchErrorMessage);
+            const errorMessage = this.mapFirebaseAuthError(error.code);
+            throw new Error(errorMessage);
         }
     }
 
 
-
     async logout(): Promise<void> {
-        const user = await firstValueFrom(this.usersService.currentUserProfile$) ;
-        if (user) {
-            const time = await this.servertimeService.getServerTime();
-
-            const logoutEvent: LoginHistory = {
-                eventType: 'logout',
-                timestamp: time,
-            };
-
-            await this.usersService.updateUser({
-                isConnected: false,
-                loginHistory: [...(user.loginHistory || []), logoutEvent],
-            });
-        }
-
+        await this.usersService.addLogEvent('logout');
         await this.auth.signOut();
     }
 

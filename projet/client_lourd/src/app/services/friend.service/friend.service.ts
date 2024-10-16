@@ -10,7 +10,7 @@ import {
     arrayRemove,
     updateDoc,
 } from '@angular/fire/firestore';
-
+//TODO refactor other functions to be similar to the deleteFriends one at the bottom of this file
 @Injectable({
     providedIn: 'root'
 })

@@ -2,7 +2,6 @@ import {Component, inject, OnInit} from '@angular/core';
 import {AuthService} from "@app/services/auth.service/auth.service";
 import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/forms';
 import {Router} from "@angular/router";
-import {UsersService} from "@app/services/users.service/users.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
 
@@ -18,7 +17,6 @@ export class RegisterPageComponent implements OnInit {
     selectedAvatar: string | File | null = null;
 
 
-    private usersService = inject(UsersService);
     private authService = inject(AuthService);
     private snackbarService = inject(SnackbarService);
     private avatarService = inject(AvatarService)
@@ -57,12 +55,9 @@ export class RegisterPageComponent implements OnInit {
         if (this.authForm.valid && this.selectedAvatar !== null) {
             const { username, email, password } = this.authForm.value;
             try {
-                const { user } = await this.authService.register(username, email, password);
-                await this.usersService.addUser({ uid: user.uid, email, username });
-                await this.avatarService.handleAvatarModification(this.selectedAvatar);
+                await this.authService.register(username, email, password, this.selectedAvatar);
                 this.snackbarService.show('Compte créé');
                 this.router.navigate(['/home']);
-
             } catch (error: any) {
                 console.log(error);
                 this.snackbarService.show(error.message || 'Une erreur est survenue');
