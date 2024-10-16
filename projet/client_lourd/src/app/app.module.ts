@@ -61,8 +61,12 @@ import {FIREBASE_OPTIONS} from "@angular/fire/compat";
 import {CanalService} from "@app/services/canal.service/canal.service";
 import { AvatarModificationDialogComponent } from './components/avatar-modification-dialog/avatar-modification-dialog.component';
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
-import {MatListModule} from "@angular/material/list";
+import { UserSearchDialogComponent } from './components/user-search-dialog/user-search-dialog.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {MatListModule} from "@angular/material/list";
+import { FriendsComponent } from './components/friends/friends.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import { AvatarWithLevelComponent } from './components/avatar-with-level/avatar-with-level.component';
 import { PopoutWindowModule } from 'angular-popout-window';
 
 /**
@@ -114,6 +118,9 @@ import { PopoutWindowModule } from 'angular-popout-window';
         AvatarPickerComponent,
         ChatComponent,
         AvatarModificationDialogComponent,
+        UserSearchDialogComponent,
+        FriendsComponent,
+        AvatarWithLevelComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -138,8 +145,9 @@ import { PopoutWindowModule } from 'angular-popout-window';
         provideFirestore(() => getFirestore()),
         provideStorage(() => getStorage()),
         MatProgressSpinnerModule,
-        MatListModule,
         MatAutocompleteModule,
+        MatListModule,
+        MatTabsModule,
         PopoutWindowModule,
     ],
     providers: [

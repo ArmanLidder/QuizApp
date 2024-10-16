@@ -49,7 +49,7 @@ export class AuthService {
             throw new Error('Cet utilisateur est déjà connecté.');
         }
 
-        const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+        await signInWithEmailAndPassword(this.auth, email, password);
         const time = await this.servertimeService.getServerTime();
 
         const loginEvent: LoginHistory = {
@@ -58,7 +58,6 @@ export class AuthService {
         };
 
         await this.usersService.updateUser({
-            uid: userCredential.user.uid,
             isConnected: true,
             loginHistory: [...(userData?.loginHistory || []), loginEvent], // Append the new login event
         });
@@ -76,7 +75,6 @@ export class AuthService {
             };
 
             await this.usersService.updateUser({
-                uid: user.uid,
                 isConnected: false,
                 loginHistory: [...(user.loginHistory || []), logoutEvent], // Append the new logout event
             });

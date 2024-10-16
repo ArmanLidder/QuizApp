@@ -8,9 +8,9 @@ import {
     query,
     collection,
     getDocs,
-    where,
+    where, collectionData,
 } from '@angular/fire/firestore';
-import {Observable, of, switchMap} from 'rxjs';
+import {firstValueFrom, Observable, of, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
 
@@ -66,6 +66,11 @@ export class UsersService {
         return docData(userDocRef, { idField: 'uid' }) as Observable<User | null>;
     }
 
+    getAllUsers() : Observable<User[] | null> {
+        const userCollectionRef = collection(this.firestore, `users`);
+        return collectionData(userCollectionRef) as Observable<User[] | null>;
+    }
+
     async getUserByEmail(email: string): Promise<User | undefined> {
         const usersRef = collection(this.firestore, 'users');
         const q = query(usersRef, where('email', '==', email));
@@ -83,8 +88,10 @@ export class UsersService {
         await updateDoc(userDoc, { avatar: avatarUrl });
     }
 
-    async updateUser(user: Partial<User>): Promise<void> { // This function needs uid in user input or errors will happen.
-        const ref = doc(this.firestore, 'users', user.uid as string);
+    async updateUser(user: Partial<User>): Promise<void> {
+        const currentUser = await firstValueFrom(this.user$);
+        const uid = currentUser?.uid;
+        const ref = doc(this.firestore, 'users', uid as string);
         await updateDoc(ref, { ...user });
     }
 
