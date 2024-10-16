@@ -43,13 +43,18 @@ export class AuthService {
 
     async login(email: string, password: string): Promise<void> {
         try {
+            const userData = await this.usersService.getUserByEmail(email);
+            if (userData?.isConnected) throw new Error('Cet utilisateur est déjà connecté.')
             await signInWithEmailAndPassword(this.auth, email, password);
             await this.usersService.addLogEvent('login');
         } catch (error: any) {
+            if (error.message === 'Cet utilisateur est déjà connecté.')  throw error;
             const errorMessage = this.mapFirebaseAuthError(error.code);
             throw new Error(errorMessage);
         }
     }
+
+
 
 
     async logout(): Promise<void> {

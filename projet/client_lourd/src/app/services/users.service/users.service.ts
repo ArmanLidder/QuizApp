@@ -111,8 +111,19 @@ export class UsersService {
             timestamp: time,
         };
         await this.updateUser({
-            isConnected: true,
+            isConnected: event === 'login',
             loginHistory: [...currentUser?.loginHistory || [], loginEvent], // Append new login event
         });
     }
+    async getUserByEmail(email: string): Promise<User | undefined> {
+        const usersRef = collection(this.firestore, 'users');
+        const q = query(usersRef, where('email', '==', email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const userDoc = querySnapshot.docs[0]; // Assuming email is unique
+            return userDoc.data() as User;
+        } else return undefined;
+    }
+
 }
