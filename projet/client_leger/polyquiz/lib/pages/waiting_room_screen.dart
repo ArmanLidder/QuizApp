@@ -42,7 +42,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         roomId = widget.quiz.id;
         WaitingRoomService.joinRoom(roomId);
       }
-      WaitingRoomService.connectToSocket(roomId);
+      WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost);
       _configureSocketListeners();
       setState(() {});
     } catch (e) {
@@ -98,6 +98,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   void _leaveRoom() {
     final event = widget.isHost ? 'hostLeft' : 'playerLeft';
     WaitingRoomService.socket?.emit(event, {'roomId': roomId});
+    if(widget.isHost) {
+      WaitingRoomService.deleteRoom(roomId);
+    }
     WaitingRoomService.disconnect();
   }
 
