@@ -39,7 +39,8 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on(SocketEvent.CONNECTION, (socket) => {
-            console.log(`New client socket connection: {socket.data.username}`);
+            const userId = socket.handshake.auth.userId;
+            console.log(`New client socket connection: ${userId}`);
             this.gameCreationService.configureGameCreationSockets(this.roomManager, socket, this.sio);
             this.gameManagementService.configureGameManagingSockets(this.roomManager, socket, this.sio);
             this.chatService.configureChatSockets(this.roomManager, socket, this.sio);
