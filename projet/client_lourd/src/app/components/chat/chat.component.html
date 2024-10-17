@@ -2,40 +2,53 @@
     <ng-container *ngIf="user$ | async as user">
         <div class="chat-container"
              [ngClass]="{'closed': state === 0, 'opened': state === 1, 'outside': state === 2}">
-            <div class="chat-header" (click)="toggleChatState()">
+            <div class="chat-header" [ngClass]="{'closed': state === 0, 'opened': state === 1, 'outside': state === 2}"
+                 (click)="toggleChatState()">
                 <span><i class="bi bi-chat-dots-fill"></i> Clavardage</span>
                 <button *ngIf="this.state !== 2" (click)="popOut()"><i class="bi bi-box-arrow-up-right"></i>
                 </button>
             </div>
-            <div *ngIf="!isJoiningCanal && !isCreateCanal">
-                <div class="chat-content" *ngIf="state !== 0">
+            <ng-container *ngIf="!isJoiningCanal && !isCreateCanal && !isDeleteCanal">
+                <div *ngIf="!isChatFocused" class="button-container canal-list">
+                    <button (click)="createNewCanal()">Ajouter un Canal</button>
+                    <button (click)="joinNewCanal()">Joindre un Canal</button>
+                </div>
+                <h2 *ngIf="!isChatFocused" class="canal-list">Mes canaux</h2>
+                <div class="canal-content" *ngIf="state !== 0 && !isChatFocused">
                     <div *ngIf="!isChatFocused" class="canal-list">
-                        <div class="button-container">
-                            <button (click)="createNewCanal()">Ajouter un Canal</button>
-                            <button (click)="joinNewCanal()">Joindre un Canal</button>
-                        </div>
-                        <h2>Mes canaux</h2>
-                        <ul>
+                        <ul style="list-style: none; padding: 0;">
                             <ng-container *ngFor="let canal of canals$ | async; trackBy: trackById">
                                 <li *ngIf="canal.permittedUsers.includes(user.uid) || canal.name === 'general'"
-                                    (click)="loadCanal(canal.id!)">
-                                    {{ canal.name }}
-                                    <button *ngIf="canal.name !== 'general'"
-                                            (click)="leaveChat(canal.id!); $event.stopPropagation()">X
-                                    </button>
+                                    (click)="loadCanal(canal.id!)"
+                                    style="display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer;">
+                                    <span>{{ canal.name }}</span>
+                                    <div class="button-group" style="display: flex; gap: 8px;">
+                                        <button *ngIf="!this.checkCanalType(canal.name)"
+                                                (click)="leaveChat(canal.id!); $event.stopPropagation()">
+                                            <i style="color: black; display: flex; align-items: center;"
+                                               class="bi bi-box-arrow-left"></i>
+                                        </button>
+                                        <button *ngIf="!this.checkCanalType(canal.name)"
+                                                (click)="accessDeleteCanal(canal.id!, canal.name!); $event.stopPropagation()">
+                                            <i style="color: red; display: flex; align-items: center;"
+                                               class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </div>
                                 </li>
                             </ng-container>
                         </ul>
                     </div>
-                    <div *ngIf="isChatFocused" class="chat-area">
-                        <div class="messages" *ngIf="currentCanal$ | async as canal">
+                </div>
+                <div class="chat-content" *ngIf="state !== 0 && isChatFocused">
+                    <ng-container *ngIf="currentCanal$ | async as canal">
+                        <div *ngIf="isChatFocused" class="chat-area">
                             <div class="canal-header">
                                 <button (click)="toggleIsChat()"><i style="color:#007bff"
                                                                     class="bi bi-caret-left-fill">Canaux</i></button>
-                                <h3><strong>{{ canal.name }}</strong></h3>
+                                <h3><strong>{{ canal!.name }}</strong></h3>
                             </div>
-                            <div *ngIf="canal.messages.length > 0">
-                                <ng-container *ngFor="let msg of canal.messages">
+                            <div #chatscrollable class="messages" *ngIf="canal">
+                                <ng-container *ngFor="let msg of canal!.messages">
                                     <div [ngClass]="['message', getMessageClass(msg, user)]">
                                         <ng-container *ngIf="getMessageClass(msg, user) == 'received'">
                                             <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
@@ -54,23 +67,36 @@
                                     </div>
                                 </ng-container>
                             </div>
+                            <small *ngIf="!canal.name" class="error-message">Le canal a été effacé. Veuillez
+                                quitter. Au revoir!
+                            </small>
+                            <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="message-form">
+                                <input id="input_message" type="text" formControlName="message"
+                                       placeholder="Saisir un message..."
+                                       required>
+                                <button type="submit" [disabled]="!messageForm.valid"><i class="bi bi-send-fill"></i>
+                                </button>
+                                <div *ngIf="messageForm.get('message')?.invalid">
+                                    <small *ngIf="messageForm.get('message')?.errors?.max"
+                                           class="error-message">{{ messageForm.get('message')?.errors }}</small>
+                                </div>
+                            </form>
+                            <small *ngIf="messageForm.get('message')?.errors?.['maxlength']" class="error-message">Le
+                                message doit contenir un maximum de 200 caractères
+                            </small>
                         </div>
-                        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="message-form">
-                            <input type="text" formControlName="message" placeholder="Saisir un message..." required>
-                            <button type="submit" [disabled]="!messageForm.valid"><i class="bi bi-send-fill"></i>
-                            </button>
-                        </form>
-                    </div>
+                    </ng-container>
                 </div>
-            </div>
-            <div *ngIf="isCreateCanal" class="container">
+            </ng-container>
+            <div *ngIf="isCreateCanal && !isDeleteCanal" class="container">
                 <div class="canal-header">
                     <button (click)="returnToMenu()"><i style="color:#007bff"
                                                         class="bi bi-caret-left-fill">Retour</i></button>
+                    <h2>Création canal</h2>
                 </div>
-                <h2>Créer un nouveau canal</h2>
                 <form [formGroup]="canalNameForm" (ngSubmit)="createCanal()" class="message-form">
                     <input
+                            id="input_canal"
                             type="text"
                             formControlName="canalName"
                             placeholder="Saisir un nom de canal..."
@@ -83,6 +109,9 @@
                         <small *ngIf="canalNameForm.get('canalName')?.errors?.pattern" class="error-message">Le nom du
                             canal
                             doit seulement contenir des caractères alphanumériques.</small>
+                        <small *ngIf="canalNameForm.get('canalName')?.errors?.['maxlength']" class="error-message">Le
+                            nom du
+                            canal doit contenir 20 caractères maximum.</small>
                     </div>
                     <div>
                         <small *ngIf="feedback" class="error-message">{{ feedback }}</small>
@@ -92,26 +121,42 @@
                     </button>
                 </form>
             </div>
-            <div *ngIf="isJoiningCanal" class="container">
+            <div *ngIf="isDeleteCanal" class="container">
                 <div class="canal-header">
                     <button (click)="returnToMenu()"><i style="color:#007bff"
                                                         class="bi bi-caret-left-fill">Retour</i></button>
+                    <h2>Suppression canal</h2>
                 </div>
-                <h2>Joindre un canal</h2>
-                <div>
+                <div class="message-form">
+                    <h3 style="text-align: justify"><strong>Attention !!!</strong><br>Cette action est irreversible. Le
+                        canal {{ canalNameToDelete }} sera effacé à jamais.</h3>
+                    <button style="background: red" (click)="deleteCanal(canalIdToDelete)">
+                        Supprimer
+                    </button>
+                </div>
+            </div>
+            <div *ngIf="isJoiningCanal && !isDeleteCanal" class="container">
+                <div class="canal-header">
+                    <button (click)="returnToMenu()"><i style="color:#007bff"
+                                                        class="bi bi-caret-left-fill">Retour</i></button>
+                    <h2>Joindre Canal</h2>
+                </div>
+                <div class="bg-center flex flex-col h-[500px]">
                     <mat-form-field>
                         <input matInput
                                placeholder="Chercher un canal ..."
                                [formControl]="searchControl"
-                               [matAutocomplete]="users"
                         />
                     </mat-form-field>
-                    <mat-autocomplete #users="matAutocomplete" class="bg-white opacity-100">
-                        <mat-option *ngFor="let canal of canalsSearch$ | async" (click)="joinChat(canal.id)"
-                                    class="bg-white opacity-100 hover:bg-white opacity-100 active:bg-white opacity-100">
-                            {{ canal.name }}
-                        </mat-option>
-                    </mat-autocomplete>
+                    <div class="flex-1 mt-4 space-y-2 overflow-y-auto">
+                        <div *ngFor="let canal of canalsSearch$ | async"
+                             class="bg-gray-100 rounded-lg p-3 flex items-center space-x-3 shadow-sm">
+                            <div class="flex-grow" style="cursor: pointer" (click)="joinChat(canal.id!)">
+                                <h3 class="text-base font-medium text-gray-900">{{ canal.name }}</h3>
+                            </div>
+                        </div>
+                        <div class="h-4"></div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,7 +1,17 @@
-import {ApplicationRef, Component, inject, OnInit, ViewChild} from '@angular/core';
+import {ApplicationRef, Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
 import {CanalService} from "@app/services/canal.service/canal.service";
 import {Message, Canal} from "@common/interfaces/message.interface";
-import {combineLatest, firstValueFrom, map, Observable, startWith} from 'rxjs';
+import {
+    BehaviorSubject,
+    combineLatest,
+    filter,
+    firstValueFrom,
+    map,
+    Observable,
+    startWith,
+    Subscription,
+    switchMap
+} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from "@app/services/users.service/users.service";
 import {User} from "@app/interfaces/user/user-data.interface";
@@ -25,15 +35,25 @@ export class ChatComponent implements OnInit {
     public usersService: UsersService = inject(UsersService)
 
     @ViewChild('popupWindow') popWindow: PopoutWindowComponent;
+    @ViewChild('chatscrollable') private scrollContainer!: ElementRef;
     messageForm: FormGroup;
 
     // Observables from firestore
     canals$: Observable<Canal[]>;
     user$: Observable<User>;
     currentCanal$: Observable<Canal | undefined>;
+    canalSubscription!: Subscription;
+    private canalId$ = new BehaviorSubject<string | null>(null);
+
+
 
     isCreateCanal: boolean;
     isJoiningCanal: boolean;
+    isDeleteCanal: boolean = false;
+    canalIdToDelete: string = '';
+    canalNameToDelete: string = '';
+    canalHasBeenDeleted: boolean = false;
+
     canalNameForm: FormGroup;
     searchControl = new FormControl('');
     canalsSearch$: Observable<Canal[]>;
@@ -44,9 +64,13 @@ export class ChatComponent implements OnInit {
     isChatFocused: boolean = false;
 
 
-    constructor() { this.setUp();}
+    constructor() {
+        this.setUp();
+    }
 
-    async ngOnInit() { await this.canalService.ensureGeneralCanal(); }
+    async ngOnInit() {
+        await this.canalService.ensureGeneralCanal();
+    }
 
     // Pop out Window methods
     closingPopOut(isClosed: boolean) {
@@ -67,6 +91,7 @@ export class ChatComponent implements OnInit {
         return canal.id!;
     }
 
+    // integrated or contextual UI
     toggleChatState() {
         if (this.state === State.closed) {
             this.state = State.opened;
@@ -75,8 +100,10 @@ export class ChatComponent implements OnInit {
         }
     }
 
+    // In chat room or not
     toggleIsChat() {
         this.isChatFocused = !this.isChatFocused;
+        if (!this.isChatFocused) this.messageForm.reset('');
     }
 
     // Check who is the sender for css style
@@ -99,6 +126,10 @@ export class ChatComponent implements OnInit {
     async createCanal() {
         const canalName = this.canalNameForm.get('canalName')?.value;
         const userId = (await firstValueFrom(this.usersService.currentUserProfile$) as User).uid;
+        if (canalName.toLowerCase().includes("room")) {
+            this.feedback = "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom."
+            return;
+        }
         if (canalName) {
             try {
                 this.feedback = '';
@@ -114,63 +145,99 @@ export class ChatComponent implements OnInit {
     loadCanal(canalId: string) {
         this.toggleIsChat();
         this.currentCanal$ = this.canalService.getCanal(canalId);
-        setTimeout(() => {
-            const input = document.querySelector('input[formControlName="message"]') as HTMLElement;
-            input?.focus();
-        }, 0);
+        this.canalId$.next(canalId);
+        this.canalSubscription = this.canalId$
+            .pipe(
+                filter(id => !!id), // Only proceed if canal ID is valid
+                switchMap(id => this.canalService.getCanal(id!)) // Fetch canal details
+            )
+            .subscribe(canal => {
+                if (!canal) {
+                    this.canalHasBeenDeleted = true
+                }
+            });
+        this.focusOnForm('input_message');
+    }
+
+    async deleteCanal(canalId: string) {
+        try {
+            await this.canalService.deleteCanal(canalId);
+            this.returnToMenu();
+        } catch (error) {
+            this.returnToMenu();
+        }
     }
 
     async sendMessage(message?: string) {
         const messageContent = message || this.messageForm.get('message')?.value;
         const uid = (await firstValueFrom(this.user$)).uid;
         const canalId = (await firstValueFrom(this.currentCanal$))?.id as string;
+        if (!canalId) {
+            this.canalHasBeenDeleted = true;
+        }
         if (messageContent && this.currentCanal$) {
             const newMessage: Message = {
-                userUid: uid, // Replace with actual user UID
+                userUid: uid,
                 message: messageContent,
             };
             try {
-                await this.canalService.addMessage(canalId, newMessage);
+                await this.canalService.addMessage(canalId, newMessage)
                 this.messageForm.reset();
+                this.scrollDown();
             } catch (error) {
-                // console.error('Error sending message:', error);
+                this.returnToMenu();
             }
         }
     }
 
+    // triggers move to creation page
     createNewCanal() {
         this.isCreateCanal = true;
+        this.focusOnForm('input_canal');
     }
 
+    // trigers move to join page
     joinNewCanal() {
-       this.isJoiningCanal = true;
+        this.isJoiningCanal = true;
     }
 
     returnToMenu() {
         this.canalNameForm.reset('');
+        this.messageForm.reset('');
+        this.searchControl.reset('');
         this.feedback = '';
         this.isCreateCanal = false;
         this.isJoiningCanal = false;
+        this.isDeleteCanal = false;
+        this.canalIdToDelete = '';
+        this.canalNameToDelete = '';
+        if (this.canalSubscription) this.canalSubscription.unsubscribe();
+        this.canalId$.next(null);
+        this.canalHasBeenDeleted = false;
     }
 
-    async deleteCanal(canalId: string) {
-        if (confirm('Are you sure you want to delete this canal?')) {
-            try {
-                await this.canalService.deleteCanal(canalId);
-            } catch (error) {
-                console.error('Error deleting canal:', error);
-            }
-        }
+    // trigger move to warning page
+    accessDeleteCanal(canaId: string, canalName: string) {
+        this.isDeleteCanal = true;
+        this.canalIdToDelete = canaId;
+        this.canalNameToDelete = canalName;
+    }
+
+    // help for assigning css class
+    checkCanalType(canalName: string) {
+        if (canalName === "general") return true;
+        if (canalName.includes("room")) return true;
+        return canalName.includes("#");
     }
 
     private setUp() {
         this.canals$ = this.canalService.canals$;
         this.user$ = this.usersService.currentUserProfile$ as Observable<User>;
         this.messageForm = this.fb.group({
-            message: ['', Validators.required]
+            message: ['', [Validators.required, Validators.maxLength(200)]]
         });
         this.canalNameForm = this.fb.group({
-            canalName: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)]]
+            canalName: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/), Validators.maxLength(20)]]
         });
         this.canalsSearch$ = combineLatest([
             this.canalService.canals$,
@@ -179,10 +246,45 @@ export class ChatComponent implements OnInit {
         ]).pipe(
             map(([canals, search, user]) => {
                 const str = (search ?? '').toLowerCase();
-                return canals.filter(canal => canal.name.toLowerCase().includes(str) && canal.name !== 'general' && !canal.permittedUsers.includes((user as User).uid));
+                return canals.filter(canal => canal.name.toLowerCase().includes(str) && canal.name !== 'general' && !canal.name.includes('room') && !canal.name.includes('#') && !canal.permittedUsers.includes((user as User).uid));
             }),
             map(canals => canals || []),
         );
+        this.canals$ = this.canals$.pipe(map(canals => this.sortCanal(canals)))
+    }
+
+    private scrollDown() {
+        const chat = this.scrollContainer.nativeElement;
+        const shouldScroll = (chat.scrollTop + chat.clientHeight) < chat.scrollHeight;
+        setTimeout(() => {
+            if (shouldScroll) chat.scrollTop = chat.scrollHeight + 300
+        }, 500)
+    }
+
+    private sortCanal(canals: Canal[]) {
+        return canals.sort((a, b) => {
+            // Order: general first, then channels containing '*', then channels containing '#', then all others
+            if (a.name === 'general') return -1; // General first
+            if (b.name === 'general') return 1;
+
+            const aContainsStar = a.name.includes('room');
+            const bContainsStar = b.name.includes('room');
+            if (aContainsStar && !bContainsStar) return -1; // a comes before b
+            if (!aContainsStar && bContainsStar) return 1; // b comes before a
+
+            const aContainsHash = a.name.includes('#');
+            const bContainsHash = b.name.includes('#');
+            if (aContainsHash && !bContainsHash) return -1; // a comes before b
+            if (!aContainsHash && bContainsHash) return 1; // b comes before a
+            return 0;
+        });
+    }
+
+    private focusOnForm(id: string) {
+        setTimeout(() => {
+            const input = document.getElementById(id) as HTMLElement;
+            input?.focus();
+        }, 400);
     }
 
     protected readonly console = console;
