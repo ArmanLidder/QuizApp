@@ -18,7 +18,6 @@ import { QuestionListComponent } from '@app/components/question-list/question-li
 import { QuizCreationComponent } from '@app/components/quiz-creation/quiz-creation.component';
 import { QuizInfoComponent } from '@app/components/quiz-info/quiz-info.component';
 import { RoomCodePromptComponent } from '@app/components/room-code-prompt/room-code-prompt.component';
-import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { StatisticHistogramComponent } from '@app/components/statistic-histogram/statistic-histogram.component';
 import { UniqueQuizErrorFeedbackComponent } from '@app/components/unique-quiz-error-feedback/unique-quiz-error-feedback.component';
 import { ValidationQuizErrorFeedbackComponent } from '@app/components/validation-quiz-error-feedback/validation-quiz-error-feedback.component';
@@ -79,7 +78,6 @@ import { PopoutWindowModule } from 'angular-popout-window';
         AppComponent,
         GamePageComponent,
         MainPageComponent,
-        SidebarComponent,
         QuizCreationComponent,
         QuizCreationPageComponent,
         QuestionListComponent,

@@ -22,15 +22,9 @@ export class Application {
         private readonly quizController: QuizController,
         private readonly adminAuthController: AdminAuthController,
         private readonly historyController: GameHistoryController,
-        // private readonly avatarController: AvatarController,
-        // private readonly authController: AuthController,
-        // private readonly  profileController: ProfileManagerController,
     ) {
         this.app = express();
 
-        // mongoose.connect(process.env.DATABASE_URL)
-        //     .then(() => console.log('MongoDB connected'))
-        //     .catch((err) => console.log('MongoDB connection error:', err));
 
         this.swaggerOptions = {
             swaggerDefinition: {
