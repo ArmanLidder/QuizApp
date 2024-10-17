@@ -10,7 +10,6 @@ export class MainPageComponent {
     readonly title: string = 'OnlyQuiz';
 
     constructor(private socketService: SocketClientService) {
-        if (!this.socketService.isSocketAlive()) this.socketService.connect();
         window.onload = () => {
             localStorage.removeItem('token');
             this.socketService.disconnect();
