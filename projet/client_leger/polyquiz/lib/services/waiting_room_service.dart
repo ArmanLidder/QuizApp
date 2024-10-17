@@ -8,7 +8,7 @@ class WaitingRoomService {
     return socket != null && socket!.connected;
   }
 
-  static Future<void> connectToSocket(String roomId, {required bool isHost}) async {
+  static Future<void> connectToSocket(String roomId, {required bool isHost, String? username}) async {
     socket = IO.io('http://192.168.56.1:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
@@ -18,16 +18,18 @@ class WaitingRoomService {
 
     socket?.on('connect', (_) {
       print('Connected to WebSocket');
-      joinRoom(roomId);
+      if(username != null) {
+        sendJoinRoomRequest(roomId, username);
+      }
     });
 
-    WaitingRoomService.socket?.on('disconnect', (_) {
-    print('Disconnected from WebSocket');
+    socket?.on('disconnect', (_) {
+      print('Disconnected from WebSocket');
       if (isHost) {
         print('Host disconnected, deleting room...');
         deleteRoom(roomId);
       }
-  });
+    });
 
     socket?.on('newPlayer', (data) {
       print('New player joined: $data');
@@ -47,35 +49,14 @@ class WaitingRoomService {
   }
 
   static Future<void> deleteRoom(String roomId) async {
-    
-  // final completer = Completer<void>();
-  print('Attempting to delete room: $roomId');
-
-  socket?.emit('hostAbandonnement', {'roomId': roomId});
-
-  // socket?.emitWithAck('hostAbandonnement', roomId, ack: (success) {
-  //   print('showing the log: $success');
-  //   if (success == true) {
-  //     print("Room deleted successfully for ID: $roomId");
-  //     completer.complete();
-  //   } else {
-  //     print('Failed to delete room');
-  //     completer.completeError('Failed to delete room');
-  //   }
-  // });
-
-  // return completer.future;
-}
+    print('Attempting to delete room: $roomId');
+    socket?.emit('hostAbandonnement', {'roomId': roomId});
+  }
 
 
   static Future<String> createRoom(String quizId) async {
     final completer = Completer<String>();
     print('Creating room for quiz: $quizId');
-
-    if (!isSocketAlive()) {
-      print("Socket is not connected. Attempting to connect...");
-      await connectToSocket("roomId", isHost: true);
-    }
 
     socket?.emitWithAck('createRoom', quizId, ack: (roomCode) {
       if (roomCode != null) {
@@ -90,12 +71,39 @@ class WaitingRoomService {
     return completer.future;
   }
 
-  static void joinRoom(String roomId) {
-    if (isSocketAlive()) {
-      socket?.emit('joinRoom', {'roomId': roomId});
-    } else {
-      print('Socket is not connected, cannot join room');
+  // Function to join a room, with a callback for the join process
+  static Future<String> sendJoinRoomRequest(String roomId, String username) async {
+    if (!isSocketAlive()) {
+      return 'Socket is not connected, cannot join room';
     }
+
+    final completer = Completer<String>();
+
+    final usernameData = {
+      'roomId': int.parse(roomId),
+      'username': username,
+    };
+
+    print('Joining room with data: $usernameData');
+
+    socket?.emitWithAck('playerJoin', usernameData, ack: (isLocked) {
+      if (isLocked is bool) {
+        print("is joining room locked: $isLocked");
+        final result = _handleJoiningRoomValidation(isLocked);
+        completer.complete(result);
+      } else {
+        completer.complete('Unexpected response from server');
+      }
+    });
+
+    print("joined room with id: $roomId");
+
+    return completer.future;
+  }
+
+  // Helper function to validate if the room is locked
+  static String _handleJoiningRoomValidation(bool isLocked) {
+    return isLocked ? 'Room is locked, cannot join at this time.' : 'Successfully joined the room!';
   }
 
 

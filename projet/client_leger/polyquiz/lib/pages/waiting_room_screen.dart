@@ -6,8 +6,9 @@ import '../models/quiz.dart';
 class WaitingRoomScreen extends StatefulWidget {
   final Quiz quiz;
   final bool isHost;
+  final String? username;
 
-  const WaitingRoomScreen({Key? key, required this.quiz, required this.isHost}) : super(key: key);
+  const WaitingRoomScreen({Key? key, required this.quiz, required this.isHost, this.username}) : super(key: key);
 
   @override
   _WaitingRoomScreenState createState() => _WaitingRoomScreenState();
@@ -16,6 +17,7 @@ class WaitingRoomScreen extends StatefulWidget {
 class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   List<String> players = [];
   String roomId = "nothing";
+  String username = "nothing";
   bool isRoomLocked = false;
   bool isGameStarting = false;
   String? newPlayerName;
@@ -40,9 +42,14 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         roomId = await WaitingRoomService.createRoom(widget.quiz.id);
       } else {
         roomId = widget.quiz.id;
-        WaitingRoomService.joinRoom(roomId);
+        username = widget.username ?? 'nothing';
+        print('Joining room $roomId as $username');
       }
-      WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost);
+      if (username == 'nothing') {
+        WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost);
+      } else {
+        WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost, username: username);
+      }
       _configureSocketListeners();
       setState(() {});
     } catch (e) {
@@ -96,7 +103,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   }
 
   void _leaveRoom() {
-    final event = widget.isHost ? 'hostLeft' : 'playerLeft';
+    final event = widget.isHost ? 'hostAbandonnement' : 'playerAbandonnement';
     WaitingRoomService.socket?.emit(event, {'roomId': roomId});
     if(widget.isHost) {
       WaitingRoomService.deleteRoom(roomId);
