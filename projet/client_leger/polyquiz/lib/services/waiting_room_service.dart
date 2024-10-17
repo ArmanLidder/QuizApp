@@ -18,7 +18,7 @@ class WaitingRoomService {
 
     socket?.on('connect', (_) {
       print('Connected to WebSocket');
-      if(username != null) {
+      if(username != null && isHost == false) {
         sendJoinRoomRequest(roomId, username);
       }
     });
@@ -57,6 +57,11 @@ class WaitingRoomService {
   static Future<String> createRoom(String quizId) async {
     final completer = Completer<String>();
     print('Creating room for quiz: $quizId');
+
+    if (!isSocketAlive()) {
+      print("Socket is not connected. Attempting to connect...");
+      await connectToSocket("roomId", isHost: true);
+    }
 
     socket?.emitWithAck('createRoom', quizId, ack: (roomCode) {
       if (roomCode != null) {

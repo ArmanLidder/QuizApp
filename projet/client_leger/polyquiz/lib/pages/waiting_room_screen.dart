@@ -1,4 +1,6 @@
 import 'dart:ffi';
+import 'dart:async';
+import 'package:timer_count_down/timer_count_down.dart';
 import 'package:flutter/material.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
@@ -22,6 +24,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   bool isGameStarting = false;
   String? newPlayerName;
   bool showPopup = false;
+  bool isCountdownActive = false;
 
   @override
   void initState() {
@@ -40,13 +43,14 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     try {
       if (widget.isHost) {
         roomId = await WaitingRoomService.createRoom(widget.quiz.id);
+        // WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost);
       } else {
         roomId = widget.quiz.id;
         username = widget.username ?? 'nothing';
         print('Joining room $roomId as $username');
       }
       if (username == 'nothing') {
-        WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost);
+        print('isHost : username is nothing');
       } else {
         WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost, username: username);
       }
@@ -55,6 +59,12 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     } catch (e) {
       print('Error initializing room: $e');
     }
+  }
+
+  void _startCountdown() {
+    setState(() {
+      isCountdownActive = true;
+    });
   }
 
   void _configureSocketListeners() {
@@ -148,10 +158,23 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
               },
             ),
           ),
-          if (widget.isHost)
+          if (widget.isHost && !isCountdownActive)
             ElevatedButton(
-              onPressed: _startGame,
+              onPressed: _startCountdown,
               child: Text('Start Game'),
+            ),
+          if (widget.isHost && isCountdownActive)
+            Countdown(
+              seconds: 5, // Set the countdown duration here
+              build: (BuildContext context, double time) => Text(
+                'Starting in: ${time.toStringAsFixed(0)} seconds',
+                style: TextStyle(fontSize: 18),
+              ),
+              interval: Duration(seconds: 1),
+              onFinished: () {
+                print('Countdown is done!');
+                _startGame();
+              },
             ),
           if (widget.isHost)
             IconButton(
