@@ -12,7 +12,6 @@ import { GameInterfaceComponent } from '@app/components/game-interface/game-inte
 import { GameItemComponent } from '@app/components/game-item/game-item.component';
 import { GamesListComponent } from '@app/components/games-list/games-list.component';
 import { HostInterfaceComponent } from '@app/components/host-interface/host-interface.component';
-import { PasswordPromptComponent } from '@app/components/password-prompt/password-prompt.component';
 import { PlayerListComponent } from '@app/components/player-list/player-list.component';
 import { QrlResponseAreaComponent } from '@app/components/qrl-response-area/qrl-response-area.component';
 import { QuestionListComponent } from '@app/components/question-list/question-list.component';
@@ -86,7 +85,6 @@ import { PopoutWindowModule } from 'angular-popout-window';
         QuestionListComponent,
         GameCreationPageComponent,
         GameAdministrationPageComponent,
-        PasswordPromptComponent,
         GameItemComponent,
         GamesListComponent,
         GameHistoryListComponent,
