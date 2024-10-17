@@ -1,68 +1,89 @@
-<div class="min-h-screen p-8">
-    <!-- Display user data when available -->
-    <ng-container *ngIf="currentUser$ | async as user">
-        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white text-center relative">
-                <div class="relative inline-block">
-                    <div class="absolute -top-2 -left-0.5 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
-                        {{ user.level }}
+<div class="min-h-screen bg-gray-100">
+    <div class="max-w-4xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
+        <ng-container *ngIf="currentUser$ | async as user">
+            <!-- User Info Section -->
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-lg shadow-md overflow-hidden">
+                <div class="p-8 text-white text-center relative">
+                    <!-- Avatar and Level -->
+                    <div class="relative inline-block">
+                        <div class="absolute -top-2 -left-0.5 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
+                            {{ user.level }}
+                        </div>
+                        <img [src]="user.avatar" alt="Avatar de {{ user.username }}"
+                             class="w-32 h-32 rounded-full mx-auto mb-4 border-2 border-white shadow-lg"/>
+                        <button class="absolute -bottom-0 -right-0 mb-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-10 h-10"
+                                (click)="avatarModificationDialog()">
+                            <mat-icon class="text-xl">edit</mat-icon>
+                        </button>
                     </div>
-                    <img [src]="user.avatar" alt="Avatar de {{ user.username }}"
-                         class="w-32 h-32 rounded-full mx-auto mb-4 border-2 border-white shadow-lg"/>
-                    <button class="absolute -bottom-0 -right-0 mb-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-10 h-10"
-                            (click)="avatarModificationDialog()">
-                        <mat-icon class="text-xl">edit</mat-icon>
-                    </button>
-                </div>
-                <div class="flex items-center justify-center mt-2">
-                    <h1 class="text-3xl font-bold">{{ user.username }}</h1>
-                    <button class="ml-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-6 h-6"
-                            (click)="usernameModificationDialog()">
-                        <mat-icon class="text-base">edit</mat-icon>
-                    </button>
-                </div>
-                <p class="text-lg mt-2">{{ user.email }}</p>
-                <div class="mt-4 flex justify-center items-center space-x-4">
-                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center">
-                        <span class="font-semibold mr-2">Prestige :</span>
-                        <span class="text-2xl mr-1">{{ getPrestigeIcon(user.prestige) }}</span>
-                        {{ getPrestigeLabel(user.prestige) }}
+                    <!-- Username and Email -->
+                    <div class="mt-4">
+                        <div class="flex items-center justify-center">
+                            <h1 class="text-3xl font-bold">{{ user.username }}</h1>
+                            <button class="ml-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-6 h-6"
+                                    (click)="usernameModificationDialog()">
+                                <mat-icon class="text-base">edit</mat-icon>
+                            </button>
+                        </div>
+                        <p class="text-lg mt-2">{{ user.email }}</p>
                     </div>
-                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
-                        <span class="font-semibold">Argent :</span> {{ user.currency }}
+                    <!-- Prestige and Currency -->
+                    <div class="mt-4 flex justify-center items-center space-x-4">
+                        <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center">
+                            <span class="font-semibold mr-2">Prestige :</span>
+                            <span class="text-2xl mr-1">{{ getPrestigeIcon(user.prestige) }}</span>
+                            {{ getPrestigeLabel(user.prestige) }}
+                        </div>
+                        <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
+                            <span class="font-semibold">Argent :</span> {{ user.currency }}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h2 class="text-2xl font-semibold mb-4">Statistiques</h2>
+            <!-- Main Content Area -->
+            <div class="bg-white shadow-md rounded-b-lg">
+                <!-- Statistics Section -->
+                <div class="p-8 border-b">
+                    <h2 class="text-2xl font-semibold mb-4">Statistiques</h2>
+                    <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="mb-2"><span
-                                    class="font-semibold">Parties Jouées :</span> {{ user.stats.gamesPlayed }}</p>
-                            <p class="mb-2"><span
-                                    class="font-semibold">Parties Gagnées :</span> {{ user.stats.gamesWon }}</p>
-                            <p class="mb-2"><span
-                                    class="font-semibold">Bonnes Réponses Par Partie :</span> {{ user.stats.avgCorrectAnswers }}
-                            </p>
-                            <p><span class="font-semibold">Temps Moyen Par Partie :</span> {{ user.stats.avgGameTime }}
-                                secondes</p>
+                            <p class="font-semibold">Parties Jouées</p>
+                            <p class="text-2xl">{{ user.stats.gamesPlayed }}</p>
                         </div>
-                    </div>
-
-                    <div>
-                        <h2 class="text-2xl font-semibold mb-4">Amis</h2>
-                        <ul class="bg-gray-50 p-4 rounded-lg">
-                            <li *ngFor="let friend of user.friends" class="mb-2 last:mb-0">{{ friend }}</li>
-                        </ul>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="font-semibold">Parties Gagnées</p>
+                            <p class="text-2xl">{{ user.stats.gamesWon }}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="font-semibold">Bonnes Réponses Par Partie</p>
+                            <p class="text-2xl">{{ user.stats.avgCorrectAnswers }}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="font-semibold">Temps Moyen Par Partie</p>
+                            <p class="text-2xl">{{ user.stats.avgGameTime }} secondes</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Achievements -->
-                <div class="mt-8 mb-8">
+                <!-- Friends Section with Sticky Tabs -->
+                <div class="border-b">
+                    <div class="flex justify-between items-center p-8 pb-0">
+                        <h2 class="text-2xl font-semibold">Amis</h2>
+                        <button (click)="openUserSearch()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center">
+                            <mat-icon class="mr-2">person_add</mat-icon>
+                            Ajouter
+                        </button>
+                    </div>
+                    <div class="min-h-40">
+                        <app-friends ></app-friends>
+                    </div>
+                </div>
+
+                <!-- Achievements Section -->
+                <div class="p-8 border-b">
                     <h2 class="text-2xl font-semibold mb-4">Exploits</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <div *ngFor="let achievement of allAchievements; let i = index"
                              class="p-4 rounded-lg text-center" [ngClass]="getAchievementClass(i)">
                             <span class="text-2xl mb-2 block">{{ getAchievementIcon(i) }}</span>
@@ -71,7 +92,7 @@
                     </div>
                 </div>
 
-                <!-- Connection history (inside expansion panel) -->
+                <!-- Expandable Sections -->
                 <mat-accordion class="mt-8 space-y-4">
                     <!-- Connection History Panel -->
                     <mat-expansion-panel>
@@ -80,7 +101,7 @@
                                 Historique des Connexions
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <ul class="bg-gray-50 p-4 rounded-lg">
+                        <ul class="bg-gray-50 p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
                             <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
                 <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
                     {{ history.eventType === 'login' ? 'Connexion' : 'Déconnexion' }}
@@ -97,7 +118,7 @@
                                 Historique des Parties
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <ul class="bg-gray-50 p-4 rounded-lg">
+                        <ul class="bg-gray-50 p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
                             <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
                 <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
                     {{ game.result === 'win' ? 'Gagné' : 'Perdu' }}
@@ -110,6 +131,6 @@
                     </mat-expansion-panel>
                 </mat-accordion>
             </div>
-        </div>
-    </ng-container>
+        </ng-container>
+    </div>
 </div>

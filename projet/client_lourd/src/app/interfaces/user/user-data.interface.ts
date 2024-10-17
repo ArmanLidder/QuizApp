@@ -35,10 +35,9 @@ interface GameHistory {
     gameMode: string;
 }
 
-interface FriendRequest {
+export interface FriendRequest {
     fromUserId: string;
     toUserId: string;
-    status: 'pending' | 'accepted' | 'rejected';
 }
 
 interface UserSettings {
