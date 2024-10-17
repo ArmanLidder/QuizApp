@@ -14,7 +14,7 @@
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
         "noImplicitReturns": true,
-        "resolveJsonModule": false, // DO NOT CHANGE
+        "resolveJsonModule": true, // DO NOT CHANGE
         "paths": {
             "@app/*": ["./app/*"],
             "@common/*": ["../common/*"]
