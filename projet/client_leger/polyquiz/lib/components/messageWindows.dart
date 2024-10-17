@@ -9,6 +9,20 @@ class _MessageWindowState extends State<MessageWindow> {
   final TextEditingController _messageController = TextEditingController();
   final List<String> _messages = [];
 
+  bool _isOpen = false;
+
+  void openChat() {
+    setState(() {
+      _isOpen = true;
+    });
+  }
+
+  void closeChat() {
+    setState(() {
+      _isOpen = false;
+    });
+  }
+
   void _sendMessage() {
     final message = _messageController.text.trim();
     if (message.isEmpty) {
@@ -117,5 +131,18 @@ class _MessageWindowState extends State<MessageWindow> {
             color: Colors.blue,
           ))
     ]))));
+  }
+  Widget buildPopupButton() {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: FloatingActionButton(
+        onPressed: () {
+          if (!_isOpen) {
+            openChat();
+          }
+        },
+        child: Icon(Icons.message),
+      )
+    );
   }
 }
