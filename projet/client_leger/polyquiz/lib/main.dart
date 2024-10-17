@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:polyquiz/pages/game_page.dart';
 import 'pages/login-page.dart';
 import 'pages/auth_screen.dart';
 import 'pages/quiz_list_page.dart';
@@ -25,4 +26,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
