@@ -142,8 +142,10 @@ export class ChatComponent implements OnInit {
         }
     }
 
-    loadCanal(canalId: string) {
+    async loadCanal(canalId: string) {
         this.toggleIsChat();
+        const uid = (await firstValueFrom(this.user$)).uid;
+        console.log(uid);
         this.currentCanal$ = this.canalService.getCanal(canalId);
         this.canalId$.next(canalId);
         this.canalSubscription = this.canalId$
@@ -152,8 +154,12 @@ export class ChatComponent implements OnInit {
                 switchMap(id => this.canalService.getCanal(id!)) // Fetch canal details
             )
             .subscribe(canal => {
-                if (!canal) {
-                    this.canalHasBeenDeleted = true
+                if (!canal) this.canalHasBeenDeleted = true
+                else if (canal?.name !== 'general' && !(canal?.permittedUsers.includes(uid))) {
+                    this.toggleIsChat();
+                    this.appRef.tick();
+                    this.canalSubscription.unsubscribe();
+                    console.log('returnToMenu');
                 }
             });
         this.focusOnForm('input_message');
