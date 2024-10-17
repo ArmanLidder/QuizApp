@@ -6,7 +6,12 @@ import { DatabaseService } from '@app/services/database.service/database.service
 import { SocketManager } from '@app/services/socket-manager.service/socket-manager.service';
 import { QuizService } from '@app/services/quiz.service/quiz.service';
 import { HistoryService } from '@app/services/history.service/history.service';
+// import * as jwt from "jsonwebtoken";
+import * as dotenv from "dotenv";
+dotenv.config();
+
 /* eslint-disable max-params */
+
 @Service()
 export class Server {
     private static readonly appPort: string | number | boolean = Server.normalizePort(process.env.PORT || '3000');
@@ -29,6 +34,16 @@ export class Server {
 
         this.server = http.createServer(this.application.app);
         this.socketManager = new SocketManager(this.quizService, this.historyService, this.server);
+        // Removed this part since we moved to firebase
+        // this.socketManager.sio.use((socket, next) => {
+        //     const token = socket.handshake.auth.token;
+        //     try {
+        //         socket.data.user = jwt.verify(token, process.env.JWT_SECRET) as { id: string, username: string };
+        //         next();
+        //     } catch (err) {
+        //         next(new Error('Authentication error'));
+        //     }
+        // });
         this.socketManager.handleSockets();
 
         this.server.listen(Server.appPort);

@@ -5,6 +5,15 @@
 export const environment = {
     production: false,
     serverUrl: 'http://localhost:3000/api',
+    firebase : {
+        apiKey: "AIzaSyAurHesdch5GUNG0at-Ek2PeTrSQCv1xmg",
+        authDomain: "polyquiz-app.firebaseapp.com",
+        projectId: "polyquiz-app",
+        storageBucket: "polyquiz-app.appspot.com",
+        messagingSenderId: "98437822234",
+        appId: "1:98437822234:web:eb97250f2dd5957eaa5ea3",
+        measurementId: "G-LYRYDVNRLW"
+    }
 };
 
 /*

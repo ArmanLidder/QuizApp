@@ -7,9 +7,12 @@ import { HistoryService } from '@app/services/history.service/history.service';
 import { GameCreationService } from '@app/services/game-creation.service/game-creation.service';
 import { GameManagementService } from '@app/services/game-management.service/game-management.service';
 import { ChatService } from '@app/services/chat.service/chat.service';
+// import {PlayerUsername} from "@common/interfaces/socket-manager.interface";
+// import {ErrorDictionary} from "@common/browser-message/error-message/error-message";
+
 
 export class SocketManager {
-    private sio: io.Server;
+    sio: io.Server;
     private roomManager: RoomManagingService;
     private gameCreationService: GameCreationService;
     private gameManagementService: GameManagementService;
@@ -20,7 +23,14 @@ export class SocketManager {
         private historyService: HistoryService,
         server: http.Server,
     ) {
-        this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
+        this.sio = new io.Server(server, {
+            cors: {
+                origin: '*',
+                methods: ['GET', 'POST'],
+                allowedHeaders: ["my-custom-header"], // added
+                credentials: true // added
+            }
+        });
         this.roomManager = new RoomManagingService();
         this.gameCreationService = new GameCreationService();
         this.gameManagementService = new GameManagementService(this.quizService, this.historyService);
@@ -29,9 +39,13 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on(SocketEvent.CONNECTION, (socket) => {
+            console.log(`New client socket connection: {socket.data.username}`);
             this.gameCreationService.configureGameCreationSockets(this.roomManager, socket, this.sio);
             this.gameManagementService.configureGameManagingSockets(this.roomManager, socket, this.sio);
             this.chatService.configureChatSockets(this.roomManager, socket, this.sio);
+            socket.on('disconnect', async () => {
+                console.log('Client disconnected');
+            });
         });
     }
 }
