@@ -9,12 +9,6 @@ import { Service } from 'typedi';
 import { QuizController } from '@app/controllers/quiz.controller/quiz.controller';
 import { AdminAuthController } from './controllers/admin-auth.controller/admin-auth.controller';
 import { GameHistoryController } from '@app/controllers/game-history.controller/game-history.controller';
-// import { AuthController } from "@app/controllers/auth.controller/auth.controller";
-// import { AvatarController } from "@app/controllers/avatar.controller/avatar.controller";
-// import { ProfileManagerController } from "@app/controllers/profile-manager.controller/profile-manager.controller";
-// import * as path from 'path';
-// import * as process from "process";
-// import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 dotenv.config();
 
