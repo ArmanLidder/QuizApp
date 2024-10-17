@@ -11,10 +11,23 @@ class _MessageWindowState extends State<MessageWindow> {
 
   bool _isOpen = false;
 
-  void openChat() {
+  Future<void> openChat(BuildContext context) {
     setState(() {
       _isOpen = true;
     });
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: SizedBox(
+              height: 500,
+              width: 500,
+              child: buildChat(),
+            ),
+          );
+        }
+    );
   }
 
   void closeChat() {
@@ -36,21 +49,7 @@ class _MessageWindowState extends State<MessageWindow> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(children: <Widget>[
-      Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            "Zone de Clavardage",
-            style: TextStyle(
-              fontSize: 24.0,
-            ),
-            textAlign: TextAlign.center,
-          )),
-      // Cette section est la liste des messages déjà envoyés
-      Expanded(child: buildMessageContainer()),
-      buildInputBox(),
-    ]));
+    return buildPopupButton(context);
   }
 
   Widget buildMessageContainer() {
@@ -132,17 +131,36 @@ class _MessageWindowState extends State<MessageWindow> {
           ))
     ]))));
   }
-  Widget buildPopupButton() {
+
+  Widget buildPopupButton(BuildContext context) {
     return Align(
       alignment: Alignment.bottomRight,
       child: FloatingActionButton(
         onPressed: () {
-          if (!_isOpen) {
-            openChat();
+          if (_isOpen) {
+            openChat(context);
           }
         },
         child: Icon(Icons.message),
       )
     );
+  }
+
+  Widget buildChat() {
+    return Container(
+        child: Column(children: <Widget>[
+          Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Zone de Clavardage",
+                style: TextStyle(
+                  fontSize: 24.0,
+                ),
+                textAlign: TextAlign.center,
+              )),
+          // Cette section est la liste des messages déjà envoyés
+          Expanded(child: buildMessageContainer()),
+          buildInputBox(),
+        ]));
   }
 }
