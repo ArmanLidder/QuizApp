@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/quiz.dart';
 
 class QuizService {
-  final String baseUrl = 'http://192.168.56.1:3000/api';
+  final String baseUrl = 'http://192.168.68.103:3000/api'; //192.168.56.1
 
   Future<List<Quiz>> fetchAllQuizzes() async {
     try {

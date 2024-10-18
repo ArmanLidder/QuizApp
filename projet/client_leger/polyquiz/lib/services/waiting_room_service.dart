@@ -8,8 +8,9 @@ class WaitingRoomService {
     return socket != null && socket!.connected;
   }
 
-  static Future<void> connectToSocket(String roomId, {required bool isHost, String? username}) async {
-    socket = IO.io('http://192.168.56.1:3000', <String, dynamic>{
+  static Future<void> connectToSocket(String roomId,
+      {required bool isHost, String? username}) async {
+    socket = IO.io('http://192.168.68.103:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
@@ -18,7 +19,7 @@ class WaitingRoomService {
 
     socket?.on('connect', (_) {
       print('Connected to WebSocket');
-      if(username != null && isHost == false) {
+      if (username != null && isHost == false) {
         sendJoinRoomRequest(roomId, username);
       }
     });
@@ -53,7 +54,6 @@ class WaitingRoomService {
     socket?.emit('hostAbandonnement', {'roomId': roomId});
   }
 
-
   static Future<String> createRoom(String quizId) async {
     final completer = Completer<String>();
     print('Creating room for quiz: $quizId');
@@ -77,7 +77,8 @@ class WaitingRoomService {
   }
 
   // Function to join a room, with a callback for the join process
-  static Future<String> sendJoinRoomRequest(String roomId, String username) async {
+  static Future<String> sendJoinRoomRequest(
+      String roomId, String username) async {
     if (!isSocketAlive()) {
       return 'Socket is not connected, cannot join room';
     }
@@ -108,9 +109,10 @@ class WaitingRoomService {
 
   // Helper function to validate if the room is locked
   static String _handleJoiningRoomValidation(bool isLocked) {
-    return isLocked ? 'Room is locked, cannot join at this time.' : 'Successfully joined the room!';
+    return isLocked
+        ? 'Room is locked, cannot join at this time.'
+        : 'Successfully joined the room!';
   }
-
 
   static void disconnect() {
     socket?.disconnect();

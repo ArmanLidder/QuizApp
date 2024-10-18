@@ -10,7 +10,9 @@ class WaitingRoomScreen extends StatefulWidget {
   final bool isHost;
   final String? username;
 
-  const WaitingRoomScreen({Key? key, required this.quiz, required this.isHost, this.username}) : super(key: key);
+  const WaitingRoomScreen(
+      {Key? key, required this.quiz, required this.isHost, this.username})
+      : super(key: key);
 
   @override
   _WaitingRoomScreenState createState() => _WaitingRoomScreenState();
@@ -52,7 +54,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       if (username == 'nothing') {
         print('isHost : username is nothing');
       } else {
-        WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost, username: username);
+        WaitingRoomService.connectToSocket(roomId,
+            isHost: widget.isHost, username: username);
       }
       _configureSocketListeners();
       setState(() {});
@@ -69,26 +72,26 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   void _configureSocketListeners() {
     WaitingRoomService.socket?.on('newPlayer', (data) {
-        if (data is List) {
-          newPlayerName = data.last; 
-          setState(() {
-            players.add(newPlayerName!);
-            showPopup = true;
-          });
-        } else {
-          print('Unexpected data format: $data');
-        }
-      });
+      if (data is List) {
+        newPlayerName = data.last;
+        setState(() {
+          players.add(newPlayerName!);
+          showPopup = true;
+        });
+      } else {
+        print('Unexpected data format: $data');
+      }
+    });
 
     WaitingRoomService.socket?.on('removedPlayer', (username) {
-    if (username is String) {
-      setState(() {
-        players.remove(username);
-      });
-    } else {
-      print('Unexpected data format for playerLeft: $username');
-    }
-  });
+      if (username is String) {
+        setState(() {
+          players.remove(username);
+        });
+      } else {
+        print('Unexpected data format for playerLeft: $username');
+      }
+    });
 
     WaitingRoomService.socket?.on('startGame', (_) {
       setState(() {
@@ -115,7 +118,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   void _leaveRoom() {
     final event = widget.isHost ? 'hostAbandonnement' : 'playerAbandonnement';
     WaitingRoomService.socket?.emit(event, {'roomId': roomId});
-    if(widget.isHost) {
+    if (widget.isHost) {
       WaitingRoomService.deleteRoom(roomId);
     }
     WaitingRoomService.disconnect();
@@ -160,7 +163,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
           ),
           if (widget.isHost && !isCountdownActive)
             ElevatedButton(
-              onPressed: _startCountdown,
+              onPressed:
+                  players.length >= 1 && isRoomLocked ? _startCountdown : null,
               child: Text('Start Game'),
             ),
           if (widget.isHost && isCountdownActive)
