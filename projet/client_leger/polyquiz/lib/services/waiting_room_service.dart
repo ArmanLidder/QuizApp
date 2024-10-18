@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class WaitingRoomService {
+class WaitingRoomService extends ChangeNotifier {
   static final WaitingRoomService _instance = WaitingRoomService._internal();
   IO.Socket? socket;
 
@@ -64,12 +65,19 @@ class WaitingRoomService {
     });
 
     socket?.on('time', (data) {
-      //isTransition = true;
+      this.time = data;
+      print('on time data: ${this.time}');
+      notifyListeners();
+      if (time == 0) {
+        this.isGameStarting = true;
+        //navigatorKey.currentState?.pushNamed('/nextPage', arguments: data);
+      }
     });
   }
 
-  void startGame(String roomId) {
-    socket?.emit('start', {'roomId': roomId, 'time': 5});
+  void sendStartSignals() {
+    socket?.emit('start', {'roomId': this.roomId, 'time': 5});
+    notifyListeners();
   }
 
   void toggleRoomLock(num roomId) {

@@ -26,7 +26,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   bool isGameStarting = false;
   String? newPlayerName;
   bool showPopup = false;
-  bool isCountdownActive = false;
   WaitingRoomService waitingRoomService = WaitingRoomService();
 
   @override
@@ -66,12 +65,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     }
   }
 
-  void _startCountdown() {
-    setState(() {
-      isCountdownActive = true;
-    });
-  }
-
   void _configureSocketListeners() {
     waitingRoomService.socket?.on('newPlayer', (data) {
       if (data is List) {
@@ -95,12 +88,11 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       }
     });
 
-    waitingRoomService.socket?.on('startGame', (_) {
-      setState(() {
-        isGameStarting = true;
-      });
-      _startGame();
-    });
+    // waitingRoomService.socket?.on('startGame', (_) {
+    //   setState(() {
+    //     isGameStarting = true;
+    //   });
+    // });
   }
 
   void _toggleRoomLock() {
@@ -126,12 +118,12 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     waitingRoomService.disconnect();
   }
 
-  void _startGame() {
-    if (widget.isHost) {
-      waitingRoomService.startGame(roomId);
-    }
-    Navigator.pushNamed(context, '/gameScreen', arguments: roomId);
-  }
+  // void _startGame() {
+  //   if (widget.isHost) {
+  //     waitingRoomService.startGame();
+  //   }
+  //   Navigator.pushNamed(context, '/gameScreen', arguments: roomId);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -163,25 +155,34 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
               },
             ),
           ),
-          if (widget.isHost && !isCountdownActive)
+          if (widget.isHost && !waitingRoomService.isTransition)
             ElevatedButton(
-              onPressed:
-                  players.length >= 1 && isRoomLocked ? _startCountdown : null,
+              onPressed: players.length >= 1 && isRoomLocked
+                  ? () => setState(() {
+                        this.waitingRoomService.isTransition = true;
+                        waitingRoomService.sendStartSignals();
+                      })
+                  : null,
               child: Text('Start Game'),
             ),
-          if (widget.isHost && isCountdownActive)
-            Countdown(
-              seconds: 5, // Set the countdown duration here
-              build: (BuildContext context, double time) => Text(
-                'Starting in: ${time.toStringAsFixed(0)} seconds',
-                style: TextStyle(fontSize: 18),
-              ),
-              interval: Duration(seconds: 1),
-              onFinished: () {
-                print('Countdown is done!');
-                _startGame();
-              },
-            ),
+          if (widget.isHost && waitingRoomService.isTransition)
+            AnimatedBuilder(
+                animation: waitingRoomService,
+                builder: (BuildContext context, Widget? snapshot) {
+                  return Text(
+                      'Game starts in: ${waitingRoomService.time} second(s)');
+                }),
+          // Countdown(
+          //   seconds: 5, // Set the countdown duration here
+          //   build: (BuildContext context, double time) => Text(
+          //     'Starting in: ${time.toStringAsFixed(0)} seconds',
+          //     style: TextStyle(fontSize: 18),
+          //   ),
+          //   interval: Duration(seconds: 1),
+          //   onFinished: () {
+          //     print('Countdown is done!');
+          //   },
+          // ),
           if (widget.isHost)
             IconButton(
               icon: Container(

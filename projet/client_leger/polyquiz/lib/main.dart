@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/global_navigation_service.dart';
 // import 'package:polyquiz/pages/game_page.dart';
 import 'pages/login-page.dart';
 import 'pages/auth_screen.dart';
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Polyquiz',
+      navigatorKey: GlobalNavigationService.navigatorKey,
       initialRoute: '/',
       routes: {
         '/auth': (context) => AuthScreen(),
