@@ -46,7 +46,7 @@ class WaitingRoomService {
   }
 
   static void toggleRoomLock(String roomId, bool isLocked) {
-    socket?.emit('toggleLock', {'roomId': roomId, 'locked': isLocked});
+    socket?.emit('toggleRoomRock', {'roomId': roomId, 'locked': isLocked});
   }
 
   static Future<void> deleteRoom(String roomId) async {
