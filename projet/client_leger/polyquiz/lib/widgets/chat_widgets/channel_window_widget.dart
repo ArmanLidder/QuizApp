@@ -7,7 +7,7 @@ class ChannelWindowWidget extends StatefulWidget {
 class _ChannelWindowWidgetState extends State<ChannelWindowWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text('not yet implemented');
+    return ChannelSelectionWidget();
   }
 }
 
@@ -18,6 +18,16 @@ class ChannelSelectionWidget extends StatefulWidget {
 class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text('not yet implemented');
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(child: ElevatedButton(onPressed: (){}, child: Text("Créer un canal"))),
+            Expanded(child: ElevatedButton(onPressed: (){}, child: Text("Joindre un canal")))
+          ]
+        ),
+        Expanded(child: Text("list of channels to be added"))
+      ]
+    );
   }
 }
