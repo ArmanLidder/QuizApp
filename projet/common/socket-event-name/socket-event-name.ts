@@ -43,6 +43,7 @@ export namespace SocketEvent {
     export const PAUSE_TIMER = 'pauseTimer'
     export const PANIC_MODE = 'panicMode'
     export const GAME_STATUS_DISTRIBUTION = 'gameStatsDistribution';
+    export const GET_USER_DATA = 'getUserData';
 }
 
 

@@ -3,6 +3,8 @@ import { PlayerMessage, PlayerUsername } from '@common/interfaces/socket-manager
 import { RoomManagingService } from '@app/services/room-managing.service/room-managing.service';
 import * as io from 'socket.io';
 
+// This service may be erased
+
 export class ChatService {
     configureChatSockets(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         this.handleGetMessage(roomManager, socket);

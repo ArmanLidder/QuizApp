@@ -14,10 +14,18 @@ export class SocketClientService {
 
     connect() {
         const serverUrlWithoutApi = environment.serverUrl.replace('/api', '');
-        this.socket = io(serverUrlWithoutApi, { transports: ['websocket'], upgrade: false });
+        console.log(serverUrlWithoutApi)
+        this.socket = io(serverUrlWithoutApi, {
+            transports: ['websocket'],
+            upgrade: false,
+            auth: {
+                token: localStorage.getItem('token'),
+            }
+        });
     }
 
     disconnect() {
+        localStorage.clear();
         this.socket.disconnect();
     }
 

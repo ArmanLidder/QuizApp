@@ -1,0 +1,27 @@
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.avatar-item img.selected {
+  border: 3px solid #007bff;
+  box-shadow: 0 0 15px rgba(0,123,255,0.5);
+}
+
+.avatar-selection {
+  display: flex;
+  align-items: center; /* Align the items vertically in the center */
+  justify-content: space-between; /* Optional: spread elements across the width */
+}
+
+.upload-placeholder {
+  display: flex;
+  align-items: center; /* Aligns the icon and text vertically */
+  cursor: pointer; /* Changes the cursor to a pointer when hovering */
+}
+
+mat-icon {
+  margin-right: 5px; /* Adds some space between the icon and the text */
+}

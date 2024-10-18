@@ -45,3 +45,10 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Build output
+/build/
+*.build/
+*.tmp/
+*.out/
+*.swp
