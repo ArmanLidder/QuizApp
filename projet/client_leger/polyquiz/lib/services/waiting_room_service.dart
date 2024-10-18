@@ -2,13 +2,36 @@ import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class WaitingRoomService {
-  static IO.Socket? socket;
+  static final WaitingRoomService _instance = WaitingRoomService._internal();
+  IO.Socket? socket;
 
-  static bool isSocketAlive() {
+  int roomId = 0;
+  bool isRoomLocked = false;
+  bool isGameStarting = false;
+  bool isTransition = false;
+  List<String> players = [];
+  num time = 0;
+
+  WaitingRoomService._internal();
+
+  factory WaitingRoomService() {
+    return _instance;
+  }
+
+  void setUpService() {
+    this.roomId = 0;
+    this.isRoomLocked = false;
+    this.isGameStarting = false;
+    this.isTransition = false;
+    this.players = [];
+    this.time = 0;
+  }
+
+  bool isSocketAlive() {
     return socket != null && socket!.connected;
   }
 
-  static Future<void> connectToSocket(String roomId,
+  Future<void> connectToSocket(String roomId,
       {required bool isHost, String? username}) async {
     socket = IO.io('http://192.168.68.103:3000', <String, dynamic>{
       'transports': ['websocket'],
@@ -39,22 +62,26 @@ class WaitingRoomService {
     socket?.on('removedPlayer', (data) {
       print('Player left: $data');
     });
+
+    socket?.on('time', (data) {
+      //isTransition = true;
+    });
   }
 
-  static void startGame(String roomId) {
-    socket?.emit('startGame', {'roomId': roomId});
+  void startGame(String roomId) {
+    socket?.emit('start', {'roomId': roomId, 'time': 5});
   }
 
-  static void toggleRoomLock(String roomId, bool isLocked) {
-    socket?.emit('toggleRoomRock', {'roomId': roomId, 'locked': isLocked});
+  void toggleRoomLock(num roomId) {
+    socket?.emit('toggleRoomRock', roomId);
   }
 
-  static Future<void> deleteRoom(String roomId) async {
+  Future<void> deleteRoom(String roomId) async {
     print('Attempting to delete room: $roomId');
     socket?.emit('hostAbandonnement', {'roomId': roomId});
   }
 
-  static Future<String> createRoom(String quizId) async {
+  Future<String> createRoom(String quizId) async {
     final completer = Completer<String>();
     print('Creating room for quiz: $quizId');
 
@@ -67,6 +94,7 @@ class WaitingRoomService {
       if (roomCode != null) {
         print("Room created with ID: $roomCode");
         completer.complete(roomCode.toString());
+        this.roomId = roomCode;
       } else {
         print('Failed to create room');
         completer.completeError('Failed to create room');
@@ -77,8 +105,7 @@ class WaitingRoomService {
   }
 
   // Function to join a room, with a callback for the join process
-  static Future<String> sendJoinRoomRequest(
-      String roomId, String username) async {
+  Future<String> sendJoinRoomRequest(String roomId, String username) async {
     if (!isSocketAlive()) {
       return 'Socket is not connected, cannot join room';
     }
@@ -108,17 +135,17 @@ class WaitingRoomService {
   }
 
   // Helper function to validate if the room is locked
-  static String _handleJoiningRoomValidation(bool isLocked) {
+  String _handleJoiningRoomValidation(bool isLocked) {
     return isLocked
         ? 'Room is locked, cannot join at this time.'
         : 'Successfully joined the room!';
   }
 
-  static void disconnect() {
+  void disconnect() {
     socket?.disconnect();
   }
 
-  static void updateRoomLockStatus(String roomId, bool isLocked) {
+  void updateRoomLockStatus(String roomId, bool isLocked) {
     // Update the lock status in your backend
     // Your implementation here
   }
