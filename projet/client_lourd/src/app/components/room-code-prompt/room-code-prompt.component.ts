@@ -49,15 +49,15 @@ export class RoomCodePromptComponent implements OnInit {
         this.handleError();
     }
 
-    async validateUsername() {
-        this.error = await this.roomValidationService.verifyUsername();
-        this.handleError();
-    }
+    // async validateUsername() {
+    //     this.error = await this.roomValidationService.verifyUsername();
+    //     this.handleError();
+    // }
 
     async joinRoom() {
         this.error = await this.roomValidationService.sendJoinRoomRequest();
         const isValid =
-            !this.roomValidationService.isLocked && this.roomValidationService.isRoomIdValid && this.roomValidationService.isUsernameValid;
+            !this.roomValidationService.isLocked && this.roomValidationService.isRoomIdValid;
         if (isValid) this.sendAllDataToWaitingRoom();
         else this.handleError();
     }
