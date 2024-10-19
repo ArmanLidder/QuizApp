@@ -35,7 +35,6 @@ export class GameCreationService {
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket) {
         socket.on(SocketEvent.CREATE_ROOM, async (quizID: string, callback) => {
             const userId = socket.handshake.auth.userId;
-            console.log(`ON Game Creation User Firebase Id: ${userId}`)
             const roomCode = roomManager.addRoom(quizID);
             await this.fs.firestore.collection('canals').add(this.generateRoomCanal(roomCode, userId))
             roomManager.addUser(roomCode, HOST_USERNAME, socket.id);
