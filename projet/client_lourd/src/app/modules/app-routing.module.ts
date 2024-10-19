@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PasswordPromptComponent } from '@app/components/password-prompt/password-prompt.component';
 import {AuthGuard, canActivate, redirectLoggedInTo, redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { GameCreationPageComponent } from '@app/pages/game-creation-page/game-creation-page.component';
@@ -25,7 +24,6 @@ const routes: Routes = [
     { path: 'game-creation-page', component: GameCreationPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin}},
     { path: 'quiz-creation', component: QuizCreationPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
     { path: 'quiz-creation/:id', component: QuizCreationPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
-    { path: 'game-admin-prompt', component: PasswordPromptComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
     { path: 'quiz-testing-page/:id', component: GamePageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
     { path: 'waiting-room-host-page/:id', component: WaitingRoomHostPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
     { path: 'waiting-room-player-page', component: WaitingRoomPlayerPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },

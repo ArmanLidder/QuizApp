@@ -5,6 +5,7 @@ import { environment } from "../../../environments/environment";
 import { Observable } from 'rxjs';
 import { User } from "@app/interfaces/user/user-data.interface";
 import {AuthService} from "@app/services/auth.service/auth.service";
+import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
 
 @Component({
   selector: 'app-avatar',
@@ -24,6 +25,7 @@ export class AvatarComponent {
       private router: Router,
       private authService: AuthService,
       private usersService: UsersService,
+      private socketService: SocketClientService,
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +55,8 @@ export class AvatarComponent {
   async logout() {
     this.toggleMenu();
     await this.authService.logout();
-    this.router.navigate(['/login']);
+    if (this.socketService.isSocketAlive()) this.socketService.disconnect();
+    await this.router.navigate(['/login']);
     console.log("navigation done")
   }
 
