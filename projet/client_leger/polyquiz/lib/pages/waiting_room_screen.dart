@@ -39,11 +39,13 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   void dispose() {
     _leaveRoom();
     waitingRoomService.disconnect();
+    waitingRoomService.cancelListeners();
     super.dispose();
   }
 
   Future<void> _initRoom() async {
     try {
+      
       if (widget.isHost) {
         roomId = await waitingRoomService.createRoom(widget.quiz.id);
         // WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost);
@@ -66,19 +68,30 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   }
 
   void _configureSocketListeners() {
-    waitingRoomService.socket?.on('newPlayer', (data) {
-      if (data is List) {
-        newPlayerName = data.last;
-        setState(() {
-          players.add(newPlayerName!);
-          showPopup = true;
+    final waitingRoomService = WaitingRoomService();
+
+    waitingRoomService.onNewPlayer((data) {
+      if (mounted) {
+        if (data is List) {
+          newPlayerName = data.last;
+          setState(() {
+            players.add(newPlayerName!);
+            showPopup = true;
+          });
+        } else {
+          print('Unexpected data format: $data');
+        }
+        Future.delayed(Duration(seconds: 2), () {
+          if (mounted) {
+            setState(() {
+              showPopup = false;
+            });
+          }
         });
-      } else {
-        print('Unexpected data format: $data');
       }
     });
 
-    waitingRoomService.socket?.on('removedPlayer', (username) {
+    waitingRoomService.onRemovedPlayer((username) {
       if (username is String) {
         setState(() {
           players.remove(username);
@@ -88,7 +101,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       }
     });
 
-    // waitingRoomService.socket?.on('startGame', (_) {
+    // Uncomment and use if needed
+    // waitingRoomService.onStartGame((_) {
     //   setState(() {
     //     isGameStarting = true;
     //   });
@@ -99,7 +113,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     setState(() {
       isRoomLocked = !isRoomLocked;
     });
-    waitingRoomService.toggleRoomLock(waitingRoomService.roomId);
+    waitingRoomService.toggleRoomLock(roomId);
     waitingRoomService.updateRoomLockStatus(roomId, isRoomLocked);
   }
 
@@ -111,11 +125,10 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   void _leaveRoom() {
     final event = widget.isHost ? 'hostAbandonnement' : 'playerAbandonnement';
-    waitingRoomService.socket?.emit(event, {'roomId': roomId});
+    waitingRoomService.userLeft(roomId, event);
     if (widget.isHost) {
       waitingRoomService.deleteRoom(roomId);
     }
-    waitingRoomService.disconnect();
   }
 
   // void _startGame() {

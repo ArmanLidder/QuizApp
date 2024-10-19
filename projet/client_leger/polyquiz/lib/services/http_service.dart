@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:polyquiz/constants/constants.dart';
 
 class HttpService {
-  static const String baseUrl = 'http://192.168.68.103:3000/api';
+  static final String baseUrl = IP_URL + '/api';
 
   static Future<http.Response> post(
       String endpoint, Map<String, dynamic> data) async {

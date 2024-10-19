@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'socket_service.dart';
+import 'package:polyquiz/constants/socket-event.dart';
 
 class WaitingRoomService extends ChangeNotifier {
   static final WaitingRoomService _instance = WaitingRoomService._internal();
-  IO.Socket? socket;
+  final SocketService _socketService = SocketService(); // Use the SocketService instance
 
   int roomId = 0;
   bool isRoomLocked = false;
@@ -29,64 +30,22 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   bool isSocketAlive() {
-    return socket != null && socket!.connected;
+    return _socketService.isSocketAlive();
   }
 
   Future<void> connectToSocket(String roomId,
       {required bool isHost, String? username}) async {
-    socket = IO.io('http://192.168.68.103:3000', <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
+    if (!_socketService.isSocketAlive()) {
+      print("Socket is not connected. Attempting to connect...");
+      _socketService.connect();
+    }
 
-    socket?.connect();
-
-    socket?.on('connect', (_) {
+    _socketService.onMessage(SocketEvent.CONNECTION, (_) {
       print('Connected to WebSocket');
       if (username != null && isHost == false) {
         sendJoinRoomRequest(roomId, username);
       }
     });
-
-    socket?.on('disconnect', (_) {
-      print('Disconnected from WebSocket');
-      if (isHost) {
-        print('Host disconnected, deleting room...');
-        deleteRoom(roomId);
-      }
-    });
-
-    socket?.on('newPlayer', (data) {
-      print('New player joined: $data');
-    });
-
-    socket?.on('removedPlayer', (data) {
-      print('Player left: $data');
-    });
-
-    socket?.on('time', (data) {
-      this.time = data;
-      print('on time data: ${this.time}');
-      notifyListeners();
-      if (time == 0) {
-        this.isGameStarting = true;
-        //navigatorKey.currentState?.pushNamed('/nextPage', arguments: data);
-      }
-    });
-  }
-
-  void sendStartSignals() {
-    socket?.emit('start', {'roomId': this.roomId, 'time': 5});
-    notifyListeners();
-  }
-
-  void toggleRoomLock(num roomId) {
-    socket?.emit('toggleRoomRock', roomId);
-  }
-
-  Future<void> deleteRoom(String roomId) async {
-    print('Attempting to delete room: $roomId');
-    socket?.emit('hostAbandonnement', {'roomId': roomId});
   }
 
   Future<String> createRoom(String quizId) async {
@@ -98,7 +57,7 @@ class WaitingRoomService extends ChangeNotifier {
       await connectToSocket("roomId", isHost: true);
     }
 
-    socket?.emitWithAck('createRoom', quizId, ack: (roomCode) {
+    _socketService.sendMessageWithAck(SocketEvent.CREATE_ROOM, quizId, (roomCode) {
       if (roomCode != null) {
         print("Room created with ID: $roomCode");
         completer.complete(roomCode.toString());
@@ -112,7 +71,6 @@ class WaitingRoomService extends ChangeNotifier {
     return completer.future;
   }
 
-  // Function to join a room, with a callback for the join process
   Future<String> sendJoinRoomRequest(String roomId, String username) async {
     if (!isSocketAlive()) {
       return 'Socket is not connected, cannot join room';
@@ -127,7 +85,7 @@ class WaitingRoomService extends ChangeNotifier {
 
     print('Joining room with data: $usernameData');
 
-    socket?.emitWithAck('playerJoin', usernameData, ack: (isLocked) {
+    _socketService.sendMessageWithAck(SocketEvent.JOIN_GAME, usernameData, (isLocked) {
       if (isLocked is bool) {
         print("is joining room locked: $isLocked");
         final result = _handleJoiningRoomValidation(isLocked);
@@ -142,19 +100,52 @@ class WaitingRoomService extends ChangeNotifier {
     return completer.future;
   }
 
-  // Helper function to validate if the room is locked
-  String _handleJoiningRoomValidation(bool isLocked) {
-    return isLocked
-        ? 'Room is locked, cannot join at this time.'
-        : 'Successfully joined the room!';
+  void toggleRoomLock(String roomId) {
+    _socketService.sendMessage(SocketEvent.TOGGLE_ROOM_LOCK, {'roomId': roomId});
+  }
+
+  void updateRoomLockStatus(String roomId, bool isRoomLocked) {
+    _socketService.sendMessage(SocketEvent.UPDATE_SELECTION, {'roomId': roomId, 'isRoomLocked': isRoomLocked});
+  }
+
+  void userLeft(String roomId, dynamic event) {
+    _socketService.sendMessage(event, {'roomId': roomId});
+  }
+
+  void deleteRoom(String roomId) {
+    _socketService.sendMessage(SocketEvent.HOST_LEFT, {'roomId': roomId});
   }
 
   void disconnect() {
-    socket?.disconnect();
+    _socketService.disconnect();
   }
 
-  void updateRoomLockStatus(String roomId, bool isLocked) {
-    // Update the lock status in your backend
-    // Your implementation here
+  void cancelListeners() {
+    print('All listeners have been removed');
+  }
+
+  void onNewPlayer(Function(dynamic) callback) {
+    _socketService.onMessage(SocketEvent.NEW_PLAYER, callback);
+  }
+
+  void onRemovedPlayer(Function(dynamic) callback) {
+    _socketService.onMessage(SocketEvent.REMOVED_PLAYER, callback);
+  }
+
+  void onStartGame(Function(dynamic) callback) {
+    _socketService.onMessage(SocketEvent.START, callback);
+  }
+
+  void sendStartSignals() {
+    _socketService.sendMessage(SocketEvent.START, {'roomId': this.roomId, 'time': 5});
+    notifyListeners();
+  }
+
+  String _handleJoiningRoomValidation(bool isLocked) {
+    if (isLocked) {
+      return 'Room is locked, cannot join';
+    } else {
+      return 'Successfully joined the room';
+    }
   }
 }

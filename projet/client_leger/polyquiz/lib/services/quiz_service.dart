@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/quiz.dart';
+import 'package:polyquiz/constants/constants.dart';
 
 class QuizService {
-  final String baseUrl = 'http://192.168.68.103:3000/api'; //192.168.56.1
+  static final String baseUrl = IP_URL + '/api';
 
   Future<List<Quiz>> fetchAllQuizzes() async {
     try {
