@@ -117,10 +117,6 @@ class WaitingRoomService extends ChangeNotifier {
     _socketService.sendMessage(SocketEvent.TOGGLE_ROOM_LOCK, this.roomId);
   }
 
-  void updateRoomLockStatus(String roomId, bool isRoomLocked) {
-    //_socketService.sendMessage(SocketEvent.UPDATE_SELECTION, {'roomId': roomId, 'isRoomLocked': isRoomLocked});
-  }
-
   void userLeft(String roomId, dynamic event) {
     _socketService.sendMessage(event, roomId);
   }

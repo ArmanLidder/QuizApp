@@ -114,7 +114,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       isRoomLocked = !isRoomLocked;
     });
     waitingRoomService.toggleRoomLock();
-    waitingRoomService.updateRoomLockStatus(roomId, isRoomLocked);
   }
 
   void _banPlayer(String username) {
@@ -188,17 +187,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   return Text(
                       'Game starts in: ${waitingRoomService.time} second(s)');
                 }),
-          // Countdown(
-          //   seconds: 5, // Set the countdown duration here
-          //   build: (BuildContext context, double time) => Text(
-          //     'Starting in: ${time.toStringAsFixed(0)} seconds',
-          //     style: TextStyle(fontSize: 18),
-          //   ),
-          //   interval: Duration(seconds: 1),
-          //   onFinished: () {
-          //     print('Countdown is done!');
-          //   },
-          // ),
           if (widget.isHost)
             IconButton(
               icon: Container(
