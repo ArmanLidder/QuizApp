@@ -19,6 +19,7 @@ class _ChatWidgetState extends State<ChatWidget> {
           Expanded(
             child: Container(
                 color: Colors.blue,
+                padding: EdgeInsets.all(10.0),
                 child: Row(
                   children: [
                     Icon(Icons.textsms, size: 40),
@@ -30,6 +31,7 @@ class _ChatWidgetState extends State<ChatWidget> {
           Expanded(
             flex: 9,
               child: Container(
+                  padding: EdgeInsets.all(10.0),
                   child: buildCurrentPage(),
           ))
         ]
