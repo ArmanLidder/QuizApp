@@ -47,15 +47,6 @@ class WaitingRoomService extends ChangeNotifier {
         sendJoinRoomRequest(roomId, username);
       }
     });
-
-    _socketService.onMessage(SocketEvent.TIME, (data) {
-      this.time = data;
-      print('on time data: ${this.time}');
-      notifyListeners();
-      if (time == 0) {
-        this.isGameStarting = true;
-      }
-    });
   }
 
   Future<String> createRoom(String quizId) async {
@@ -112,6 +103,13 @@ class WaitingRoomService extends ChangeNotifier {
     return completer.future;
   }
 
+  void sendBanPlayer(String username) {
+    removePlayer(username);
+    _socketService.sendMessage(
+        SocketEvent.BAN_PLAYER, {'roomId': this.roomId, 'username': username});
+    notifyListeners();
+  }
+
   void toggleRoomLock() {
     print('RoomId sent: ${this.roomId}');
     _socketService.sendMessage(SocketEvent.TOGGLE_ROOM_LOCK, this.roomId);
@@ -133,9 +131,9 @@ class WaitingRoomService extends ChangeNotifier {
     _socketService.clearAllListeners();
   }
 
-  void onNewPlayer(Function(dynamic) callback) {
-    _socketService.onMessage(SocketEvent.NEW_PLAYER, callback);
-  }
+  // void onNewPlayer(Function(dynamic) callback) {
+  //   _socketService.onMessage(SocketEvent.NEW_PLAYER, callback);
+  // }
 
   void onRemovedPlayer(Function(dynamic) callback) {
     _socketService.onMessage(SocketEvent.REMOVED_PLAYER, callback);
@@ -151,11 +149,57 @@ class WaitingRoomService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removePlayer(String username) {
+    players.remove(username);
+  }
+
   String _handleJoiningRoomValidation(bool isLocked) {
     if (isLocked) {
       return 'Room is locked, cannot join';
     } else {
       return 'Successfully joined the room';
     }
+  }
+
+  void configureBaseSocketFeatures() {
+    handleNewPlayer();
+    handleRemovedFromGame();
+    handleRemovedPlayer();
+    handleTime();
+    handleFinalTransition();
+  }
+
+  void handleNewPlayer() {
+    _socketService.onMessage(SocketEvent.NEW_PLAYER, (players) {
+      this.players = List<String>.from(players);
+      notifyListeners();
+    });
+  }
+
+  void handleRemovedFromGame() {}
+
+  void handleRemovedPlayer() {
+    _socketService.onMessage(SocketEvent.REMOVED_PLAYER, (username) {
+      if (players.contains(username)) {
+        removePlayer(username);
+      }
+    });
+  }
+
+  void handleTime() {
+    _socketService.onMessage(SocketEvent.TIME, (data) {
+      this.time = data;
+      print('on time data: ${this.time}');
+      notifyListeners();
+      if (time == 0) {
+        this.isGameStarting = true;
+      }
+    });
+  }
+
+  void handleFinalTransition() {
+    // _socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION, (){
+
+    // });
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:async';
-import 'package:timer_count_down/timer_count_down.dart';
 import 'package:flutter/material.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
@@ -20,7 +19,6 @@ class WaitingRoomScreen extends StatefulWidget {
 }
 
 class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
-  List<String> players = [];
   String roomId = "nothing";
   String username = "nothing";
   bool isRoomLocked = false;
@@ -48,7 +46,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     try {
       if (widget.isHost) {
         roomId = await waitingRoomService.createRoom(widget.quiz.id);
-        // WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost);
       } else {
         roomId = widget.quiz.id;
         username = widget.username ?? 'nothing';
@@ -60,53 +57,11 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         waitingRoomService.connectToSocket(roomId,
             isHost: widget.isHost, username: username);
       }
-      _configureSocketListeners();
+      waitingRoomService.configureBaseSocketFeatures();
       setState(() {});
     } catch (e) {
       print('Error initializing room: $e');
     }
-  }
-
-  void _configureSocketListeners() {
-    //final waitingRoomService = WaitingRoomService();
-
-    waitingRoomService.onNewPlayer((data) {
-      if (mounted) {
-        if (data is List) {
-          newPlayerName = data.last;
-          setState(() {
-            players.add(newPlayerName!);
-            showPopup = true;
-          });
-        } else {
-          print('Unexpected data format: $data');
-        }
-        Future.delayed(Duration(seconds: 2), () {
-          if (mounted) {
-            setState(() {
-              showPopup = false;
-            });
-          }
-        });
-      }
-    });
-
-    waitingRoomService.onRemovedPlayer((username) {
-      if (username is String) {
-        setState(() {
-          players.remove(username);
-        });
-      } else {
-        print('Unexpected data format for playerLeft: $username');
-      }
-    });
-
-    // Uncomment and use if needed
-    // waitingRoomService.onStartGame((_) {
-    //   setState(() {
-    //     isGameStarting = true;
-    //   });
-    // });
   }
 
   void _toggleRoomLock() {
@@ -114,12 +69,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       isRoomLocked = !isRoomLocked;
     });
     waitingRoomService.toggleRoomLock();
-  }
-
-  void _banPlayer(String username) {
-    setState(() {
-      players.remove(username);
-    });
   }
 
   void _leaveRoom() {
@@ -131,13 +80,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
     }
   }
-
-  // void _startGame() {
-  //   if (widget.isHost) {
-  //     waitingRoomService.startGame();
-  //   }
-  //   Navigator.pushNamed(context, '/gameScreen', arguments: roomId);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -154,24 +96,31 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             ),
           Text('Players:'),
           Expanded(
-            child: ListView.builder(
-              itemCount: players.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(players[index]),
-                  trailing: widget.isHost
-                      ? IconButton(
-                          icon: Icon(Icons.remove),
-                          onPressed: () => _banPlayer(players[index]),
-                        )
-                      : null,
-                );
-              },
-            ),
+            child: AnimatedBuilder(
+                animation: waitingRoomService,
+                builder: (BuildContext context, Widget? snapshot) {
+                  return ListView.builder(
+                    itemCount: waitingRoomService.players.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(waitingRoomService.players[index]),
+                        trailing: widget.isHost
+                            ? IconButton(
+                                icon: Icon(Icons.remove),
+                                onPressed: () => {
+                                  waitingRoomService.sendBanPlayer(
+                                      waitingRoomService.players[index])
+                                },
+                              )
+                            : null,
+                      );
+                    },
+                  );
+                }),
           ),
           if (widget.isHost && !waitingRoomService.isTransition)
             ElevatedButton(
-              onPressed: players.length >= 1 && isRoomLocked
+              onPressed: waitingRoomService.players.length >= 1 && isRoomLocked
                   ? () => setState(() {
                         this.waitingRoomService.isTransition = true;
                         waitingRoomService.sendStartSignals();
