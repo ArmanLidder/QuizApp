@@ -21,8 +21,8 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Expanded(child: IconButton(onPressed: (){ widget.returnCallback(); }, icon: Icon(Icons.arrow_back))),
-            Expanded(child: Text(getChannel().name)) // TODO: Change once I can access channel name
+            Expanded(child: Align(alignment: Alignment.centerLeft, child: IconButton(onPressed: (){ widget.returnCallback(); }, icon: Icon(Icons.arrow_back)))),
+            Expanded(child: Align(alignment: Alignment.center, child: Text(getChannel().name)))
           ]
         ),
         Expanded(child: Obx(() {
@@ -63,7 +63,7 @@ class MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return buildSentMessage();
+    return isUserSender() ? buildSentMessage() : buildReceivedMessage();
   }
 
   Widget buildSentMessage() {
@@ -112,5 +112,9 @@ class MessageTile extends StatelessWidget {
         Flexible(child: Text(username))
       ],
     );
+  }
+
+  bool isUserSender() {
+    return false;
   }
 }
