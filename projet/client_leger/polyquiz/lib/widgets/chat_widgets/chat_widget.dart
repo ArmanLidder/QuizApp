@@ -10,7 +10,7 @@ class ChatWidget extends StatefulWidget {
 
 class _ChatWidgetState extends State<ChatWidget> {
   Page page = Page.Channel;
-  String title = "Clavardage";
+  String currentChannelId = "Clavardage";
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class _ChatWidgetState extends State<ChatWidget> {
   Widget buildCurrentPage() {
     switch (page) {
       case Page.Message:
-        return MessageWindowWidget(channelId: 'channelId', returnCallback: (){
+        return MessageWindowWidget(channelId: currentChannelId, returnCallback: (){
           setState(() {
             page = Page.Channel;
           });
@@ -52,7 +52,7 @@ class _ChatWidgetState extends State<ChatWidget> {
 
   void selectChannel(String name) {
     setState(() {
-      title = name;
+      currentChannelId = name;
       page = Page.Message;
     });
   }
