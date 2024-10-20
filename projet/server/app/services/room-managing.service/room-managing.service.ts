@@ -1,7 +1,8 @@
 import { Service } from 'typedi';
 import { HOST_USERNAME } from '@common/names/host-username';
 import { RoomData } from '@app/interface/room-data-interface';
-import {GameConfig} from "@common/interfaces/game-info.interface";
+import { GameConfig } from "@common/interfaces/game-info.interface";
+import { GameListItem } from "@common/interfaces/room-interface";
 
 type SocketId = string;
 type Username = string;
@@ -41,6 +42,12 @@ export class RoomManagingService {
             game: null,
             bannedNames: [],
             timer: null,
+            hostUserId: config.hostUserId,
+            gameType: config.gameType,
+            private: config.private,
+            onGoing: false,
+            price: config.price,
+            friendsOnly: config.friendsOnly,
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -65,6 +72,31 @@ export class RoomManagingService {
             if (playersMap.get(username) === userSocketId) return username;
         }
         return undefined;
+    }
+
+    startGame(roomId: number) {
+        const gameConfig: RoomData = this.rooms.get(roomId);
+        gameConfig.onGoing = true;
+        this.rooms.set(roomId, gameConfig)
+    }
+
+    getGamesConfig() :GameListItem[] {
+        const gameList:GameListItem[] = []
+        this.rooms.forEach((roomData: RoomData, roomCode: number) => {
+            let gameItem = {
+                room: roomCode,
+                quizId: roomData.quizId,
+                numberOfPlayers: roomData.players.size,
+                hostUserId: roomData.hostUserId,
+                gameType: roomData.gameType,
+                private: roomData.private,
+                onGoing: roomData.onGoing,
+                price: roomData.price,
+                friendsOnly: roomData.friendsOnly,
+            } as GameListItem;
+            gameList.push(gameItem);
+        });
+        return gameList;
     }
 
     removeUserFromRoom(roomId: number, name: string): void {

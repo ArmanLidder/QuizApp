@@ -44,6 +44,9 @@ export namespace SocketEvent {
     export const PANIC_MODE = 'panicMode'
     export const GAME_STATUS_DISTRIBUTION = 'gameStatsDistribution';
     export const GET_USER_DATA = 'getUserData';
+
+    export const UPDATE_GAME_LIST = 'update_game_list';
+    export const GET_GAME_LIST = 'get_game_list';
 }
 
 
