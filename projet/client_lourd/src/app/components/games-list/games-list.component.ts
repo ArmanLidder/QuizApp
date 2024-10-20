@@ -1,15 +1,16 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { AlertDialogComponent } from '@app/components/alert-dialog/alert-dialog.component';
-import { HTTP_STATUS_CODE_CREATED } from '@common/constants/games-list.component.const';
-import { QuizValidationService } from '@app/services/quiz-validation.service/quiz-validation.service';
-import { QuizService } from '@app/services/quiz.service/quiz.service';
-import { ErrorDictionary } from '@common/browser-message/error-message/error-message';
-import { Quiz } from '@common/interfaces/quiz.interface';
-import { getCurrentDateService } from 'src/utils/current-date-format/current-date-format';
-import { generateRandomId } from 'src/utils/random-id-generator/random-id-generator';
-import { QUIZ_TESTING_PAGE, WAITING_ROOM_HOST_PAGE } from '@common/page-url/page-url';
+import {Component, ElementRef, Input, OnInit, ViewChild, inject} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {Router} from '@angular/router';
+import {AlertDialogComponent} from '@app/components/alert-dialog/alert-dialog.component';
+import {GameConfigDialogComponent} from "@app/components/game-config-dialog/game-config-dialog.component";
+import {HTTP_STATUS_CODE_CREATED} from '@common/constants/games-list.component.const';
+import {QuizValidationService} from '@app/services/quiz-validation.service/quiz-validation.service';
+import {QuizService} from '@app/services/quiz.service/quiz.service';
+import {ErrorDictionary} from '@common/browser-message/error-message/error-message';
+import {Quiz} from '@common/interfaces/quiz.interface';
+import {getCurrentDateService} from 'src/utils/current-date-format/current-date-format';
+import {generateRandomId} from 'src/utils/random-id-generator/random-id-generator';
+import {QUIZ_TESTING_PAGE, WAITING_ROOM_HOST_PAGE} from '@common/page-url/page-url';
 
 @Component({
     selector: 'app-games-list',
@@ -36,7 +37,8 @@ export class GamesListComponent implements OnInit {
         public quizServices: QuizService,
         public quizValidator: QuizValidationService,
         private dialog: MatDialog,
-    ) {}
+    ) {
+    }
 
     ngOnInit() {
         this.populateGameList();
@@ -174,7 +176,7 @@ export class GamesListComponent implements OnInit {
         });
     }
 
-    handleQuizAction(route: string) {
+    handleQuizAction(route: string){
         this.populateGameList();
 
         if (!this.selectedQuiz) return;
@@ -197,7 +199,11 @@ export class GamesListComponent implements OnInit {
     }
 
     playGame() {
-        this.handleQuizAction(`/${WAITING_ROOM_HOST_PAGE}/`);
+        const isConfigured = this.dialog.open(GameConfigDialogComponent).afterClosed()
+        isConfigured.subscribe((res) => {
+            console.log(`Response: ${res}`)
+            if (res) this.handleQuizAction(`/${WAITING_ROOM_HOST_PAGE}/`);
+        });
     }
 
     private showError(error: string) {

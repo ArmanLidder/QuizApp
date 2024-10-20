@@ -28,7 +28,7 @@ export class GameManagementService {
 
     configureGameManagingSockets(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         this.timerService = new TimerService(roomManager, sio);
-        this.handleStartGame(roomManager, socket);
+        this.handleStartGame(roomManager, socket, sio);
         this.handleGetQuestion(roomManager, socket);
         this.handleSubmitAnswer(roomManager, socket, sio);
         this.handleUpdateSelection(roomManager, socket, sio);
@@ -45,14 +45,16 @@ export class GameManagementService {
         this.handleGameStatusDistribution(socket, sio);
     }
 
-    private handleStartGame(roomManager: RoomManagingService, socket: io.Socket) {
+    private handleStartGame(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.START, async (data: RemainingTime) => {
+            roomManager.startGame(data.roomId);
             const room = roomManager.getRoomById(data.roomId);
             const quizId = room.quizId;
             const usernames = roomManager.getUsernamesArray(data.roomId);
             room.game = new Game(usernames, this.quizService, this.historyService);
             await room.game.setup(quizId);
             this.timerService.startTimer({ roomId: data.roomId, time: data.time });
+            this.sendUpdateGameList(roomManager, sio)
         });
     }
 
@@ -191,5 +193,9 @@ export class GameManagementService {
         socket.on(SocketEvent.GAME_STATUS_DISTRIBUTION, (data: GameStats) => {
             sio.to(String(data.roomId)).emit(SocketEvent.GAME_STATUS_DISTRIBUTION, data.stats);
         });
+    }
+
+    private sendUpdateGameList(roomManager: RoomManagingService, sio: io.Server) {
+        sio.emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig())
     }
 }

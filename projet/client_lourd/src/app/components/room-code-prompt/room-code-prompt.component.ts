@@ -12,7 +12,7 @@ export class RoomCodePromptComponent implements OnInit {
     @Output() sendRoomData: EventEmitter<number> = new EventEmitter<number>();
     @Output() sendUsernameData: EventEmitter<string> = new EventEmitter<string>();
     @Output() validationDone: EventEmitter<boolean> = new EventEmitter<boolean>();
-    inputBorderColor: string = '';
+    inputBorderColor: string = 'black';
     error: string | undefined = '';
     textColor: string = '';
 
@@ -49,15 +49,15 @@ export class RoomCodePromptComponent implements OnInit {
         this.handleError();
     }
 
-    async validateUsername() {
-        this.error = await this.roomValidationService.verifyUsername();
-        this.handleError();
-    }
+    // async validateUsername() {
+    //     this.error = await this.roomValidationService.verifyUsername();
+    //     this.handleError();
+    // }
 
     async joinRoom() {
         this.error = await this.roomValidationService.sendJoinRoomRequest();
         const isValid =
-            !this.roomValidationService.isLocked && this.roomValidationService.isRoomIdValid && this.roomValidationService.isUsernameValid;
+            !this.roomValidationService.isLocked && this.roomValidationService.isRoomIdValid;
         if (isValid) this.sendAllDataToWaitingRoom();
         else this.handleError();
     }
@@ -76,7 +76,7 @@ export class RoomCodePromptComponent implements OnInit {
 
     private reset() {
         this.textColor = NO_COLOR;
-        this.inputBorderColor = NO_COLOR;
+        this.inputBorderColor = 'black';
         this.error = '';
     }
 

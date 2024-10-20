@@ -9,6 +9,7 @@ import * as io from 'socket.io';
 import {Service} from 'typedi';
 import {FirebaseService} from "@app/services/firebase.service/firebase.service";
 import {Canal} from "@common/interfaces/message.interface";
+import {GameConfig} from "@common/interfaces/game-info.interface";
 
 @Service()
 export class GameCreationService {
@@ -21,7 +22,7 @@ export class GameCreationService {
 
     configureGameCreationSockets(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         this.timerService = new TimerService(roomManager, sio);
-        this.handleRoomCreation(roomManager, socket);
+        this.handleRoomCreation(roomManager, socket, sio);
         this.handleJoinGame(roomManager, socket, sio);
         this.handleBanPlayer(roomManager, socket, sio);
         this.handleToggleRoomLock(roomManager, socket);
@@ -30,15 +31,17 @@ export class GameCreationService {
         this.handleValidateRoomId(roomManager, socket);
         this.handlePlayerLeft(roomManager, socket, sio);
         this.handleHostLeft(roomManager, socket, sio);
+        this.handleGetGameList(roomManager, socket, sio);
     }
 
-    private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket) {
-        socket.on(SocketEvent.CREATE_ROOM, async (quizID: string, callback) => {
+    private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.CREATE_ROOM, async (data: { quizId: string, gameConfig: GameConfig }, callback) => {
             const userId = socket.handshake.auth.userId;
-            const roomCode = roomManager.addRoom(quizID);
+            const roomCode = roomManager.addRoom(data.quizId, data.gameConfig);
             await this.fs.firestore.collection('canals').add(this.generateRoomCanal(roomCode, userId))
             roomManager.addUser(roomCode, HOST_USERNAME, socket.id);
             socket.join(String(roomCode));
+            this.sendUpdateGameList(roomManager, sio)
             callback(roomCode);
         });
     }
@@ -55,6 +58,7 @@ export class GameCreationService {
                 socket.join(String(roomCode));
                 await this.addUserToRoomCanal(roomCode, userId);
                 sio.to(String(data.roomId)).emit(SocketEvent.NEW_PLAYER, players);
+                this.sendUpdateGameList(roomManager, sio)
             }
             callback(isLocked);
         });
@@ -68,6 +72,7 @@ export class GameCreationService {
             await this.removeUserFromRoomCanal(data.roomId, banned_socket.handshake.auth.userId);
             sio.to(bannedID).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(data.roomId)).emit(SocketEvent.REMOVED_PLAYER, data.username);
+            this.sendUpdateGameList(roomManager, sio)
         });
     }
 
@@ -111,6 +116,7 @@ export class GameCreationService {
         socket.on(SocketEvent.PLAYER_LEFT, async (roomId: number) => {
             await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId);
             const userInfo = roomManager.removeUserBySocketId(socket.id);
+            this.sendUpdateGameList(roomManager, sio)
             if (userInfo) {
                 const game = roomManager.getGameByRoomId(roomId);
                 if (game) {
@@ -140,8 +146,21 @@ export class GameCreationService {
             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             roomManager.deleteRoom(roomId);
             await this.deleteRoomCanal(roomId);
+            this.sendUpdateGameList(roomManager, sio)
             sio.to(String(roomId)).disconnectSockets(true);
         });
+    }
+
+    private handleGetGameList(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.GET_GAME_LIST, () => {
+            console.log(`sending game list ${roomManager.getGamesConfig()}`)
+            sio.to(socket.id).emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig());
+        });
+    }
+
+    private sendUpdateGameList(roomManager: RoomManagingService, sio: io.Server) {
+        console.log(`sending game list on update ${roomManager.getGamesConfig()}`)
+        sio.emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig())
     }
 
     private generateRoomCanal(roomId: number, userId: string): Canal {
@@ -165,21 +184,21 @@ export class GameCreationService {
     }
 
     private async removeUserFromRoomCanal(roomCode: number, userId: string) {
-       try {
-           const docRef = await this.getDocRef(roomCode);
-           await docRef.update({
-               permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId),
-           });
-       } catch(error) {
-           console.log(error);
-       }
+        try {
+            const docRef = await this.getDocRef(roomCode);
+            await docRef.update({
+                permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId),
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     private async deleteRoomCanal(roomCode: number) {
         try {
             const docRef = await this.getDocRef(roomCode);
             await docRef.delete()
-        } catch(error) {
+        } catch (error) {
             console.log(error);
         }
     }
