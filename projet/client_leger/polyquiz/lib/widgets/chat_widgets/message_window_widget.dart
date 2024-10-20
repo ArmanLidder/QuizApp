@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
+import 'package:polyquiz/services/channelService.dart';
 
 class MessageWindowWidget extends StatefulWidget {
   final void Function() returnCallback;
@@ -11,6 +13,8 @@ class MessageWindowWidget extends StatefulWidget {
 }
 
 class _MessageWindowWidgetState extends State<MessageWindowWidget> {
+  final channelService = Get.put(ChannelService());
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -21,8 +25,16 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
             Text("Channel Name") // TODO: Change once I can access channel name
           ]
         ),
+        Expanded(child: Obx(() {
+          return MessageListWidget(messages: getMessagesFromChannel().isEmpty ? [] : getMessagesFromChannel());
+        }))
       ]
     );
+  }
+
+  List<Message> getMessagesFromChannel() {
+    bool channelById(Canal channel) => channel.id == widget.channelId;
+    return channelService.channels.toList().firstWhere(channelById).messages;
   }
 }
 
