@@ -11,7 +11,7 @@ export interface RoomData {
     hostUserId?: string;
     gameType?: string;
     private?: boolean; // visbilité de la partie
-    onGoing?: string; // partie en cours
+    onGoing?: boolean; // partie en cours
     price?: number; // prix d'une partie
     friendsOnly?: boolean; // prix d'une partie
 }
