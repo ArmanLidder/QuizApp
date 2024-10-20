@@ -38,7 +38,11 @@ class _ChatPopupState extends State<ChatPopup> {
 
     showDialog(context: context, builder: (BuildContext context) {
       return Dialog(
+        clipBehavior: Clip.hardEdge,
         // content: Expanded(child: ChatWidget()),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0)
+        ),
         child: Container(
           width: 700,
           height: 700,
