@@ -1,3 +1,5 @@
+import 'package:polyquiz/enums/question_type.dart';
+
 class Quiz {
   final String id;
   final String title;
@@ -22,7 +24,9 @@ class Quiz {
       id: json['id'].toString(),
       title: json['title'] as String,
       description: json['description'] as String,
-      duration: json['duration'] is int ? json['duration'] : int.parse(json['duration']),
+      duration: json['duration'] is int
+          ? json['duration']
+          : int.parse(json['duration']),
       lastModification: json['lastModification'] as String?,
       questions: (json['questions'] as List<dynamic>)
           .map((question) => QuizQuestion.fromJson(question))
@@ -102,9 +106,4 @@ class QuizChoice {
       'isCorrect': isCorrect,
     };
   }
-}
-
-enum QuestionType {
-  QCM,
-  QRL,
 }

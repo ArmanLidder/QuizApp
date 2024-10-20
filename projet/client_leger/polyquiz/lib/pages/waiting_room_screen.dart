@@ -1,7 +1,7 @@
 import 'dart:ffi';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:polyquiz/services/game_service.dart';
+import 'package:polyquiz/services/game_real_service.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
 import 'package:polyquiz/constants/socket-event.dart';
@@ -27,7 +27,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   String? newPlayerName;
   bool showPopup = false;
   WaitingRoomService waitingRoomService = WaitingRoomService();
-  GameService gameService = GameService();
+  GameRealService gameService = GameRealService();
 
   @override
   void initState() {
