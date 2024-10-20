@@ -33,6 +33,19 @@ export class SocketClientService {
         });
     }
 
+    async asyncConnect() {
+        await this.fetchUserID();
+        const serverUrlWithoutApi = environment.serverUrl.replace('/api', '');
+        console.log(`UserId: ${this.userID}`)
+        this.socket = io(serverUrlWithoutApi, {
+            transports: ['websocket'],
+            upgrade: false,
+            auth: {
+                userId: this.userID
+            },
+        });
+    }
+
     disconnect() {
         localStorage.clear();
         this.socket.disconnect();
