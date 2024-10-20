@@ -6,12 +6,12 @@ import 'package:polyquiz/models/player.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/socket_service.dart';
 
-class GameRealService {
-  static final GameRealService _instance = GameRealService._internal();
+class RealGameService {
+  static final RealGameService _instance = RealGameService._internal();
 
-  GameRealService._internal();
+  RealGameService._internal();
 
-  factory GameRealService() {
+  factory RealGameService() {
     return _instance;
   }
 
