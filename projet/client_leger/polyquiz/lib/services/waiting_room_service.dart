@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/global_navigation_service.dart';
 import 'socket_service.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 
@@ -7,6 +8,7 @@ class WaitingRoomService extends ChangeNotifier {
   static final WaitingRoomService _instance = WaitingRoomService._internal();
   final SocketService _socketService =
       SocketService(); // Use the SocketService instance
+  GlobalNavigationService _globalNavigationService = GlobalNavigationService();
 
   int roomId = 0;
   bool isRoomLocked = false;
@@ -176,7 +178,11 @@ class WaitingRoomService extends ChangeNotifier {
     });
   }
 
-  void handleRemovedFromGame() {}
+  void handleRemovedFromGame() {
+    _socketService.onMessage(SocketEvent.REMOVED_FROM_GAME, (_) {
+      _globalNavigationService.navigateTo('/');
+    });
+  }
 
   void handleRemovedPlayer() {
     _socketService.onMessage(SocketEvent.REMOVED_PLAYER, (username) {
