@@ -73,7 +73,7 @@ class ChannelSelectionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: TextButton(
-          onPressed: () => buttonCallback(name),
+          onPressed: () => buttonCallback(id),
           child: Container(child: Text(name)),
           style: TextButton.styleFrom(
             alignment: Alignment.centerLeft,
