@@ -4,6 +4,7 @@ import { DELETE_NUMBER, START_TRANSITION_DELAY } from '@common/constants/waiting
 import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
 import { Router } from '@angular/router';
 import { GAME_PAGE, HOME_PAGE } from '@common/page-url/page-url';
+import {GameConfig} from "@common/interfaces/game-info.interface";
 
 @Injectable({
     providedIn: 'root',
@@ -28,9 +29,13 @@ export class WaitingRoomManagementService {
         this.time = 0;
     }
 
-    async sendRoomCreation(quizId: string | null) {
+    async sendRoomCreation(quizId: string | null, gameConfig: GameConfig) {
+        const data = {
+            quizId: quizId,
+            gameConfig: gameConfig,
+        }
         return new Promise<number>((resolve) => {
-            this.socketService.send(SocketEvent.CREATE_ROOM, quizId, (roomCode: number) => {
+            this.socketService.send(SocketEvent.CREATE_ROOM, data, (roomCode: number) => {
                 this.roomId = roomCode;
                 resolve(roomCode);
             });

@@ -6,6 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import { GameService } from '@app/services/game.service/game.service';
 import { HOST_USERNAME } from '@common/names/host-username';
 import { LOCKED, UNLOCKED } from '@common/constants/waiting-room.component.const';
+import {GameConfigService} from "@app/services/game-config.service/game-config.service";
+import {GameConfig} from "@common/interfaces/game-info.interface";
 
 @Component({
     selector: 'app-waiting-room',
@@ -22,6 +24,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         public waitingRoomManagementService: WaitingRoomManagementService,
         public gameService: GameService,
         private socketService: SocketClientService,
+        private gameConfigService: GameConfigService,
     ) {
         this.connect();
     }
@@ -68,7 +71,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
 
     private async setUpHost() {
         const quizId = this.route.snapshot.paramMap.get('id');
-        this.roomId = await this.waitingRoomManagementService.sendRoomCreation(quizId);
+        this.roomId = await this.waitingRoomManagementService.sendRoomCreation(quizId, (this.gameConfigService.getGameConfig() as GameConfig));
         this.gameService.gameRealService.username = HOST_USERNAME;
     }
 

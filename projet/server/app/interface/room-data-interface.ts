@@ -1,5 +1,4 @@
 import { Game } from '@app/classes/game/game';
-import { Message } from '@common/interfaces/message.interface';
 
 export interface RoomData {
     room: number;
@@ -9,5 +8,11 @@ export interface RoomData {
     game: Game;
     timer: NodeJS.Timer;
     bannedNames: string[];
-    messages?: Message[];
+    hostUserId?: string;
+    gameType?: string;
+    private?: boolean; // visbilité de la partie
+    onGoing?: string; // partie en cours
+    price?: number; // prix d'une partie
+    friendsOnly?: boolean; // prix d'une partie
 }
+

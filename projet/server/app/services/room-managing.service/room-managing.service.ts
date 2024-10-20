@@ -1,7 +1,7 @@
-import { Message } from '@common/interfaces/message.interface';
 import { Service } from 'typedi';
 import { HOST_USERNAME } from '@common/names/host-username';
 import { RoomData } from '@app/interface/room-data-interface';
+import {GameConfig} from "@common/interfaces/game-info.interface";
 
 type SocketId = string;
 type Username = string;
@@ -31,7 +31,7 @@ export class RoomManagingService {
         return this.rooms.get(roomId)?.game;
     }
 
-    addRoom(quizId: string): number {
+    addRoom(quizId: string, config?: GameConfig): number {
         const roomId = this.generateUniqueRoomId();
         const roomData: RoomData = {
             room: roomId,
@@ -40,7 +40,6 @@ export class RoomManagingService {
             locked: false,
             game: null,
             bannedNames: [],
-            messages: [],
             timer: null,
         };
         this.rooms.set(roomId, roomData);
@@ -54,10 +53,6 @@ export class RoomManagingService {
 
     addUser(roomId: number, username: string, socketId: string) {
         this.getRoomById(roomId).players.set(username, socketId);
-    }
-
-    addMessage(roomId: number, message: Message) {
-        this.getRoomById(roomId).messages?.push(message);
     }
 
     getSocketIdByUsername(roomId: number, username: string): string {

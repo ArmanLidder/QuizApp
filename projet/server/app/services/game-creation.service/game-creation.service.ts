@@ -9,6 +9,7 @@ import * as io from 'socket.io';
 import {Service} from 'typedi';
 import {FirebaseService} from "@app/services/firebase.service/firebase.service";
 import {Canal} from "@common/interfaces/message.interface";
+import {GameConfig} from "@common/interfaces/game-info.interface";
 
 @Service()
 export class GameCreationService {
@@ -33,9 +34,9 @@ export class GameCreationService {
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket) {
-        socket.on(SocketEvent.CREATE_ROOM, async (quizID: string, callback) => {
+        socket.on(SocketEvent.CREATE_ROOM, async (data: { quizId: string, gameConfig: GameConfig }, callback) => {
             const userId = socket.handshake.auth.userId;
-            const roomCode = roomManager.addRoom(quizID);
+            const roomCode = roomManager.addRoom(data.quizId, data.gameConfig);
             await this.fs.firestore.collection('canals').add(this.generateRoomCanal(roomCode, userId))
             roomManager.addUser(roomCode, HOST_USERNAME, socket.id);
             socket.join(String(roomCode));
