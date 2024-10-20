@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { GameConfigService } from '@app/services/game-config.service/game-config.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -34,7 +34,7 @@ export class GameConfigDialogComponent {
       this.gameConfigService.setPrice(price);
       this.gameConfigService.setFriendsOnly(friendsOnly);
       this.gameConfigService.setPrivacy(isPrivate);
-      this.dialogRef.close(this.gameConfigService.getGameConfig());
+      this.dialogRef.close(true);
     }
   }
 
