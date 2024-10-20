@@ -4,6 +4,7 @@ import 'package:timer_count_down/timer_count_down.dart';
 import 'package:flutter/material.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
+import 'package:polyquiz/constants/socket-event.dart';
 
 class WaitingRoomScreen extends StatefulWidget {
   final Quiz quiz;
@@ -38,8 +39,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   @override
   void dispose() {
     _leaveRoom();
-    waitingRoomService.disconnect();
     waitingRoomService.cancelListeners();
+    waitingRoomService.disconnect();
     super.dispose();
   }
 
@@ -124,10 +125,13 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   }
 
   void _leaveRoom() {
-    final event = widget.isHost ? 'hostAbandonnement' : 'playerAbandonnement';
-    waitingRoomService.userLeft(roomId, event);
     if (widget.isHost) {
+      print('Host left Deleting room $roomId');
       waitingRoomService.deleteRoom(roomId);
+    }
+    else {
+      print('Player left');
+      waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
     }
   }
 

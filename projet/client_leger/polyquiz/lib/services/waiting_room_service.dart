@@ -101,7 +101,7 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   void toggleRoomLock(String roomId) {
-    _socketService.sendMessage(SocketEvent.TOGGLE_ROOM_LOCK, {'roomId': roomId});
+    _socketService.sendMessage(SocketEvent.TOGGLE_ROOM_LOCK, roomId);
   }
 
   void updateRoomLockStatus(String roomId, bool isRoomLocked) {
@@ -109,11 +109,11 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   void userLeft(String roomId, dynamic event) {
-    _socketService.sendMessage(event, {'roomId': roomId});
+    _socketService.sendMessage(event, roomId);
   }
 
   void deleteRoom(String roomId) {
-    _socketService.sendMessage(SocketEvent.HOST_LEFT, {'roomId': roomId});
+    _socketService.sendMessage(SocketEvent.HOST_LEFT, roomId);
   }
 
   void disconnect() {
@@ -121,7 +121,7 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   void cancelListeners() {
-    print('All listeners have been removed');
+    _socketService.clearAllListeners();
   }
 
   void onNewPlayer(Function(dynamic) callback) {

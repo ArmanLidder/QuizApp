@@ -48,6 +48,11 @@ class SocketService {
     _socket?.emitWithAck(event, data, ack: ack);
   }
 
+  void clearAllListeners() {
+    _socket?.clearListeners();
+    _socket?.off('*');
+  }
+
   bool isSocketAlive() {
     return _socket != null && _socket!.connected;
   }
