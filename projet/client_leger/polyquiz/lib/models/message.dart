@@ -1,11 +1,13 @@
 import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Message {
   final String userUid;
   final String message;
   final dynamic createdAt;
 
-  Message(this.userUid, this.message, {this.createdAt});
+  Message({required this.userUid, required this.message, this.createdAt});
 
   Message.fromJson(Map<String, dynamic> json)
     : userUid = json['userUid'] as String,
@@ -22,22 +24,37 @@ class Message {
 class Canal {
   final String? id;
   final String name;
-  final Bool isPrivate;
+  final bool isPrivate;
   final List<String> permittedUsers;
   final List<Message> messages;
 
-  Canal(this.name, this.isPrivate, this.permittedUsers, this.messages, {this.id});
+  Canal({required this.name, required this.isPrivate, required this.permittedUsers, required this.messages, this.id});
 
   Canal.fromJson(Map<String, dynamic> json)
     : id = json['id'] != null ? json['id'] as String : null,
       name = json['name'] as String,
-      isPrivate = json['isPrivate'] as Bool,
+      isPrivate = json['isPrivate'] as bool,
       permittedUsers = (json['permittedUsers'] as List<dynamic>)
         .map((user) => user as String)
         .toList(),
       messages = (json['messages'] as List<dynamic>)
         .map((message) => Message.fromJson(message))
         .toList();
+
+  factory Canal.fromDocument(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
+    return Canal(
+      id: doc.id,
+      name: data['name'] as String,
+      isPrivate: data['isPrivate'] as bool,
+      permittedUsers: (data['permittedUsers'] as List<dynamic>)
+        .map((user) => user as String)
+        .toList(),
+      messages: (data['messages'] as List<dynamic>)
+        .map((message) => Message.fromJson(message))
+        .toList(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'id': id != null ? id : null,
