@@ -66,6 +66,9 @@ import { FriendsComponent } from './components/friends/friends.component';
 import {MatTabsModule} from "@angular/material/tabs";
 import { AvatarWithLevelComponent } from './components/avatar-with-level/avatar-with-level.component';
 import { PopoutWindowModule } from 'angular-popout-window';
+import { GameConfigDialogComponent } from './components/game-config-dialog/game-config-dialog.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatSelectModule} from "@angular/material/select";
 
 /**
  * Main module that is used in main.ts.
@@ -117,6 +120,7 @@ import { PopoutWindowModule } from 'angular-popout-window';
         UserSearchDialogComponent,
         FriendsComponent,
         AvatarWithLevelComponent,
+        GameConfigDialogComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -145,6 +149,8 @@ import { PopoutWindowModule } from 'angular-popout-window';
         MatListModule,
         MatTabsModule,
         PopoutWindowModule,
+        MatCheckboxModule,
+        MatSelectModule,
     ],
     providers: [
         CanalService,
