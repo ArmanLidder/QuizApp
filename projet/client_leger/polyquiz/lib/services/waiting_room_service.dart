@@ -5,7 +5,8 @@ import 'package:polyquiz/constants/socket-event.dart';
 
 class WaitingRoomService extends ChangeNotifier {
   static final WaitingRoomService _instance = WaitingRoomService._internal();
-  final SocketService _socketService = SocketService(); // Use the SocketService instance
+  final SocketService _socketService =
+      SocketService(); // Use the SocketService instance
 
   int roomId = 0;
   bool isRoomLocked = false;
@@ -46,6 +47,15 @@ class WaitingRoomService extends ChangeNotifier {
         sendJoinRoomRequest(roomId, username);
       }
     });
+
+    _socketService.onMessage(SocketEvent.TIME, (data) {
+      this.time = data;
+      print('on time data: ${this.time}');
+      notifyListeners();
+      if (time == 0) {
+        this.isGameStarting = true;
+      }
+    });
   }
 
   Future<String> createRoom(String quizId) async {
@@ -57,7 +67,8 @@ class WaitingRoomService extends ChangeNotifier {
       await connectToSocket("roomId", isHost: true);
     }
 
-    _socketService.sendMessageWithAck(SocketEvent.CREATE_ROOM, quizId, (roomCode) {
+    _socketService.sendMessageWithAck(SocketEvent.CREATE_ROOM, quizId,
+        (roomCode) {
       if (roomCode != null) {
         print("Room created with ID: $roomCode");
         completer.complete(roomCode.toString());
@@ -85,7 +96,8 @@ class WaitingRoomService extends ChangeNotifier {
 
     print('Joining room with data: $usernameData');
 
-    _socketService.sendMessageWithAck(SocketEvent.JOIN_GAME, usernameData, (isLocked) {
+    _socketService.sendMessageWithAck(SocketEvent.JOIN_GAME, usernameData,
+        (isLocked) {
       if (isLocked is bool) {
         print("is joining room locked: $isLocked");
         final result = _handleJoiningRoomValidation(isLocked);
@@ -100,12 +112,13 @@ class WaitingRoomService extends ChangeNotifier {
     return completer.future;
   }
 
-  void toggleRoomLock(String roomId) {
-    _socketService.sendMessage(SocketEvent.TOGGLE_ROOM_LOCK, roomId);
+  void toggleRoomLock() {
+    print('RoomId sent: ${this.roomId}');
+    _socketService.sendMessage(SocketEvent.TOGGLE_ROOM_LOCK, this.roomId);
   }
 
   void updateRoomLockStatus(String roomId, bool isRoomLocked) {
-    _socketService.sendMessage(SocketEvent.UPDATE_SELECTION, {'roomId': roomId, 'isRoomLocked': isRoomLocked});
+    //_socketService.sendMessage(SocketEvent.UPDATE_SELECTION, {'roomId': roomId, 'isRoomLocked': isRoomLocked});
   }
 
   void userLeft(String roomId, dynamic event) {
@@ -137,7 +150,8 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   void sendStartSignals() {
-    _socketService.sendMessage(SocketEvent.START, {'roomId': this.roomId, 'time': 5});
+    _socketService
+        .sendMessage(SocketEvent.START, {'roomId': this.roomId, 'time': 5});
     notifyListeners();
   }
 

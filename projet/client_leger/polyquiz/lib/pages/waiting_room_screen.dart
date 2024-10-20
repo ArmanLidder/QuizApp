@@ -46,7 +46,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   Future<void> _initRoom() async {
     try {
-      
       if (widget.isHost) {
         roomId = await waitingRoomService.createRoom(widget.quiz.id);
         // WaitingRoomService.connectToSocket(roomId, isHost: widget.isHost);
@@ -69,7 +68,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   }
 
   void _configureSocketListeners() {
-    final waitingRoomService = WaitingRoomService();
+    //final waitingRoomService = WaitingRoomService();
 
     waitingRoomService.onNewPlayer((data) {
       if (mounted) {
@@ -114,7 +113,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     setState(() {
       isRoomLocked = !isRoomLocked;
     });
-    waitingRoomService.toggleRoomLock(roomId);
+    waitingRoomService.toggleRoomLock();
     waitingRoomService.updateRoomLockStatus(roomId, isRoomLocked);
   }
 
@@ -128,8 +127,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     if (widget.isHost) {
       print('Host left Deleting room $roomId');
       waitingRoomService.deleteRoom(roomId);
-    }
-    else {
+    } else {
       print('Player left');
       waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
     }
@@ -178,6 +176,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   ? () => setState(() {
                         this.waitingRoomService.isTransition = true;
                         waitingRoomService.sendStartSignals();
+                        print('sendStartSignals called');
                       })
                   : null,
               child: Text('Start Game'),
