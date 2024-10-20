@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/game_service.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
 import 'package:polyquiz/constants/socket-event.dart';
@@ -26,6 +27,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   String? newPlayerName;
   bool showPopup = false;
   WaitingRoomService waitingRoomService = WaitingRoomService();
+  GameService gameService = GameService();
 
   @override
   void initState() {
@@ -46,9 +48,12 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     try {
       if (widget.isHost) {
         roomId = await waitingRoomService.createRoom(widget.quiz.id);
+        gameService.username = 'host';
       } else {
         roomId = widget.quiz.id;
         username = widget.username ?? 'nothing';
+        gameService.username = username;
+        waitingRoomService.gatherPlayers();
         print('Joining room $roomId as $username');
       }
       if (username == 'nothing') {
@@ -129,13 +134,15 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   : null,
               child: Text('Start Game'),
             ),
-          if (widget.isHost && waitingRoomService.isTransition)
-            AnimatedBuilder(
-                animation: waitingRoomService,
-                builder: (BuildContext context, Widget? snapshot) {
-                  return Text(
-                      'Game starts in: ${waitingRoomService.time} second(s)');
-                }),
+          AnimatedBuilder(
+              animation: waitingRoomService,
+              builder: (BuildContext context, Widget? snapshot) {
+                return Visibility(
+                  visible: waitingRoomService.isTransition,
+                  child: Text(
+                      'Game starts in: ${waitingRoomService.time} second(s)'),
+                );
+              }),
           if (widget.isHost)
             IconButton(
               icon: Container(

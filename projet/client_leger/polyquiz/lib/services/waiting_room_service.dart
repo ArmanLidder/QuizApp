@@ -155,6 +155,13 @@ class WaitingRoomService extends ChangeNotifier {
     players.remove(username);
   }
 
+  void gatherPlayers() {
+    _socketService.sendMessageWithAck(
+        SocketEvent.GATHER_PLAYERS_USERNAME, this.roomId, (dynamic players) {
+      this.players = List<String>.from(players);
+    });
+  }
+
   String _handleJoiningRoomValidation(bool isLocked) {
     if (isLocked) {
       return 'Room is locked, cannot join';
@@ -195,17 +202,21 @@ class WaitingRoomService extends ChangeNotifier {
   void handleTime() {
     _socketService.onMessage(SocketEvent.TIME, (data) {
       this.time = data;
-      print('on time data: ${this.time}');
-      notifyListeners();
       if (time == 0) {
         this.isGameStarting = true;
+        this._globalNavigationService.navigateTo('/game');
+      } else if (time > 0) {
+        this.isTransition = true;
       }
+      notifyListeners();
     });
   }
 
   void handleFinalTransition() {
-    // _socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION, (){
-
-    // });
+    this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION, (_) {
+      if (this.isTransition) {
+        this._globalNavigationService.navigateTo('/');
+      }
+    });
   }
 }

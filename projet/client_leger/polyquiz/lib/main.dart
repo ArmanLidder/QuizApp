@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
-// import 'package:polyquiz/pages/game_page.dart';
 import 'pages/login-page.dart';
 import 'pages/auth_screen.dart';
 import 'pages/quiz_list_page.dart';
@@ -11,6 +11,7 @@ Future<void> main() async {
   // await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
         '/join': (context) => JoinRoomPage(),
+        '/game': (context) => GamePage()
       },
     );
   }

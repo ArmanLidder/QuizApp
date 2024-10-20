@@ -4,7 +4,12 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class GameService {
   static final GameService _instance = GameService._internal();
-  IO.Socket? socket;
+
+  GameService._internal();
+
+  factory GameService() {
+    return _instance;
+  }
 
   String username = '';
   num roomId = 0;
@@ -20,10 +25,4 @@ class GameService {
   //late final Audio audio = Audio('assets/music.mp3');
   bool audioPaused = false;
   bool inTimeTransition = false;
-
-  GameService._internal();
-
-  factory GameService() {
-    return _instance;
-  }
 }
