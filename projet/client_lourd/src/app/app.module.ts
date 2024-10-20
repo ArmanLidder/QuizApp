@@ -69,6 +69,7 @@ import { PopoutWindowModule } from 'angular-popout-window';
 import { GameConfigDialogComponent } from './components/game-config-dialog/game-config-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSelectModule} from "@angular/material/select";
+import { ActiveGameListComponent } from './components/active-game-list/active-game-list.component';
 
 /**
  * Main module that is used in main.ts.
@@ -121,6 +122,7 @@ import {MatSelectModule} from "@angular/material/select";
         FriendsComponent,
         AvatarWithLevelComponent,
         GameConfigDialogComponent,
+        ActiveGameListComponent,
     ],
     imports: [
         AppMaterialModule,
