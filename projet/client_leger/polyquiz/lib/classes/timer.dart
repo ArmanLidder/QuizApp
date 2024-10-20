@@ -1,9 +1,9 @@
-class Timer {
+class ClientTimer {
   int? _interval;
   int _counter = 0;
   final int _startValue;
 
-  Timer(this._startValue) {
+  ClientTimer(this._startValue) {
     _counter = _startValue;
   }
 
