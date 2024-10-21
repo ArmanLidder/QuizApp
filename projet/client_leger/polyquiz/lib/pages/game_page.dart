@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/widgets/game_widgets/host_widgets/host_grading_widget.dart';
-import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_legend_widget.dart';
-import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
+import 'package:polyquiz/constants/socket-event.dart';
+import 'package:polyquiz/services/game_service.dart';
+import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/widgets/game_widgets/host_widgets/host_interface_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_notice.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
-import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_legend_widget.dart';
-import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_widget.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -19,7 +19,7 @@ class GamePage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<GamePage> {
-  bool isHost = true;
+  late bool isHost;
   bool isQcm = false; // Il faudra remplacer par un enum par la suite
   bool noticeReceived = false;
   bool isGrading = true;
@@ -27,6 +27,31 @@ class _MyWidgetState extends State<GamePage> {
   int questionNum = 1;
   int questionPts = 50;
   String message = "Attendez pendant que l'hôte corrige les réponses...";
+  GameService _gameService = GameService();
+  SocketService _socketService = SocketService();
+  InteractiveListService _interactiveListService = InteractiveListService();
+
+  @override
+  void initState() {
+    super.initState();
+    if (_socketService.isSocketAlive()) {
+      _interactiveListService.configureBaseSocketFeatures();
+      this.isHost = this._gameService.realGameService.username == 'host';
+    }
+  }
+
+  @override
+  void dispose() {
+    final String socketMessage =
+        this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
+    if (this._socketService.isSocketAlive()) {
+      this
+          ._socketService
+          .sendMessage(socketMessage, this._gameService.realGameService.roomId);
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,59 +126,7 @@ class _MyWidgetState extends State<GamePage> {
             ],
           ),
         ), //////////////////// Fin de la vue du joueur et debut de la vue de l'organisateur
-        Visibility(
-            visible: isHost,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    TimerWidget(isHost: isHost, time: time),
-                    QuestionInfoWidget(
-                        questionNum: questionNum, questionPts: questionPts),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Visibility(
-                      visible: !noticeReceived,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Prochaine question',
-                          style: TextStyle(
-                              color: Color.fromRGBO(255, 255, 255, 1),
-                              fontSize: 20),
-                        ),
-                        style: TextButton.styleFrom(
-                            textStyle: TextStyle(fontWeight: FontWeight.normal),
-                            splashFactory: NoSplash.splashFactory,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                            backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 100.0,
-                    ),
-                    QuitBtn()
-                  ],
-                ),
-                SizedBox(height: 20.0),
-                Visibility(visible: isQcm, child: HistogramLegend()),
-                Visibility(visible: isQcm, child: Histogram()),
-                Visibility(
-                    visible: isGrading,
-                    child: HostGrading(
-                      playerName: 'Player1',
-                      playerAnswer: 'Answer answer answer',
-                    )),
-                PlayersDataTableLegend(),
-                SizedBox(height: 20.0),
-                PlayersDataTable()
-              ],
-            ))
+        Visibility(visible: isHost, child: HostInterface())
       ]),
     );
   }

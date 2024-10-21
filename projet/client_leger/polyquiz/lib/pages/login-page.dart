@@ -4,7 +4,8 @@ import 'package:polyquiz/services/global_navigation_service.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  GlobalNavigationService globalNavigationService = GlobalNavigationService();
+  final GlobalNavigationService globalNavigationService =
+      GlobalNavigationService();
 
   @override
   Widget build(BuildContext context) {

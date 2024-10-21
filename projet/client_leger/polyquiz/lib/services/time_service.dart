@@ -1,5 +1,4 @@
 import 'package:polyquiz/classes/timer.dart';
-import 'dart:async';
 
 class TimeService {
   static final TimeService _instance = TimeService._internal();

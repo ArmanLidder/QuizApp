@@ -27,7 +27,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   String? newPlayerName;
   bool showPopup = false;
   WaitingRoomService waitingRoomService = WaitingRoomService();
-  RealGameService gameService = RealGameService();
+  RealGameService realGameService = RealGameService();
 
   @override
   void initState() {
@@ -48,12 +48,14 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     try {
       if (widget.isHost) {
         roomId = await waitingRoomService.createRoom(widget.quiz.id);
-        gameService.username = 'host';
+        realGameService.username = 'host';
+        realGameService.roomId = waitingRoomService.roomId;
       } else {
         roomId = widget.quiz.id;
         username = widget.username ?? 'nothing';
-        gameService.username = username;
+        realGameService.username = username;
         waitingRoomService.gatherPlayers();
+        realGameService.roomId = int.parse(roomId);
         print('Joining room $roomId as $username');
       }
       if (username == 'nothing') {
@@ -129,7 +131,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   ? () => setState(() {
                         this.waitingRoomService.isTransition = true;
                         waitingRoomService.sendStartSignals();
-                        print('sendStartSignals called');
                       })
                   : null,
               child: Text('Start Game'),
