@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart';

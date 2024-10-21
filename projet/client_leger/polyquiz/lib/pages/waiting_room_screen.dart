@@ -38,7 +38,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   @override
   void dispose() {
-    _leaveRoom();
+    //_leaveRoom();
     waitingRoomService.cancelListeners();
     waitingRoomService.disconnect();
     super.dispose();

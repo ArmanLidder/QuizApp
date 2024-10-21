@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/initial_question_data.dart';
@@ -7,7 +8,7 @@ import 'package:polyquiz/models/player.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/socket_service.dart';
 
-class RealGameService {
+class RealGameService extends ChangeNotifier {
   static final RealGameService _instance = RealGameService._internal();
 
   RealGameService._internal();
@@ -74,6 +75,8 @@ class RealGameService {
       );
 
       this.question = questionData.question;
+      print('QUESTION ATTRIBUTE: ${this.question}');
+      notifyListeners();
 
       if (questionData.numberOfQuestions == 1) {
         this.isLast = true;

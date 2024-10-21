@@ -50,7 +50,8 @@ class _HostInterfaceState extends State<HostInterface> {
             TimerWidget(isHost: true, time: 10),
             QuestionInfoWidget(
                 questionNum: gameService.questionNumber,
-                questionPts: 50), //gameService.question!.points),
+                questionPts:
+                    50), //gameService.question!.points), null question when load
           ],
         ),
         Row(
@@ -82,10 +83,13 @@ class _HostInterfaceState extends State<HostInterface> {
         SizedBox(height: 20.0),
         Visibility(
             visible: QuestionType.QCM ==
-                QuestionType.QCM, //gameService.question!.type
+                QuestionType
+                    .QCM, // gameService.question!.type null question when load
             child: HistogramLegend()),
         Visibility(
-            visible: QuestionType.QCM == QuestionType.QCM, child: Histogram()),
+            visible:
+                QuestionType.QCM == QuestionType.QCM, // null question when load
+            child: Histogram()),
         Visibility(
             visible: hostInterfaceManagementService.isHostEvaluating,
             child: HostGrading(
