@@ -1,0 +1,1 @@
+const String HOST_USERNAME = 'Organisateur';

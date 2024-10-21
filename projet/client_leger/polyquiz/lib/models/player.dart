@@ -1,3 +1,4 @@
+
 class Player {
   final String id;
   final String name;
@@ -11,3 +12,7 @@ class Player {
     );
   }
 }
+
+const double BONUS_MULTIPLIER = 1.2;
+const int TESTING_TRANSITION_TIMER = 3;
+const int QRL_DURATION = 60;
