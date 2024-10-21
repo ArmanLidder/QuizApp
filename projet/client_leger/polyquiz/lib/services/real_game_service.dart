@@ -36,6 +36,7 @@ class RealGameService {
   init() {
     this.configureBaseSocket();
     this._socketService.sendMessage(SocketEvent.GET_QUESTION, this.roomId);
+    print('ROOM ID SENT: ${this.roomId}');
     this.audio.setSource(AssetSource('music.mp3'));
     this.audio.setVolume(0.1);
   }
@@ -64,8 +65,9 @@ class RealGameService {
 
   void configureBaseSocket() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION, (data) {
+      print('DATA RECEIVED: ${data}');
       InitialQuestionData questionData = InitialQuestionData(
-        question: data['question'],
+        question: QuizQuestion.fromJson(data['question']),
         username: data['username'],
         index: data['index'],
         numberOfQuestions: data['numberOfQuestions'],

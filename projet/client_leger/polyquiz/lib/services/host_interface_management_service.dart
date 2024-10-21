@@ -150,7 +150,7 @@ class HostInterfaceManagementService {
         (data) async {
       final numberOfPlayers =
           await _interactiveListService.getPlayersList(roomId);
-      initGraph(data['question'], numberOfPlayers);
+      initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
     });
   }
 
@@ -158,7 +158,7 @@ class HostInterfaceManagementService {
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) async {
       final numberOfPlayers =
           await this._interactiveListService.getPlayersList(roomId);
-      initGraph(data.question, numberOfPlayers);
+      initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
     });
   }
 

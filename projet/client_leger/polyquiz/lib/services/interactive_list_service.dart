@@ -65,9 +65,7 @@ class InteractiveListService {
   }
 
   bool isPlayerGone(String username, List<Player> remainingPlayers) {
-    final Player? foundPlayer =
-        remainingPlayers.firstWhere((player) => player.username == username);
-    return foundPlayer != null;
+    return !remainingPlayers.any((player) => player.username == username);
   }
 
   void setUpPlayerList(List<Player> leftPlayers) {
@@ -82,7 +80,8 @@ class InteractiveListService {
       'roomId': roomId,
       'username': userInfo.username,
     }, (score) {
-      this.addPlayer(userInfo, score, leftPlayers);
+      print('SCORE DATA RECEIVED: ${score}');
+      this.addPlayer(userInfo, Score.fromJson(score), leftPlayers);
     });
   }
 
