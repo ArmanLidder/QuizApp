@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/offline_game_service.dart';
@@ -5,7 +6,15 @@ import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 
 class GameService {
-  bool isTestMode = false;
+  static final GameService _instance = GameService._internal();
+
+  GameService._internal();
+
+  factory GameService() {
+    return _instance;
+  }
+
+  bool isOfflineMode = false;
   bool isInputFocused = false;
   Map<int, String?> answers = {};
   String qrlAnswer = '';
@@ -14,128 +23,132 @@ class GameService {
   bool hasInteracted = false;
   int? lastQrlScore;
 
-  final OfflineGameService _offlineGameService = OfflineGameService();
-  final RealGameService _realGameService = RealGameService();
+  final OfflineGameService offlineGameService = OfflineGameService();
+  final RealGameService realGameService = RealGameService();
   final SocketService socketService = SocketService();
 
-  // int get timer {
-  //   return isTestMode ? _offlineGameService.timer?.time ?? 0 : _realGameService.timer;
-  // }
+  int get timer {
+    return this.isOfflineMode
+        ? this.offlineGameService.timer.time
+        : this.realGameService.timer;
+  }
 
   int get playerScore {
-    return _offlineGameService.playerScore;
+    return this.offlineGameService.playerScore;
   }
 
   bool get isBonus {
-    return _offlineGameService.isBonus;
+    return this.offlineGameService.isBonus;
   }
 
   QuizQuestion? get question {
-    return isTestMode
-        ? _offlineGameService.question
-        : _realGameService.question;
+    return this.isOfflineMode
+        ? this.offlineGameService.question
+        : this.realGameService.question;
   }
 
   int get questionNumber {
-    return isTestMode
-        ? _offlineGameService.currQuestionIndex + 1
-        : _realGameService.questionNumber;
+    return this.isOfflineMode
+        ? this.offlineGameService.currQuestionIndex + 1
+        : this.realGameService.questionNumber;
   }
 
   String get username {
-    return _realGameService.username;
+    return this.realGameService.username;
   }
 
   bool get lockedStatus {
-    return isTestMode ? _offlineGameService.locked : _realGameService.locked;
+    return this.isOfflineMode
+        ? this.offlineGameService.locked
+        : this.realGameService.locked;
   }
 
   bool get validatedStatus {
-    return isTestMode
-        ? _offlineGameService.validated
-        : _realGameService.validated;
+    return this.isOfflineMode
+        ? this.offlineGameService.validated
+        : this.realGameService.validated;
   }
 
-  // Audio get audio {
-  //   return _realGameService.audio;
-  // }
+  AudioPlayer get audio {
+    return this.realGameService.audio;
+  }
 
   void destroy() {
-    reset();
-    answers.clear();
+    this.reset();
+    this.answers.clear();
   }
 
   void init(String pathId) {
-    if (!isTestMode) {
-      //configureBaseSockets();
-      _realGameService.roomId = int.parse(pathId);
-      _realGameService.init();
+    if (!this.isOfflineMode) {
+      configureBaseSockets();
+      this.realGameService.roomId = int.parse(pathId);
+      this.realGameService.init();
     } else {
-      _offlineGameService.quizId = pathId;
-      _offlineGameService.init();
+      this.offlineGameService.quizId = pathId;
+      this.offlineGameService.init();
     }
   }
 
   void selectChoice(int index) {
-    if (!lockedStatus) {
-      if (answers.containsKey(index)) {
-        answers.remove(index);
-        _realGameService.sendSelection(index, false);
+    if (!this.lockedStatus) {
+      if (this.answers.containsKey(index)) {
+        this.answers.remove(index);
+        this.realGameService.sendSelection(index, false);
       } else {
-        String? textChoice = question?.choices?[index].text;
-        answers[index] = textChoice;
-        _realGameService.sendSelection(index, true);
+        String? textChoice = this.question?.choices?[index].text;
+        this.answers[index] = textChoice;
+        this.realGameService.sendSelection(index, true);
       }
     }
   }
 
   void sendAnswer() {
-    if (!isTestMode) {
-      _realGameService.answers = answers;
-      _realGameService.qrlAnswer = qrlAnswer;
-      _realGameService.sendAnswer();
-      isActive = false;
-      hasInteracted = false;
+    if (!this.isOfflineMode) {
+      this.realGameService.answers = this.answers;
+      this.realGameService.qrlAnswer = this.qrlAnswer;
+      this.realGameService.sendAnswer();
+      this.isActive = false;
+      this.hasInteracted = false;
     } else {
-      _offlineGameService.answers = answers;
-      _offlineGameService.qrlAnswer = qrlAnswer;
-      qrlAnswer = '';
-      _offlineGameService.sendAnswer();
+      this.offlineGameService.answers = this.answers;
+      this.offlineGameService.qrlAnswer = this.qrlAnswer;
+      this.qrlAnswer = '';
+      this.offlineGameService.sendAnswer();
     }
-    lastQrlScore = null;
-    answers.clear();
+    this.lastQrlScore = null;
+    this.answers.clear();
   }
 
-  // bool isPanicDisabled() {
-  //   if (question?.type != null) {
-  //     return timer > QLR_PANIC_MODE_ENABLED || _realGameService.inTimeTransition;
-  //   } else {
-  //     return timer > QCM_PANIC_MODE_ENABLED || _realGameService.inTimeTransition;
-  //   }
-  // }
+  bool isPanicDisabled() {
+    if (this.question?.type != null) {
+      return this.timer > 20 || this.realGameService.inTimeTransition;
+    } else {
+      return this.timer > 10 || this.realGameService.inTimeTransition;
+    }
+  }
 
   void reset() {
-    isTestMode = false;
-    qrlAnswer = '';
-    isActive = false;
-    hasInteracted = false;
-    //audio.pause();
-    //audio.currentTime = 0;
-    _realGameService.destroy();
-    _offlineGameService.reset();
+    this.isOfflineMode = false;
+    this.qrlAnswer = '';
+    this.isActive = false;
+    this.hasInteracted = false;
+    this.audio.pause();
+    this.audio.seek(Duration.zero);
+    this.realGameService.destroy();
+    this.offlineGameService.reset();
   }
 
-  // void configureBaseSockets() {
-  //   socketService.onMessage(SocketEvent.TIME, (dynamic timeValue) {
-  //     handleTimeEvent(timeValue);
-  //   });
-  // }
+  void configureBaseSockets() {
+    this.socketService.onMessage(SocketEvent.TIME, (timeValue) {
+      handleTimeEvent(timeValue);
+    });
+  }
 
-  // void handleTimeEvent(dynamic timeValue) {
-  //   _realGameService.timer = timeValue;
-  //   if (timer == 0 && !_realGameService.locked) {
-  //     _realGameService.locked = true;
-  //     if (username != HOST_USERNAME) sendAnswer();
-  //   }
-  // }
+  void handleTimeEvent(timeValue) {
+    this.realGameService.timer = timeValue;
+    if (this.timer == 0 && !this.realGameService.locked) {
+      this.realGameService.locked = true;
+      if (this.username != 'host') sendAnswer();
+    }
+  }
 }

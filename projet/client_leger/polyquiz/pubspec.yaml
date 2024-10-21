@@ -21,6 +21,7 @@ dependencies:
   timer_count_down: ^2.2.0
   flutter_dotenv: ^5.0.2
   dotenv: ^4.2.0
+  audioplayers: ^6.1.0
 
 
 dev_dependencies:
@@ -31,4 +32,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    # Add assets here if any
+    - assets/music.mp3

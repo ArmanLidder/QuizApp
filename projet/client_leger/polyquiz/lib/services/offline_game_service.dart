@@ -1,15 +1,25 @@
+import 'package:polyquiz/classes/timer.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/quiz_service.dart';
+import 'package:polyquiz/services/time_service.dart';
 
 class OfflineGameService {
+  static final OfflineGameService _instance = OfflineGameService._internal();
+
+  OfflineGameService._internal();
+
+  factory OfflineGameService() {
+    return _instance;
+  }
+
   bool validated = false;
   bool gameOver = false;
   Map<int, String?> answers = {};
   bool locked = false;
   String quizId = '';
   bool isBonus = false;
-  //late Timer timer;
+  late ClientTimer timer;
   int playerScore = 0;
   QuizQuestion? question;
   int currQuestionIndex = 0;
@@ -17,14 +27,14 @@ class OfflineGameService {
   List<int> timeouts = [0, 0];
   late Quiz quiz;
 
-  //final TimeService timeService;
+  final TimeService timeService = TimeService();
   final QuizService quizService = QuizService();
 
   void init() {
     getQuiz(quizId).then((quiz) {
       this.quiz = quiz;
       this.question = quiz.questions[currQuestionIndex];
-      //timeService.deleteAllTimers();
+      timeService.deleteAllTimers();
       //startTimer(question?.type == QuestionType.QCM ? quiz.duration : 60);
       //handleQuestionTimerEnd();
     });
@@ -34,14 +44,14 @@ class OfflineGameService {
     return quizService.fetchQuizById(quizId);
   }
 
-  // bool next() {
-  //   if (timeService.getTimer(0) != null) {
-  //     if (currQuestionIndex == quiz.questions.length - 1) return false;
-  //     currQuestionIndex++;
-  //     question = quiz.questions[currQuestionIndex];
-  //   }
-  //   return true;
-  // }
+  bool next() {
+    if (timeService.getTimer(0) != null) {
+      if (currQuestionIndex == quiz.questions.length - 1) return false;
+      currQuestionIndex++;
+      question = quiz.questions[currQuestionIndex];
+    }
+    return true;
+  }
 
   void sendAnswer() {
     validated = true;
@@ -87,16 +97,16 @@ class OfflineGameService {
     }
   }
 
-  // void startTimer(int duration) {
-  //   if (timeService.timersArray[0] != null) {
-  //     timeService.deleteAllTimers();
-  //   }
-  //   timer = timeService.createTimer(duration);
-  //   timeService.startTimer(0);
-  // }
+  void startTimer(int duration) {
+    if (timeService.timersArray[0] != null) {
+      timeService.deleteAllTimers();
+    }
+    timer = timeService.createTimer(duration);
+    timeService.startTimer(0);
+  }
 
   void reset() {
-    //timeService.deleteAllTimers();
+    timeService.deleteAllTimers();
     playerScore = 0;
     currQuestionIndex = 0;
     isBonus = false;

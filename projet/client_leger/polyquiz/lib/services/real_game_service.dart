@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/initial_question_data.dart';
@@ -28,13 +29,15 @@ class RealGameService {
   bool locked = false;
   bool validated = false;
   String qrlAnswer = '';
-  //late Audio audio;
+  AudioPlayer audio = AudioPlayer();
   bool audioPaused = false;
   bool inTimeTransition = false;
 
   init() {
     this.configureBaseSocket();
     this._socketService.sendMessage(SocketEvent.GET_QUESTION, this.roomId);
+    this.audio.setSource(AssetSource('music.mp3'));
+    this.audio.setVolume(0.1);
   }
 
   destroy() {
@@ -44,7 +47,7 @@ class RealGameService {
   }
 
   void sendAnswer() {
-    final isMultipleChoiceQuestion = question?.type == QuestionType.QCM;
+    final isMultipleChoiceQuestion = this.question?.type == QuestionType.QCM;
     final answers = this.answers.values.toList();
 
     this._socketService.sendMessage(SocketEvent.SUBMIT_ANSWER, {
