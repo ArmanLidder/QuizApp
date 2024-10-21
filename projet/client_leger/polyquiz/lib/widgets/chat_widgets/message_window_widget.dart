@@ -14,6 +14,7 @@ class MessageWindowWidget extends StatefulWidget {
 
 class _MessageWindowWidgetState extends State<MessageWindowWidget> {
   final channelService = Get.put(ChannelService());
+  final TextEditingController _messageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,8 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
         ),
         Expanded(child: Obx(() {
           return MessageListWidget(messages: getChannel().messages.isEmpty ? [] : getChannel().messages);
-        }))
+        })),
+        buildInputBox(),
       ]
     );
   }
@@ -35,6 +37,33 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
   Canal getChannel() {
     bool channelById(Canal channel) => channel.id == widget.channelId;
     return channelService.channels.toList().firstWhere(channelById);
+  }
+
+  Widget buildInputBox() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: TextField(
+            controller: _messageController,
+            decoration: InputDecoration(
+              hintText: "input a message...",
+              border: InputBorder.none,
+            ),
+            onSubmitted: (value) => sendMessage(),
+          ),
+        ),
+        IconButton(onPressed: sendMessage, icon: Icon(Icons.send, color: Colors.blue))
+      ],
+    );
+  }
+
+  Future<void> sendMessage() async {
+    final content = _messageController.text.trim();
+    if (content.isEmpty) {
+      return Future.value();
+    }
+    await channelService.addMessage(widget.channelId, content);
+    _messageController.clear();
   }
 }
 
@@ -115,6 +144,6 @@ class MessageTile extends StatelessWidget {
   }
 
   bool isUserSender() {
-    return false;
+    return userId == "Kvw4qW583jXEdYuoBgVjRe5JeAK2"; // TODO: Fix this so it isn't hardcoded
   }
 }
