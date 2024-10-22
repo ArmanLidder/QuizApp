@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class QuestionInfoWidget extends StatefulWidget {
   final int questionNum;
   final int questionPts;
+  final String questionTxt;
 
   const QuestionInfoWidget({
     Key? key,
     required this.questionNum,
     required this.questionPts,
+    required this.questionTxt,
   }) : super(key: key);
 
   @override
@@ -28,7 +30,7 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
           ),
           Text('${widget.questionPts} pts', style: TextStyle(fontSize: 16)),
           Text(
-            'Question question question question?',
+            '${widget.questionTxt}',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           )
         ],

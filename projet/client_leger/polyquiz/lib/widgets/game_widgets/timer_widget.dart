@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class TimerWidget extends StatefulWidget {
   final bool isHost;
+  final String timeTxt;
   final num time;
 
   const TimerWidget({
     Key? key,
     required this.isHost,
+    required this.timeTxt,
     required this.time,
   }) : super(key: key);
 
@@ -31,7 +33,7 @@ class _TimerWidgetState extends State<TimerWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Temps restant: ',
+            '${widget.timeTxt}',
             style: TextStyle(fontSize: 20),
           ),
           Text(

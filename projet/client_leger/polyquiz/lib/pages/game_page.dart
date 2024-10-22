@@ -26,6 +26,7 @@ class _MyWidgetState extends State<GamePage> {
   int time = 10;
   int questionNum = 1;
   int questionPts = 50;
+  String questionTxt = "Question par defaut ?";
   String message = "Attendez pendant que l'hôte corrige les réponses...";
   GameService _gameService = GameService();
   SocketService _socketService = SocketService();
@@ -71,11 +72,12 @@ class _MyWidgetState extends State<GamePage> {
                   Expanded(
                     child: TimerWidget(
                       isHost: isHost,
+                      timeTxt: 'Temps restant',
                       time: time,
                     ),
                   ),
                   QuestionInfoWidget(
-                      questionNum: questionNum, questionPts: questionPts),
+                      questionNum: questionNum, questionPts: questionPts, questionTxt: questionTxt),
                   Expanded(
                     child: Container(
                       alignment: Alignment.center,
