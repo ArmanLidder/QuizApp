@@ -88,7 +88,7 @@ class HostInterfaceManagementService {
     this.handleRemovedPlayer();
     this.handleEndQuestionAfterRemoval();
     this.handleEvaluationOver();
-    //this.handleRefreshActivityStats();
+    this.handleRefreshActivityStats();
     this.handleHostPanicMode();
     this.handleHostTimerPause();
   }
@@ -211,14 +211,14 @@ class HostInterfaceManagementService {
     });
   }
 
-  // void handleRefreshActivityStats() {
-  //   this._socketService.onMessage(SocketEvent.REFRESH_ACTIVITY_STATS, (activityStatsValue) {
-  //     histogramDataChangingResponses = {
-  //       ACTIVE: activityStatsValue[ACTIVE_STATUS],
-  //       INACTIVE: activityStatsValue[INACTIVE_STATUS],
-  //     };
-  //   });
-  // }
+  void handleRefreshActivityStats() {
+    this._socketService.onMessage(SocketEvent.REFRESH_ACTIVITY_STATS, (activityStatsValue) {
+      histogramDataChangingResponses = {
+        'Actif': activityStatsValue[0],
+        'Inactif': activityStatsValue[1],
+      };
+    });
+  }
 
   void resetInterface() {
     this.gameService.realGameService.validated = true;

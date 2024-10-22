@@ -69,7 +69,7 @@ class _HostInterfaceState extends State<HostInterface> {
                 AnimatedBuilder(
                   animation: gameService,
                   builder: (BuildContext context, Widget? snapshot) {
-                    return TimerWidget(isHost: true, timeTxt: hostInterfaceManagementService.timerText, time: gameService.realGameService.timer);
+                    return TimerWidget(isHost: true, timeTxt: hostInterfaceManagementService.timerText, time: gameService.realGameService.timer, hostInterfaceManagementService : hostInterfaceManagementService);
                   }),
                 AnimatedBuilder( 
                   animation: gameService,
