@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/channelService.dart';
+import 'package:polyquiz/services/user_service.dart';
 
 class MessageWindowWidget extends StatefulWidget {
   final void Function() returnCallback;
@@ -85,14 +86,26 @@ class MessageListWidget extends StatelessWidget {
 class MessageTile extends StatelessWidget {
   final imageUrl = "https://i.pinimg.com/originals/87/a2/d6/87a2d6017b9a7cc38274cef92a45cee3.jpg"; // TODO: Remove and add images
   final username = "Elsa";
+  final userService = Get.put(UserService());
 
   final String content;
   final String userId;
-  const MessageTile({required this.content, required this.userId, super.key});
+  MessageTile({required this.content, required this.userId, super.key});
 
   @override
   Widget build(BuildContext context) {
     return isUserSender() ? buildSentMessage() : buildReceivedMessage();
+  }
+
+  // TODO: REMOVE THESE METHODS AND REPLACE W/ BETTER ONE
+  Future<String> getUsername() async {
+    final userDoc = await userService.getUserById(userId);
+    return userDoc.data()!['username'];
+  }
+
+  Future<String> getImageUrl() async {
+    final userDoc = await userService.getUserById(userId);
+    return userDoc.data()!['avatar'];
   }
 
   Widget buildSentMessage() {
@@ -102,7 +115,7 @@ class MessageTile extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.all(10.0),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: Colors.lightBlue,
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Text(content)
@@ -119,7 +132,7 @@ class MessageTile extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.all(10.0),
             decoration: BoxDecoration(
-              color: Colors.lightBlue,
+              color: Colors.grey[300],
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Text(content)
@@ -134,11 +147,14 @@ class MessageTile extends StatelessWidget {
       children: <Widget>[
         Expanded(
           flex: 3,
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(imageUrl),
+          child: FutureBuilder(
+            future: getImageUrl(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) => CircleAvatar(
+              backgroundImage: NetworkImage(snapshot.data ?? imageUrl),
+            ),
           ),
         ),
-        Flexible(child: Text(username))
+        Flexible(child: FutureBuilder(future: getUsername(), builder: (BuildContext context, AsyncSnapshot<String> snapshot) => Text(snapshot.data ?? username)))
       ],
     );
   }
