@@ -1,4 +1,22 @@
 
+class FriendRequest {
+  final String fromUserId;
+  final String toUserId;
+
+  FriendRequest({required this.fromUserId, required this.toUserId});
+
+  factory FriendRequest.fromJson(Map<String, dynamic> json) {
+    return FriendRequest(fromUserId: json['fromUserId'] as String, toUserId: json['toUserId'] as String);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'fromUserId': fromUserId,
+      'toUserId': toUserId,
+    };
+  }
+}
+
 class UserSettings {
   final Theme theme;
   final Language language;
