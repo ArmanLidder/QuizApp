@@ -55,55 +55,17 @@ class _MyWidgetState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PolyQuiz'),
-        centerTitle: true,
-        backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-      ),
-      body: ListView(children: [
-        Visibility(
-          // Vue du joueur commence ici
-          visible: !isHost,
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TimerWidget(
-                      isHost: isHost,
-                      time: time,
-                    ),
-                  ),
-                  QuestionInfoWidget(
-                    questionNum: questionNum,
-                    questionPts: questionPts,
-                    questionText: 'wahoo',
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.all(5.0),
-                      padding: EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(border: Border.all()),
-                      child: Text(
-                        'Score: 0',
-                        style: TextStyle(fontSize: 20),
-=======
-    if (isHost){
+    if (isHost) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('PolyQuiz'),
           centerTitle: true,
           backgroundColor: Color.fromRGBO(53, 121, 246, 1),
         ),
-        body: ListView(children: [
-        Visibility(visible: isHost, child: HostInterface())
-        ]),
+        body: ListView(
+            children: [Visibility(visible: isHost, child: HostInterface())]),
       );
-    }
-    else {
+    } else {
       return Scaffold(
         appBar: AppBar(
           title: const Text('PolyQuiz'),
@@ -123,11 +85,12 @@ class _MyWidgetState extends State<GamePage> {
                         isHost: isHost,
                         timeTxt: 'Temps restant',
                         time: time,
->>>>>>> 3748bf3ff7f33be118529e367b4fecd7ff3d5fbd
                       ),
                     ),
                     QuestionInfoWidget(
-                        questionNum: questionNum, questionPts: questionPts, questionTxt: questionTxt),
+                        questionNum: questionNum,
+                        questionPts: questionPts,
+                        questionText: questionTxt),
                     Expanded(
                       child: Container(
                         alignment: Alignment.center,
@@ -178,8 +141,8 @@ class _MyWidgetState extends State<GamePage> {
               ],
             ),
           ), //////////////////// Fin de la vue du joueur et debut de la vue de l'organisateur
-      ]),  
-    );
+        ]),
+      );
     }
   }
 }
