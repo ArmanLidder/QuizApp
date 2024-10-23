@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:projet3userpage/fancyAppBar.dart';
-import 'ProfileCard.dart';
-import 'statisticBlorb.dart';
-import 'starComponent.dart';
-import 'historique.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
-import 'firebase_options.dart';
+
+import '../widgets/user_widget/fancyAppBar.dart';
+import '../widgets/user_widget/ProfileCard.dart';
+import '../widgets/user_widget/statisticBlorb.dart';
+import '../widgets/user_widget/starComponent.dart';
+import '../widgets/user_widget/historique.dart';
+
+import '../firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
