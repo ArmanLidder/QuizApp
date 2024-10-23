@@ -43,88 +43,92 @@ class _HostInterfaceState extends State<HostInterface> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: AnimatedBuilder(
-      animation: gameService.realGameService,
-      builder: (BuildContext context, Widget? snapshot) {
-      if(gameService.question == null){
-        return Center(
-          child: Text(
-            'Waiting for questions to load...',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        );
-      }
-      else 
-        {
-          return Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                TimerWidget(isHost: true, time: gameService.timer),
-                QuestionInfoWidget(
-                    questionNum: gameService.questionNumber,
-                    questionPts: gameService.question!.points), //gameService.question!.points), null question when load
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Visibility(
-                  visible: true, // a changer plus tard
-                  child: TextButton(
-                    onPressed: () {
-                      hostInterfaceManagementService.saveStats();
-                      isLastButton = gameService.realGameService.isLast;
-                      if(isLastButton){
-                        hostInterfaceManagementService.handleLastQuestion();
-                      }
-                      else{
-                        hostInterfaceManagementService.requestNextQuestion();
-                      }
-                    },
-                    child: Text(
-                      'Prochaine question',
-                      style: TextStyle(
-                          color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
-                    ),
-                    style: TextButton.styleFrom(
-                        textStyle: TextStyle(fontWeight: FontWeight.normal),
-                        splashFactory: NoSplash.splashFactory,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+        child: AnimatedBuilder(
+            animation: gameService.realGameService,
+            builder: (BuildContext context, Widget? snapshot) {
+              if (gameService.question == null) {
+                return Center(
+                  child: Text(
+                    'Waiting for questions to load...',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                ),
-                SizedBox(
-                  width: 100.0,
-                ),
-                QuitBtn()
-              ],
-            ),
-            SizedBox(height: 20.0),
-            Visibility(
-                visible: gameService.question!.type ==
-                    QuestionType
-                        .QCM, // gameService.question!.type null question when load
-                child: HistogramLegend()),
-            Visibility(
-                visible:
-                    gameService.question!.type == QuestionType.QCM, // null question when load
-                child: Histogram()),
-            Visibility(
-                visible: hostInterfaceManagementService.isHostEvaluating,
-                child: HostGrading(
-                  playerName: 'Player1',
-                  playerAnswer: 'Answer answer answer',
-                )),
-            PlayersDataTableLegend(),
-            SizedBox(height: 20.0),
-            PlayersDataTable()
-          ],
-        );
-      }
-      }
-    ));
+                );
+              } else {
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        TimerWidget(isHost: true, time: gameService.timer),
+                        QuestionInfoWidget(
+                          questionNum: gameService.questionNumber,
+                          questionPts: gameService.question!.points,
+                          questionText: gameService.question!.text,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Visibility(
+                          visible: true, // a changer plus tard
+                          child: TextButton(
+                            onPressed: () {
+                              hostInterfaceManagementService.saveStats();
+                              isLastButton = gameService.realGameService.isLast;
+                              if (isLastButton) {
+                                hostInterfaceManagementService
+                                    .handleLastQuestion();
+                              } else {
+                                hostInterfaceManagementService
+                                    .requestNextQuestion();
+                              }
+                            },
+                            child: Text(
+                              'Prochaine question',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                  fontSize: 20),
+                            ),
+                            style: TextButton.styleFrom(
+                                textStyle:
+                                    TextStyle(fontWeight: FontWeight.normal),
+                                splashFactory: NoSplash.splashFactory,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                                backgroundColor:
+                                    Color.fromRGBO(53, 121, 246, 1)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100.0,
+                        ),
+                        QuitBtn()
+                      ],
+                    ),
+                    SizedBox(height: 20.0),
+                    Visibility(
+                        visible: gameService.question!.type ==
+                            QuestionType
+                                .QCM, // gameService.question!.type null question when load
+                        child: HistogramLegend()),
+                    Visibility(
+                        visible: gameService.question!.type ==
+                            QuestionType.QCM, // null question when load
+                        child: Histogram()),
+                    Visibility(
+                        visible:
+                            hostInterfaceManagementService.isHostEvaluating,
+                        child: HostGrading(
+                          playerName: 'Player1',
+                          playerAnswer: 'Answer answer answer',
+                        )),
+                    PlayersDataTableLegend(),
+                    SizedBox(height: 20.0),
+                    PlayersDataTable()
+                  ],
+                );
+              }
+            }));
   }
 }

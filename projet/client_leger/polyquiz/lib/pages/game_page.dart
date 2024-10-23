@@ -75,7 +75,10 @@ class _MyWidgetState extends State<GamePage> {
                     ),
                   ),
                   QuestionInfoWidget(
-                      questionNum: questionNum, questionPts: questionPts),
+                    questionNum: questionNum,
+                    questionPts: questionPts,
+                    questionText: 'wahoo',
+                  ),
                   Expanded(
                     child: Container(
                       alignment: Alignment.center,
