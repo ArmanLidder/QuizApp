@@ -3,6 +3,7 @@ import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_interface_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
@@ -135,7 +136,8 @@ class _MyWidgetState extends State<GamePage> {
                       ),
                     ),
                     SizedBox(width: 100.0),
-                    QuitBtn()
+                    QuitBtn(),
+                    ChatPopup()
                   ],
                 )
               ],

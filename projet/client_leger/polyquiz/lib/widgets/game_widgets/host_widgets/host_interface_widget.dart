@@ -6,6 +6,7 @@ import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/qrl_evaluation_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_legend_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_grading_widget.dart';
@@ -145,7 +146,8 @@ class _HostInterfaceState extends State<HostInterface> {
                 )),
             PlayersDataTableLegend(),
             SizedBox(height: 20.0),
-            PlayersDataTable()
+            PlayersDataTable(),
+            ChatPopup(),
           ],
         );
       }
