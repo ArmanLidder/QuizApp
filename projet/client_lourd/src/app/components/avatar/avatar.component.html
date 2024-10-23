@@ -1,0 +1,11 @@
+<p *ngIf="!isChat">{{ (currentUser$ | async)?.username }}</p>
+<div class="avatar-container">
+    <img [src]="(currentUser$ | async)?.avatar" alt="User Avatar" class="avatar-item" (click)="toggleMenu()" />
+    <div *ngIf="menuEnabled && !isChat" class="dropdown-menu">
+        <ul>
+            <li (click)="goToProfile()">Voir Profile</li>
+            <li (click)="logout()">Déconnexion</li>
+        </ul>
+    </div>
+</div>
+<p *ngIf="isChat">{{ (currentUser$ | async)?.username }}</p>

@@ -1,0 +1,31 @@
+<div class="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-6">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Modification du nom d'utilisateur</h2>
+
+    <div class="space-y-4">
+        <label for="username" class="block text-sm font-medium text-gray-700">Nouveau nom d'utilisateur</label>
+        <input
+                [(ngModel)]="newUsername"
+                type="text"
+                id="username"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Entrer un nouveau nom d'utilisateur"
+        />
+    </div>
+
+    <div class="flex flex-col items-center space-y-4">
+
+        <div class="flex justify-end space-x-4 w-full">
+            <button (click)="cancel()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                Annuler
+            </button>
+
+            <button
+                    [disabled]="!newUsername"
+                    (click)="confirm()"
+                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                Confirmer
+            </button>
+        </div>
+    </div>
+</div>

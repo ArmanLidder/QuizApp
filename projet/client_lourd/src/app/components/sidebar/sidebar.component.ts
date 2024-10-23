@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MESSAGE_MAX_CHARACTERS } from '@common/constants/sidebar.component.const';
 import { GameService } from '@app/services/game.service/game.service';
 import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
-import { Message } from '@common/interfaces/message.interface';
+import { Message_Old } from '@common/interfaces/message.interface';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { getCurrentDateService } from 'src/utils/current-date-format/current-date-format';
 import { QUIZ_TESTING_PAGE } from '@common/page-url/page-url';
@@ -20,7 +20,7 @@ export class SidebarComponent implements AfterViewInit {
     myName: string;
     roomId: string;
     messageForm: FormGroup;
-    messages: Message[];
+    messages: Message_Old[];
     socketService: SocketClientService;
     formBuilder: FormBuilder;
     route: ActivatedRoute;
@@ -57,7 +57,7 @@ export class SidebarComponent implements AfterViewInit {
         const newMessageContent: string = this.messageForm.get('message')?.value;
         if (this.socketService.isSocketAlive()) {
             if (this.messageForm.get('message')?.valid && newMessageContent.trim()) {
-                const newMessage: Message = { sender: this.myName, content: newMessageContent, time: getCurrentDateService() };
+                const newMessage: Message_Old = { sender: this.myName, content: newMessageContent, time: getCurrentDateService() };
                 this.socketService.send(SocketEvent.NEW_MESSAGE, { roomId: Number(this.roomId), message: newMessage });
                 this.messageForm.get('message')?.setValue('');
             }
@@ -88,7 +88,7 @@ export class SidebarComponent implements AfterViewInit {
     }
 
     private getRoomMessages() {
-        this.socketService.send(SocketEvent.GET_MESSAGES, Number(this.roomId), (messages: Message[]) => {
+        this.socketService.send(SocketEvent.GET_MESSAGES, Number(this.roomId), (messages: Message_Old[]) => {
             this.messages = messages ?? [];
         });
     }
@@ -100,7 +100,7 @@ export class SidebarComponent implements AfterViewInit {
     }
 
     private configureBaseSocketFeatures() {
-        this.socketService.on(SocketEvent.RECEIVED_MESSAGE, (message: Message) => {
+        this.socketService.on(SocketEvent.RECEIVED_MESSAGE, (message: Message_Old) => {
             this.messages.push(message);
             setTimeout(() => {
                 this.scrollToBottom();

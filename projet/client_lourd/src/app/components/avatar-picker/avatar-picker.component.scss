@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  padding: 1rem;
+}
+.avatar-item {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.avatar-item:hover {
+  transform: scale(1.05);
+}

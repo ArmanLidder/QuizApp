@@ -5,10 +5,15 @@ import 'pages/login-page.dart';
 import 'pages/auth_screen.dart';
 import 'pages/quiz_list_page.dart';
 import 'pages/join_room_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-Future<void> main() async {
-  // await dotenv.load(fileName: ".env");
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -1,0 +1,10 @@
+<header class="bg-gradient-to-r from-purple-500 to-blue-600 text-white py-10 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto text-center">
+        <a [routerLink]="['/home']" class="text-4xl font-extrabold tracking-wide hover:underline">
+            PolyQuiz
+        </a>
+    </div>
+    <div class="absolute top-0 right-0 flex items-center justify-center h-full p-4">
+        <app-avatar *ngIf="currentUser$ | async"></app-avatar>
+    </div>
+</header>

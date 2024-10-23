@@ -40,6 +40,34 @@ import { CorrectionQRLComponent } from './components/correction-qrl/correction-q
 import { GameHistoryListComponent } from './components/game-history-list/game-history-list.component';
 import { LeaveButtonComponent } from './components/leave-boutton/leave-boutton.component';
 import { StatisticZoneComponent } from './components/statistic-zone/statistic-zone.component';
+import { LoginPageComponent } from '@app/pages/login-page/login-page.component';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatIconModule} from "@angular/material/icon";
+import {MatInputModule} from "@angular/material/input";
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {RegisterPageComponent} from "@app/pages/register-page/register-page.component";
+import { AvatarComponent } from './components/avatar/avatar.component';
+import { HeaderComponent } from './components/header/header.component';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+import { UsernameModificationDialogComponent } from '@app/components/username-modification-dialog/username-modification-dialog.component';
+import { AvatarPickerComponent } from './components/avatar-picker/avatar-picker.component';
+import {initializeApp, provideFirebaseApp} from "@angular/fire/app";
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import {environment} from "../environments/environment";
+import {ChatComponent} from "@app/components/chat/chat.component";
+import {FIREBASE_OPTIONS} from "@angular/fire/compat";
+import {CanalService} from "@app/services/canal.service/canal.service";
+import { AvatarModificationDialogComponent } from './components/avatar-modification-dialog/avatar-modification-dialog.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import { UserSearchDialogComponent } from './components/user-search-dialog/user-search-dialog.component';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {MatListModule} from "@angular/material/list";
+import { FriendsComponent } from './components/friends/friends.component';
+import {MatTabsModule} from "@angular/material/tabs";
+import { AvatarWithLevelComponent } from './components/avatar-with-level/avatar-with-level.component';
+import { PopoutWindowModule } from 'angular-popout-window';
 
 /**
  * Main module that is used in main.ts.
@@ -81,6 +109,18 @@ import { StatisticZoneComponent } from './components/statistic-zone/statistic-zo
         LeaveButtonComponent,
         StatisticZoneComponent,
         ConfirmationDialogComponent,
+        LoginPageComponent,
+        RegisterPageComponent,
+        AvatarComponent,
+        HeaderComponent,
+        ProfilePageComponent,
+        UsernameModificationDialogComponent,
+        AvatarPickerComponent,
+        ChatComponent,
+        AvatarModificationDialogComponent,
+        UserSearchDialogComponent,
+        FriendsComponent,
+        AvatarWithLevelComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -94,8 +134,26 @@ import { StatisticZoneComponent } from './components/statistic-zone/statistic-zo
         BrowserAnimationsModule,
         MatTooltipModule,
         MatDialogModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        provideFirebaseApp(() => initializeApp(environment.firebase)),
+        provideAuth(() => getAuth()),
+        provideFirestore(() => getFirestore()),
+        provideStorage(() => getStorage()),
+        MatProgressSpinnerModule,
+        MatAutocompleteModule,
+        MatListModule,
+        MatTabsModule,
+        PopoutWindowModule,
     ],
-    providers: [],
+    providers: [
+        CanalService,
+        { provide: FIREBASE_OPTIONS, useValue: environment.firebase }
+    ],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
