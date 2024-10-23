@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-
+import 'package:polyquiz/services/host_interface_management_service.dart';
 class TimerWidget extends StatefulWidget {
   final bool isHost;
+  final String timeTxt;
   final num time;
+  final HostInterfaceManagementService? hostInterfaceManagementService;
 
   const TimerWidget({
     Key? key,
     required this.isHost,
+    required this.timeTxt,
     required this.time,
+    this.hostInterfaceManagementService,
   }) : super(key: key);
 
   @override
@@ -31,7 +35,7 @@ class _TimerWidgetState extends State<TimerWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Temps restant: ',
+            '${widget.timeTxt}',
             style: TextStyle(fontSize: 20),
           ),
           Text(
@@ -45,15 +49,31 @@ class _TimerWidgetState extends State<TimerWidget> {
               children: [
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      timerIcon = changeIcon(timerIcon);
-                    });
+                    if(widget.hostInterfaceManagementService != null ){
+                      widget.hostInterfaceManagementService?.sendPauseTimer();
+                      setState(() {
+                        timerIcon = changeIcon(timerIcon);
+                      });
+                    }
                   },
                   icon: Icon(timerIcon),
                   iconSize: 35,
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if(widget.hostInterfaceManagementService != null ){
+                      if (widget.hostInterfaceManagementService?.gameService?.isPanicDisabled() == false) {
+                        widget.hostInterfaceManagementService?.startPanicMode();
+                      } else {
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Vous ne pouvez pas encore activer le mode panique'),
+                          ),
+                        );
+                      }
+                    }
+                  },
                   icon: Icon(panicModeIcon),
                   iconSize: 35,
                 )

@@ -26,6 +26,7 @@ class _MyWidgetState extends State<GamePage> {
   int time = 10;
   int questionNum = 1;
   int questionPts = 50;
+  String questionTxt = "Question par defaut ?";
   String message = "Attendez pendant que l'hôte corrige les réponses...";
   GameService _gameService = GameService();
   SocketService _socketService = SocketService();
@@ -54,6 +55,7 @@ class _MyWidgetState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return Scaffold(
       appBar: AppBar(
         title: const Text('PolyQuiz'),
@@ -88,49 +90,96 @@ class _MyWidgetState extends State<GamePage> {
                       child: Text(
                         'Score: 0',
                         style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              Visibility(
-                  visible: isQcm && !noticeReceived,
-                  child: Container(height: 500, child: PlayerQcm())),
-              Visibility(
-                  visible: !isQcm && !noticeReceived, child: PlayerQrl()),
-              Visibility(
-                  visible: noticeReceived,
-                  child: PlayerNotice(message: message)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Visibility(
-                    visible: !noticeReceived,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Confirmer',
-                        style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: 20),
-                      ),
-                      style: TextButton.styleFrom(
-                          textStyle: TextStyle(fontWeight: FontWeight.normal),
-                          splashFactory: NoSplash.splashFactory,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                          backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
-                    ),
-                  ),
-                  SizedBox(width: 100.0),
-                  QuitBtn()
-                ],
-              )
-            ],
-          ),
-        ), //////////////////// Fin de la vue du joueur et debut de la vue de l'organisateur
+=======
+    if (isHost){
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('PolyQuiz'),
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+        ),
+        body: ListView(children: [
         Visibility(visible: isHost, child: HostInterface())
-      ]),
+        ]),
+      );
+    }
+    else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('PolyQuiz'),
+          centerTitle: true,
+          backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+        ),
+        body: ListView(children: [
+          Visibility(
+            // Vue du joueur commence ici
+            visible: !isHost,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TimerWidget(
+                        isHost: isHost,
+                        timeTxt: 'Temps restant',
+                        time: time,
+>>>>>>> 3748bf3ff7f33be118529e367b4fecd7ff3d5fbd
+                      ),
+                    ),
+                    QuestionInfoWidget(
+                        questionNum: questionNum, questionPts: questionPts, questionTxt: questionTxt),
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.all(5.0),
+                        padding: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(border: Border.all()),
+                        child: Text(
+                          'Score: 0',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Visibility(
+                    visible: isQcm && !noticeReceived,
+                    child: Container(height: 500, child: PlayerQcm())),
+                Visibility(
+                    visible: !isQcm && !noticeReceived, child: PlayerQrl()),
+                Visibility(
+                    visible: noticeReceived,
+                    child: PlayerNotice(message: message)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Visibility(
+                      visible: !noticeReceived,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Confirmer',
+                          style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20),
+                        ),
+                        style: TextButton.styleFrom(
+                            textStyle: TextStyle(fontWeight: FontWeight.normal),
+                            splashFactory: NoSplash.splashFactory,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+                      ),
+                    ),
+                    SizedBox(width: 100.0),
+                    QuitBtn()
+                  ],
+                )
+              ],
+            ),
+          ), //////////////////// Fin de la vue du joueur et debut de la vue de l'organisateur
+      ]),  
     );
+    }
   }
 }

@@ -33,6 +33,7 @@ class RealGameService extends ChangeNotifier {
   AudioPlayer audio = AudioPlayer();
   bool audioPaused = false;
   bool inTimeTransition = false;
+  bool isNotified = false;
 
   init() {
     this.configureBaseSocket();
@@ -76,7 +77,10 @@ class RealGameService extends ChangeNotifier {
 
       this.question = questionData.question;
       print('QUESTION ATTRIBUTE: ${this.question}');
-      notifyListeners();
+      if(!isNotified){
+        notifyListeners();
+        isNotified = true;
+      }
 
       if (questionData.numberOfQuestions == 1) {
         this.isLast = true;
@@ -85,9 +89,14 @@ class RealGameService extends ChangeNotifier {
 
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) {
       NextQuestionData nextQuestionData = NextQuestionData(
-          question: data['question'],
+          question: QuizQuestion.fromJson(data['question']),
           index: data['index'],
           isLast: data['isLast']);
+
+      if(!isNotified){
+        notifyListeners();
+        isNotified = true;
+      }
 
       this.question = nextQuestionData.question;
       this.questionNumber = nextQuestionData.index;

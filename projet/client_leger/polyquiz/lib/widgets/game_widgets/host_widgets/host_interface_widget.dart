@@ -24,6 +24,7 @@ class HostInterface extends StatefulWidget {
 
 class _HostInterfaceState extends State<HostInterface> {
   bool isLastButton = false;
+  bool isResultPage = false;
 
   QrlEvaluationService qrlEvaluationService = QrlEvaluationService();
   GameService gameService = GameService();
@@ -31,6 +32,7 @@ class _HostInterfaceState extends State<HostInterface> {
       HostInterfaceManagementService();
   GlobalNavigationService _globalNavigationService = GlobalNavigationService();
   SocketService _socketService = SocketService();
+
   @override
   void initState() {
     super.initState();
@@ -53,18 +55,34 @@ class _HostInterfaceState extends State<HostInterface> {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 );
+              } else if (isResultPage) {
+                return ResultPage();
               } else {
                 return Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        TimerWidget(isHost: true, time: gameService.timer),
-                        QuestionInfoWidget(
-                          questionNum: gameService.questionNumber,
-                          questionPts: gameService.question!.points,
-                          questionText: gameService.question!.text,
-                        ),
+                        AnimatedBuilder(
+                            animation: gameService,
+                            builder: (BuildContext context, Widget? snapshot) {
+                              return TimerWidget(
+                                  isHost: true,
+                                  timeTxt:
+                                      hostInterfaceManagementService.timerText,
+                                  time: gameService.realGameService.timer,
+                                  hostInterfaceManagementService:
+                                      hostInterfaceManagementService);
+                            }),
+                        AnimatedBuilder(
+                            animation: gameService,
+                            builder: (BuildContext context, Widget? snapshot) {
+                              return QuestionInfoWidget(
+                                  questionNum: gameService.questionNumber,
+                                  questionPts: gameService.question!.points,
+                                  questionText: gameService.question!
+                                      .text); //gameService.question!.points), null question when load
+                            }),
                       ],
                     ),
                     Row(
@@ -75,17 +93,24 @@ class _HostInterfaceState extends State<HostInterface> {
                           child: TextButton(
                             onPressed: () {
                               hostInterfaceManagementService.saveStats();
-                              isLastButton = gameService.realGameService.isLast;
                               if (isLastButton) {
+                                isResultPage = true;
+                              }
+                              if (gameService.realGameService.isLast) {
+                                gameService.realGameService.isNotified = false;
                                 hostInterfaceManagementService
                                     .handleLastQuestion();
+                                isLastButton = true;
                               } else {
+                                gameService.realGameService.isNotified = false;
                                 hostInterfaceManagementService
                                     .requestNextQuestion();
                               }
                             },
                             child: Text(
-                              'Prochaine question',
+                              isLastButton
+                                  ? 'Dernière question'
+                                  : 'Prochaine question',
                               style: TextStyle(
                                   color: Color.fromRGBO(255, 255, 255, 1),
                                   fontSize: 20),
@@ -103,7 +128,13 @@ class _HostInterfaceState extends State<HostInterface> {
                         SizedBox(
                           width: 100.0,
                         ),
-                        QuitBtn()
+                        QuitBtn(),
+                        ElevatedButton(
+                          onPressed: () {
+                            print(this._socketService.isSocketAlive());
+                          },
+                          child: Text('Check Socket Status'),
+                        ),
                       ],
                     ),
                     SizedBox(height: 20.0),
@@ -130,5 +161,17 @@ class _HostInterfaceState extends State<HostInterface> {
                 );
               }
             }));
+  }
+}
+
+class ResultPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Game Over! Here are the results.',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    );
   }
 }

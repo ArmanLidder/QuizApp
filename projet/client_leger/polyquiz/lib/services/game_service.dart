@@ -1,11 +1,12 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/offline_game_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 
-class GameService {
+class GameService extends ChangeNotifier {
   static final GameService _instance = GameService._internal();
 
   GameService._internal();
@@ -141,6 +142,7 @@ class GameService {
   void configureBaseSockets() {
     this.socketService.onMessage(SocketEvent.TIME, (timeValue) {
       handleTimeEvent(timeValue);
+      notifyListeners();
     });
   }
 
