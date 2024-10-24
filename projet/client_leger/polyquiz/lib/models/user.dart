@@ -33,6 +33,31 @@ class User {
     required this.friendRequests,
     required this.settings,
   });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    final friends = json['friends'].map((friend) => friend as String);
+    final achievements = json['achievements'].map((achievement) => achievement as num);
+    final loginHistory = json['loginHistory'].map((loginHistoryValue) => LoginHistory.fromJson(loginHistoryValue));
+    final gameHistory = json['gameHistory'].map((gameHistoryValue) => GameHistory.fromJson(gameHistoryValue));
+    final friendRequests = json['friendRequests'].map((friendRequest) => FriendRequest.fromJson(friendRequest));
+    return User(
+        uid: json['uid'] as String,
+        email: json['email'] as String,
+        username: json['username'] as String,
+        avatar: json['avatar'] as String,
+        friends: friends,
+        currency: json['currency'] as num,
+        achievements: achievements,
+        level: json['level'] as num,
+        prestige: json['prestige'] as num,
+        isConnected: json['isConnected'] as bool,
+        stats: UserStats.fromJson(json['stats']),
+        loginHistory: loginHistory,
+        gameHistory: gameHistory,
+        friendRequests: friendRequests,
+        settings: UserSettings.fromJson(json['userSettings']),
+    );
+  }
 }
 
 class UserStats {
