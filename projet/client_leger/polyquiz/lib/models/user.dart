@@ -35,12 +35,12 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    final friends = json['friends'].map((friend) => friend as String);
-    final achievements = json['achievements'].map((achievement) => achievement as num);
-    final loginHistory = json['loginHistory'].map((loginHistoryValue) => LoginHistory.fromJson(loginHistoryValue));
-    final gameHistory = json['gameHistory'].map((gameHistoryValue) => GameHistory.fromJson(gameHistoryValue));
-    final friendRequests = json['friendRequests'].map((friendRequest) => FriendRequest.fromJson(friendRequest));
-    return User(
+    final friends = (json['friends'] as List<dynamic>).map((friend) => friend as String).toList();
+    final achievements = (json['achievements'] as List<dynamic>).map((achievement) => achievement as num).toList();
+    final loginHistory = (json['loginHistory'] as List<dynamic>).map((loginHistoryValue) => LoginHistory.fromJson(loginHistoryValue)).toList();
+    final gameHistory = (json['gameHistory'] as List<dynamic>).map((gameHistoryValue) => GameHistory.fromJson(gameHistoryValue)).toList();
+    final friendRequests = (json['friendRequests'] as List<dynamic>).map((friendRequest) => FriendRequest.fromJson(friendRequest)).toList();
+    final user = User(
         uid: json['uid'] as String,
         email: json['email'] as String,
         username: json['username'] as String,
@@ -55,8 +55,9 @@ class User {
         loginHistory: loginHistory,
         gameHistory: gameHistory,
         friendRequests: friendRequests,
-        settings: UserSettings.fromJson(json['userSettings']),
+        settings: UserSettings.fromJson(json['settings']),
     );
+    return user;
   }
 }
 
