@@ -1,4 +1,37 @@
 
+class GameHistory {
+  final Result result;
+  final dynamic timestamp;
+  final num score;
+  final String gameMode;
+
+  GameHistory({required this.result, required this.timestamp, required this.score, required this.gameMode});
+
+  factory GameHistory.fromJson(Map<String, dynamic> json) {
+    Result result;
+    switch (json['result']) {
+      case 'win':
+        result = Result.win;
+        break;
+      case 'loss':
+      default:
+        result = Result.loss;
+    }
+
+    return GameHistory(
+        result: result,
+        timestamp: json['timestamp'],
+        score: json['score'] as num,
+        gameMode: json['gamemode'] as String,
+    );
+  }
+}
+
+enum Result {
+  win,
+  loss
+}
+
 class FriendRequest {
   final String fromUserId;
   final String toUserId;
