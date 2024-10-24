@@ -99,13 +99,15 @@ class MessageTile extends StatelessWidget {
 
   // TODO: REMOVE THESE METHODS AND REPLACE W/ BETTER ONE
   Future<String> getUsername() async {
-    final userDoc = await userService.getUserById(userId);
-    return userDoc.data()!['username'];
+    final user = await userService.getUserById(userId);
+    if (user == null) return username;
+    return user.username;
   }
 
   Future<String> getImageUrl() async {
-    final userDoc = await userService.getUserById(userId);
-    return userDoc.data()!['avatar'];
+    final user = await userService.getUserById(userId);
+    if (user == null) return imageUrl;
+    return user.avatar;
   }
 
   Widget buildSentMessage() {
