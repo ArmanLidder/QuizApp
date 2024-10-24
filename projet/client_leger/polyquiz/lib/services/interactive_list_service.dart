@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/score.dart';
 import 'package:polyquiz/services/socket_service.dart';
 
-class InteractiveListService {
+class InteractiveListService extends ChangeNotifier {
   static final InteractiveListService _instance =
       InteractiveListService._internal();
 
@@ -20,17 +21,13 @@ class InteractiveListService {
   SocketService _socketService = SocketService();
 
   Future<int> getPlayersList(int roomId,
-      {List<Player> leftPlayers = const [], bool resetPlayerStatus = true}) {
-    final Completer<int> completer = Completer<int>();
-
+      {List<Player> leftPlayers = const [],
+      bool resetPlayerStatus = true}) async {
+    final completer = Completer<int>();
     gatherPlayersUsername(
-      RoomSettings(resetPlayerStatus: resetPlayerStatus, roomId: roomId),
-      (playersCount) {
-        completer.complete(playersCount);
-      },
-      leftPlayers,
-    );
-
+        RoomSettings(resetPlayerStatus: resetPlayerStatus, roomId: roomId),
+        completer.complete,
+        leftPlayers);
     return completer.future;
   }
 
@@ -40,7 +37,7 @@ class InteractiveListService {
         SocketEvent.GATHER_PLAYERS_USERNAME, roomSettings.roomId, (players) {
       resolve(players.length);
       setUpPlayerList(leftPlayers);
-      for (String username in players) {
+      for (var username in players) {
         getPlayerScoreFromServer(
             UserData(
                 username: username,
@@ -80,7 +77,6 @@ class InteractiveListService {
       'roomId': roomId,
       'username': userInfo.username,
     }, (score) {
-      print('SCORE DATA RECEIVED: ${score}');
       this.addPlayer(userInfo, Score.fromJson(score), leftPlayers);
     });
   }
@@ -95,6 +91,7 @@ class InteractiveListService {
         bonus: score.bonusCount,
         status: status,
         canChat: canChat));
+    notifyListeners();
   }
 
   bool canPlayerChat(String username) {

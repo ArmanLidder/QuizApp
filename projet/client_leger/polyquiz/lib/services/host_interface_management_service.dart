@@ -69,7 +69,6 @@ class HostInterfaceManagementService {
     this.gameService.realGameService.validated = false;
     this.gameService.realGameService.locked = false;
     this._socketService.sendMessage(SocketEvent.START_TRANSITION, this.roomId);
-
   }
 
   void handleLastQuestion() {
@@ -97,7 +96,7 @@ class HostInterfaceManagementService {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
       this.timerText = 'Prochaine question dans: ';
       this.gameService.realGameService.timer = timeValue;
-      if (this.gameService.realGameService.timer  == 0) {
+      if (this.gameService.realGameService.timer == 0) {
         this.gameService.realGameService.inTimeTransition = false;
         this.resetInterface();
         this._socketService.sendMessage(
@@ -116,7 +115,8 @@ class HostInterfaceManagementService {
       this.resetInterface();
 
       if (this.gameService.question?.type == QuestionType.QCM) {
-        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+        this._interactiveListService.getPlayersList(roomId,
+            leftPlayers: leftPlayers, resetPlayerStatus: false);
       } else {
         this.sendQrlAnswer();
         this.isHostEvaluating = true;
@@ -134,7 +134,9 @@ class HostInterfaceManagementService {
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
-        this._interactiveListService.getPlayersList(this.roomId, leftPlayers: leftPlayers);
+        this
+            ._interactiveListService
+            .getPlayersList(this.roomId, leftPlayers: leftPlayers);
       }
     });
   }
@@ -142,23 +144,25 @@ class HostInterfaceManagementService {
   void handleRefreshChoicesStats() {
     this._socketService.onMessage(SocketEvent.REFRESH_CHOICES_STATS,
         (choicesStatsValue) {
-      this.histogramDataChangingResponses = createChoicesStatsMap(List<num>.from(choicesStatsValue));
+      this.histogramDataChangingResponses =
+          createChoicesStatsMap(List<num>.from(choicesStatsValue));
     });
   }
 
   void handleGetInitialQuestion() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION,
         (data) async {
-      final numberOfPlayers =
-          await _interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers);
+      final numberOfPlayers = await _interactiveListService
+          .getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
     });
   }
 
   void handleGetNextQuestion() {
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) async {
-      final numberOfPlayers =
-          await this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers);
+      final numberOfPlayers = await this
+          ._interactiveListService
+          .getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
     });
   }
@@ -171,7 +175,8 @@ class HostInterfaceManagementService {
           .indexWhere((player) => player.username == username);
       if (playerIndex != -1) {
         this.leftPlayers.add(this._interactiveListService.players[playerIndex]);
-        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+        this._interactiveListService.getPlayersList(roomId,
+            leftPlayers: leftPlayers, resetPlayerStatus: false);
       }
     });
   }
@@ -207,12 +212,14 @@ class HostInterfaceManagementService {
 
   void handleEvaluationOver() {
     this._socketService.onMessage(SocketEvent.EVALUATION_OVER, (_) {
-      _interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+      _interactiveListService.getPlayersList(roomId,
+          leftPlayers: leftPlayers, resetPlayerStatus: false);
     });
   }
 
   void handleRefreshActivityStats() {
-    this._socketService.onMessage(SocketEvent.REFRESH_ACTIVITY_STATS, (activityStatsValue) {
+    this._socketService.onMessage(SocketEvent.REFRESH_ACTIVITY_STATS,
+        (activityStatsValue) {
       histogramDataChangingResponses = {
         'Actif': activityStatsValue[0],
         'Inactif': activityStatsValue[1],
@@ -268,7 +275,8 @@ class HostInterfaceManagementService {
       //todo
       final values = stats.responsesValues;
       final responses = stats.responsesNumber;
-      data.add(TransportStats(values.entries.toList(), responses.entries.toList(), stats.question as QuizQuestion));
+      data.add(TransportStats(values.entries.toList(),
+          responses.entries.toList(), stats.question as QuizQuestion));
     });
     return data;
   }
