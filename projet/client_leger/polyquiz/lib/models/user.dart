@@ -1,4 +1,49 @@
 
+class LoginHistory {
+  final EventType eventType;
+  final dynamic timestamp;
+
+  LoginHistory({required this.eventType, required this.timestamp});
+
+  factory LoginHistory.fromJson(Map<String, dynamic> json) {
+    EventType eventType;
+    switch (json['eventType']) {
+      case 'login':
+        eventType = EventType.login;
+        break;
+      case 'logout':
+      default:
+        eventType = EventType.logout;
+    }
+
+    return LoginHistory(
+        eventType: eventType,
+        timestamp: json['timestamp'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    String eventTypeValue;
+    switch (this.eventType) {
+      case EventType.login:
+        eventTypeValue = "login";
+        break;
+      case EventType.logout:
+      default:
+        eventTypeValue = 'logout';
+    }
+    return {
+      'eventType': eventTypeValue,
+      'timestamp': timestamp,
+    };
+  }
+}
+
+enum EventType {
+  login,
+  logout
+}
+
 class GameHistory {
   final Result result;
   final dynamic timestamp;
