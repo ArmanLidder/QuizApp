@@ -22,8 +22,25 @@ class GameHistory {
         result: result,
         timestamp: json['timestamp'],
         score: json['score'] as num,
-        gameMode: json['gamemode'] as String,
+        gameMode: json['gameMode'] as String,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    String resultValue;
+    switch (result) {
+      case Result.win:
+        resultValue = 'win';
+        break;
+      case Result.loss:
+      default:
+        resultValue = 'loss';
+    }
+    return {
+      'result': resultValue,
+      'score': score,
+      'gameMode': gameMode,
+    };
   }
 }
 
