@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/models/user.dart';
 
 class UserService extends GetxController {
   final String collectionName = 'users';
   static UserService get instance => Get.find();
   final _db = FirebaseFirestore.instance;
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getUserById(String id) async {
+  Future<User?> getUserById(String id) async {
     final doc = await _db.collection(collectionName).doc(id).get();
-    return doc;
+    if (!doc.exists || doc.data() == null) {
+      return null;
+    }
+    final user = User.fromJson(doc.data()!);
+    return user;
   }
 }
