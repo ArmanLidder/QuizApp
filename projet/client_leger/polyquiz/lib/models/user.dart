@@ -1,4 +1,31 @@
 
+class UserStats {
+  final num gamesPlayed;
+  final num gamesWon;
+  final num avgCorrectAnswers;
+  final num avgGameTime;
+
+  UserStats({required this.gamesPlayed, required this.gamesWon, required this.avgCorrectAnswers, required this.avgGameTime});
+
+  factory UserStats.fromJson(Map<String, dynamic> json) {
+    return UserStats(
+        gamesPlayed: json['gamesPlayed'] as num,
+        gamesWon: json['gamesWon'] as num,
+        avgCorrectAnswers: json['avgCorrectAnswers'] as num,
+        avgGameTime: json['avgGameTime'] as num,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'gamesPlayed': gamesPlayed,
+      'gamesWon': gamesWon,
+      'avgCorrectAnswers': avgCorrectAnswers,
+      'avgGameTime': avgGameTime,
+    };
+  }
+}
+
 class LoginHistory {
   final EventType eventType;
   final dynamic timestamp;
