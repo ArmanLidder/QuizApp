@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "98437822234",
+    "project_id": "polyquiz-app",
+    "storage_bucket": "polyquiz-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98437822234:android:3b33c681b3bf87a1aa5ea3",
+        "android_client_info": {
+          "package_name": "com.polyquiz.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP0d8Ewo8R63AohbHUAf-ePyfWFbrgjhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
