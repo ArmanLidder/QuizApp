@@ -8,17 +8,13 @@ import '../widgets/user_widget/statisticBlorb.dart';
 import '../widgets/user_widget/starComponent.dart';
 import '../widgets/user_widget/historique.dart';
 
-import '../firebase_options.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(); // Initialize Firebase without options
 
   // Fetch documents from Firestore
   Map<String, dynamic>? userData =
-      await fetchUserById("EIjJvAYViMPepXVvCxy3veDbcUj1");
+  await fetchUserById("EIjJvAYViMPepXVvCxy3veDbcUj1");
   if (userData != null) {
     print(userData);
     runApp(MyApp(userData: userData));
@@ -31,7 +27,7 @@ Future<Map<String, dynamic>?> fetchUserById(String userId) async {
   try {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final DocumentSnapshot<Map<String, dynamic>> snapshot =
-        await firestore.collection('users').doc(userId).get();
+    await firestore.collection('users').doc(userId).get();
 
     // Check if the document exists
     if (snapshot.exists) {
@@ -78,7 +74,7 @@ class MyApp extends StatelessWidget {
               ),
               StarCardGrid(
                   labels:
-                      List.generate(8, (index) => "Defi numero ${index + 1}"),
+                  List.generate(8, (index) => "Defi numero ${index + 1}"),
                   achievementsList: achievements),
               Historique(
                 events: [
