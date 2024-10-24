@@ -63,7 +63,9 @@ class PlayersDataTableLegend extends StatelessWidget {
             Icons.square,
             color: Color.fromRGBO(221, 221, 221, 1),
           )),
-          TextSpan(text: 'Fin de partie', style: TextStyle(color: Colors.black))
+          TextSpan(
+              text: 'Fin de partie',
+              style: TextStyle(color: const Color.fromRGBO(26, 26, 26, 1)))
         ])),
         SizedBox(
           width: 30.0,

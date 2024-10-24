@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
+import 'package:polyquiz/constants/timer_message.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/models/typedefs.dart';
@@ -19,7 +20,7 @@ class HostInterfaceManagementService {
     return _instance;
   }
 
-  String timerText = 'Temps restant';
+  String timerText = TimerMessage.TIME_LEFT;
   bool isGameOver = false;
   Map<String, int> histogramDataChangingResponses = {};
   Map<String, bool> histogramDataValue = {};

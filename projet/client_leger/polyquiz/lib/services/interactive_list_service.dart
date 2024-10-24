@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/constants/player_status.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/score.dart';
 import 'package:polyquiz/services/socket_service.dart';
@@ -37,7 +38,8 @@ class InteractiveListService extends ChangeNotifier {
         SocketEvent.GATHER_PLAYERS_USERNAME, roomSettings.roomId, (players) {
       resolve(players.length);
       setUpPlayerList(leftPlayers);
-      for (var username in players) {
+      for (String username in players) {
+        print('USERNAME IN PLAYERS: ${username}');
         getPlayerScoreFromServer(
             UserData(
                 username: username,
@@ -62,7 +64,7 @@ class InteractiveListService extends ChangeNotifier {
   }
 
   bool isPlayerGone(String username, List<Player> remainingPlayers) {
-    return !remainingPlayers.any((player) => player.username == username);
+    return remainingPlayers.any((player) => player.username == username);
   }
 
   void setUpPlayerList(List<Player> leftPlayers) {
@@ -96,7 +98,13 @@ class InteractiveListService extends ChangeNotifier {
 
   bool canPlayerChat(String username) {
     final int playerIndex = this.findPlayer(username, this.actualStatus);
-    return this.actualStatus.length == 0
+    print('PLAYER INDEX: ${playerIndex}');
+    for (Player player in actualStatus) {
+      print('ACTUAL STATUS CONTENT: ${player.username}');
+    }
+    return this.actualStatus.length == 0 ||
+            playerIndex ==
+                -1 // bug potentiel du actualstatus qui n'a pas tous les joueurs au bon moment
         ? true
         : this.actualStatus[playerIndex].canChat;
   }
@@ -104,7 +112,7 @@ class InteractiveListService extends ChangeNotifier {
   void appendLeftPlayersToActivePlayers(List<Player> leftPlayers) {
     for (var player in leftPlayers) {
       player.canChat = false;
-      player.status = 'left';
+      player.status = PlayerStatus.LEFT;
       this.players.add(player);
     }
   }
@@ -115,29 +123,30 @@ class InteractiveListService extends ChangeNotifier {
 
   void handleUpdateInteraction() {
     this._socketService.onMessage(SocketEvent.UPDATE_INTERACTION, (username) {
-      this.changePlayerStatus(username, 'interaction');
+      this.changePlayerStatus(username, PlayerStatus.INTERACTION);
     });
   }
 
   void handleSubmitAnswer() {
     this._socketService.onMessage(SocketEvent.SUBMIT_ANSWER, (username) {
-      this.changePlayerStatus(username, 'validation');
+      this.changePlayerStatus(username, PlayerStatus.VALIDATION);
     });
   }
 
   void changePlayerStatus(String username, String status) {
     final playerIndex = this.findPlayer(username, this.players);
     if (playerIndex != -1) this.players[playerIndex].status = status;
+    notifyListeners();
   }
 
   String initPlayerStatus(
       String username, bool resetPlayerStatus, List<Player> leftPlayers) {
     if (this.isPlayerGone(username, leftPlayers))
-      return 'left';
+      return PlayerStatus.LEFT;
     else if (!resetPlayerStatus)
       return this.getActualStatus(username);
     else
-      return this.isFinal ? 'endGame' : 'no-interaction';
+      return this.isFinal ? PlayerStatus.END_GAME : PlayerStatus.NO_INTERACTION;
   }
 
   String getActualStatus(String username) {
