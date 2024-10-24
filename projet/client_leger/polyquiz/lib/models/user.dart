@@ -1,4 +1,40 @@
 
+class User {
+  final String uid;
+  final String email;
+  final String username;
+  final String avatar;
+  final List<String> friends;
+  final num currency;
+  final List<num> achievements;
+  final num level;
+  final num prestige;
+  final bool isConnected;
+  final UserStats stats;
+  final List<LoginHistory> loginHistory;
+  final List<GameHistory> gameHistory;
+  final List<FriendRequest> friendRequests;
+  final UserSettings settings;
+
+  User({
+    required this.uid,
+    required this.email,
+    required this.username,
+    required this.avatar,
+    required this.friends,
+    required this.currency,
+    required this.achievements,
+    required this.level,
+    required this.prestige,
+    required this.isConnected,
+    required this.stats,
+    required this.loginHistory,
+    required this.gameHistory,
+    required this.friendRequests,
+    required this.settings,
+  });
+}
+
 class UserStats {
   final num gamesPlayed;
   final num gamesWon;
