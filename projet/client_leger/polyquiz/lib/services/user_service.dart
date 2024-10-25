@@ -36,14 +36,12 @@ class UserService extends GetxController {
       return null; // Handle the error appropriately
     }
   }
-  /// Create a new user in Firestore
   Future<void> createUser({
     required String uid,
     required String email,
     required String username,
   }) async {
     try {
-      print("creating user!!!!!!");
       // Create a new user document in Firestore
       await _db.collection(collectionName).doc(uid).set({
         'uid': uid,

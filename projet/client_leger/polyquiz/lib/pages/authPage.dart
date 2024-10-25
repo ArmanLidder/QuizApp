@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login successful!')),
       );
-      Navigator.pushReplacementNamed(context, '/quizz');
+      Navigator.pushReplacementNamed(context, '/join');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login failed: $e')),
