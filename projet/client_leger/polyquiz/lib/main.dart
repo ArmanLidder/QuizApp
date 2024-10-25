@@ -6,10 +6,15 @@ import 'pages/quiz_list_page.dart';
 import 'pages/join_room_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:get/get.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/user_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Get.put(UserService());
+  Get.put(LoggedInUserService());
   runApp(const MyApp());
 }
 
