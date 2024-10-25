@@ -1,57 +1,125 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:polyquiz/services/global_navigation_service.dart';
-import 'package:polyquiz/components/messageWindows.dart';
-import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
 
-  final GlobalNavigationService globalNavigationService =
-      GlobalNavigationService();
+class _LoginPageState extends State<LoginPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      // Login successful, navigate to the next screen
+      Navigator.pushReplacementNamed(context, '/home'); // Replace '/home' with your desired route
+    } on FirebaseAuthException catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Login Error'),
+          content: Text(e.message ?? 'Unknown error'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _register() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      // Registration successful, navigate to the next screen
+      Navigator.pushReplacementNamed(context, '/home'); // Replace '/home' with your desired route
+    } on FirebaseAuthException catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Registration Error'),
+          content: Text(e.message ?? 'Unknown error'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('PolyQuiz'),
-        centerTitle: true,
-        backgroundColor: const Color.fromRGBO(53, 121, 246, 1),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              // Navigate to the '/quizz' route
-              globalNavigationService.navigateTo('/quizz');
-              //Navigator.pushNamed(context, '/quizz');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  const Color.fromRGBO(53, 121, 246, 1), // Button color
-            ),
-            child: const Text(
-              'Create a room',
-              style: TextStyle(color: Colors.white), // Text color
-            ),
+      appBar: AppBar(title: Text('Login')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 16),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: _login,
+                    child: Text('Login'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _register,
+                    child: Text('Register'),
+                  ),
+                ],
+              ),
+            ],
           ),
-          const SizedBox(height: 20), // Add some space between the buttons
-          ElevatedButton(
-            onPressed: () {
-              // Navigate to the '/join' route
-              globalNavigationService.navigateTo('/join');
-              //Navigator.pushNamed(context, '/join');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  const Color.fromRGBO(53, 121, 246, 1), // Button color
-            ),
-            child: const Text(
-              'Join a room',
-              style: TextStyle(color: Colors.white), // Text color
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
