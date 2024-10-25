@@ -73,7 +73,8 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
           ListView.builder(
             itemCount: channelService.permittedChannels.length,
               itemBuilder: (context, index) {
-                return ChannelSelectionButton(buttonCallback: widget.updateCurrentChannel, name: channelService.permittedChannels[index].name, id: channelService.channels[index].id ?? "null");
+                final channel = channelService.permittedChannels[index];
+                return ChannelSelectionButton(buttonCallback: widget.updateCurrentChannel,leaveChannelCallback: () {channelService.leaveChannel(channel.id!);} , name: channel.name, id: channel.id ?? "null");
               }
         );}))
       ]
@@ -83,12 +84,14 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
 
 class ChannelSelectionButton extends StatelessWidget {
   final void Function(String) buttonCallback;
+  final void Function() leaveChannelCallback;
   final String name;
   final String id;
 
   const ChannelSelectionButton({
     super.key,
     required this.buttonCallback,
+    required this.leaveChannelCallback,
     required this.name,
     required this.id,
   });
@@ -104,11 +107,11 @@ class ChannelSelectionButton extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)
           )
       ),
-      trailing: SizedBox(
+      trailing: name == 'general' ? null : SizedBox(
         width: 100,
         child: Row(
           children: <Widget>[
-            IconButton(onPressed: (){}, icon: Icon(Icons.logout)),
+            IconButton(onPressed: (){leaveChannelCallback();}, icon: Icon(Icons.logout)),
             IconButton(onPressed: (){}, icon: Icon(Icons.delete))
           ]
         ),
@@ -167,7 +170,7 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
   Widget buildChannelTile(String name, String id) {
     return ListTile(
         title: TextButton(
-          onPressed: () {},
+          onPressed: () {channelService.joinChannel(id);},
           child: Container(child: Text(name)),
           style: TextButton.styleFrom(
             alignment: Alignment.centerLeft,
