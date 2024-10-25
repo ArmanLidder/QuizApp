@@ -9,9 +9,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -23,12 +21,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Polyquiz',
       navigatorKey: GlobalNavigationService.navigatorKey,
-      initialRoute: '/',
+      home: LoginPage(), // The starting page is set to LoginPage.
       routes: {
-        '/': (context) => LoginPage(),
+        '/login': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
         '/join': (context) => JoinRoomPage(),
-        '/game': (context) => GamePage()
+        '/game': (context) => GamePage(),
       },
     );
   }
