@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class StatitisticsBlorb extends StatelessWidget {
-  final int nPlayedGames;
-  final int nWonGames;
-  final int avgGoodAnswers;
-  final int avgGameTime;
+  final num nPlayedGames;
+  final num nWonGames;
+  final num avgGoodAnswers;
+  final num avgGameTime;
 
   StatitisticsBlorb({
     required this.nPlayedGames,
@@ -40,7 +40,7 @@ class StatitisticsBlorb extends StatelessWidget {
   }
 }
 
-Widget StatRow(String label, int value, [String postStatString = ""]) {
+Widget StatRow(String label, num value, [String postStatString = ""]) {
   return Row(
     children: [
       Text(
