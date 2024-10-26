@@ -10,7 +10,7 @@ import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'dart:convert';
 
-class HostInterfaceManagementService {
+class HostInterfaceManagementService extends ChangeNotifier {
   static final HostInterfaceManagementService _instance =
       HostInterfaceManagementService._internal();
 
@@ -235,6 +235,15 @@ class HostInterfaceManagementService {
 
   void initGraph(QuizQuestion question, int numberOfPlayers) {
     //todo voir avec la maniere dont l'histogramme est fait
+    this.isHostEvaluating = false;
+    if (question.type == QuestionType.QCM && question.choices != null) {
+      for (QuizChoice choice in question.choices!) {
+        this
+            .histogramDataValue
+            .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
+      }
+      notifyListeners();
+    }
   }
 
   Map<String, int> createChoicesStatsMap(List<num> choicesStatsValue) {
