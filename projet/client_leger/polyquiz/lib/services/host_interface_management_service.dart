@@ -61,6 +61,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
           question);
       if (question.type != QuestionType.QRL) {
         this.gameStats.add(savedStats);
+        notifyListeners();
       }
     }
   }
@@ -121,6 +122,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
       } else {
         this.sendQrlAnswer();
         this.isHostEvaluating = true;
+        notifyListeners();
       }
     });
   }
@@ -265,9 +267,10 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this._socketService.sendMessageWithAck(
         SocketEvent.GET_PLAYER_ANSWERS, this.gameService.realGameService.roomId,
         (playerAnswers) {
-      this.responsesQRL =
-          Map<String, ResponseData>.from(jsonDecode(playerAnswers));
+      List<dynamic> decodedAnswers = jsonDecode(playerAnswers);
+      this.responsesQRL = transformIntoResponsesQrl(decodedAnswers);
     });
+    notifyListeners();
   }
 
   void sendGameStats() {
@@ -286,7 +289,6 @@ class HostInterfaceManagementService extends ChangeNotifier {
   TransportStatsFormat prepareStatsTransport() {
     final TransportStatsFormat data = [];
     this.gameStats.forEach((stats) {
-      //todo
       final values = stats.responsesValues;
       final responses = stats.responsesNumber;
       data.add(TransportStats(values.entries.toList(),
@@ -307,6 +309,19 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.isPaused = false;
     this.isPanicMode = false;
     notifyListeners();
+  }
+
+  Map<String, ResponseData> transformIntoResponsesQrl(
+      List<dynamic> playerAnswers) {
+    Map<String, ResponseData> map = {};
+
+    for (var answer in playerAnswers) {
+      String key = answer[0];
+      ResponseData value =
+          ResponseData(answer[1]['answers'], answer[1]['time']);
+      map[key] = value;
+    }
+    return map;
   }
 }
 

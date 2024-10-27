@@ -80,8 +80,7 @@ class _HostInterfaceState extends State<HostInterface> {
                               return QuestionInfoWidget(
                                   questionNum: gameService.questionNumber,
                                   questionPts: gameService.question!.points,
-                                  questionText: gameService.question!
-                                      .text); //gameService.question!.points), null question when load
+                                  questionText: gameService.question!.text);
                             }),
                       ],
                     ),
@@ -138,22 +137,34 @@ class _HostInterfaceState extends State<HostInterface> {
                       ],
                     ),
                     SizedBox(height: 20.0),
-                    Visibility(
-                        visible: gameService.question!.type ==
-                            QuestionType
-                                .QCM, // gameService.question!.type null question when load
-                        child: HistogramLegend()),
-                    Visibility(
-                        visible: gameService.question!.type ==
-                            QuestionType.QCM, // null question when load
-                        child: Histogram()),
-                    Visibility(
-                        visible:
-                            hostInterfaceManagementService.isHostEvaluating,
-                        child: HostGrading(
-                          playerName: 'Player1',
-                          playerAnswer: 'Answer answer answer',
-                        )),
+                    AnimatedBuilder(
+                        animation: gameService,
+                        builder: (BuildContext context, Widget? snapshot) {
+                          return Column(
+                            children: [
+                              Visibility(
+                                  visible: gameService.question!.type ==
+                                      QuestionType.QCM,
+                                  child: HistogramLegend()),
+                              Visibility(
+                                  visible: gameService.question!.type ==
+                                      QuestionType.QCM,
+                                  child: Histogram()),
+                            ],
+                          );
+                        }),
+                    AnimatedBuilder(
+                        animation: hostInterfaceManagementService,
+                        builder: (BuildContext context, Widget? snapshot) {
+                          return Visibility(
+                              visible: hostInterfaceManagementService
+                                  .isHostEvaluating,
+                              child: HostGrading(
+                                  gameStats:
+                                      hostInterfaceManagementService.gameStats,
+                                  qrlAnswers: hostInterfaceManagementService
+                                      .responsesQRL));
+                        }),
                     PlayersDataTableLegend(),
                     SizedBox(height: 20.0),
                     PlayersDataTable()
