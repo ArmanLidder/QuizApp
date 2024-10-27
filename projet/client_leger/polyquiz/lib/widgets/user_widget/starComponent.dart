@@ -52,7 +52,7 @@ class StarCard extends StatelessWidget {
 
 class StarCardGrid extends StatelessWidget {
   final List<String> labels;
-  final List<int> achievementsList;
+  final List<num> achievementsList;
 
   StarCardGrid({required this.labels, required this.achievementsList});
 

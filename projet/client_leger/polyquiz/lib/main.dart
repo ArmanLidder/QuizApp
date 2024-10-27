@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/pages/game_page.dart';
+import 'package:polyquiz/pages/login-page.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'pages/authPage.dart';
 import 'pages/quiz_list_page.dart';
@@ -10,6 +11,7 @@ import 'firebase_options.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/pages/userPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,13 +29,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Polyquiz',
       navigatorKey: GlobalNavigationService.navigatorKey,
-      home: LoginPage(), // The starting page is set to LoginPage.
+      home: AuthPage(), // The starting page is set to LoginPage.
       routes: {
+        '/auth': (context) => AuthPage(),
         '/login': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
         '/join': (context) => JoinRoomPage(),
         '/game': (context) => GamePage(),
         '/home': (context) => HomePage(),
+        '/user': (context) => Userpage(),
       },
     );
   }

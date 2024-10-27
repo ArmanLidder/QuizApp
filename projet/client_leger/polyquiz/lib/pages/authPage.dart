@@ -3,14 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
-
-class LoginPage extends StatefulWidget {
+class AuthPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
-
+  _AuthPageState createState() => _AuthPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _AuthPageState extends State<AuthPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
@@ -47,9 +45,13 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration successful!')),
       );
-      this.userService.createUser(uid:"sdasd", email: _emailController.text, username: _usernameController.text);
+      this.userService.createUser(
+          uid: "sdasd",
+          email: _emailController.text,
+          username: _usernameController.text);
       setState(() {
-        _isRegistering = false; // Return to login mode after successful registration.
+        _isRegistering =
+            false; // Return to login mode after successful registration.
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
