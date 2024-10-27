@@ -245,7 +245,19 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
               ),
             )
           ),
-
+          Column(children: channelErrorMessage(_currentName)),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: TextButton(
+                onPressed: isValidChannelName(_currentName) ? (){} : null,
+                child: Text("Créer"),
+                style: TextButton.styleFrom(
+                  backgroundColor: isValidChannelName(_currentName) ? Colors.blue : Colors.grey[400],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))
+                ),
+            ),
+          )
         ]
     );
   }
@@ -259,7 +271,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     List<Widget> errors = [];
     final errorStyle = TextStyle(color: Colors.red);
     final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
-    if (!alphanumeric.hasMatch(name)) errors.add(Text(
+    if (!alphanumeric.hasMatch(name) && name.isNotEmpty) errors.add(Text(
       "Le nom du canal doit seulement contenir des caractères alphanumériques.",
       style: errorStyle
     ));
