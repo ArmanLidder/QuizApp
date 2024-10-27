@@ -45,7 +45,6 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
   }
 
   Color getColor(Player player) {
-    print('PLAYER STATUS IN GET COLOR: ${player.status}');
     switch (player.status) {
       case PlayerStatus.NO_INTERACTION:
         return Color.fromRGBO(246, 53, 53, 1);

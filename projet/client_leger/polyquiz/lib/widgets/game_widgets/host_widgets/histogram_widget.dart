@@ -12,8 +12,18 @@ class Histogram extends StatefulWidget {
 class _HistogramWidgetState extends State<Histogram> {
   HostInterfaceManagementService _hostInterfaceManagementService =
       HostInterfaceManagementService();
-  List<String> choices = ['choice1', 'choice2', 'choice3', 'choice4'];
-  List<double> answers = [3, 1, 2, 1];
+
+  Color getColor(int index) {
+    if (_hostInterfaceManagementService.histogramDataValue.entries
+        .toList()[index]
+        .value) {
+      print('GOT TO TRUE');
+      return Color.fromRGBO(123, 229, 117, 1);
+    } else {
+      return Color.fromRGBO(246, 53, 53, 1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,20 +60,28 @@ class _HistogramWidgetState extends State<Histogram> {
                 ),
               ),
             ),
-            barGroups: answers.asMap().entries.map((entry) {
-              int index = entry.key;
-              double value = entry.value;
-              return BarChartGroupData(
-                x: index,
-                barRods: [
-                  BarChartRodData(
-                      toY: value,
-                      color: Color.fromRGBO(246, 53, 53, 1),
-                      width: 50,
-                      borderRadius: BorderRadius.zero),
-                ],
-              );
-            }).toList(),
+            barGroups: _hostInterfaceManagementService
+                .histogramDataChangingResponses.entries
+                .toList()
+                .asMap()
+                .map((index, entry) {
+                  int value = entry.value;
+                  return MapEntry(
+                      index,
+                      BarChartGroupData(
+                        x: index,
+                        barRods: [
+                          BarChartRodData(
+                            toY: value.toDouble(),
+                            color: getColor(index),
+                            width: 50,
+                            borderRadius: BorderRadius.zero,
+                          ),
+                        ],
+                      ));
+                })
+                .values
+                .toList(),
           ));
         },
       ),

@@ -147,6 +147,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
         (choicesStatsValue) {
       this.histogramDataChangingResponses =
           createChoicesStatsMap(List<num>.from(choicesStatsValue));
+      notifyListeners();
     });
   }
 
