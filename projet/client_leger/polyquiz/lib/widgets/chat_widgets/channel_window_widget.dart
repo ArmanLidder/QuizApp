@@ -206,3 +206,30 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
     );
   }
 }
+
+class ChannelCreationWidget extends StatefulWidget {
+  final returnCallback;
+  const ChannelCreationWidget({required this.returnCallback, super.key});
+
+  @override
+  State<ChannelCreationWidget> createState() => _ChannelCreationWidgetState();
+}
+
+class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
+  final _messageController = TextEditingController();
+  final channelService = Get.put(ChannelService());
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+        children: <Widget>[
+          Row(
+              children: <Widget>[
+                Expanded(child: Align(alignment: Alignment.centerLeft, child: IconButton(onPressed: (){ widget.returnCallback(); }, icon: Icon(Icons.arrow_back)))),
+                Expanded(child: Align(alignment: Alignment.center, child: Text("Joindre Canal")))
+              ]
+          ),
+        ]
+    );
+  }
+}
