@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/game_interface_management_service.dart';
 
 class PlayerQrl extends StatefulWidget {
-  const PlayerQrl({super.key});
+  final GameInterfaceManagementService? gameInterfaceManagementService;
+
+  const PlayerQrl({
+    Key? key,
+    this.gameInterfaceManagementService,
+  }) : super(key: key);
 
   @override
   State<PlayerQrl> createState() => _PlayerQrlWidgetState();
@@ -28,6 +34,7 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
             onChanged: (value) {
               setState(() {
                 inputText = (200 - value.characters.length).toString();
+                widget.gameInterfaceManagementService!.gameService.qrlAnswer = inputText;
               });
             },
           ),

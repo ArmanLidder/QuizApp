@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/enums/question_type.dart';
@@ -9,7 +10,7 @@ import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 
-class GameInterfaceManagementService {
+class GameInterfaceManagementService extends ChangeNotifier {
   static final GameInterfaceManagementService _instance =
       GameInterfaceManagementService._internal();
 
@@ -25,14 +26,15 @@ class GameInterfaceManagementService {
   List<Player> players = [];
   bool inPanicMode = false;
   List<dynamic> gameStats = []; // Type a revoir
-
-  GameService _gameService = GameService();
+  String timerText = 'Temps restant ';
+  bool isNotified = false;
+  GameService gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
   GlobalNavigationService _globalNavigationService = GlobalNavigationService();
 
   void setUp(String pathId) {
-    if (this._gameService.isOfflineMode) {
+    if (this.gameService.isOfflineMode) {
       if (this._socketService.isSocketAlive()) {
         this._socketService.disconnect();
       }
@@ -40,7 +42,7 @@ class GameInterfaceManagementService {
     if (this._socketService.isSocketAlive()) {
       this.configureBaseSocketFeatures();
     }
-    this._gameService.init(pathId);
+    this.gameService.init(pathId);
   }
 
   void reset() {
@@ -49,48 +51,63 @@ class GameInterfaceManagementService {
     this.isBonus = false;
     this.playerScore = 0;
     this.gameStats = [];
+    this.timerText = 'Temps restant ';
     this.inPanicMode = false;
   }
 
-  void configureBaseSocketFeatures() {}
+  void configureBaseSocketFeatures() {
+    this.handleEndQuestion();
+    this.handleEvaluationOver();
+    this.handleTimeTransition();
+    this.handleFinalTimeTransition();
+    this.handleRemovedFromGame();
+    this.handlePanicMode();
+    this.handlePauseTimer();
+    this.handleGameStatusDistribution();
+  }
 
   void resetData() {
-    this._gameService.audio.pause();
-    this._gameService.audio.seek(Duration.zero);
-    this._gameService.realGameService.audioPaused = false;
+    this.gameService.audio.pause();
+    this.gameService.audio.seek(Duration.zero);
+    this.gameService.realGameService.audioPaused = false;
     this.inPanicMode = false;
-    this._gameService.realGameService.locked = false;
-    this._gameService.realGameService.validated = false;
+    this.gameService.realGameService.locked = false;
+    this.gameService.realGameService.validated = false;
     this.isBonus = false;
+    this.timerText = 'Temps restant ';
   }
 
   void handleEndQuestion() {
     this._socketService.onMessage(SocketEvent.END_QUESTION, (_) {
-      this._gameService.audio.pause();
-      this._gameService.audio.seek(Duration.zero);
-      this._gameService.realGameService.audioPaused = false;
+      this.gameService.audio.pause();
+      this.gameService.audio.seek(Duration.zero);
+      this.gameService.realGameService.audioPaused = false;
       this.inPanicMode = false;
-      if (this._gameService.question?.type == QuestionType.QCM) {
+      if (this.gameService.question?.type == QuestionType.QCM) {
         this.getScore();
       } else {
-        this._gameService.qrlAnswer = '';
-        this._gameService.realGameService.validated = true;
+        this.gameService.qrlAnswer = '';
+        this.gameService.realGameService.validated = true;
       }
+      this.gameService.realGameService.isNotified = false;
+      notifyListeners();
     });
   }
 
   void handleEvaluationOver() {
     this._socketService.onMessage(SocketEvent.EVALUATION_OVER, (_) {
       this.getScore();
+      notifyListeners();
     });
   }
 
   void handleTimeTransition() {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
-      this._gameService.realGameService.timer = timeValue;
-      if (this._gameService.timer == 0) {
+      this.gameService.realGameService.timer = timeValue;
+      if (this.gameService.timer == 0) {
         this.resetData();
       }
+      notifyListeners();
     });
   }
 
@@ -98,14 +115,16 @@ class GameInterfaceManagementService {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION,
         (timeValue) {
       //todo code pour afficher la transition aux resultats finaux
-      this._gameService.realGameService.timer = timeValue;
-      if (this._gameService.timer == 0) {
+      this.gameService.realGameService.timer = timeValue;
+      this.timerText =  "Les résultats finaux s'afficherons dans ";
+      if (this.gameService.timer == 0) {
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
         this
             ._interactiveListService
-            .getPlayersList(this._gameService.realGameService.roomId);
+            .getPlayersList(this.gameService.realGameService.roomId);
       }
+      notifyListeners();
     });
   }
 
@@ -117,30 +136,40 @@ class GameInterfaceManagementService {
 
   void handlePanicMode() {
     this._socketService.onMessage(SocketEvent.PANIC_MODE, (_) {
-      if (this._gameService.timer > 0 &&
-          !this._gameService.realGameService.audioPaused) {
-        this._gameService.audio.play(AssetSource('music.mp3'));
+      if (this.gameService.timer > 0 &&
+          !this.gameService.realGameService.audioPaused) {
+        this.gameService.audio.play(AssetSource('music.mp3'));
       }
       this.inPanicMode = true;
+      notifyListeners();
     });
   }
 
   void handlePauseTimer() {
     this._socketService.onMessage(SocketEvent.PAUSE_TIMER, (_) {
-      if (this._gameService.realGameService.audioPaused && this.inPanicMode) {
-        this._gameService.audio.play(AssetSource('music.mp3'));
-      } else if (!this._gameService.realGameService.audioPaused &&
+      if (this.gameService.realGameService.audioPaused && this.inPanicMode) {
+        this.gameService.audio.play(AssetSource('music.mp3'));
+      } else if (!this.gameService.realGameService.audioPaused &&
           this.inPanicMode) {
-        this._gameService.audio.pause();
+        this.gameService.audio.pause();
       }
-      this._gameService.realGameService.audioPaused =
-          !this._gameService.realGameService.audioPaused;
+      this.gameService.realGameService.audioPaused =
+          !this.gameService.realGameService.audioPaused;
+      notifyListeners();
     });
   }
 
   void handleGameStatusDistribution() {
     this._socketService.onMessage(SocketEvent.GAME_STATUS_DISTRIBUTION,
-        (gameStats) => {this.unpackStats(this.parseGameStats(gameStats))});
+        (gameStats) {
+          try {
+            
+            this.unpackStats(this.parseGameStats(gameStats));
+            notifyListeners();
+          } catch (e) {
+            print('Error in handleGameStatusDistribution: $e');
+          }
+        });
   }
 
   parseGameStats(stringifyStats) {
@@ -158,29 +187,33 @@ class GameInterfaceManagementService {
   }
 
   void getScore() {
-    if (this._gameService.realGameService.username != 'host') {
+    if (this.gameService.realGameService.username != 'host') {
       this._socketService.sendMessageWithAck(
-            SocketEvent.GET_SCORE,
-            {
-              'roomId': this._gameService.realGameService.roomId,
-              'username': this._gameService.realGameService.username,
-            },
-            (Score score) {
-              this._gameService.realGameService.validated = true;
-              this.updateScore(score.points);
-              this.isBonus = score.isBonus;
-            } as Function(dynamic p1),
-          );
+        SocketEvent.GET_SCORE,
+        {
+          'roomId': this.gameService.realGameService.roomId,
+          'username': this.gameService.realGameService.username,
+        },
+        (dynamic response) {
+          final score = Score.fromJson(response);
+          this.gameService.realGameService.validated = true;
+          this.updateScore(score.points);
+          this.isBonus = score.isBonus;
+        },
+      );
     }
   }
 
   void updateScore(int score) {
     final oldScore = this.playerScore;
     this.playerScore = score;
-    if (this._gameService.question?.type == QuestionType.QRL) {
-      this._gameService.lastQrlScore = (((playerScore - oldScore) /
-              (_gameService.realGameService.question?.points ?? 0)) *
-          100) as int?;
+    if (this.gameService.question?.type == QuestionType.QRL) {
+      this.gameService.lastQrlScore = (((playerScore - oldScore) /
+              (gameService.realGameService.question?.points ?? 0)) *
+          100).toInt();
+
+      print("I am Here 444444");
+      print(this.gameService.lastQrlScore);
     }
   }
 }

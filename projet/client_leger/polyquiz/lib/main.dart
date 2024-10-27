@@ -4,6 +4,7 @@ import 'package:polyquiz/services/global_navigation_service.dart';
 import 'pages/authPage.dart';
 import 'pages/quiz_list_page.dart';
 import 'pages/join_room_page.dart';
+import 'pages/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:get/get.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/quizz': (context) => QuizListPage(),
         '/join': (context) => JoinRoomPage(),
         '/game': (context) => GamePage(),
+        '/home': (context) => HomePage(),
       },
     );
   }
