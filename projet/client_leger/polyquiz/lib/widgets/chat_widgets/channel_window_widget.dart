@@ -29,6 +29,8 @@ class _ChannelWindowWidgetState extends State<ChannelWindowWidget> {
     switch (currentPage) {
       case Page.join:
         return ChannelJoiningWidget(returnCallback: () {selectChannel(Page.select);});
+      case Page.create:
+        return ChannelCreationWidget(returnCallback: () {selectChannel(Page.create);});
       case Page.select:
       default:
         return ChannelSelectionWidget(widget.updateCurrentChannel, selectChannel);
@@ -65,7 +67,7 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Expanded(child: ElevatedButton(onPressed: (){}, child: Text("Créer un canal"))),
+            Expanded(child: ElevatedButton(onPressed: (){widget.changePage(Page.create);}, child: Text("Créer un canal"))),
             Expanded(child: ElevatedButton(onPressed: (){widget.changePage(Page.join);}, child: Text("Joindre un canal")))
           ]
         ),
@@ -216,8 +218,9 @@ class ChannelCreationWidget extends StatefulWidget {
 }
 
 class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
-  final _messageController = TextEditingController();
+  final inputController = TextEditingController();
   final channelService = Get.put(ChannelService());
+  String _currentName = "";
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +232,46 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
                 Expanded(child: Align(alignment: Alignment.center, child: Text("Joindre Canal")))
               ]
           ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: TextField(
+              controller: inputController,
+              onChanged: (content) {setState(() {
+                _currentName = inputController.text.trim();
+              });},
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Saisir un nom de canal...',
+              ),
+            )
+          ),
+
         ]
     );
+  }
+
+  bool isValidChannelName(String name) {
+    final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
+    return alphanumeric.hasMatch(name) && name.length <= 20 && name.length > 0;
+  }
+
+  List<Widget> channelErrorMessage(String name) {
+    List<Widget> errors = [];
+    final errorStyle = TextStyle(color: Colors.red);
+    final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
+    if (!alphanumeric.hasMatch(name)) errors.add(Text(
+      "Le nom du canal doit seulement contenir des caractères alphanumériques.",
+      style: errorStyle
+    ));
+    if (name.length > 20) errors.add(Text(
+      "Le nom du canal doit contenir 20 caractères maximum.",
+      style: errorStyle,
+    ));
+    if (name.isEmpty) errors.add(Text(
+      "Le nom de canal est requis.",
+      style: errorStyle,
+    ));
+
+    return errors;
   }
 }
