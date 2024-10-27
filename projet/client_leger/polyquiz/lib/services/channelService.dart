@@ -52,16 +52,26 @@ class ChannelService extends GetxController {
   }
 
   Future<void> joinChannel(String channelId) async {
-    DocumentReference channelRef = _db.collection(collectionName).doc(channelId);
+    DocumentReference channelRef = _getChannelRefById(channelId);
     await channelRef.update({
       'permittedUsers': FieldValue.arrayUnion([hardcodedUserId])
     });
   }
 
   Future<void> leaveChannel(String channelId) async {
-    DocumentReference channelRef = _db.collection(collectionName).doc(channelId);
+    DocumentReference channelRef = _getChannelRefById(channelId);
     await channelRef.update({
       'permittedUsers': FieldValue.arrayRemove([hardcodedUserId])
     });
   }
+
+  Future<void> deleteChannel(String channelId) async {
+    DocumentReference channelRef = _getChannelRefById(channelId);
+    final docSnapshot = await channelRef.get();
+    if (docSnapshot.exists) {
+      await channelRef.delete();
+    }
+  }
+
+  DocumentReference _getChannelRefById(String id) => _db.collection(collectionName).doc(id);
 }
