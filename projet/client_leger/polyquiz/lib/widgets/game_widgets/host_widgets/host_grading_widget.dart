@@ -4,8 +4,8 @@ import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/qrl_evaluation_service.dart';
 
 class HostGrading extends StatefulWidget {
-  List<QuestionStatistics> gameStats;
-  Map<String, ResponseData> qrlAnswers;
+  final List<QuestionStatistics> gameStats;
+  final Map<String, ResponseData> qrlAnswers;
   HostGrading({
     Key? key,
     required this.gameStats,
@@ -94,23 +94,35 @@ class _HostGradingState extends State<HostGrading> {
                 ],
               );
             } else {
-              return DataTable(
-                  columns: [
-                    DataColumn(
-                      label: Expanded(child: Center(child: Text('Nom'))),
-                    ),
-                    DataColumn(
-                      label: Expanded(child: Center(child: Text('Note'))),
-                    ),
-                  ],
-                  rows: List<DataRow>.generate(
-                      _qrlEvaluationService.points.length, (index) {
-                    return DataRow(cells: [
-                      DataCell(Text(_qrlEvaluationService.usernames[index])),
-                      DataCell(
-                          Text(_qrlEvaluationService.points[index].toString()))
-                    ]);
-                  }));
+              return Column(
+                children: [
+                  DataTable(
+                      headingRowColor: WidgetStateProperty.all(
+                          Color.fromRGBO(53, 121, 246, 1)),
+                      headingTextStyle: TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 1),
+                          fontWeight: FontWeight.bold),
+                      border: TableBorder.all(),
+                      columns: [
+                        DataColumn(
+                          label: Expanded(child: Center(child: Text('Nom'))),
+                        ),
+                        DataColumn(
+                          label: Expanded(child: Center(child: Text('Note'))),
+                        ),
+                      ],
+                      rows: List<DataRow>.generate(
+                          _qrlEvaluationService.points.length, (index) {
+                        return DataRow(cells: [
+                          DataCell(
+                              Text(_qrlEvaluationService.usernames[index])),
+                          DataCell(Text(
+                              _qrlEvaluationService.points[index].toString()))
+                        ]);
+                      })),
+                  SizedBox(height: .0),
+                ],
+              );
             }
           }),
     );
