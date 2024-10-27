@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/channelService.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/user_service.dart';
 
 class MessageWindowWidget extends StatefulWidget {
@@ -87,6 +88,7 @@ class MessageTile extends StatelessWidget {
   final imageUrl = "https://i.pinimg.com/originals/87/a2/d6/87a2d6017b9a7cc38274cef92a45cee3.jpg"; // TODO: Remove and add images
   final username = "Elsa";
   final userService = Get.put(UserService());
+  final loggedInService = Get.put(LoggedInUserService());
 
   final String content;
   final String userId;
@@ -162,6 +164,6 @@ class MessageTile extends StatelessWidget {
   }
 
   bool isUserSender() {
-    return userId == "Kvw4qW583jXEdYuoBgVjRe5JeAK2"; // TODO: Fix this so it isn't hardcoded
+    return userId == loggedInService.user?.uid; // TODO: Fix this so it isn't hardcoded
   }
 }
