@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
@@ -13,8 +14,9 @@ class _AuthPageState extends State<AuthPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final UserService userService = UserService.instance;
-  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
+  final UserService userService = UserService();
+  final LoggedInUserService loggedInUserService = LoggedInUserService();
+  final ImageStorageService imageStorageService = ImageStorageService();
 
   bool _isRegistering = false;
 
@@ -25,12 +27,13 @@ class _AuthPageState extends State<AuthPage> {
         password: _passwordController.text,
       );
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login successful!')),
+        SnackBar(content: Text('Connection réussie!')),
       );
+      await this.loggedInUserService.setUserByEmail(_emailController.text);
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: $e')),
+        SnackBar(content: Text('Connection échouée: $e')),
       );
     }
   }
@@ -43,10 +46,10 @@ class _AuthPageState extends State<AuthPage> {
       );
       // Here, you could save the username to a user profile or database.
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration successful!')),
+        SnackBar(content: Text('Inscription réussie!')),
       );
+
       this.userService.createUser(
-          uid: "sdasd",
           email: _emailController.text,
           username: _usernameController.text);
       setState(() {
@@ -55,7 +58,7 @@ class _AuthPageState extends State<AuthPage> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration failed: $e')),
+        SnackBar(content: Text('Inscription échouée: $e')),
       );
     }
   }
@@ -64,7 +67,7 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isRegistering ? 'Register' : 'Login'),
+        title: Text(_isRegistering ? "S'enregistrer" : 'Se connecter'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -75,7 +78,7 @@ class _AuthPageState extends State<AuthPage> {
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
-                  labelText: 'Username',
+                  labelText: "nom d'utilisateur",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -83,7 +86,7 @@ class _AuthPageState extends State<AuthPage> {
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: 'Adresse mail',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
@@ -92,7 +95,7 @@ class _AuthPageState extends State<AuthPage> {
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: 'Mot de passe',
                 border: OutlineInputBorder(),
               ),
               obscureText: true,
@@ -100,7 +103,7 @@ class _AuthPageState extends State<AuthPage> {
             SizedBox(height: 24),
             ElevatedButton(
               onPressed: _isRegistering ? _register : _login,
-              child: Text(_isRegistering ? 'Register' : 'Login'),
+              child: Text(_isRegistering ? "S'enregistrer" : 'Se connecter'),
             ),
             SizedBox(height: 16),
             TextButton(
@@ -110,9 +113,10 @@ class _AuthPageState extends State<AuthPage> {
                 });
               },
               child: Text(_isRegistering
-                  ? 'Already have an account? Login'
-                  : 'Don’t have an account? Register'),
+                  ? 'Tu as déja un compte? connecte toi!'
+                  : "tu n'as pas de compte? connecte-toi!"),
             ),
+
           ],
         ),
       ),

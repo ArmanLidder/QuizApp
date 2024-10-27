@@ -1,22 +1,17 @@
+import 'dart:ui';
+
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/services/imageStorageService.dart';
 import 'user_service.dart';
-class LoggedInUserService {
-  // Singleton instance
-  static final LoggedInUserService _instance = LoggedInUserService._internal();
 
+class LoggedInUserService extends GetxController {
   static LoggedInUserService get instance => Get.find();
 
-  // User properties
+  final UserService userService = UserService();
+  final ImageStorageService imageStorageService = ImageStorageService();
+
   User? user;
-
-  // Private constructor
-  LoggedInUserService._internal();
-
-  // Getter for the singleton instance
-  factory LoggedInUserService() {
-    return _instance;
-  }
 
   // Method to set user info
   void setUser(User user) {
@@ -24,19 +19,37 @@ class LoggedInUserService {
   }
 
   Future<void> setUserByEmail(String email) async {
-    final userService = UserService.instance; // Access UserService instance
-    User? fetchedUser = await userService.getUserByEmail(email); // Fetch user by email
+    User? fetchedUser = await this.userService.getUserByEmail(email); // Fetch user by email
     if (fetchedUser != null) {
       setUser(fetchedUser); // Set the fetched user
     } else {
       print('User not found with email: $email');
     }
   }
-
+  Future<void> reloadUser() async{
+    String? uid = await this.getUid();
+    User user = UserService.instance.getUserById(uid ?? '') as User;
+    this.setUser(user);
+  }
   User? getUser(){
     return (this.user);
   }
   String? getUid(){
+    if (this.user == null){
+      return "noId";
+    }
     return (this.user?.uid);
+  }
+String forceToString(String? string){
+  if (string == null){
+    return "emptyString";
+  }
+  return string;
+}
+
+  Future<void> updateProfilePicture() async{
+    String? newImagelLink = await this.imageStorageService.pickAndUploadImage();
+    this.userService.updateUserAvatar(id: this.forceToString(this.getUid()), newAvatarUrl: this.forceToString(newImagelLink));
+    this.reloadUser();
   }
 }

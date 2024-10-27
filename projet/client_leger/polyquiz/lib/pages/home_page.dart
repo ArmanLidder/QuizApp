@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -24,6 +25,12 @@ class HomePage extends StatelessWidget {
               },
               child: Text('Quizz'),
             ),
+            const SizedBox(height:20),
+            ElevatedButton(onPressed: () {
+              Navigator.pushReplacementNamed(context, '/user');
+            }, child: Text("user page")
+            ),
+            ChatPopup(),
           ],
         ),
       ),

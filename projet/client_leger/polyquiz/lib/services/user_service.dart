@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:uuid/uuid.dart';
 
 class UserService extends GetxController {
   final String collectionName = 'users';
@@ -22,12 +23,10 @@ class UserService extends GetxController {
           .collection(collectionName)
           .where('email', isEqualTo: email)
           .get();
-
       if (querySnapshot.docs.isEmpty) {
-        return null; // No user found with the given email
+        return null;
       }
 
-      // Assuming emails are unique, we can just take the first document
       final doc = querySnapshot.docs.first;
       final user = User.fromJson(doc.data()!);
       return user;
@@ -37,17 +36,17 @@ class UserService extends GetxController {
     }
   }
   Future<void> createUser({
-    required String uid,
     required String email,
     required String username,
   }) async {
+    String uid = Uuid() as String;
     try {
       // Create a new user document in Firestore
       await _db.collection(collectionName).doc(uid).set({
         'uid': uid,
         'email': email,
         'username': username,
-        'avatar': '', // Default or empty avatar
+        'avatar': 'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58',
         'friends': [],
         'currency': 0,
         'achievements': [],
@@ -72,6 +71,20 @@ class UserService extends GetxController {
     } catch (e) {
       print('Failed to create user: $e');
       // Optionally handle the error further (e.g., logging or notifying the user)
+    }
+  }
+
+  Future<void> updateUserAvatar({
+    required String id,
+    required String newAvatarUrl,
+  }) async {
+    try {
+      await _db.collection(collectionName).doc(id).update({
+        'avatar': newAvatarUrl,
+      });
+      print('Avatar updated successfully');
+    } catch (e) {
+      print('Failed to update avatar: $e');
     }
   }
 }

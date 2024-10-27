@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/services/imageStorageService.dart';
 import '../widgets/user_widget/fancyAppBar.dart';
 import '../widgets/user_widget/ProfileCard.dart';
 import '../widgets/user_widget/statisticBlorb.dart';
@@ -12,6 +13,7 @@ import 'package:polyquiz/services/logged_in_user_service.dart';
 class Userpage extends StatelessWidget {
   final UserService userService = UserService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
+  final ImageStorageService imageStorageService = ImageStorageService();
   User? userData = LoggedInUserService.instance.user;
 
   @override
@@ -43,20 +45,14 @@ class Userpage extends StatelessWidget {
                   List.generate(8, (index) => "Defi numero ${index + 1}"),
                   achievementsList: achievements),
               Historique(
-                events: [
-                  EvenementRow(date: "2024-10-16", label: "Connection"),
-                  EvenementRow(
-                      date: "2024-10-17",
-                      label: "Partie Gagnée",
-                      color: Colors.green),
-                  EvenementRow(date: "2024-10-18", label: "Déconection"),
-                  EvenementRow(
-                    date: "2024-10-19",
-                    label: "Connection",
-                  ),
-                  EvenementRow(date: "2024-10-20", label: "Déconnection"),
-                ],
-              )
+                gameHistory: userData?.gameHistory ?? [],
+                loginHistory: userData?.loginHistory ?? [],
+              ),
+              ElevatedButton(
+                  onPressed: this.imageStorageService.pickAndUploadImage,
+                  child: Text("Choisir une image TEST")
+              ),
+
             ],
           ),
         ),
