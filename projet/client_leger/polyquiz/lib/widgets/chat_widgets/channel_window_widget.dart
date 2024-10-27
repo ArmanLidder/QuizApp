@@ -30,7 +30,7 @@ class _ChannelWindowWidgetState extends State<ChannelWindowWidget> {
       case Page.join:
         return ChannelJoiningWidget(returnCallback: () {selectChannel(Page.select);});
       case Page.create:
-        return ChannelCreationWidget(returnCallback: () {selectChannel(Page.create);});
+        return ChannelCreationWidget(returnCallback: () {selectChannel(Page.select);});
       case Page.select:
       default:
         return ChannelSelectionWidget(widget.updateCurrentChannel, selectChannel);
@@ -249,7 +249,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: TextButton(
-                onPressed: isValidChannelName(_currentName) ? (){} : null,
+                onPressed: isValidChannelName(_currentName) ? (){ createChannel(context); } : null,
                 child: Text("Créer"),
                 style: TextButton.styleFrom(
                   backgroundColor: isValidChannelName(_currentName) ? Colors.blue : Colors.grey[400],
@@ -285,5 +285,31 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     ));
 
     return errors;
+  }
+
+  void sameChannelNamePopup(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Canal existant!"),
+          content: Text("Le nom ${_currentName} est déjà utilisé. Veuillez choisir un autre nom."),
+          actions: <Widget>[
+            TextButton(onPressed: () { return Navigator.pop(context); }, child: Text("OK")),
+          ],
+        )
+    );
+  }
+
+  Future<void> createChannel(BuildContext context) async {
+    bool isCreated = await channelService.createChannel(_currentName, ["Kvw4qW583jXEdYuoBgVjRe5JeAK2"], false);
+    if (isCreated) {
+      print("worked");
+      inputController.clear();
+      widget.returnCallback();
+      return;
+    }
+    print('didnt work');
+    sameChannelNamePopup(context);
+    inputController.clear();
   }
 }
