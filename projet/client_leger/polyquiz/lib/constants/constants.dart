@@ -1,6 +1,6 @@
 import '../models/quiz_interface.dart';
 
-const String IP_URL = 'http://192.168.86.1:3000';
+const String IP_URL = 'http://192.168.0.83:3000';
 
 const int PLAYER_NOT_FOUND_INDEX = -1;
 const int QLR_PANIC_MODE_ENABLED = 20;

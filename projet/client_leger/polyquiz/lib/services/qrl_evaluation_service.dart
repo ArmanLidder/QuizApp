@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_service.dart';
+import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 
-class QrlEvaluationService {
+class QrlEvaluationService extends ChangeNotifier {
   static final QrlEvaluationService _instance =
       QrlEvaluationService._internal();
 
@@ -18,7 +20,7 @@ class QrlEvaluationService {
   List<int> scores = [0, 50, 100];
   String currentAnswer = '';
   String currentUsername = '';
-  int inputPoint = 0;
+  int inputPoint = -1;
   bool isCorrectionFinished = false;
   bool isValid = true;
   List<int> points = [];
@@ -36,7 +38,7 @@ class QrlEvaluationService {
   SocketService _socketService = SocketService();
   GameService _gameService = GameService();
 
-  void initialize(Map<String, QrlAnswer> qrlAnswers) {
+  void initialize(Map<String, ResponseData> qrlAnswers) {
     this.indexPlayer = -1;
     this.isCorrectionFinished = false;
     this.initializePlayerAnswers(qrlAnswers);
@@ -44,15 +46,19 @@ class QrlEvaluationService {
   }
 
   void getCorrection(int point) {
-    this.points[this.indexPlayer] = point;
+    this.points.add(point);
   }
 
   void nextAnswer() {
     this.indexPlayer++;
-    if (this.indexPlayer <= this.usernames.length) {
+    print(indexPlayer);
+    print(usernames);
+    print(currentAnswer);
+    if (this.indexPlayer < this.usernames.length) {
       this.currentAnswer = this.answers[this.indexPlayer];
       this.currentUsername = this.usernames[this.indexPlayer];
     }
+    notifyListeners();
   }
 
   void reset() {
@@ -61,6 +67,8 @@ class QrlEvaluationService {
     this.isValid = true;
     this.currentAnswer = '';
     this.currentUsername = '';
+    this.inputPoint = -1;
+    notifyListeners();
   }
 
   void clearAll() {
@@ -79,13 +87,13 @@ class QrlEvaluationService {
   }
 
   void submitPoint(List<QuestionStatistics> gameStats) {
-    this.isValid = scores.contains(int.tryParse(inputPoint.toString()));
+    this.isValid = scores.contains(inputPoint);
 
     if (indexPlayer < usernames.length) {
       if (isValid) {
         getCorrection(inputPoint);
         nextAnswer();
-        inputPoint = 0;
+        inputPoint = -1;
       }
 
       if (indexPlayer >= usernames.length) {
@@ -98,9 +106,11 @@ class QrlEvaluationService {
 
   void endCorrection(List<QuestionStatistics> gameStats) {
     for (int i = 0; i < this.usernames.length; i++) {
+      print('POINTS CONTENT: ${this.points[i]}');
       this.correctedQrlAnswers[this.usernames[i]] = this.points[i];
       this.questionStats[this.points[i].toString()] =
-          (this.questionStats[this.points[i]]! + 1);
+          int.parse(this.questionStats[this.points[i].toString()]!.toString()) +
+              1;
     }
 
     final emptyMap = {
@@ -126,7 +136,7 @@ class QrlEvaluationService {
     });
   }
 
-  void initializePlayerAnswers(Map<String, QrlAnswer> qrlAnswers) {
+  void initializePlayerAnswers(Map<String, ResponseData> qrlAnswers) {
     var sortedEntries = qrlAnswers.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
 

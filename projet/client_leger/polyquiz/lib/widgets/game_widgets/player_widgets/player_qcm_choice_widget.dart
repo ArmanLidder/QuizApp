@@ -31,6 +31,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   Widget build(BuildContext context) {
     if(lastQuestionIndex != widget.gameInterfaceManagementService!.gameService.questionNumber && textBtnColor == Color.fromRGBO(53, 121, 246, 1)){
       
+      
       textBtnColor = Color.fromRGBO(0, 0, 0, 0);
       lastQuestionIndex = widget.gameInterfaceManagementService!.gameService.questionNumber;
     }

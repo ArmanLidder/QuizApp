@@ -64,16 +64,15 @@ class _MyWidgetState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isHost){
+    if (isHost) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('PolyQuiz'),
           centerTitle: true,
           backgroundColor: Color.fromRGBO(53, 121, 246, 1),
         ),
-        body: ListView(children: [
-        Visibility(visible: isHost, child: HostInterface())
-        ]),
+        body: ListView(
+            children: [Visibility(visible: isHost, child: HostInterface())]),
       );
     } else {
       return Container(
@@ -120,7 +119,7 @@ class _MyWidgetState extends State<GamePage> {
                               ),
                             ),
                             QuestionInfoWidget(
-                                questionNum: _gameInterfaceManagementService.gameService.questionNumber, questionPts: _gameInterfaceManagementService.gameService.question!.points, questionTxt: _gameInterfaceManagementService.gameService.question!.text),
+                                questionNum: _gameInterfaceManagementService.gameService.questionNumber, questionPts: _gameInterfaceManagementService.gameService.question!.points, questionText: _gameInterfaceManagementService.gameService.question!.text),
                             Expanded(
                               child: Container(
                                 alignment: Alignment.center,
