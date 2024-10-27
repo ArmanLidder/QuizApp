@@ -43,19 +43,8 @@ class Userpage extends StatelessWidget {
                   List.generate(8, (index) => "Defi numero ${index + 1}"),
                   achievementsList: achievements),
               Historique(
-                events: [
-                  EvenementRow(date: "2024-10-16", label: "Connection"),
-                  EvenementRow(
-                      date: "2024-10-17",
-                      label: "Partie Gagnée",
-                      color: Colors.green),
-                  EvenementRow(date: "2024-10-18", label: "Déconection"),
-                  EvenementRow(
-                    date: "2024-10-19",
-                    label: "Connection",
-                  ),
-                  EvenementRow(date: "2024-10-20", label: "Déconnection"),
-                ],
+                gameHistory: userData?.gameHistory ?? [],
+                loginHistory: userData?.loginHistory ?? [],
               )
             ],
           ),

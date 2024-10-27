@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:uuid/uuid.dart';
 
 class UserService extends GetxController {
   final String collectionName = 'users';
@@ -37,10 +38,10 @@ class UserService extends GetxController {
     }
   }
   Future<void> createUser({
-    required String uid,
     required String email,
     required String username,
   }) async {
+    String uid = Uuid() as String;
     try {
       // Create a new user document in Firestore
       await _db.collection(collectionName).doc(uid).set({

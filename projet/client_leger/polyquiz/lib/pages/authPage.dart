@@ -20,13 +20,15 @@ class _AuthPageState extends State<AuthPage> {
 
   Future<void> _login() async {
     try {
+      /*
       await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
-      );
+      );*/
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Login successful!')),
       );
+      this.loggedInUserService.setUserByEmail(_emailController.text);
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -45,8 +47,8 @@ class _AuthPageState extends State<AuthPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration successful!')),
       );
+
       this.userService.createUser(
-          uid: "sdasd",
           email: _emailController.text,
           username: _usernameController.text);
       setState(() {
