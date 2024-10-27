@@ -73,5 +73,22 @@ class ChannelService extends GetxController {
     }
   }
 
+  Future<bool> createChannel(String channelName, List<String> permittedUsers, bool isPrivate) async {
+    final querySnapshot = await _db.collection(collectionName).where('name', isEqualTo: channelName).limit(1).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      return false;
+    }
+
+    Canal newChannel = Canal(
+      name: channelName,
+      permittedUsers: permittedUsers,
+      isPrivate: isPrivate,
+      messages: [],
+    );
+
+    await _db.collection(collectionName).add(newChannel.toJson());
+    return true;
+  }
+
   DocumentReference _getChannelRefById(String id) => _db.collection(collectionName).doc(id);
 }
