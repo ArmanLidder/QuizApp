@@ -52,16 +52,43 @@ class ChannelService extends GetxController {
   }
 
   Future<void> joinChannel(String channelId) async {
-    DocumentReference channelRef = _db.collection(collectionName).doc(channelId);
+    DocumentReference channelRef = _getChannelRefById(channelId);
     await channelRef.update({
       'permittedUsers': FieldValue.arrayUnion([hardcodedUserId])
     });
   }
 
   Future<void> leaveChannel(String channelId) async {
-    DocumentReference channelRef = _db.collection(collectionName).doc(channelId);
+    DocumentReference channelRef = _getChannelRefById(channelId);
     await channelRef.update({
       'permittedUsers': FieldValue.arrayRemove([hardcodedUserId])
     });
   }
+
+  Future<void> deleteChannel(String channelId) async {
+    DocumentReference channelRef = _getChannelRefById(channelId);
+    final docSnapshot = await channelRef.get();
+    if (docSnapshot.exists) {
+      await channelRef.delete();
+    }
+  }
+
+  Future<bool> createChannel(String channelName, List<String> permittedUsers, bool isPrivate) async {
+    final querySnapshot = await _db.collection(collectionName).where('name', isEqualTo: channelName).limit(1).get();
+    if (querySnapshot.docs.isNotEmpty) {
+      return false;
+    }
+
+    Canal newChannel = Canal(
+      name: channelName,
+      permittedUsers: permittedUsers,
+      isPrivate: isPrivate,
+      messages: [],
+    );
+
+    await _db.collection(collectionName).add(newChannel.toJson());
+    return true;
+  }
+
+  DocumentReference _getChannelRefById(String id) => _db.collection(collectionName).doc(id);
 }
