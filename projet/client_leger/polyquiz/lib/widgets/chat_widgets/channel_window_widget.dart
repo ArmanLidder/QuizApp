@@ -74,7 +74,13 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
             itemCount: channelService.permittedChannels.length,
               itemBuilder: (context, index) {
                 final channel = channelService.permittedChannels[index];
-                return ChannelSelectionButton(buttonCallback: widget.updateCurrentChannel,leaveChannelCallback: () {channelService.leaveChannel(channel.id!);} , name: channel.name, id: channel.id ?? "null");
+                return ChannelSelectionButton(
+                    buttonCallback: widget.updateCurrentChannel,
+                    leaveChannelCallback: () {channelService.leaveChannel(channel.id!);},
+                    deleteChannelCallback: () {channelService.deleteChannel(channel.id!);},
+                    name: channel.name,
+                    id: channel.id ?? "null"
+                );
               }
         );}))
       ]
@@ -85,6 +91,7 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
 class ChannelSelectionButton extends StatelessWidget {
   final void Function(String) buttonCallback;
   final void Function() leaveChannelCallback;
+  final void Function() deleteChannelCallback;
   final String name;
   final String id;
 
@@ -92,6 +99,7 @@ class ChannelSelectionButton extends StatelessWidget {
     super.key,
     required this.buttonCallback,
     required this.leaveChannelCallback,
+    required this.deleteChannelCallback,
     required this.name,
     required this.id,
   });
@@ -112,12 +120,30 @@ class ChannelSelectionButton extends StatelessWidget {
         child: Row(
           children: <Widget>[
             IconButton(onPressed: (){leaveChannelCallback();}, icon: Icon(Icons.logout)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.delete))
+            IconButton(onPressed: (){deleteChannelPopup(context);}, icon: Icon(Icons.delete))
           ]
         ),
       )
     );
   }
+
+  void deleteChannelPopup(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Attention !!!"),
+          content: Text("Cette action est irreversible. Le canal ${name} sera effacé à jamais."),
+          actions: <Widget>[
+            TextButton(onPressed: () { return Navigator.pop(context); }, child: Text("Annuler")),
+            TextButton(onPressed: () {
+              deleteChannelCallback();
+              Navigator.pop(context);
+            }, child: Text("Supprimer"))
+          ],
+        )
+    );
+  }
+
 }
 
 class ChannelJoiningWidget extends StatefulWidget {
