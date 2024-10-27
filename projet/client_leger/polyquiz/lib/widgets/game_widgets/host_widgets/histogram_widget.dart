@@ -17,7 +17,6 @@ class _HistogramWidgetState extends State<Histogram> {
     if (_hostInterfaceManagementService.histogramDataValue.entries
         .toList()[index]
         .value) {
-      print('GOT TO TRUE');
       return Color.fromRGBO(123, 229, 117, 1);
     } else {
       return Color.fromRGBO(246, 53, 53, 1);

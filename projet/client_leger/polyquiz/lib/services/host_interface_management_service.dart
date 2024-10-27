@@ -232,19 +232,22 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void resetInterface() {
     this.gameService.realGameService.validated = true;
     this.gameService.realGameService.locked = true;
+    this.histogramDataChangingResponses.clear();
+    this.histogramDataValue.clear();
+    notifyListeners();
   }
 
   void initGraph(QuizQuestion question, int numberOfPlayers) {
-    //todo voir avec la maniere dont l'histogramme est fait
     this.isHostEvaluating = false;
     if (question.type == QuestionType.QCM && question.choices != null) {
+      print('INIT GRAPH GOT INTO THE IF');
       for (QuizChoice choice in question.choices!) {
         this
             .histogramDataValue
             .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
       }
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   Map<String, int> createChoicesStatsMap(List<num> choicesStatsValue) {
@@ -303,6 +306,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.gameStats.clear();
     this.isPaused = false;
     this.isPanicMode = false;
+    notifyListeners();
   }
 }
 
