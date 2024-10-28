@@ -14,7 +14,7 @@ class LoggedInUserService extends GetxController {
   User? user;
 
   // Method to set user info
-  void setUser(User user) {
+  void setUser(User? user) {
     this.user = user;
   }
 
@@ -28,7 +28,7 @@ class LoggedInUserService extends GetxController {
   }
   Future<void> reloadUser() async{
     String? uid = await this.getUid();
-    User user = UserService.instance.getUserById(uid ?? '') as User;
+    User? user = await UserService.instance.getUserById(uid ?? '');
     this.setUser(user);
   }
   User? getUser(){
@@ -49,7 +49,7 @@ String forceToString(String? string){
 
   Future<void> updateProfilePicture() async{
     String? newImagelLink = await this.imageStorageService.pickAndUploadImage();
-    this.userService.updateUserAvatar(id: this.forceToString(this.getUid()), newAvatarUrl: this.forceToString(newImagelLink));
-    this.reloadUser();
+    await this.userService.updateUserAvatar(id: this.forceToString(this.getUid()), newAvatarUrl: this.forceToString(newImagelLink));
+    await this.reloadUser();
   }
 }

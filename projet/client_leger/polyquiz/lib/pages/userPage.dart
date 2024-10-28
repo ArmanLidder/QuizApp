@@ -24,7 +24,7 @@ class Userpage extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: FancyAppBar(
-            imageUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
+            sourceImgUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -49,10 +49,11 @@ class Userpage extends StatelessWidget {
                 loginHistory: userData?.loginHistory ?? [],
               ),
               ElevatedButton(
-                  onPressed: this.imageStorageService.pickAndUploadImage,
-                  child: Text("Choisir une image TEST")
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/home');
+                },
+                child: Text("Retours a la page d'origine"),
               ),
-
             ],
           ),
         ),
