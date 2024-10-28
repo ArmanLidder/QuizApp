@@ -29,6 +29,8 @@ class _ChannelWindowWidgetState extends State<ChannelWindowWidget> {
     switch (currentPage) {
       case Page.join:
         return ChannelJoiningWidget(returnCallback: () {selectChannel(Page.select);});
+      case Page.create:
+        return ChannelCreationWidget(returnCallback: () {selectChannel(Page.select);});
       case Page.select:
       default:
         return ChannelSelectionWidget(widget.updateCurrentChannel, selectChannel);
@@ -65,7 +67,7 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Expanded(child: ElevatedButton(onPressed: (){}, child: Text("Créer un canal"))),
+            Expanded(child: ElevatedButton(onPressed: (){widget.changePage(Page.create);}, child: Text("Créer un canal"))),
             Expanded(child: ElevatedButton(onPressed: (){widget.changePage(Page.join);}, child: Text("Joindre un canal")))
           ]
         ),
@@ -74,7 +76,13 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
             itemCount: channelService.permittedChannels.length,
               itemBuilder: (context, index) {
                 final channel = channelService.permittedChannels[index];
-                return ChannelSelectionButton(buttonCallback: widget.updateCurrentChannel,leaveChannelCallback: () {channelService.leaveChannel(channel.id!);} , name: channel.name, id: channel.id ?? "null");
+                return ChannelSelectionButton(
+                    buttonCallback: widget.updateCurrentChannel,
+                    leaveChannelCallback: () {channelService.leaveChannel(channel.id!);},
+                    deleteChannelCallback: () {channelService.deleteChannel(channel.id!);},
+                    name: channel.name,
+                    id: channel.id ?? "null"
+                );
               }
         );}))
       ]
@@ -85,6 +93,7 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
 class ChannelSelectionButton extends StatelessWidget {
   final void Function(String) buttonCallback;
   final void Function() leaveChannelCallback;
+  final void Function() deleteChannelCallback;
   final String name;
   final String id;
 
@@ -92,6 +101,7 @@ class ChannelSelectionButton extends StatelessWidget {
     super.key,
     required this.buttonCallback,
     required this.leaveChannelCallback,
+    required this.deleteChannelCallback,
     required this.name,
     required this.id,
   });
@@ -112,12 +122,30 @@ class ChannelSelectionButton extends StatelessWidget {
         child: Row(
           children: <Widget>[
             IconButton(onPressed: (){leaveChannelCallback();}, icon: Icon(Icons.logout)),
-            IconButton(onPressed: (){}, icon: Icon(Icons.delete))
+            IconButton(onPressed: (){deleteChannelPopup(context);}, icon: Icon(Icons.delete))
           ]
         ),
       )
     );
   }
+
+  void deleteChannelPopup(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Attention !!!"),
+          content: Text("Cette action est irreversible. Le canal ${name} sera effacé à jamais."),
+          actions: <Widget>[
+            TextButton(onPressed: () { return Navigator.pop(context); }, child: Text("Annuler")),
+            TextButton(onPressed: () {
+              deleteChannelCallback();
+              Navigator.pop(context);
+            }, child: Text("Supprimer"))
+          ],
+        )
+    );
+  }
+
 }
 
 class ChannelJoiningWidget extends StatefulWidget {
@@ -178,5 +206,110 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
           )
       )
     );
+  }
+}
+
+class ChannelCreationWidget extends StatefulWidget {
+  final returnCallback;
+  const ChannelCreationWidget({required this.returnCallback, super.key});
+
+  @override
+  State<ChannelCreationWidget> createState() => _ChannelCreationWidgetState();
+}
+
+class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
+  final inputController = TextEditingController();
+  final channelService = Get.put(ChannelService());
+  String _currentName = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+        children: <Widget>[
+          Row(
+              children: <Widget>[
+                Expanded(child: Align(alignment: Alignment.centerLeft, child: IconButton(onPressed: (){ widget.returnCallback(); }, icon: Icon(Icons.arrow_back)))),
+                Expanded(child: Align(alignment: Alignment.center, child: Text("Joindre Canal")))
+              ]
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: TextField(
+              controller: inputController,
+              onChanged: (content) {setState(() {
+                _currentName = inputController.text.trim();
+              });},
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Saisir un nom de canal...',
+              ),
+            )
+          ),
+          Column(children: channelErrorMessage(_currentName)),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: TextButton(
+                onPressed: isValidChannelName(_currentName) ? (){ createChannel(context); } : null,
+                child: Text("Créer"),
+                style: TextButton.styleFrom(
+                  backgroundColor: isValidChannelName(_currentName) ? Colors.blue : Colors.grey[400],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))
+                ),
+            ),
+          )
+        ]
+    );
+  }
+
+  bool isValidChannelName(String name) {
+    final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
+    return alphanumeric.hasMatch(name) && name.length <= 20 && name.length > 0;
+  }
+
+  List<Widget> channelErrorMessage(String name) {
+    List<Widget> errors = [];
+    final errorStyle = TextStyle(color: Colors.red);
+    final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
+    if (!alphanumeric.hasMatch(name) && name.isNotEmpty) errors.add(Text(
+      "Le nom du canal doit seulement contenir des caractères alphanumériques.",
+      style: errorStyle
+    ));
+    if (name.length > 20) errors.add(Text(
+      "Le nom du canal doit contenir 20 caractères maximum.",
+      style: errorStyle,
+    ));
+    if (name.isEmpty) errors.add(Text(
+      "Le nom de canal est requis.",
+      style: errorStyle,
+    ));
+
+    return errors;
+  }
+
+  void sameChannelNamePopup(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Canal existant!"),
+          content: Text("Le nom ${_currentName} est déjà utilisé. Veuillez choisir un autre nom."),
+          actions: <Widget>[
+            TextButton(onPressed: () { return Navigator.pop(context); }, child: Text("OK")),
+          ],
+        )
+    );
+  }
+
+  Future<void> createChannel(BuildContext context) async {
+    bool isCreated = await channelService.createChannel(_currentName, ["Kvw4qW583jXEdYuoBgVjRe5JeAK2"], false);
+    if (isCreated) {
+      print("worked");
+      inputController.clear();
+      widget.returnCallback();
+      return;
+    }
+    print('didnt work');
+    sameChannelNamePopup(context);
+    inputController.clear();
   }
 }

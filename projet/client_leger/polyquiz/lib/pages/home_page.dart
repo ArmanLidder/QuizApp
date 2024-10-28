@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
+import 'package:polyquiz/services/socket_service.dart';
+
+import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 
 class HomePage extends StatelessWidget {
+  final SocketService _socketService = SocketService();
+
+  @override
+  void initState() {
+    if(_socketService.isSocketAlive()) {
+      _socketService.disconnect();
+      _socketService.clearAllListeners();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

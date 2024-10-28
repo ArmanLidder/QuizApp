@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
+import 'package:polyquiz/constants/timer_message.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/models/typedefs.dart';
@@ -9,7 +10,7 @@ import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'dart:convert';
 
-class HostInterfaceManagementService {
+class HostInterfaceManagementService extends ChangeNotifier {
   static final HostInterfaceManagementService _instance =
       HostInterfaceManagementService._internal();
 
@@ -19,7 +20,7 @@ class HostInterfaceManagementService {
     return _instance;
   }
 
-  String timerText = 'Temps restant';
+  String timerText = TimerMessage.TIME_LEFT;
   bool isGameOver = false;
   Map<String, int> histogramDataChangingResponses = {};
   Map<String, bool> histogramDataValue = {};
@@ -60,6 +61,7 @@ class HostInterfaceManagementService {
           question);
       if (question.type != QuestionType.QRL) {
         this.gameStats.add(savedStats);
+        notifyListeners();
       }
     }
   }
@@ -69,7 +71,6 @@ class HostInterfaceManagementService {
     this.gameService.realGameService.validated = false;
     this.gameService.realGameService.locked = false;
     this._socketService.sendMessage(SocketEvent.START_TRANSITION, this.roomId);
-
   }
 
   void handleLastQuestion() {
@@ -97,7 +98,7 @@ class HostInterfaceManagementService {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
       this.timerText = 'Prochaine question dans: ';
       this.gameService.realGameService.timer = timeValue;
-      if (this.gameService.realGameService.timer  == 0) {
+      if (this.gameService.realGameService.timer == 0) {
         this.gameService.realGameService.inTimeTransition = false;
         this.resetInterface();
         this._socketService.sendMessage(
@@ -116,10 +117,12 @@ class HostInterfaceManagementService {
       this.resetInterface();
 
       if (this.gameService.question?.type == QuestionType.QCM) {
-        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+        this._interactiveListService.getPlayersList(roomId,
+            leftPlayers: leftPlayers, resetPlayerStatus: false);
       } else {
         this.sendQrlAnswer();
         this.isHostEvaluating = true;
+        notifyListeners();
       }
     });
   }
@@ -134,7 +137,9 @@ class HostInterfaceManagementService {
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
-        this._interactiveListService.getPlayersList(this.roomId, leftPlayers: leftPlayers);
+        this
+            ._interactiveListService
+            .getPlayersList(this.roomId, leftPlayers: leftPlayers);
       }
     });
   }
@@ -142,23 +147,26 @@ class HostInterfaceManagementService {
   void handleRefreshChoicesStats() {
     this._socketService.onMessage(SocketEvent.REFRESH_CHOICES_STATS,
         (choicesStatsValue) {
-      this.histogramDataChangingResponses = createChoicesStatsMap(List<num>.from(choicesStatsValue));
+      this.histogramDataChangingResponses =
+          createChoicesStatsMap(List<num>.from(choicesStatsValue));
+      notifyListeners();
     });
   }
 
   void handleGetInitialQuestion() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION,
         (data) async {
-      final numberOfPlayers =
-          await _interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers);
+      final numberOfPlayers = await _interactiveListService
+          .getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
     });
   }
 
   void handleGetNextQuestion() {
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) async {
-      final numberOfPlayers =
-          await this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers);
+      final numberOfPlayers = await this
+          ._interactiveListService
+          .getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
     });
   }
@@ -171,7 +179,8 @@ class HostInterfaceManagementService {
           .indexWhere((player) => player.username == username);
       if (playerIndex != -1) {
         this.leftPlayers.add(this._interactiveListService.players[playerIndex]);
-        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+        this._interactiveListService.getPlayersList(roomId,
+            leftPlayers: leftPlayers, resetPlayerStatus: false);
       }
     });
   }
@@ -207,12 +216,14 @@ class HostInterfaceManagementService {
 
   void handleEvaluationOver() {
     this._socketService.onMessage(SocketEvent.EVALUATION_OVER, (_) {
-      _interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+      _interactiveListService.getPlayersList(roomId,
+          leftPlayers: leftPlayers, resetPlayerStatus: false);
     });
   }
 
   void handleRefreshActivityStats() {
-    this._socketService.onMessage(SocketEvent.REFRESH_ACTIVITY_STATS, (activityStatsValue) {
+    this._socketService.onMessage(SocketEvent.REFRESH_ACTIVITY_STATS,
+        (activityStatsValue) {
       histogramDataChangingResponses = {
         'Actif': activityStatsValue[0],
         'Inactif': activityStatsValue[1],
@@ -223,10 +234,22 @@ class HostInterfaceManagementService {
   void resetInterface() {
     this.gameService.realGameService.validated = true;
     this.gameService.realGameService.locked = true;
+    this.histogramDataChangingResponses.clear();
+    this.histogramDataValue.clear();
+    notifyListeners();
   }
 
   void initGraph(QuizQuestion question, int numberOfPlayers) {
-    //todo voir avec la maniere dont l'histogramme est fait
+    this.isHostEvaluating = false;
+    if (question.type == QuestionType.QCM && question.choices != null) {
+      print('INIT GRAPH GOT INTO THE IF');
+      for (QuizChoice choice in question.choices!) {
+        this
+            .histogramDataValue
+            .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
+      }
+    }
+    notifyListeners();
   }
 
   Map<String, int> createChoicesStatsMap(List<num> choicesStatsValue) {
@@ -244,9 +267,10 @@ class HostInterfaceManagementService {
     this._socketService.sendMessageWithAck(
         SocketEvent.GET_PLAYER_ANSWERS, this.gameService.realGameService.roomId,
         (playerAnswers) {
-      this.responsesQRL =
-          Map<String, ResponseData>.from(jsonDecode(playerAnswers));
+      List<dynamic> decodedAnswers = jsonDecode(playerAnswers);
+      this.responsesQRL = transformIntoResponsesQrl(decodedAnswers);
     });
+    notifyListeners();
   }
 
   void sendGameStats() {
@@ -265,10 +289,10 @@ class HostInterfaceManagementService {
   TransportStatsFormat prepareStatsTransport() {
     final TransportStatsFormat data = [];
     this.gameStats.forEach((stats) {
-      //todo
       final values = stats.responsesValues;
       final responses = stats.responsesNumber;
-      data.add(TransportStats(values.entries.toList(), responses.entries.toList(), stats.question as QuizQuestion));
+      data.add(TransportStats(values.entries.toList(),
+          responses.entries.toList(), stats.question as QuizQuestion));
     });
     return data;
   }
@@ -284,6 +308,20 @@ class HostInterfaceManagementService {
     this.gameStats.clear();
     this.isPaused = false;
     this.isPanicMode = false;
+    notifyListeners();
+  }
+
+  Map<String, ResponseData> transformIntoResponsesQrl(
+      List<dynamic> playerAnswers) {
+    Map<String, ResponseData> map = {};
+
+    for (var answer in playerAnswers) {
+      String key = answer[0];
+      ResponseData value =
+          ResponseData(answer[1]['answers'], answer[1]['time']);
+      map[key] = value;
+    }
+    return map;
   }
 }
 

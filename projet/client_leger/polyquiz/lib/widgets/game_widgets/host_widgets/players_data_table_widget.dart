@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/classes/player.dart';
+import 'package:polyquiz/constants/player_status.dart';
+import 'package:polyquiz/services/interactive_list_service.dart';
 
 class PlayersDataTable extends StatefulWidget {
   const PlayersDataTable({super.key});
@@ -11,22 +12,23 @@ class PlayersDataTable extends StatefulWidget {
 class _PlayersDataTableState extends State<PlayersDataTable> {
   int? columnIndex;
   bool isAscending = true;
+  InteractiveListService _interactiveListService = InteractiveListService();
 
   void onSort(int columnIndex, bool isAscending) {
     if (columnIndex == 0) {
-      players.sort((player1, player2) {
+      _interactiveListService.players.sort((player1, player2) {
         return isAscending
-            ? player1.name.compareTo(player2.name)
-            : player2.name.compareTo(player1.name);
+            ? player1.username.compareTo(player2.username)
+            : player2.username.compareTo(player1.username);
       });
     } else if (columnIndex == 1) {
-      players.sort((player1, player2) {
+      _interactiveListService.players.sort((player1, player2) {
         return isAscending
-            ? player1.points.compareTo(player2.points)
-            : player2.points.compareTo(player1.points);
+            ? player1.score.compareTo(player2.score)
+            : player2.score.compareTo(player1.score);
       });
     } else if (columnIndex == 3) {
-      players.sort((player1, player2) {
+      _interactiveListService.players.sort((player1, player2) {
         return isAscending
             ? player1.canChat
                 ? -1
@@ -42,11 +44,22 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
     });
   }
 
-  List<Player> players = [
-    Player(name: 'Player1', points: 50, bonus: 0, canChat: true),
-    Player(name: 'Player2', points: 150, bonus: 50, canChat: true),
-    Player(name: 'Player3', points: 100, bonus: 0, canChat: true)
-  ];
+  Color getColor(Player player) {
+    switch (player.status) {
+      case PlayerStatus.NO_INTERACTION:
+        return Color.fromRGBO(246, 53, 53, 1);
+      case PlayerStatus.INTERACTION:
+        return Color.fromRGBO(255, 226, 108, 1);
+      case PlayerStatus.VALIDATION:
+        return Color.fromRGBO(123, 229, 117, 1);
+      case PlayerStatus.LEFT:
+        return Color.fromRGBO(26, 26, 26, 1);
+      case PlayerStatus.END_GAME:
+        return Color.fromRGBO(221, 221, 221, 1);
+      default:
+        return const Color.fromRGBO(187, 222, 251, 1);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,33 +80,55 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
     ];
     return Container(
       width: 650.0,
-      child: DataTable(
-        headingRowColor:
-            WidgetStateProperty.all(Color.fromRGBO(53, 121, 246, 1)),
-        headingTextStyle: TextStyle(
-            color: Color.fromRGBO(255, 255, 255, 1),
-            fontWeight: FontWeight.bold),
-        border: TableBorder.all(),
-        sortColumnIndex: columnIndex,
-        sortAscending: isAscending,
-        columns: columns,
-        rows: players.map((player) {
-          return DataRow(cells: [
-            DataCell(Center(child: Text(player.name))),
-            DataCell(Center(child: Text(player.points.toString()))),
-            DataCell(Center(child: Text(player.bonus.toString()))),
-            DataCell(Center(
-                child: Switch(
-                    value: player.canChat,
-                    activeTrackColor: Color.fromRGBO(53, 121, 246, 1),
-                    onChanged: (value) {
-                      setState(() {
-                        player.canChat = value;
-                      });
-                    })))
-          ]);
-        }).toList(),
-      ),
+      child: AnimatedBuilder(
+          animation: _interactiveListService,
+          builder: (BuildContext context, Widget? snapshot) {
+            return DataTable(
+              headingRowColor:
+                  WidgetStateProperty.all(Color.fromRGBO(53, 121, 246, 1)),
+              headingTextStyle: TextStyle(
+                  color: Color.fromRGBO(255, 255, 255, 1),
+                  fontWeight: FontWeight.bold),
+              border: TableBorder.all(),
+              sortColumnIndex: columnIndex,
+              sortAscending: isAscending,
+              columns: columns,
+              rows: _interactiveListService.players.map((player) {
+                return DataRow(
+                    color: WidgetStatePropertyAll(getColor(player)),
+                    cells: [
+                      DataCell(Center(child: Text(player.username))),
+                      DataCell(Center(child: Text(player.score.toString()))),
+                      DataCell(Center(child: Text(player.bonus.toString()))),
+                      DataCell(Center(
+                          child: Switch(
+                              value: player.canChat,
+                              activeTrackColor: Color.fromRGBO(53, 121, 246, 1),
+                              onChanged: (value) {
+                                setState(() {
+                                  player.canChat = value;
+                                });
+                              })))
+                    ]);
+              }).toList(),
+            );
+          }),
     );
   }
 }
+
+// class Player {
+//   final String username;
+//   final int score;
+//   final int bonus;
+//   String status;
+//   bool canChat;
+
+//   Player({
+//     required this.username,
+//     required this.score,
+//     required this.bonus,
+//     required this.status,
+//     required this.canChat,
+//   });
+// }

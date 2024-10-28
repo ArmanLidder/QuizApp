@@ -33,7 +33,7 @@ class _HostInterfaceState extends State<HostInterface> {
       HostInterfaceManagementService();
   GlobalNavigationService _globalNavigationService = GlobalNavigationService();
   SocketService _socketService = SocketService();
-  
+
   @override
   void initState() {
     super.initState();
@@ -46,113 +46,133 @@ class _HostInterfaceState extends State<HostInterface> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: AnimatedBuilder(
-      animation: gameService.realGameService,
-      builder: (BuildContext context, Widget? snapshot) {
-      if(gameService.question == null){
-        return Center(
-          child: Text(
-            'Waiting for questions to load...',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        );
-      }
-      else if (isResultPage) {
-        return ResultPage();
-      }
-      else 
-        {
-          return Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                AnimatedBuilder(
-                  animation: gameService,
-                  builder: (BuildContext context, Widget? snapshot) {
-                    return TimerWidget(isHost: true, timeTxt: hostInterfaceManagementService.timerText, time: gameService.realGameService.timer, hostInterfaceManagementService : hostInterfaceManagementService);
-                  }),
-                AnimatedBuilder( 
-                  animation: gameService,
-                  builder: (BuildContext context, Widget? snapshot) {
-                  return QuestionInfoWidget(
-                      questionNum: gameService.questionNumber,
-                      questionPts: gameService.question!.points,
-                      questionTxt: gameService.question!.text); //gameService.question!.points), null question when load
-                }),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Visibility(
-                  visible: true, // a changer plus tard
-                  child: TextButton(
-                    onPressed: () {
-                      hostInterfaceManagementService.saveStats();
-                      if(isLastButton){
-                        isResultPage = true;
-                      }
-                      if(gameService.realGameService.isLast){
-                        gameService.realGameService.isNotified = false;
-                        hostInterfaceManagementService.handleLastQuestion();
-                        isLastButton = true;
-                      }
-                      else{
-                        gameService.realGameService.isNotified = false;
-                        hostInterfaceManagementService.requestNextQuestion();
-                      }
-                    },
-                    child: Text(
-                      isLastButton ? 'Dernière question' : 'Prochaine question',
-                      style: TextStyle(
-                          color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
-                    ),
-                    style: TextButton.styleFrom(
-                        textStyle: TextStyle(fontWeight: FontWeight.normal),
-                        splashFactory: NoSplash.splashFactory,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+        child: AnimatedBuilder(
+            animation: gameService.realGameService,
+            builder: (BuildContext context, Widget? snapshot) {
+              if (gameService.question == null) {
+                return Center(
+                  child: Text(
+                    'Waiting for questions to load...',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                ),
-                SizedBox(
-                  width: 100.0,
-                ),
-                QuitBtn(),
-                ElevatedButton(
-                  onPressed: () {
-                    print(this._socketService.isSocketAlive());
-                  },
-                  child: Text('Check Socket Status'),
-                ),
-              ],
-            ),
-            SizedBox(height: 20.0),
-            Visibility(
-                visible: gameService.question!.type ==
-                    QuestionType
-                        .QCM, // gameService.question!.type null question when load
-                child: HistogramLegend()),
-            Visibility(
-                visible:
-                    gameService.question!.type == QuestionType.QCM, // null question when load
-                child: Histogram()),
-            Visibility(
-                visible: hostInterfaceManagementService.isHostEvaluating,
-                child: HostGrading(
-                  playerName: 'Player1',
-                  playerAnswer: 'Answer answer answer',
-                )),
-            PlayersDataTableLegend(),
-            SizedBox(height: 20.0),
-            PlayersDataTable(),
-            ChatPopup(),
-          ],
-        );
-      }
-      }
-    ));
+                );
+              } else if (isResultPage) {
+                return ResultPage();
+              } else {
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        AnimatedBuilder(
+                            animation: gameService,
+                            builder: (BuildContext context, Widget? snapshot) {
+                              return TimerWidget(
+                                  isHost: true,
+                                  timeTxt:
+                                      hostInterfaceManagementService.timerText,
+                                  time: gameService.realGameService.timer,
+                                  hostInterfaceManagementService:
+                                      hostInterfaceManagementService);
+                            }),
+                        AnimatedBuilder(
+                            animation: gameService,
+                            builder: (BuildContext context, Widget? snapshot) {
+                              return QuestionInfoWidget(
+                                  questionNum: gameService.questionNumber,
+                                  questionPts: gameService.question!.points,
+                                  questionText: gameService.question!.text);
+                            }),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Visibility(
+                          visible: true, // a changer plus tard
+                          child: TextButton(
+                            onPressed: () {
+                              hostInterfaceManagementService.saveStats();
+                              if (isLastButton) {
+                                isResultPage = true;
+                              }
+                              if (gameService.realGameService.isLast) {
+                                gameService.realGameService.isNotified = false;
+                                hostInterfaceManagementService
+                                    .handleLastQuestion();
+                                isLastButton = true;
+                              } else {
+                                gameService.realGameService.isNotified = false;
+                                hostInterfaceManagementService
+                                    .requestNextQuestion();
+                              }
+                            },
+                            child: Text(
+                              isLastButton
+                                  ? 'Dernière question'
+                                  : 'Prochaine question',
+                              style: TextStyle(
+                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                  fontSize: 20),
+                            ),
+                            style: TextButton.styleFrom(
+                                textStyle:
+                                    TextStyle(fontWeight: FontWeight.normal),
+                                splashFactory: NoSplash.splashFactory,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                                backgroundColor:
+                                    Color.fromRGBO(53, 121, 246, 1)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100.0,
+                        ),
+                        QuitBtn(),
+                        ElevatedButton(
+                          onPressed: () {
+                            print(this._socketService.isSocketAlive());
+                          },
+                          child: Text('Check Socket Status'),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.0),
+                    AnimatedBuilder(
+                        animation: gameService,
+                        builder: (BuildContext context, Widget? snapshot) {
+                          return Column(
+                            children: [
+                              Visibility(
+                                  visible: gameService.question!.type ==
+                                      QuestionType.QCM,
+                                  child: HistogramLegend()),
+                              Visibility(
+                                  visible: gameService.question!.type ==
+                                      QuestionType.QCM,
+                                  child: Histogram()),
+                            ],
+                          );
+                        }),
+                    AnimatedBuilder(
+                        animation: hostInterfaceManagementService,
+                        builder: (BuildContext context, Widget? snapshot) {
+                          return Visibility(
+                              visible: hostInterfaceManagementService
+                                  .isHostEvaluating,
+                              child: HostGrading(
+                                  gameStats:
+                                      hostInterfaceManagementService.gameStats,
+                                  qrlAnswers: hostInterfaceManagementService
+                                      .responsesQRL));
+                        }),
+                    PlayersDataTableLegend(),
+                    SizedBox(height: 20.0),
+                    PlayersDataTable()
+                  ],
+                );
+              }
+            }));
   }
 }
 
