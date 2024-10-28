@@ -45,23 +45,35 @@ class _QuizListPageState extends State<QuizListPage> {
           ? Center(child: CircularProgressIndicator())
           : errorMessage.isNotEmpty
               ? Center(child: Text(errorMessage))
-              : ListView.builder(
-                  itemCount: quizzes.length,
-                  itemBuilder: (context, index) {
-                    final quiz = quizzes[index];
-                    return ListTile(
-                      title: Text(quiz.title),
-                      subtitle: Text('Duration: ${quiz.duration} minutes'),
-                      onTap: () {
-                        Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WaitingRoomScreen(quiz: quiz, isHost: true),
-                          ),
-                        );
+              : Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: quizzes.length,
+                        itemBuilder: (context, index) {
+                          final quiz = quizzes[index];
+                          return ListTile(
+                            title: Text(quiz.title),
+                            subtitle:
+                                Text('Duration: ${quiz.duration} minutes'),
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/waitingRoom',
+                                arguments: quiz,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/home');
                       },
-                    );
-                  },
+                      child: Text("Retours a la page d'origine"),
+                    ),
+                  ],
                 ),
     );
   }

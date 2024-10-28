@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/pages/login-page.dart';
+import 'package:polyquiz/pages/waiting_room_screen.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'pages/authPage.dart';
@@ -40,6 +42,9 @@ class MyApp extends StatelessWidget {
         '/game': (context) => GamePage(),
         '/home': (context) => HomePage(),
         '/user': (context) => Userpage(),
+        '/waitingRoom': (context) => WaitingRoomScreen(
+            quiz: ModalRoute.of(context)!.settings.arguments as Quiz,
+            isHost: true),
       },
     );
   }

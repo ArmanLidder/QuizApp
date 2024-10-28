@@ -33,7 +33,6 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
       });
 
       try {
-
         // Navigate to the WaitingRoomScreen
         Navigator.push(
           context,
@@ -111,6 +110,12 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                       onPressed: _joinRoom,
                       child: Text('Join Room'),
                     ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/home');
+                },
+                child: Text("Retours a la page d'origine"),
+              ),
             ],
           ),
         ),
