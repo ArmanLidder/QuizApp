@@ -17,6 +17,10 @@ class UserService extends GetxController {
     final user = User.fromJson(doc.data()!);
     return user;
   }
+  Future<String> getUserNameById(String id) async{
+    User? user = await this.getUserById(id);
+    return user?.username ?? "";
+  }
   Future<User?> getUserByEmail(String email) async {
     try {
       final querySnapshot = await _db
