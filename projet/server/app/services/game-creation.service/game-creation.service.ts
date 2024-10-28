@@ -143,10 +143,11 @@ export class GameCreationService {
 
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
+            console.log('Host left');
             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             roomManager.deleteRoom(roomId);
             await this.deleteRoomCanal(roomId);
-            this.sendUpdateGameList(roomManager, sio)
+            this.sendUpdateGameList(roomManager, sio);
             sio.to(String(roomId)).disconnectSockets(true);
         });
     }

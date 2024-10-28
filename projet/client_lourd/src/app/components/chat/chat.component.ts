@@ -45,8 +45,6 @@ export class ChatComponent implements OnInit {
     canalSubscription!: Subscription;
     private canalId$ = new BehaviorSubject<string | null>(null);
 
-
-
     isCreateCanal: boolean;
     isJoiningCanal: boolean;
     isDeleteCanal: boolean = false;
