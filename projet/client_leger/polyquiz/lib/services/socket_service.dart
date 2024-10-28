@@ -1,9 +1,12 @@
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:polyquiz/constants/constants.dart';
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
+  final LoggedInUserService  loggedInUserService = LoggedInUserService();
   static final String baseUrl = IP_URL;
+  static final String socketUrl = baseUrl + '/';
   IO.Socket? _socket;
 
   factory SocketService() {
@@ -14,9 +17,14 @@ class SocketService {
 
   void connect() {
     if (_socket == null) {
-      _socket = IO.io(IP_URL, <String, dynamic>{
+      _socket = IO.io(socketUrl, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
+        'upgrade': false,
+        'auth':{
+          'userId': this.loggedInUserService.getUid()
+        }
+
       });
 
       _socket?.on('connect', (_) {

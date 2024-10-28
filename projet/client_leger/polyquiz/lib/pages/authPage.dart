@@ -15,7 +15,7 @@ class _AuthPageState extends State<AuthPage> {
   final TextEditingController _usernameController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final UserService userService = UserService();
-  final LoggedInUserService loggedInUserService = LoggedInUserService();
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
 
   bool _isRegistering = false;

@@ -14,11 +14,11 @@ class Userpage extends StatelessWidget {
   final UserService userService = UserService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
-  User? userData = LoggedInUserService.instance.user;
+  User? userData;
 
   @override
   Widget build(BuildContext context) {
-    print(userData);
+    this.userData = this.loggedInUserService.getUser();
     List<num> achievements = this.userData?.achievements ?? [];
 
     return MaterialApp(
