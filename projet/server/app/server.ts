@@ -43,7 +43,11 @@ export class Server {
         //         next(new Error('Authentication error'));
         //     }
         // });
-        this.socketManager.handleSockets();
+        try {
+            this.socketManager.handleSockets();
+        } catch (e) {
+            return e
+        }
 
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
