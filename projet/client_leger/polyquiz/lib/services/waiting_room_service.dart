@@ -187,7 +187,7 @@ class WaitingRoomService extends ChangeNotifier {
 
   void handleRemovedFromGame() {
     _socketService.onMessage(SocketEvent.REMOVED_FROM_GAME, (_) {
-      _globalNavigationService.navigateTo('/');
+      _globalNavigationService.navigateTo('/home');
     });
   }
 
@@ -215,7 +215,7 @@ class WaitingRoomService extends ChangeNotifier {
   void handleFinalTransition() {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION, (_) {
       if (this.isTransition) {
-        this._globalNavigationService.navigateTo('/');
+        this._globalNavigationService.navigateTo('/home');
       }
     });
   }

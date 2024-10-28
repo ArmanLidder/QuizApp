@@ -128,7 +128,10 @@ class _HostInterfaceState extends State<HostInterface> {
                         SizedBox(
                           width: 100.0,
                         ),
-                        QuitBtn(),
+                        QuitBtn(
+                          isHost: true,
+                          roomId: this.gameService.realGameService.roomId,
+                        ),
                         ElevatedButton(
                           onPressed: () {
                             print(this._socketService.isSocketAlive());

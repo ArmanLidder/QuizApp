@@ -34,7 +34,8 @@ class _MyWidgetState extends State<GamePage> {
   GameService _gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
-  GameInterfaceManagementService _gameInterfaceManagementService = GameInterfaceManagementService();
+  GameInterfaceManagementService _gameInterfaceManagementService =
+      GameInterfaceManagementService();
 
   @override
   void initState() {
@@ -42,10 +43,12 @@ class _MyWidgetState extends State<GamePage> {
     if (_socketService.isSocketAlive()) {
       _interactiveListService.configureBaseSocketFeatures();
       this.isHost = this._gameService.realGameService.username == 'host';
-      if(!isHost){
+      if (!isHost) {
         print('I am Here');
         this._gameInterfaceManagementService.gameService.isOfflineMode = false;
-        this._gameInterfaceManagementService.setUp(this._gameService.realGameService.roomId.toString());
+        this
+            ._gameInterfaceManagementService
+            .setUp(this._gameService.realGameService.roomId.toString());
       }
     }
   }
@@ -59,6 +62,7 @@ class _MyWidgetState extends State<GamePage> {
           ._socketService
           .sendMessage(socketMessage, this._gameService.realGameService.roomId);
     }
+    this._gameService.destroy();
     super.dispose();
   }
 
@@ -76,129 +80,185 @@ class _MyWidgetState extends State<GamePage> {
       );
     } else {
       return Container(
-        child: AnimatedBuilder(
-        animation: _gameInterfaceManagementService.gameService.realGameService,
-        builder: (BuildContext context, Widget? snapshot) {
-          if(_gameInterfaceManagementService.gameService.question == null){
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Waiting for questions to load...',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            );
-          }
-        else
-          {
-          return AnimatedBuilder(
-            animation: Listenable.merge([_gameInterfaceManagementService, _gameInterfaceManagementService.gameService]),
-            builder: (BuildContext context, Widget? snapshot) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: const Text('PolyQuiz'),
-                  centerTitle: true,
-                  backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                ),
-                body: ListView(children: [
-                  Visibility(
-                    // Vue du joueur commence ici
-                    visible: !isHost,
+          child: AnimatedBuilder(
+              animation:
+                  _gameInterfaceManagementService.gameService.realGameService,
+              builder: (BuildContext context, Widget? snapshot) {
+                if (_gameInterfaceManagementService.gameService.question ==
+                    null) {
+                  return Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TimerWidget(
-                                isHost: isHost,
-                                timeTxt: _gameInterfaceManagementService.timerText,
-                                time: _gameInterfaceManagementService.gameService.timer,
-                              ),
-                            ),
-                            QuestionInfoWidget(
-                                questionNum: _gameInterfaceManagementService.gameService.questionNumber, questionPts: _gameInterfaceManagementService.gameService.question!.points, questionText: _gameInterfaceManagementService.gameService.question!.text),
-                            Expanded(
-                              child: Container(
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.all(5.0),
-                                padding: EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(border: Border.all()),
-                                child: Text(
-                                  'Pointage: ${_gameInterfaceManagementService.playerScore}',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ),
-                            )
-                          ],
+                        Text(
+                          'Waiting for questions to load...',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-                        Visibility(
-                            visible: _gameInterfaceManagementService.gameService.question?.type == QuestionType.QCM && !noticeReceived,
-                            child: Container(height: 500, child: PlayerQcm(gameInterfaceManagementService: _gameInterfaceManagementService))),
-                        Visibility(
-                            visible: _gameInterfaceManagementService.gameService.question?.type == QuestionType.QRL && !noticeReceived, child: PlayerQrl(gameInterfaceManagementService: _gameInterfaceManagementService)),
-                        Visibility(
-                          visible: noticeReceived,
-                          child: FutureBuilder(
-                          future: _gameInterfaceManagementService.gameService.lastQrlScore != null && _gameInterfaceManagementService.gameService.isHostEvaluating == false
-                            ? Future.delayed(Duration(seconds: 4), () {
-                              setState(() {
-                                noticeReceived = false;
-                              });
-                              })
-                            : Future.value(null),
-                          builder: (context, snapshot) {
-                            return PlayerNotice(
-                            message: message,
-                            gameInterfaceManagementService: _gameInterfaceManagementService,
-                            );
-                          },
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Visibility(
-                              visible: !noticeReceived,
-                              child: TextButton(
-                                onPressed: () {
-                                  if(_gameInterfaceManagementService.gameService.question?.type == QuestionType.QRL){
-                                    _gameInterfaceManagementService.gameService.isHostEvaluating = true;
-                                    this.noticeReceived = true;
-                                  }
-                                  _gameInterfaceManagementService.gameService.sendAnswer();
-                                },
-                                child: Text(
-                                  'Confirmer',
-                                  style: TextStyle(
-                                      color: Color.fromRGBO(255, 255, 255, 1),
-                                      fontSize: 20),
-                                ),
-                                style: TextButton.styleFrom(
-                                    textStyle: TextStyle(fontWeight: FontWeight.normal),
-                                    splashFactory: NoSplash.splashFactory,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20.0)),
-                                    backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
-                              ),
-                            ),
-                            SizedBox(width: 100.0),
-                            QuitBtn(),
-                            ChatPopup()
-                          ],
-                        )
                       ],
                     ),
-                  ), //////////////////// Fin de la vue du joueur et debut de la vue de l'organisateur
-                ]),  
-              );
-            }
-          );
-        }
-      })
-      );
+                  );
+                } else {
+                  return AnimatedBuilder(
+                      animation: Listenable.merge([
+                        _gameInterfaceManagementService,
+                        _gameInterfaceManagementService.gameService
+                      ]),
+                      builder: (BuildContext context, Widget? snapshot) {
+                        return Scaffold(
+                          appBar: AppBar(
+                            title: const Text('PolyQuiz'),
+                            centerTitle: true,
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
+                          body: ListView(children: [
+                            Visibility(
+                              // Vue du joueur commence ici
+                              visible: !isHost,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TimerWidget(
+                                          isHost: isHost,
+                                          timeTxt:
+                                              _gameInterfaceManagementService
+                                                  .timerText,
+                                          time: _gameInterfaceManagementService
+                                              .gameService.timer,
+                                        ),
+                                      ),
+                                      QuestionInfoWidget(
+                                          questionNum:
+                                              _gameInterfaceManagementService
+                                                  .gameService.questionNumber,
+                                          questionPts:
+                                              _gameInterfaceManagementService
+                                                  .gameService.question!.points,
+                                          questionText:
+                                              _gameInterfaceManagementService
+                                                  .gameService.question!.text),
+                                      Expanded(
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          margin: EdgeInsets.all(5.0),
+                                          padding: EdgeInsets.all(10.0),
+                                          decoration: BoxDecoration(
+                                              border: Border.all()),
+                                          child: Text(
+                                            'Pointage: ${_gameInterfaceManagementService.playerScore}',
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Visibility(
+                                      visible: _gameInterfaceManagementService
+                                                  .gameService.question?.type ==
+                                              QuestionType.QCM &&
+                                          !noticeReceived,
+                                      child: Container(
+                                          height: 500,
+                                          child: PlayerQcm(
+                                              gameInterfaceManagementService:
+                                                  _gameInterfaceManagementService))),
+                                  Visibility(
+                                      visible: _gameInterfaceManagementService
+                                                  .gameService.question?.type ==
+                                              QuestionType.QRL &&
+                                          !noticeReceived,
+                                      child: PlayerQrl(
+                                          gameInterfaceManagementService:
+                                              _gameInterfaceManagementService)),
+                                  Visibility(
+                                    visible: noticeReceived,
+                                    child: FutureBuilder(
+                                      future: _gameInterfaceManagementService
+                                                      .gameService
+                                                      .lastQrlScore !=
+                                                  null &&
+                                              _gameInterfaceManagementService
+                                                      .gameService
+                                                      .isHostEvaluating ==
+                                                  false
+                                          ? Future.delayed(Duration(seconds: 4),
+                                              () {
+                                              setState(() {
+                                                noticeReceived = false;
+                                              });
+                                            })
+                                          : Future.value(null),
+                                      builder: (context, snapshot) {
+                                        return PlayerNotice(
+                                          message: message,
+                                          gameInterfaceManagementService:
+                                              _gameInterfaceManagementService,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Visibility(
+                                        visible: !noticeReceived,
+                                        child: TextButton(
+                                          onPressed: () {
+                                            if (_gameInterfaceManagementService
+                                                    .gameService
+                                                    .question
+                                                    ?.type ==
+                                                QuestionType.QRL) {
+                                              _gameInterfaceManagementService
+                                                  .gameService
+                                                  .isHostEvaluating = true;
+                                              this.noticeReceived = true;
+                                            }
+                                            _gameInterfaceManagementService
+                                                .gameService
+                                                .sendAnswer();
+                                          },
+                                          child: Text(
+                                            'Confirmer',
+                                            style: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    255, 255, 255, 1),
+                                                fontSize: 20),
+                                          ),
+                                          style: TextButton.styleFrom(
+                                              textStyle: TextStyle(
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                              splashFactory:
+                                                  NoSplash.splashFactory,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.0)),
+                                              backgroundColor: Color.fromRGBO(
+                                                  53, 121, 246, 1)),
+                                        ),
+                                      ),
+                                      SizedBox(width: 100.0),
+                                      QuitBtn(
+                                          isHost: false,
+                                          roomId: this
+                                              ._gameService
+                                              .realGameService
+                                              .roomId),
+                                      ChatPopup()
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ), //////////////////// Fin de la vue du joueur et debut de la vue de l'organisateur
+                          ]),
+                        );
+                      });
+                }
+              }));
     }
   }
 }

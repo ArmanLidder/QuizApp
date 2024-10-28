@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/real_game_service.dart';
+import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
 import 'package:polyquiz/constants/socket-event.dart';
@@ -95,6 +96,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       appBar: AppBar(title: Text('Waiting Room')),
       body: Column(
         children: [
+          QuitBtn(isHost: widget.isHost, roomId: waitingRoomService.roomId),
+          SizedBox(height: 70.0),
           Text('Room ID: $roomId'),
           if (widget.isHost)
             SwitchListTile(

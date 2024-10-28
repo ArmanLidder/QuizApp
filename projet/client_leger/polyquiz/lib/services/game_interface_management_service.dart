@@ -116,7 +116,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         (timeValue) {
       //todo code pour afficher la transition aux resultats finaux
       this.gameService.realGameService.timer = timeValue;
-      this.timerText =  "Les résultats finaux s'afficherons dans ";
+      this.timerText = "Les résultats finaux s'afficherons dans ";
       if (this.gameService.timer == 0) {
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
@@ -130,7 +130,8 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handleRemovedFromGame() {
     this._socketService.onMessage(SocketEvent.REMOVED_FROM_GAME, (_) {
-      this._globalNavigationService.navigateTo('/');
+      print('GOT TO HERE...');
+      this._globalNavigationService.navigateTo('/home');
     });
   }
 
@@ -162,14 +163,13 @@ class GameInterfaceManagementService extends ChangeNotifier {
   void handleGameStatusDistribution() {
     this._socketService.onMessage(SocketEvent.GAME_STATUS_DISTRIBUTION,
         (gameStats) {
-          try {
-            
-            this.unpackStats(this.parseGameStats(gameStats));
-            notifyListeners();
-          } catch (e) {
-            print('Error in handleGameStatusDistribution: $e');
-          }
-        });
+      try {
+        this.unpackStats(this.parseGameStats(gameStats));
+        notifyListeners();
+      } catch (e) {
+        print('Error in handleGameStatusDistribution: $e');
+      }
+    });
   }
 
   parseGameStats(stringifyStats) {
@@ -209,8 +209,9 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.playerScore = score;
     if (this.gameService.question?.type == QuestionType.QRL) {
       this.gameService.lastQrlScore = (((playerScore - oldScore) /
-              (gameService.realGameService.question?.points ?? 0)) *
-          100).toInt();
+                  (gameService.realGameService.question?.points ?? 0)) *
+              100)
+          .toInt();
 
       print("I am Here 444444");
       print(this.gameService.lastQrlScore);
