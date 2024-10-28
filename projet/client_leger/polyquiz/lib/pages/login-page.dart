@@ -30,9 +30,7 @@ class LoginPage extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () {
-              // Navigate to the '/quizz' route
               globalNavigationService.navigateTo('/quizz');
-              //Navigator.pushNamed(context, '/quizz');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor:

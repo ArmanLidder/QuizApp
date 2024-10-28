@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Polyquiz',
       navigatorKey: GlobalNavigationService.navigatorKey,
-      home: AuthPage(), // The starting page is set to LoginPage.
+      home: LoginPage(), // The starting page is set to LoginPage.
       routes: {
         '/auth': (context) => AuthPage(),
         '/login': (context) => LoginPage(),
