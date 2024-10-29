@@ -4,7 +4,7 @@ import 'package:polyquiz/constants/constants.dart';
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
-  final LoggedInUserService  loggedInUserService = LoggedInUserService();
+  final LoggedInUserService loggedInUserService = LoggedInUserService();
   static final String baseUrl = IP_URL;
   static final String socketUrl = baseUrl + '/';
   IO.Socket? _socket;
@@ -21,10 +21,10 @@ class SocketService {
         'transports': ['websocket'],
         'autoConnect': false,
         'upgrade': false,
-        'auth':{
-          'userId': this.loggedInUserService.getUid()
+        'auth': {
+          'userId':
+              'v9nOIFSNWkQKs6Zr0T9r3qHlVtw1' //this.loggedInUserService.getUid()
         }
-
       });
 
       _socket?.on('connect', (_) {
@@ -64,5 +64,4 @@ class SocketService {
   bool isSocketAlive() {
     return _socket != null && _socket!.connected;
   }
-
 }

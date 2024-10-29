@@ -11,8 +11,8 @@ class TtsService {
 
   FlutterTts _flutterTts = FlutterTts();
   Map<dynamic, dynamic> _currentVoice = {};
-  bool isTtsEnabled = true;
-  //il faudra import le user service pour savoir la langue a utiliser
+  bool isTtsEnabled = false;
+  //il faudra import le user service pour savoir la langue a utiliser ou la passer en param
 
   void initTts() {
     this._flutterTts.getVoices.then((data) {
@@ -50,5 +50,10 @@ class TtsService {
 
   void toggleEnable() {
     this.isTtsEnabled = !this.isTtsEnabled;
+  }
+
+  void resetTts() {
+    this.isTtsEnabled = false;
+    this._currentVoice = {};
   }
 }
