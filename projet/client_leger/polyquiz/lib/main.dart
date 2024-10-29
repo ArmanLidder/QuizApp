@@ -24,6 +24,7 @@ void main() async {
   Get.put(UserService());
   Get.put(LoggedInUserService());
   Get.put(ImageStorageService());
+
   runApp(const MyApp());
 }
 

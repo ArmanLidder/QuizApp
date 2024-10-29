@@ -49,9 +49,9 @@ class _AuthPageState extends State<AuthPage> {
         SnackBar(content: Text('Inscription réussie!')),
       );
 
-      this.userService.createUser(
-          email: _emailController.text,
-          username: _usernameController.text);
+      await this.userService.createUser(
+          _emailController.text,
+           _usernameController.text);
       setState(() {
         _isRegistering =
             false; // Return to login mode after successful registration.
@@ -114,7 +114,7 @@ class _AuthPageState extends State<AuthPage> {
               },
               child: Text(_isRegistering
                   ? 'Tu as déja un compte? connecte toi!'
-                  : "tu n'as pas de compte? connecte-toi!"),
+                  : "tu n'as pas de compte? inscris-toi!"),
             ),
 
           ],

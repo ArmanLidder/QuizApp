@@ -39,15 +39,10 @@ class UserService extends GetxController {
       return null; // Handle the error appropriately
     }
   }
-  Future<void> createUser({
-    required String email,
-    required String username,
-  }) async {
-    String uid = Uuid() as String;
+  Future<void> createUser(String email, String username) async {
     try {
-      // Create a new user document in Firestore
-      await _db.collection(collectionName).doc(uid).set({
-        'uid': uid,
+      // Create a new user document in Firestore with an auto-generated ID
+      DocumentReference docRef = await _db.collection(collectionName).add({
         'email': email,
         'username': username,
         'avatar': 'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58',
@@ -72,12 +67,13 @@ class UserService extends GetxController {
           'notificationsEnabled': true,
         },
       });
+
+      String uid = docRef.id;
+      print('User created with ID: $uid');
     } catch (e) {
       print('Failed to create user: $e');
-      // Optionally handle the error further (e.g., logging or notifying the user)
     }
   }
-
   Future<void> updateUserAvatar({
     required String id,
     required String newAvatarUrl,
