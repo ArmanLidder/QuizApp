@@ -22,6 +22,7 @@ void main() async {
   Get.put(UserService());
   Get.put(LoggedInUserService());
   Get.put(ImageStorageService());
+
   runApp(const MyApp());
 }
 
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Polyquiz',
       navigatorKey: GlobalNavigationService.navigatorKey,
-      home: LoginPage(), // The starting page is set to LoginPage.
+      home: AuthPage(), // The starting page is set to LoginPage.
       routes: {
         '/auth': (context) => AuthPage(),
         '/login': (context) => LoginPage(),
