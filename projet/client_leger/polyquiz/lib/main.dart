@@ -4,6 +4,7 @@ import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/pages/login-page.dart';
 import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
+import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'pages/authPage.dart';
@@ -22,6 +23,7 @@ import 'package:polyquiz/services/StoreService.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Get.put(ChannelService());
   Get.put(UserService());
   Get.put(LoggedInUserService());
   Get.put(ImageStorageService());
