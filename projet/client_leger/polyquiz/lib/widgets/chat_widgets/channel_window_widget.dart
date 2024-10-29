@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/channelService.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 
 // to be removed once connected to database
 enum Page {
@@ -54,7 +55,7 @@ class ChannelSelectionWidget extends StatefulWidget {
 }
 
 class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
-  final channelService = Get.put(ChannelService());
+  final channelService = ChannelService.instance;
 
   @override
   void initState() {
@@ -157,7 +158,7 @@ class ChannelJoiningWidget extends StatefulWidget {
 }
 
 class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
-  final channelService = Get.put(ChannelService());
+  final channelService = ChannelService.instance;
   String _query = "";
 
   void searchChannels(String query) {
@@ -219,7 +220,8 @@ class ChannelCreationWidget extends StatefulWidget {
 
 class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
   final inputController = TextEditingController();
-  final channelService = Get.put(ChannelService());
+  final channelService = ChannelService.instance;
+  final loggedInService = LoggedInUserService.instance;
   String _currentName = "";
 
   @override
@@ -301,7 +303,8 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
   }
 
   Future<void> createChannel(BuildContext context) async {
-    bool isCreated = await channelService.createChannel(_currentName, ["Kvw4qW583jXEdYuoBgVjRe5JeAK2"], false);
+    print("The user id is: ${this.loggedInService.user?.uid ?? 'could not find'}");
+    bool isCreated = await channelService.createChannel(_currentName, [loggedInService.user?.uid ?? ""], false);
     if (isCreated) {
       print("worked");
       inputController.clear();

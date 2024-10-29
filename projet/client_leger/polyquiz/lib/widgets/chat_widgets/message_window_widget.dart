@@ -15,7 +15,7 @@ class MessageWindowWidget extends StatefulWidget {
 }
 
 class _MessageWindowWidgetState extends State<MessageWindowWidget> {
-  final channelService = Get.put(ChannelService());
+  final channelService = ChannelService.instance;
   final TextEditingController _messageController = TextEditingController();
 
   @override
@@ -87,8 +87,8 @@ class MessageListWidget extends StatelessWidget {
 class MessageTile extends StatelessWidget {
   final imageUrl = "https://i.pinimg.com/originals/87/a2/d6/87a2d6017b9a7cc38274cef92a45cee3.jpg"; // TODO: Remove and add images
   final username = "Elsa";
-  final userService = Get.put(UserService());
-  final loggedInService = Get.put(LoggedInUserService());
+  final userService = UserService.instance;
+  final loggedInService = LoggedInUserService.instance;
 
   final String content;
   final String userId;
