@@ -133,6 +133,7 @@ export class HostInterfaceManagementService {
                 this.interactiveListService.isFinal = true;
                 this.gameService.audio.pause();
                 this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
+                this.socketService.send(SocketEvent.SAVE_FINAL_GAME_STATS, this.gameService.gameRealService.roomId);
             }
         });
     }

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
 import { RoomValidationService } from '@app/services/room-validation.service/room-validation.service';
-import { NO_COLOR, RED_BORDER, RED_TEXT } from '@common/style/style';
+import { NO_COLOR } from '@common/style/style';
 
 @Component({
     selector: 'app-room-code-prompt',
@@ -47,17 +47,18 @@ export class RoomCodePromptComponent implements OnInit {
     async validateRoomId() {
         this.error = await this.roomValidationService.verifyRoomId();
         this.handleError();
+        if (!this.error) await this.validateUsername();
     }
 
-    // async validateUsername() {
-    //     this.error = await this.roomValidationService.verifyUsername();
-    //     this.handleError();
-    // }
+    async validateUsername() {
+        this.error = await this.roomValidationService.verifyUsername();
+        this.handleError();
+    }
 
     async joinRoom() {
         this.error = await this.roomValidationService.sendJoinRoomRequest();
         const isValid =
-            !this.roomValidationService.isLocked && this.roomValidationService.isRoomIdValid;
+            !this.roomValidationService.isLocked && this.roomValidationService.isRoomIdValid && this.roomValidationService.isUsernameValid;
         if (isValid) this.sendAllDataToWaitingRoom();
         else this.handleError();
     }
@@ -81,7 +82,7 @@ export class RoomCodePromptComponent implements OnInit {
     }
 
     private showErrorFeedback() {
-        this.textColor = RED_TEXT;
-        this.inputBorderColor = RED_BORDER;
+        this.textColor = 'red-text';
+        this.inputBorderColor = 'red-border';
     }
 }

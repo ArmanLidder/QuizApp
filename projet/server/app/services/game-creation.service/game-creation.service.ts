@@ -10,6 +10,10 @@ import {Service} from 'typedi';
 import {FirebaseService} from "@app/services/firebase.service/firebase.service";
 import {Canal} from "@common/interfaces/message.interface";
 import {GameConfig} from "@common/interfaces/game-info.interface";
+import {Score} from "@common/interfaces/score.interface";
+import {Game} from "@app/classes/game/game";
+import {GameHistory, User, UserStats} from "@common/interfaces/user-data.interface";
+
 
 @Service()
 export class GameCreationService {
@@ -32,6 +36,7 @@ export class GameCreationService {
         this.handlePlayerLeft(roomManager, socket, sio);
         this.handleHostLeft(roomManager, socket, sio);
         this.handleGetGameList(roomManager, socket, sio);
+        this.handleSaveStats(roomManager, socket);
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
@@ -53,7 +58,8 @@ export class GameCreationService {
                 const roomCode = data.roomId;
                 const userId = socket.handshake.auth.userId;
                 console.log(`userId joining game: ${userId}`);
-                roomManager.addUser(roomCode, data.username, socket.id);
+                // roomManager.addUser(roomCode, data.username, socket.id);
+                roomManager.addUser(roomCode, userId, socket.id);
                 const players = roomManager.getUsernamesArray(roomCode);
                 socket.join(String(roomCode));
                 await this.addUserToRoomCanal(roomCode, userId);
@@ -68,7 +74,10 @@ export class GameCreationService {
         socket.on(SocketEvent.BAN_PLAYER, async (data: PlayerUsername) => {
             const bannedID = roomManager.getSocketIdByUsername(data.roomId, data.username);
             const banned_socket = sio.sockets.sockets.get(bannedID)
-            roomManager.banUser(data.roomId, data.username);
+            // added 73
+            const bannedUserID = banned_socket.handshake.auth.userId
+            // roomManager.banUser(data.roomId, data.username);
+            roomManager.banUser(data.roomId, bannedUserID);
             await this.removeUserFromRoomCanal(data.roomId, banned_socket.handshake.auth.userId);
             sio.to(bannedID).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(data.roomId)).emit(SocketEvent.REMOVED_PLAYER, data.username);
@@ -87,6 +96,10 @@ export class GameCreationService {
             let error = '';
             if (roomManager.isNameUsed(data.roomId, data.username)) error = ErrorDictionary.NAME_ALREADY_USED;
             else if (roomManager.isNameBanned(data.roomId, data.username)) error = ErrorDictionary.BAN_MESSAGE;
+            console.log(`
+            Validation des username: ${data.username} in room ${data.roomId}
+            Erreur: ${error}
+            `)
             callback({isValid: error.length === 0, error});
         });
     }
@@ -159,6 +172,18 @@ export class GameCreationService {
         });
     }
 
+    // type are winner, loser or none
+    private handleSaveStats(roomManager: RoomManagingService, socket: io.Socket) {
+        socket.on(SocketEvent.SAVE_FINAL_GAME_STATS, async (roomId: number) => {
+            const game = roomManager.getGameByRoomId(roomId);
+            const gameType = roomManager.getRoomById(roomId).gameType;
+            const { highestScorers,nonExtremes, lowestScorers} = this.getExtremeScores(game.players)
+            for (let winner of highestScorers) await this.updateStats(winner, game, gameType, 'winner');
+            for (let loser of lowestScorers) await this.updateStats(loser, game, gameType, 'loser');
+            for (let loser of nonExtremes) await this.updateStats(loser, game, gameType, 'none');
+        });
+    }
+
     private sendUpdateGameList(roomManager: RoomManagingService, sio: io.Server) {
         console.log(`sending game list on update ${roomManager.getGamesConfig()}`)
         sio.emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig())
@@ -195,6 +220,40 @@ export class GameCreationService {
         }
     }
 
+    // Method that updates player stats online type is either winner, loser
+    // Update money has to be done here also but some logic has to be made in the class game when joining
+    // with a price
+    private async updateStats(userId: string, game: Game, gameType: string, type: string) {
+        const score = game.players.get(userId)
+        const finalResult = type === 'winner' ? 'win': 'loss';
+        let prestige = type === 'winner' ? 10 : type === 'loser' ? -10 : 0;
+        const history = {
+            result: finalResult,
+            timestamp: game.gameHistoryInfo.startTime,
+            score: score.points,
+            gameMode: gameType,
+        } as GameHistory
+        const startTime = game.startTimeCalcul;
+        const currentTime = new Date().getTime();
+        const timeDifferenceInSeconds = Math.floor((currentTime - startTime) / 1000);
+        try {
+            const docRef = await this.getDocRefUsers(userId);
+            const user = (await docRef.get()).data() as User;
+            if (user.prestige === 0 && prestige === -10) prestige = 0;
+            const newStats = this.calculateNewStats(user.stats, score, timeDifferenceInSeconds, type);
+            const achievements = this.checkAchievements(newStats, prestige, user, gameType);
+            await docRef.update({
+                gameHistory: this.fs.firebase.firestore.FieldValue.arrayUnion(history),
+                level: this.fs.firebase.firestore.FieldValue.increment(score.points),
+                prestige: this.fs.firebase.firestore.FieldValue.increment(prestige),
+                stats: newStats,
+                achievements: this.fs.firebase.firestore.FieldValue.arrayUnion(...achievements)
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     private async deleteRoomCanal(roomCode: number) {
         try {
             const docRef = await this.getDocRef(roomCode);
@@ -212,4 +271,81 @@ export class GameCreationService {
         if (querySnapshot.empty) throw new Error(`No canal found with roomCode: ${roomCode}`);
         return querySnapshot.docs[0].ref;
     }
+
+    private async getDocRefUsers(userId: string) {
+        const docRef = this.fs.firestore.collection('users').doc(userId);
+        const docSnapshot = await docRef.get();
+        if (!docSnapshot.exists) {
+            throw new Error(`No User found with id: ${userId}`);
+        }
+        return docRef;
+    }
+
+    private calculateNewStats(oldStats: UserStats, score: Score, timeDifferenceInSeconds: number, type: string) {
+        return {
+            gamesPlayed: oldStats.gamesPlayed + 1,
+            gamesWon: type === 'winner' ? oldStats.gamesWon + 1: oldStats.gamesWon,
+            correctAnswers: oldStats.correctAnswers + score.goodAnswerCounter,
+            gameTime: oldStats.gameTime + timeDifferenceInSeconds,
+            avgCorrectAnswers: parseFloat(((oldStats.correctAnswers + score.goodAnswerCounter)/(oldStats.gamesPlayed + 1)).toFixed(2)),
+            avgGameTime: parseFloat(((oldStats.gameTime + timeDifferenceInSeconds)/(oldStats.gamesPlayed + 1)).toFixed(2)),
+        } as UserStats
+    }
+
+    private getExtremeScores(players: Map<string, Score>) {
+        let highestScore = -Infinity;
+        let lowestScore = Infinity;
+        const highestScorers: string[] = [];
+        let lowestScorers: string[] = [];
+        let nonExtremes: string[] = [];
+        players.forEach((score: Score, userId: string) => {
+            if (score.points > highestScore) {
+                highestScore = score.points;
+                highestScorers.length = 0;
+                highestScorers.push(userId);
+            } else if (score.points === highestScore) {
+                highestScorers.push(userId);
+            }
+
+            if (score.points < lowestScore) {
+                lowestScore = score.points;
+                lowestScorers.length = 0;
+                lowestScorers.push(userId);
+            } else if (score.points === lowestScore) {
+                lowestScorers.push(userId);
+            }
+        });
+
+        players.forEach((score: Score, userId: string) => {
+            if (!highestScorers.includes(userId) && !lowestScorers.includes(userId)) {
+                nonExtremes.push(userId);
+            }
+        });
+
+        if (players.size === 1) {
+            lowestScorers = []
+            nonExtremes = []
+        }
+
+        return {
+            highestScorers,
+            nonExtremes,
+            lowestScorers,
+        };
+    }
+
+    // Two game types equipe or classic
+    private checkAchievements(newStats: UserStats, prestige: number, user: User, gameType: string) {
+        const achievements: number[] = [1000]; // 1000 is a based number that allows to return an array of 1 with is usable in arrayUnion
+        if (newStats.gamesWon === 1) achievements.push(1);
+        if (newStats.gamesWon > user.stats.gamesWon && gameType === 'equipe') achievements.push(2);
+        if (newStats.gamesWon === 5) achievements.push(3);
+        if (newStats.gamesWon === 10) achievements.push(4);
+        if ((user.prestige + prestige) === 50) achievements.push(5);
+        if ((user.prestige + prestige) === 100) achievements.push(6);
+        if ((user.prestige + prestige) === 150) achievements.push(7);
+        if ((user.prestige + prestige) === 200) achievements.push(8);
+        return achievements
+    }
+
 }

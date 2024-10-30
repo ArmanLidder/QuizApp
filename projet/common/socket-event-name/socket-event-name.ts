@@ -47,6 +47,7 @@ export namespace SocketEvent {
 
     export const UPDATE_GAME_LIST = 'update_game_list';
     export const GET_GAME_LIST = 'get_game_list';
+    export const SAVE_FINAL_GAME_STATS = 'save_final_game_stats';
 }
 
 

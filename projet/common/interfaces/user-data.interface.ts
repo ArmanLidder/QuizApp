@@ -16,11 +16,13 @@ export interface User {
     settings: UserSettings;
 }
 
-interface UserStats {
+export interface UserStats {
     gamesPlayed: number;
     gamesWon: number;
     avgCorrectAnswers: number;
     avgGameTime: number;
+    correctAnswers: number;
+    gameTime: number;
 }
 
 export interface LoginHistory {
@@ -28,7 +30,7 @@ export interface LoginHistory {
     timestamp: any;
 }
 
-interface GameHistory {
+export interface GameHistory {
     result: 'win' | 'loss';
     timestamp: any;
     score: number;

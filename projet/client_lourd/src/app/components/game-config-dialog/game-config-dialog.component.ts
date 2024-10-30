@@ -18,7 +18,7 @@ export class GameConfigDialogComponent {
   ) {
     // Initialize the form with the current config values or defaults
     this.gameConfigForm = this.fb.group({
-      gameType: ['', Validators.required],
+      gameType: ['classic', Validators.required],
       price: [0, [Validators.required, Validators.min(0), Validators.pattern(/^[0-9]\d*$/)]],
       friendsOnly: [false],
       private: [false]

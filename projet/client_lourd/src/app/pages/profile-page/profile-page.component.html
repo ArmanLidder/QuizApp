@@ -1,3 +1,4 @@
+<app-header></app-header>
 <div class="min-h-screen bg-gray-100">
     <div class="max-w-4xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
         <ng-container *ngIf="currentUser$ | async as user">
@@ -123,8 +124,8 @@
                 <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
                     {{ game.result === 'win' ? 'Gagné' : 'Perdu' }}
                 </span>
-                                le {{ game.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }},
-                                Mode de jeu: {{ game.gameMode }},
+                                le {{ game.timestamp }},
+                                Mode de jeu: {{ game.gameMode === 'classic' ? "Classique": "Équipe" }},
                                 Score: {{ game.score }}
                             </li>
                         </ul>
