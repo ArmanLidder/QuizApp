@@ -21,6 +21,8 @@ interface UserStats {
     gamesWon: number;
     avgCorrectAnswers: number;
     avgGameTime: number;
+    correctAnswers: number;
+    gameTime: number;
 }
 
 export interface LoginHistory {
