@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import {AbstractControl} from '@angular/forms';
 import { Quiz, QuizChoice, QuizQuestion } from '@common/interfaces/quiz.interface';
 import {
     DIVIDER,
@@ -151,4 +151,37 @@ export class QuizValidationService {
             )
         );
     }
+
+    validateInterval(control: AbstractControl): { [key: string]: boolean } | null {
+        const min = control.get('min')?.value;
+        const max = control.get('max')?.value;
+        if (min !== undefined && max !== undefined && max < min) {
+            return { maxLessThanMin: true };
+        }
+        return null;
+    }
+
+
+    validateAnswerInRange(control: AbstractControl, min: number, max: number): { [key: string]: boolean } | null {
+        const answer = control.value;
+        if (answer < min || answer > max) {
+            return { answerOutOfRange: true };
+        }
+        return null;
+    }
+
+
+    validateMarginWithinLimit(control: AbstractControl): { [key: string]: boolean } | null {
+        const answer = control.parent?.get('answer')?.value;
+        const margin = control.value;
+
+        if (answer !== undefined && margin !== undefined && margin > 0.25 * answer) {
+            console.log("im in error");
+            return { marginTooLarge: true };
+        }
+        return null;
+    }
+
+
+
 }
