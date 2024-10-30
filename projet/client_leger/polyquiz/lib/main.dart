@@ -20,9 +20,9 @@ import 'package:polyquiz/pages/userPage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Get.put(LoggedInUserService());
   Get.put(ChannelService());
   Get.put(UserService());
-  Get.put(LoggedInUserService());
   Get.put(ImageStorageService());
 
   runApp(const MyApp());
