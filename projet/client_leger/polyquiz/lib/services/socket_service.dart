@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
-  final LoggedInUserService  loggedInUserService = Get.find();
+  final LoggedInUserService loggedInUserService = Get.find();
   static final String baseUrl = IP_URL;
   static final String socketUrl = baseUrl + '/';
   IO.Socket? _socket;
@@ -23,10 +23,7 @@ class SocketService {
         'transports': ['websocket'],
         'autoConnect': false,
         'upgrade': false,
-        'auth':{
-          'userId': id
-        }
-
+        'auth': {'userId': id}
       });
 
       _socket?.on('connect', (_) {
@@ -66,5 +63,4 @@ class SocketService {
   bool isSocketAlive() {
     return _socket != null && _socket!.connected;
   }
-
 }

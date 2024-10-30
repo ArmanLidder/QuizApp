@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/services/tts_service.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/services/socket_service.dart';
 
-import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
 
-class HomePage extends StatelessWidget {
+class _HomePageState extends State<HomePage> {
   final SocketService _socketService = SocketService();
-  final TtsService _ttsService = TtsService();
 
   @override
   void initState() {
+    super.initState();
     if (_socketService.isSocketAlive()) {
       _socketService.clearAllListeners();
       _socketService.disconnect();
     }
-    _ttsService.initTts();
   }
 
   @override
