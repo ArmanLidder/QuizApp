@@ -24,6 +24,7 @@ class Userpage extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: FancyAppBar(
+            context: context,
             sourceImgUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
         body: SingleChildScrollView(
           child: Column(
@@ -40,10 +41,23 @@ class Userpage extends StatelessWidget {
                 avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
                 avgGameTime: userData?.stats.avgGameTime ?? 0,
               ),
+              Text(
+            "Accomplissements",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+            )),
               StarCardGrid(
                   labels:
                   List.generate(8, (index) => "Defi numero ${index + 1}"),
                   achievementsList: achievements),
+              Text(
+                  "Amis",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  )),
+
               FriendListDisplay(friends: userData?.friends ?? [],
                   pendingRequests: userData?.friendRequests ?? []),
 
