@@ -36,7 +36,7 @@ class LoggedInUserService extends GetxController {
   }
   String? getUid(){
     if (this.user == null){
-      return "noId";
+      return "noUser";
     }
     return (this.user?.uid);
   }

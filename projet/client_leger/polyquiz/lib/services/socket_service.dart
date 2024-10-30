@@ -1,10 +1,11 @@
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:polyquiz/constants/constants.dart';
+import 'package:get/get.dart';
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
-  final LoggedInUserService loggedInUserService = LoggedInUserService();
+  final LoggedInUserService loggedInUserService = Get.find();
   static final String baseUrl = IP_URL;
   static final String socketUrl = baseUrl + '/';
   IO.Socket? _socket;
@@ -17,14 +18,12 @@ class SocketService {
 
   void connect() {
     if (_socket == null) {
+      String? id = this.loggedInUserService.getUid();
       _socket = IO.io(socketUrl, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
         'upgrade': false,
-        'auth': {
-          'userId':
-              'v9nOIFSNWkQKs6Zr0T9r3qHlVtw1' //this.loggedInUserService.getUid()
-        }
+        'auth': {'userId': id}
       });
 
       _socket?.on('connect', (_) {
