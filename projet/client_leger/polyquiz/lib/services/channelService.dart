@@ -4,7 +4,7 @@ import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class ChannelService extends GetxController {
-  final loggedInService = Get.put(LoggedInUserService());
+  final loggedInService = LoggedInUserService.instance;
   final String collectionName = "canals";
   static ChannelService get instance => Get.find();
   RxList<Canal> channels = <Canal>[].obs;
@@ -33,7 +33,24 @@ class ChannelService extends GetxController {
     final isUserPermitted = (Canal channel) => channel.permittedUsers.contains(loggedInService.user?.uid) || channel.name == "general";
     return _db.collection(collectionName)
         .snapshots()
-        .map((query) => query.docs.map((doc) => Canal.fromDocument(doc)).where(isUserPermitted).toList());
+        .map((query) => query.docs.map((doc) => Canal.fromDocument(doc)).where(isUserPermitted).toList()..
+          sort((a, b) {
+            // Order: general first, then channels containing 'room', then channels containing '#', then all others
+            if (a.name == 'general') return -1; // General first
+            if (b.name == 'general') return 1;
+
+            bool aContainsRoom = a.name.contains('room');
+            bool bContainsRoom = b.name.contains('room');
+            if (aContainsRoom && !bContainsRoom) return -1; // a comes before b
+            if (!aContainsRoom && bContainsRoom) return 1; // b comes before a
+
+            bool aContainsHash = a.name.contains('#');
+            bool bContainsHash = b.name.contains('#');
+            if (aContainsHash && !bContainsHash) return -1; // a comes before b
+            if (!aContainsHash && bContainsHash) return 1; // b comes before a
+
+            return 0;
+          }));
   }
 
   Stream<List<Canal>> getJoinableChannelStream() {
