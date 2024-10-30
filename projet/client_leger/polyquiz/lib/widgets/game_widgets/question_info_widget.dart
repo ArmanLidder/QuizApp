@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/tts_service.dart';
 
 class QuestionInfoWidget extends StatefulWidget {
@@ -18,15 +20,27 @@ class QuestionInfoWidget extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<QuestionInfoWidget> {
+  final LoggedInUserService _loggedInUserService = LoggedInUserService.instance;
   TtsService _ttsService = TtsService();
   IconData ttsDisabledIcon = Icons.voice_over_off_outlined;
   IconData ttsEnabledIcon = Icons.record_voice_over_outlined;
   IconData ttsStateIcon = Icons.voice_over_off_outlined;
   late String _currentQuestionText;
+  late Language _language;
+
   @override
   void initState() {
     super.initState();
-    _ttsService.initTts();
+    if (_loggedInUserService.user != null) {
+      _language = _loggedInUserService.user!.settings.language;
+    } else {
+      _language == Language.en;
+    }
+    if (_language == Language.en) {
+      _ttsService.initTts('en');
+    } else {
+      _ttsService.initTts('fr');
+    }
     _currentQuestionText = widget.questionText;
     _ttsService.speak(_currentQuestionText);
   }
@@ -74,8 +88,8 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
                         _ttsService.speak(widget.questionText);
                       } else {
                         ttsStateIcon = ttsDisabledIcon;
-                        _ttsService.isTtsEnabled = false;
                         _ttsService.stop();
+                        _ttsService.isTtsEnabled = false;
                       }
                     });
                   },

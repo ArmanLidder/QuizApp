@@ -14,12 +14,12 @@ class TtsService {
   bool isTtsEnabled = false;
   //il faudra import le user service pour savoir la langue a utiliser ou la passer en param
 
-  void initTts() {
+  void initTts(String language) {
     this._flutterTts.getVoices.then((data) {
       try {
         List<Map> _voices = List<Map>.from(data);
         _voices =
-            _voices.where((voice) => voice['name'].contains('en')).toList();
+            _voices.where((voice) => voice['name'].contains(language)).toList();
         this._currentVoice = _voices.first;
         print(_currentVoice);
         this.setVoice(_currentVoice);
@@ -29,8 +29,8 @@ class TtsService {
     });
   }
 
-  void setVoice(Map voice) {
-    this
+  void setVoice(Map voice) async {
+    await this
         ._flutterTts
         .setVoice({'name': voice['name'], 'locale': voice['locale']});
   }
