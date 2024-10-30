@@ -41,6 +41,12 @@ class Userpage extends StatelessWidget {
                 avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
                 avgGameTime: userData?.stats.avgGameTime ?? 0,
               ),
+              Text(
+            "Accomplissements",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+            )),
               StarCardGrid(
                   labels:
                   List.generate(8, (index) => "Defi numero ${index + 1}"),
