@@ -20,16 +20,13 @@ class StatitisticsBlorb extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
+          Text(
               "Statistiques",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
             ),
-          ),
           StatRow("parties Jouées: ", nPlayedGames),
           StatRow("parties Gagnées: ", nWonGames),
           StatRow("bonnes réponses par partie: ", avgGoodAnswers),

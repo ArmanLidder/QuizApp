@@ -51,6 +51,13 @@ class Userpage extends StatelessWidget {
                   labels:
                   List.generate(8, (index) => "Defi numero ${index + 1}"),
                   achievementsList: achievements),
+              Text(
+                  "Amis",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  )),
+
               FriendListDisplay(friends: userData?.friends ?? [],
                   pendingRequests: userData?.friendRequests ?? []),
 
