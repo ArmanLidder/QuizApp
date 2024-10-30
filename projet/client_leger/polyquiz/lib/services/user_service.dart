@@ -41,10 +41,12 @@ class UserService extends GetxController {
   }
   Future<void> createUser(String email, String username) async {
     try {
-      // Create a new user document in Firestore with an auto-generated ID
-      DocumentReference docRef = await _db.collection(collectionName).add({
+      DocumentReference docRef = _db.collection(collectionName).doc();
+
+      await docRef.set({
         'email': email,
         'username': username,
+        'uid': docRef.id,
         'avatar': 'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58',
         'friends': [],
         'currency': 0,
@@ -68,8 +70,8 @@ class UserService extends GetxController {
         },
       });
 
-      String uid = docRef.id;
-      print('User created with ID: $uid');
+
+      print('User created');
     } catch (e) {
       print('Failed to create user: $e');
     }
