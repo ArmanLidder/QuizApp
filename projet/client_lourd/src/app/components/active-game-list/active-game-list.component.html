@@ -1,0 +1,45 @@
+<div class="container">
+    <table class="games-table">
+        <thead>
+        <tr>
+            <th colspan="2">Liste des Jeux Publics</th>
+        </tr>
+        </thead>
+        <tbody class="tbody-container">
+        <ng-container *ngIf="games$ | async as games">
+            <tr *ngFor="let game of games$ | async as games" class="hover">
+                <ng-container *ngIf="!game.private">
+                    <td>
+                        <div [class]="game.onGoing ?'on-going-game':'game-item'" (click)="joinRoom(game)">
+                            <span class="quiz-title">{{ getQuizName(game.quizId) }}</span>
+                            <ng-container *ngIf="!game.onGoing">
+                                <span class="players">{{ game.numberOfPlayers }} <i class="bi bi-people"></i></span>
+                                <span class="game-type"> Mode de jeu : {{ game.gameType == 'classic' ? 'Classique' : 'En Équipe' }}</span>
+                                <span class="price">{{ game.price == 0 ? "Gratuit " : game.price }} <i
+                                        class="bi bi-cash-coin"></i></span>
+                            </ng-container>
+                            <ng-container *ngIf="game.onGoing">
+                                <span class="players">Partie en cours</span>
+                            </ng-container>
+                        </div>
+                    </td>
+                </ng-container>
+            </tr>
+            <tr *ngIf="!games.length">
+                <td>
+                    <div class="game-item">
+                        <span class="no-game">Aucune partie présentement</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-container>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="2" class="button-container">
+                <button routerLink="/home" class="cancel">Annuler</button>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

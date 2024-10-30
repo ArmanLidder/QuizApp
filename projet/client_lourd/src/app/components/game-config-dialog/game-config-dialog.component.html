@@ -1,0 +1,42 @@
+<div class="dialog-container">
+    <h2 class="dialog-title">Configurer la partie</h2>
+    <form class="form-container" [formGroup]="gameConfigForm" (ngSubmit)="saveConfig()">
+        <div class="field-container">
+            <label for="gameType">Type de partie</label>
+            <select formControlName="gameType" id="gameType" class="select-field">
+                <option value="classic">Classique</option>
+                <option value="equipe">Équipe</option>
+            </select>
+            <div class="error-message" *ngIf="gameConfigForm.get('gameType')?.hasError('required')">
+                Le type de partie est requis. Veuillez sélectionné un type.
+            </div>
+        </div>
+
+        <div class="field-container">
+            <label for="price">Prix</label>
+            <input id="price" class="number-input" matInput type="number" formControlName="price"/>
+            <div class="error-message" *ngIf="gameConfigForm.controls['price'].invalid">
+                Le prix doit être un entier supérieur ou égal à 0.
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <label class="custom-checkbox">
+                <input type="checkbox" formControlName="friendsOnly"/>
+                <span>Amis Seulement</span>
+            </label>
+
+            <label class="custom-checkbox">
+                <input type="checkbox" formControlName="private"/>
+                <span>Partie privée</span>
+            </label>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-cancel" type="button" (click)="closeDialog()">Annuler</button>
+            <button class="btn btn-primary" type="submit" [disabled]="!gameConfigForm.valid">
+                Créer partie
+            </button>
+        </div>
+    </form>
+</div>

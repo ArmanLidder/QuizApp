@@ -6,7 +6,6 @@ import { DatabaseService } from '@app/services/database.service/database.service
 import { SocketManager } from '@app/services/socket-manager.service/socket-manager.service';
 import { QuizService } from '@app/services/quiz.service/quiz.service';
 import { HistoryService } from '@app/services/history.service/history.service';
-// import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -44,7 +43,11 @@ export class Server {
         //         next(new Error('Authentication error'));
         //     }
         // });
-        this.socketManager.handleSockets();
+        try {
+            this.socketManager.handleSockets();
+        } catch (e) {
+            return e
+        }
 
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));

@@ -4,41 +4,43 @@
     align-items: center;
 }
 
+/* Timer circle */
 .circle {
     border-radius: 50%;
-    float: left;
-    position: absolute;
-    left: 0;
-
-    font-size: 45px;
-    width: 220px;
-    height: 80px;
-    padding: 50px 0px 70px 0px;
+    width: 180px;
+    height: 180px;
+    padding: 0;
     color: #FFF;
     border: 2px solid #000000;
     text-align: center;
     font-family: Arial;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-right: 40px;
 }
 
 .circle span:first-child {
-    color:black;
+    color: black;
     font-size: 14px;
-    display: block
+    margin-bottom: 5px;
 }
 
 .circle span:nth-child(2) {
     color: #000000;
-    font-size: 60px;
-    display: block
+    font-size: 35px;
+    margin-bottom: 5px;
 }
 
 .circle mat-icon {
-    font-size: 40px;
-    height: 40px ;
-    width: 40px;
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
     cursor: pointer;
     color: black;
+    margin: 5px;
 }
 
 .histogram {
@@ -52,12 +54,22 @@
     align-content: center;
 }
 
-#question-field{
+//#question-field{
+//    display: flex;
+//    flex-direction: column;
+//    align-items: center;
+//    justify-content: center;
+//    gap: 0px;
+//}
+#question-field {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0px;
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
+    position: absolute; /* Allow for centering in the viewport */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Offset to truly center */
 }
 
 #question-field > * {
@@ -101,14 +113,13 @@
     margin-bottom: 5vh;
 }
 
-
 #flex-container {
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-content: center;
-    padding: 10px ;
+    justify-content: flex-start; /* Align to the left */
+    align-items: flex-start; /* Align items to the top */
+    padding: 10px;
     position: relative;
 }
 

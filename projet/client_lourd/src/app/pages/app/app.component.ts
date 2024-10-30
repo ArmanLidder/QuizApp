@@ -1,4 +1,4 @@
-import {Component, HostListener,OnDestroy} from '@angular/core';
+import {Component,OnDestroy,HostListener} from '@angular/core';
 import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
 import {AuthService} from "@app/services/auth.service/auth.service";
 
@@ -14,12 +14,13 @@ export class AppComponent implements OnDestroy {
 
     @HostListener('window:beforeunload')
     removeToken() {
-        this.socketService.disconnect();
+        if (this.socketService.isSocketAlive()) this.socketService.disconnect();
         this.authService.logout();
+        console.log('app disonnect')
     }
 
-    ngOnDestroy() {
-        this.socketService.disconnect();
-        this.authService.logout();
+    async ngOnDestroy() {
+        if (this.socketService.isSocketAlive()) this.socketService.disconnect();
+        await this.authService.logout();
     }
 }

@@ -1,7 +1,9 @@
-<div class="container">
-    <app-sidebar id="sidebar"></app-sidebar>
-    <section class="play-area-container">
-        <app-host-interface *ngIf='isHost'></app-host-interface>
-        <app-game-interface *ngIf='!isHost'></app-game-interface>
-    </section>
-</div>
+<!--<div class="container">-->
+<!--    <section class="play-area-container">-->
+<!--        <app-host-interface *ngIf='isHost'></app-host-interface>-->
+<!--        <app-game-interface *ngIf='!isHost'></app-game-interface>-->
+<!--    </section>-->
+<!--</div>-->
+
+<app-host-interface *ngIf='isHost'></app-host-interface>
+<app-game-interface *ngIf='!isHost'></app-game-interface>
