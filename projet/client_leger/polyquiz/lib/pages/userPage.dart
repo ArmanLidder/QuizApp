@@ -24,6 +24,7 @@ class Userpage extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: FancyAppBar(
+            context: context,
             sourceImgUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
         body: SingleChildScrollView(
           child: Column(
