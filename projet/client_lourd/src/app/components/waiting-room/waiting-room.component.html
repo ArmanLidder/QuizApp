@@ -15,12 +15,11 @@
         <h2>Joueurs:</h2>
         <ul>
             <li class="player-item" *ngFor="let player of waitingRoomManagementService.players">
-                <span class="player-name">{{ player }}</span>
+                <app-avatar class="player-name" [isChat]="true" [uid]="player"></app-avatar>
                 <div class='icon-container'><i class='fa fa-ban'(click)="banPlayer(player)" *ngIf='isHost' title='bannir'></i></div>
             </li>
         </ul>
     </div>
-
 
     <div class="actions">
         <button *ngIf='isHost' class="action-btn" (click)='startGame()' [disabled]="this.waitingRoomManagementService.players.length===0||!this.waitingRoomManagementService.isRoomLocked">Commencer</button>

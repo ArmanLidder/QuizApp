@@ -3,7 +3,7 @@ import { SocketClientService } from '@app/services/socket-client.service/socket-
 import { ErrorDictionary } from '@common/browser-message/error-message/error-message';
 // import { RoomValidationResult, UsernameValidation } from '@common/interfaces/socket-manager.interface';
 // import { HOST_USERNAME } from '@common/names/host-username';
-import { RoomValidationResult } from '@common/interfaces/socket-manager.interface';
+import {RoomValidationResult, UsernameValidation} from '@common/interfaces/socket-manager.interface';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import {UsersService} from "@app/services/users.service/users.service";
 import {firstValueFrom, Observable} from "rxjs";
@@ -17,14 +17,14 @@ export class RoomValidationService {
     isActive: boolean = true;
     isLocked: boolean = false;
     isRoomIdValid: boolean = false;
-    // isUsernameValid: boolean = false;
     roomId: string | undefined = '';
     username: string | undefined;
+    isUsernameValid: boolean = false
 
     constructor(private socketService: SocketClientService, private usersService: UsersService) {
         this.user$ = this.usersService.currentUserProfile$
         this.user$.subscribe((user: User | null) => {
-            this.username = user?.username;
+            this.username = user?.uid;
         })
     }
 
@@ -33,8 +33,8 @@ export class RoomValidationService {
         this.isLocked = false;
         this.isRoomIdValid = false;
         this.roomId = '';
-        // this.username = '';
-        // this.isUsernameValid = false;
+        this.username = '';
+        this.isUsernameValid = false;
     }
 
 
@@ -46,33 +46,34 @@ export class RoomValidationService {
         return ((await firstValueFrom(this.usersService.currentUserProfile$)) as User);
     }
 
-    // async verifyUsername() {
-    //     const whitespacePattern = /^\s*$/;
-    //     const isFormatValid = this.username === undefined || whitespacePattern.test(this.username);
-    //     const isHost = this.username?.toLowerCase() === HOST_USERNAME.toLowerCase();
-    //     if (isFormatValid) return ErrorDictionary.CHAR_NUM_ERROR;
-    //     else if (isHost) return ErrorDictionary.ORGANISER_NAME_ERROR;
-    //     else return await this.sendUsername();
-    // }
+    async verifyUsername() {
+        // const whitespacePattern = /^\s*$/;
+        // const isFormatValid = this.username === undefined || whitespacePattern.test(this.username);
+        // const isHost = this.username?.toLowerCase() === HOST_USERNAME.toLowerCase();
+        // if (isFormatValid) return ErrorDictionary.CHAR_NUM_ERROR;
+        // else if (isHost) return ErrorDictionary.ORGANISER_NAME_ERROR;
+        return await this.sendUsername();
+    }
 
     async sendJoinRoomRequest() {
+        const user = await this.getCurrentUser();
         return new Promise<string>((resolve) => {
-            const usernameData = { roomId: Number(this.roomId), username: this.username };
+            const usernameData = { roomId: Number(this.roomId), username: user.uid };
             this.socketService.send(SocketEvent.JOIN_GAME, usernameData, (isLocked: boolean) => {
                 resolve(this.handleJoiningRoomValidation(isLocked));
             });
         });
     }
 
-    // private async sendUsername() {
-    //     const user = await this.getCurrentUser();
-    //     return new Promise<string>((resolve) => {
-    //         const usernameData = { roomId: Number(this.roomId), username: user.username };
-    //         this.socketService.send(SocketEvent.VALIDATE_USERNAME, usernameData, (data: UsernameValidation) => {
-    //             resolve(this.handleUsernameValidation(data));
-    //         });
-    //     });
-    // }
+    private async sendUsername() {
+        const user = await this.getCurrentUser();
+        return new Promise<string>((resolve) => {
+            const usernameData = { roomId: Number(this.roomId), username: user.uid };
+            this.socketService.send(SocketEvent.VALIDATE_USERNAME, usernameData, (data: UsernameValidation) => {
+                resolve(this.handleUsernameValidation(data));
+            });
+        });
+    }
 
     private async sendRoomId() {
         return new Promise<string>((resolve) => {
@@ -87,10 +88,10 @@ export class RoomValidationService {
         return isLocked ? this.handleErrors(ErrorDictionary.ROOM_LOCKED) : '';
     }
 
-    // private handleUsernameValidation(data: UsernameValidation) {
-    //     this.isUsernameValid = data.isValid;
-    //     return data.isValid ? '' : data.error;
-    // }
+    private handleUsernameValidation(data: UsernameValidation) {
+        this.isUsernameValid = data.isValid;
+        return data.isValid ? '' : data.error;
+    }
 
     private handleRoomIdValidation(data: RoomValidationResult) {
         let error = '';
@@ -102,7 +103,7 @@ export class RoomValidationService {
 
     private handleErrors(errorType: string) {
         this.isRoomIdValid = false;
-        // this.isUsernameValid = false;
+        this.isUsernameValid = false;
         return errorType;
     }
 
