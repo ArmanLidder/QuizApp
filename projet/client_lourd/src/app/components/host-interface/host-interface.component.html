@@ -7,8 +7,10 @@
         <div class="circle">
             <span>{{hostInterfaceManagerService.timerText}}</span>
             <span>{{gameService.timer}}</span>
-            <mat-icon [matTooltip]="hostInterfaceManagerService.isPaused ? 'Play' : 'Pause'" (click)='hostInterfaceManagerService.sendPauseTimer()'>{{ hostInterfaceManagerService.isPaused ? 'play_circle_outline' : 'pause_circle_outline' }}</mat-icon>
-            <mat-icon [matTooltip]="gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode ? 'Vous ne pouvez  pas encore activer le mode panique' : 'Activez mode panique !'" (click)='hostInterfaceManagerService.startPanicMode()' [ngClass]="{'disable': gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode}"> whatshot </mat-icon>
+            <div class="button-container">
+                <mat-icon [matTooltip]="hostInterfaceManagerService.isPaused ? 'Play' : 'Pause'" (click)='hostInterfaceManagerService.sendPauseTimer()'>{{ hostInterfaceManagerService.isPaused ? 'play_circle_outline' : 'pause_circle_outline' }}</mat-icon>
+                <mat-icon [matTooltip]="gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode ? 'Vous ne pouvez  pas encore activer le mode panique' : 'Activez mode panique !'" (click)='hostInterfaceManagerService.startPanicMode()' [ngClass]="{'disable': gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode}"> whatshot </mat-icon>
+            </div>
         </div>
         <section id="question-field">
             <div>
