@@ -45,7 +45,11 @@ export class QuizFormService {
 
     initQuestion(question?: QuizQuestion): FormGroup {
         const questionForm = this.formBuilder.group({
-            type: [question?.type === QuestionType.QCM ? 'QCM' : 'QRL', Validators.required],
+            type: [
+                question?.type === QuestionType.QCM ? 'QCM' :
+                    question?.type === QuestionType.QRE ? 'QRE' : 'QRL',
+                Validators.required
+            ],
             text: [question?.text ?? '', Validators.required],
             points: [
                 question?.points ?? 0,
@@ -60,12 +64,29 @@ export class QuizFormService {
                 [],
                 question?.type === QuestionType.QCM
                     ? [
-                          Validators.minLength(MIN_NUMBER_OF_CHOICES_PER_QUESTION),
-                          Validators.maxLength(MAX_NUMBER_OF_CHOICES_PER_QUESTION),
-                          this.validationService.validateChoicesForm,
-                      ]
+                        Validators.minLength(MIN_NUMBER_OF_CHOICES_PER_QUESTION),
+                        Validators.maxLength(MAX_NUMBER_OF_CHOICES_PER_QUESTION),
+                        this.validationService.validateChoicesForm,
+                    ]
                     : [],
             ),
+            answer: [
+                question?.answer ?? 0,
+                question?.type === QuestionType.QRE
+                    ? [Validators.required, (control:any) => this.validationService.validateAnswerInRange(control, question?.interval?.min || 0, question?.interval?.max || 0)]
+                    : []
+            ],
+            interval: this.formBuilder.group(
+                {
+                    min: [question?.interval?.min ?? 0, question?.type === QuestionType.QRE ? Validators.required : []],
+                    max: [question?.interval?.max ?? 0, question?.type === QuestionType.QRE ? Validators.required : []],
+                },
+                { validators: question?.type === QuestionType.QRE ? this.validationService.validateInterval : [] }
+            ),
+            margin: [
+                question?.margin ?? 0,
+                question?.type === QuestionType.QRE ? [Validators.required, this.validationService.validateMarginWithinLimit] : []
+            ],
             beingModified: question === undefined,
         });
         this.attachListenerToQuestionType(questionForm);
@@ -73,12 +94,18 @@ export class QuizFormService {
         return questionForm;
     }
 
+
     extractQuestion(questionForm?: AbstractControl) {
         const question: QuizQuestion = {
-            type: questionForm?.get('type')?.value === 'QCM' ? QuestionType.QCM : QuestionType.QRL,
+            type: questionForm?.get('type')?.value === 'QCM' ? QuestionType.QCM :
+                questionForm?.get('type')?.value === 'QRE' ? QuestionType.QRE : QuestionType.QRL,
             text: questionForm?.get('text')?.value,
             points: questionForm?.get('points')?.value,
             choices: questionForm?.get('type')?.value === 'QCM' ? [] : undefined,
+            answer: questionForm?.get('type')?.value === 'QRE' ? questionForm.get('answer')?.value : undefined,
+            interval: questionForm?.get('type')?.value === 'QRE' ? questionForm.get('interval')?.value : undefined,
+            margin: questionForm?.get('type')?.value === 'QRE' ? questionForm.get('margin')?.value : undefined,
+
         };
         questionForm?.get('choices')?.value?.forEach((choiceForm: QuizChoice) => {
             const choice: QuizChoice = {
@@ -124,18 +151,41 @@ export class QuizFormService {
     }
 
     private extractQuestionFromForm(questionForm: FormArray): QuizQuestion {
+        const type = questionForm.get('type')?.value;
+
+        // Initialize the question object
         const question: QuizQuestion = {
-            type: questionForm.get('type')?.value === 'QCM' ? QuestionType.QCM : QuestionType.QRL,
+            type: type === 'QCM' ? QuestionType.QCM : type === 'QRE' ? QuestionType.QRE : QuestionType.QRL,
             text: questionForm.get('text')?.value,
             points: questionForm.get('points')?.value,
-            choices: questionForm.get('type')?.value === 'QCM' ? [] : undefined,
+            choices: type === 'QCM' ? [] : undefined, // Only QCM questions have choices
+            answer: type === 'QRE' ? questionForm.get('answer')?.value : undefined, // Only QRE questions have an answer
+            interval: type === 'QRE' ? questionForm.get('interval')?.value : undefined, // Only QRE questions have an interval
+            margin: type === 'QRE' ? questionForm.get('margin')?.value : undefined, // Only QRE questions have a margin
         };
-        (questionForm.get('choices') as FormArray).controls?.forEach((choiceForm) => {
-            const choice = this.extractChoiceFromForm(choiceForm as FormArray);
-            question.choices?.push(choice);
-        });
+
+        if (type === 'QCM') {
+            (questionForm.get('choices') as FormArray).controls.forEach((choiceForm) => {
+                const choice = this.extractChoiceFromForm(choiceForm as FormArray);
+                question.choices?.push(choice);
+            });
+        }
+
         return question;
     }
+    // private extractQuestionFromForm(questionForm: FormArray): QuizQuestion {
+    //     const question: QuizQuestion = {
+    //         type: questionForm.get('type')?.value === 'QCM' ? QuestionType.QCM : QuestionType.QRL,
+    //         text: questionForm.get('text')?.value,
+    //         points: questionForm.get('points')?.value,
+    //         choices: questionForm.get('type')?.value === 'QCM' ? [] : undefined,
+    //     };
+    //     (questionForm.get('choices') as FormArray).controls?.forEach((choiceForm) => {
+    //         const choice = this.extractChoiceFromForm(choiceForm as FormArray);
+    //         question.choices?.push(choice);
+    //     });
+    //     return question;
+    // }
 
     private extractChoiceFromForm(choiceForm: FormArray): QuizChoice {
         return {
@@ -143,7 +193,7 @@ export class QuizFormService {
             isCorrect: choiceForm.get('isCorrect')?.value === 'true',
         };
     }
-
+    //ugly function but it works
     private attachListenerToQuestionType(questionForm: FormGroup) {
         questionForm.get('type')?.valueChanges.subscribe((type: string | null) => {
             const choicesControl = questionForm.get('choices') as FormArray;
@@ -158,6 +208,39 @@ export class QuizFormService {
                 choicesControl.clear();
             }
             choicesControl?.updateValueAndValidity();
+        });
+
+        questionForm.get('interval.min')?.valueChanges.subscribe((minValue) => {
+            questionForm.get('answer')?.setValidators([
+                Validators.required,
+                (control) => this.validationService.validateAnswerInRange(control, minValue, questionForm.get('interval.max')?.value || 0)
+            ]);
+            questionForm.get('answer')?.updateValueAndValidity();
+        });
+
+        questionForm.get('interval.max')?.valueChanges.subscribe((maxValue) => {
+            questionForm.get('answer')?.setValidators([
+                Validators.required,
+                (control) => this.validationService.validateAnswerInRange(control, questionForm.get('interval.min')?.value || 0, maxValue)
+            ]);
+            questionForm.get('answer')?.updateValueAndValidity();
+        });
+
+        questionForm.get('interval.min')?.valueChanges.subscribe(() => {
+            questionForm.get('interval')?.setValidators(this.validationService.validateInterval);
+            questionForm.get('interval')?.updateValueAndValidity();
+        });
+        questionForm.get('interval.max')?.valueChanges.subscribe(() => {
+            questionForm.get('interval')?.setValidators(this.validationService.validateInterval);
+            questionForm.get('interval')?.updateValueAndValidity();
+        });
+
+        questionForm.get('answer')?.valueChanges.subscribe((answerValue) => {
+            questionForm.get('margin')?.setValidators([
+                Validators.required,
+                (control) => this.validationService.validateMarginWithinLimit(control)
+            ]);
+            questionForm.get('margin')?.updateValueAndValidity();
         });
     }
 }
