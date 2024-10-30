@@ -73,4 +73,17 @@ export class QuestionListComponent {
     getChoicesArray(index: number) {
         return this.choiceService.getChoicesArray(index, this.questionsArray);
     }
+
+    calculateMarginLimit(answer: number | null): string {
+        if (answer === null || answer === undefined) return '';
+        const limit = 0.25 * answer; // 25% of the answer
+        return limit.toFixed(2); // Format with two decimal places
+    }
+
+    calculateAnswerInterval(answer: number | null, margin: number | null): string {
+        if (answer === null || answer === undefined || margin === null || margin === undefined) return '';
+        const lowerBound = answer - margin;
+        const upperBound = answer + margin;
+        return `${lowerBound.toFixed(2)}, ${upperBound.toFixed(2)}`; // Format with two decimal places
+    }
 }
