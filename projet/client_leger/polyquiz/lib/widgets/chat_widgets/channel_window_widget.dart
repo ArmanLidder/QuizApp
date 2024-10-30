@@ -199,7 +199,7 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
   Widget buildChannelTile(String name, String id) {
     return ListTile(
         title: TextButton(
-          onPressed: () {channelService.joinChannel(id);},
+          onPressed: () {channelService.joinChannel(id); widget.returnCallback();},
           child: Container(child: Text(name)),
           style: TextButton.styleFrom(
             alignment: Alignment.centerLeft,
@@ -289,12 +289,12 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     return errors;
   }
 
-  void sameChannelNamePopup(BuildContext context) {
+  void sameChannelNamePopup(BuildContext context, String msg) {
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: Text("Canal existant!"),
-          content: Text("Le nom ${_currentName} est déjà utilisé. Veuillez choisir un autre nom."),
+          title: Text("Erreur"),
+          content: Text(msg),
           actions: <Widget>[
             TextButton(onPressed: () { return Navigator.pop(context); }, child: Text("OK")),
           ],
@@ -302,17 +302,43 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     );
   }
 
+  // Future<void> createChannel(BuildContext context) async {
+  //   bool isCreated = await channelService.createChannel(_currentName, [loggedInService.user?.uid ?? ""], false);
+  //   if (isCreated) {
+  //     inputController.clear();
+  //     widget.returnCallback();
+  //     return;
+  //   }
+  //   sameChannelNamePopup(context, "Un canal ne peut pas avoir le même nom");
+  //   inputController.clear();
+  // }
+
   Future<void> createChannel(BuildContext context) async {
-    print("The user id is: ${this.loggedInService.user?.uid ?? 'could not find'}");
-    bool isCreated = await channelService.createChannel(_currentName, [loggedInService.user?.uid ?? ""], false);
-    if (isCreated) {
-      print("worked");
-      inputController.clear();
-      widget.returnCallback();
+    final canalName = _currentName;
+    final userId = loggedInService.user?.uid ?? "";
+
+    if (canalName.toLowerCase().contains("room")) {
+      // Show feedback if the name contains "room"
+      sameChannelNamePopup(context, "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom.");
       return;
     }
-    print('didnt work');
-    sameChannelNamePopup(context);
-    inputController.clear();
+
+    if (canalName.isNotEmpty) {
+      try {
+        final isCreated = await channelService.createChannel(canalName, [userId], false);
+
+        if (isCreated) {
+          // Channel created successfully
+          inputController.clear();
+          widget.returnCallback();
+        } else {
+          // Handle duplicate name case
+          sameChannelNamePopup(context, "Le nom $canalName est déjà utilisé. Veuillez choisir un autre nom.");
+        }
+      } catch (error) {
+        // Handle any other errors
+        sameChannelNamePopup(context, "Erreur lors de la création du canal: ${error.toString()}");
+      }
+    }
   }
 }
