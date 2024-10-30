@@ -24,6 +24,7 @@ export class Game {
     correctChoices: string[] = [];
     duration: number;
     paused = false;
+    startTimeCalcul: number = 0
 
     gameHistoryInfo: GameInfo = { gameName: '', startTime: '', playersCount: 0, bestScore: 0 };
 
@@ -33,6 +34,7 @@ export class Game {
         private readonly historyService: HistoryService,
     ) {
         this.configurePlayers(usernames);
+        this.startTimeCalcul = new Date().getTime();
         this.gameHistoryInfo.playersCount = usernames.length;
         this.gameHistoryInfo.startTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timeZone: 'America/Montreal' });
     }
@@ -115,12 +117,14 @@ export class Game {
                 points: fastestPlayers.has(username) ? oldScore.points + this.addBonusPoint(points) : oldScore.points + points,
                 bonusCount: fastestPlayers.has(username) ? oldScore.bonusCount + 1 : oldScore.bonusCount,
                 isBonus: fastestPlayers.has(username),
+                goodAnswerCounter: oldScore.goodAnswerCounter + 1,
             };
         } else {
             newScore = {
                 points: oldScore.points + points,
                 bonusCount: oldScore.bonusCount,
                 isBonus: false,
+                goodAnswerCounter: oldScore.goodAnswerCounter + 1,
             };
         }
         this.players.set(username, newScore);
@@ -163,7 +167,7 @@ export class Game {
 
     private configurePlayers(usernames: string[]) {
         usernames.forEach((username) => {
-            const score = { points: 0, bonusCount: 0, isBonus: false };
+            const score = { points: 0, bonusCount: 0, isBonus: false, goodAnswerCounter: 0 };
             this.players.set(username, score);
         });
     }
