@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { POPUP_TIMEOUT } from '@common/constants/quiz-creation.component.const';
 import { ChoiceService } from '@app/services/choice-service/choice.service';
@@ -23,6 +23,7 @@ export class QuestionListComponent {
         private choiceService: ChoiceService,
     ) {}
     showPopupIfConditionMet(condition: boolean) {
+        console.log("setting")
         if (condition) {
             this.isPopUpVisible = true;
             setTimeout(() => {
@@ -33,8 +34,10 @@ export class QuestionListComponent {
     }
 
     addQuestion(index: number) {
-        this.questionErrors = this.questionService.addQuestion(index, this.questionsArray);
-        this.showPopupIfConditionMet(this.questionErrors.length !== 0);
+        this.questionErrors = this.questionService.addQuestion(index, this.questionsArray)
+        if (index != 0 ) {
+            this.showPopupIfConditionMet(this.questionErrors.length !== 0);
+        }
     }
 
     removeQuestion(index: number) {
@@ -80,10 +83,18 @@ export class QuestionListComponent {
         return limit.toFixed(2); // Format with two decimal places
     }
 
-    calculateAnswerInterval(answer: number | null, margin: number | null): string {
-        if (answer === null || answer === undefined || margin === null || margin === undefined) return '';
-        const lowerBound = answer - margin;
-        const upperBound = answer + margin;
-        return `${lowerBound.toFixed(2)}, ${upperBound.toFixed(2)}`; // Format with two decimal places
+    calculateAnswerInterval(answer: number | null, margin: number | null, min: number | null, max: number | null): string {
+        if (
+            answer === null || answer === undefined ||
+            margin === null || margin === undefined ||
+            min === null || min === undefined ||
+            max === null || max === undefined
+        ) return '';
+
+        const lowerBound = Math.max(answer - margin, min);
+        const upperBound = Math.min(answer + margin, max);
+
+        return `${lowerBound.toFixed(2)}, ${upperBound.toFixed(2)}`;
     }
+
 }

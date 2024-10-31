@@ -52,7 +52,7 @@ export class QuizFormService {
             ],
             text: [question?.text ?? '', Validators.required],
             points: [
-                question?.points ?? 0,
+                question?.points ?? null,
                 [
                     Validators.required,
                     Validators.min(MIN_POINTS_PER_QUESTION),
@@ -71,21 +71,23 @@ export class QuizFormService {
                     : [],
             ),
             answer: [
-                question?.answer ?? 0,
+                question?.answer ?? null,
                 question?.type === QuestionType.QRE
-                    ? [Validators.required, (control:any) => this.validationService.validateAnswerInRange(control, question?.interval?.min || 0, question?.interval?.max || 0)]
+                    ? [Validators.required, (control: any) => this.validationService.validateAnswerInRange(control, question?.interval?.min || 0, question?.interval?.max || 0)]
                     : []
             ],
+
             interval: this.formBuilder.group(
                 {
-                    min: [question?.interval?.min ?? 0, question?.type === QuestionType.QRE ? Validators.required : []],
-                    max: [question?.interval?.max ?? 0, question?.type === QuestionType.QRE ? Validators.required : []],
+                    min: [question?.interval?.min ?? null, question?.type === QuestionType.QRE ? Validators.required : []],
+                    max: [question?.interval?.max ?? null, question?.type === QuestionType.QRE ? Validators.required : []],
                 },
                 { validators: question?.type === QuestionType.QRE ? this.validationService.validateInterval : [] }
             ),
+
             margin: [
-                question?.margin ?? 0,
-                question?.type === QuestionType.QRE ? [Validators.required, this.validationService.validateMarginWithinLimit] : []
+                question?.margin ?? null,
+                question?.type === QuestionType.QRE ? [Validators.required, this.validationService.validateMarginWithinLimit, Validators.min(0)] : []
             ],
             beingModified: question === undefined,
         });
@@ -173,19 +175,6 @@ export class QuizFormService {
 
         return question;
     }
-    // private extractQuestionFromForm(questionForm: FormArray): QuizQuestion {
-    //     const question: QuizQuestion = {
-    //         type: questionForm.get('type')?.value === 'QCM' ? QuestionType.QCM : QuestionType.QRL,
-    //         text: questionForm.get('text')?.value,
-    //         points: questionForm.get('points')?.value,
-    //         choices: questionForm.get('type')?.value === 'QCM' ? [] : undefined,
-    //     };
-    //     (questionForm.get('choices') as FormArray).controls?.forEach((choiceForm) => {
-    //         const choice = this.extractChoiceFromForm(choiceForm as FormArray);
-    //         question.choices?.push(choice);
-    //     });
-    //     return question;
-    // }
 
     private extractChoiceFromForm(choiceForm: FormArray): QuizChoice {
         return {

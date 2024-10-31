@@ -1,195 +1,247 @@
-<div [formGroup]='parentGroup'>
-    <div formArrayName='questions'>
-        <p *ngIf='questionsArray?.length !== 0'>Questions : </p>
+<div [formGroup]="parentGroup" class="space-y-6">
+    <div formArrayName="questions" class="bg-white rounded-lg pt-6 space-y-4">
+        <p *ngIf="questionsArray?.length !== 0" class="text-lg font-medium">Questions :</p>
+
         <ng-container *ngFor="let question of questionsArray?.controls; let i = index">
-            <div class='quiz-question' [formGroupName]="i">
-                <div class="AddDelete">
-                    <button class="buttonOptionAddDelete" type="button" (click)="addQuestion(i)">
-                        <mat-icon class="add-icon" matTooltip="Ajouter une question">add</mat-icon>
-                    </button>
-                    <button class="buttonOptionAddDelete" type="button" (click)="removeQuestion(i)">
-                        <mat-icon class="delete-icon" matTooltip="Supprimer la question">delete</mat-icon>
+            <div [formGroupName]="i" class="border rounded-lg p-4 mb-4 shadow-sm">
+
+                <div class="flex gap-2 mb-2 items-center">
+                    <div class="flex gap-2">
+                        <button type="button" (click)="addQuestion(i)" class="p-2 rounded hover:bg-blue-100">
+                            <mat-icon matTooltipClass="custom-tooltip" matTooltip="Ajouter une question" class="!text-blue-600">add</mat-icon>
+                        </button>
+
+                        <button class="p-2 rounded hover:bg-gray-100"
+                                *ngIf="!question.get('beingModified')?.value" type="button"
+                                (click)="modifyQuestion(i)">
+                            <mat-icon class="!text-black" matTooltipClass="custom-tooltip" matTooltip="Modifier la question">edit</mat-icon>
+                        </button>
+                    </div>
+
+                    <div class="flex gap-2 justify-center flex-1">
+                        <button *ngIf="i !== 0" type="button" (click)="moveQuestionUp(i)" class="p-2 rounded hover:bg-gray-100">
+                            <mat-icon matTooltipClass="custom-tooltip" matTooltip="Déplacer la question vers le haut" class="!text-gray-600">keyboard_arrow_up</mat-icon>
+                        </button>
+
+                        <button *ngIf="i + 1 !== questionsArray?.length" type="button" (click)="moveQuestionDown(i)" class="p-2 rounded hover:bg-gray-100">
+                            <mat-icon matTooltipClass="custom-tooltip" matTooltip="Déplacer la question vers le bas" class="!text-gray-600">keyboard_arrow_down</mat-icon>
+                        </button>
+                    </div>
+
+                    <button type="button" (click)="removeQuestion(i)" class="p-2 rounded hover:bg-red-100">
+                        <mat-icon matTooltipClass="custom-tooltip" matTooltip="Supprimer la question" class="!text-red-600">delete</mat-icon>
                     </button>
                 </div>
 
-                <button *ngIf='i !== 0' type="button" (click)="moveQuestionUp(i)">
-                    <mat-icon matTooltip="Deplacer la question vers le haut">keyboard_arrow_up</mat-icon>
-                </button>
-                <br><br>
+
+                <div class="my-4"></div>
+
+
                 <div *ngIf="question.get('beingModified')?.value">
-                    <div class="question" [attr.id]="'question' + i">
-                        <div class="popup" [ngClass]="{ 'show': isPopUpVisible }">
-                            <span class="popuptext" [innerHTML]="questionErrors.join('<br>')"></span>
-                        </div>
-                        <p>Question {{ i + 1 }}:</p>
-                        <label for="type{{i}}">Type de la question:</label>
-                        <select formControlName="type" name="type{{i}}">
+
+                    <div class="popup" [ngClass]="{ 'show': isPopUpVisible }">
+                        <span class="popuptext" [innerHTML]="questionErrors.join('<br>')"></span>
+                    </div>
+                    <div [attr.id]="'question' + i" class="space-y-4">
+                        <label for="type{{ i }}" class="block text-sm font-medium">Type de la question :</label>
+                        <select formControlName="type" name="type{{ i }}" class="w-full p-2 border rounded">
                             <option value="QCM">QCM</option>
                             <option value="QRL">QRL</option>
                             <option value="QRE">QRE</option>
-                        </select><br>
-                        <div *ngIf="question.get('type')?.hasError('required') && question.get('type')?.touched"
-                             class="error-message">
+                        </select>
+                        <p *ngIf="question.get('type')?.hasError('required') && question.get('type')?.touched"
+                           class="text-red-600 text-sm">
                             Le type de question est requis
-                        </div>
-                        <br>
-                        <label for="text{{i}}">Texte de la question:</label>
-                        <input type="text" [attr.id]="'text' + i" name="text{{i}}" formControlName="text"><br>
-                        <div *ngIf="question.get('text')?.hasError('required') && question.get('text')?.touched"
-                             class="error-message">
+                        </p>
+
+
+                        <label for="text{{ i }}" class="block text-sm font-medium">Texte de la question :</label>
+                        <input type="text" [attr.id]="'text' + i" name="text{{ i }}" formControlName="text"
+                               class="w-full p-2 border rounded" placeholder="Saisissez le texte de la question">
+                        <p *ngIf="question.get('text')?.hasError('required') && question.get('text')?.touched"
+                           class="text-red-600 text-sm">
                             Le texte est requis
-                        </div>
-                        <br>
-                        <label for="points{{i}}">Le nombre de points de la question:</label>
-                        <input type="number" [attr.id]="'points' + i" name="points{{i}}" formControlName="points"><br>
-                        <div *ngIf="question.get('points')?.getError('required') && question.get('points')?.touched"
-                             class="error-message">
+                        </p>
+
+
+                        <label for="points{{ i }}" class="block text-sm font-medium">Le nombre de points de la question
+                            :</label>
+                        <input type="number" [attr.id]="'points' + i" name="points{{ i }}" formControlName="points"
+                               class="w-full p-2 border rounded" placeholder="Entrez le nombre de points (Multiple de 10 - Entre 10 et 100)">
+                        <p *ngIf="question.get('points')?.hasError('required') && question.get('points')?.touched"
+                           class="text-red-600 text-sm">
                             Le nombre de points est requis
-                        </div>
-                        <br>
-                        <div *ngIf="question.get('points')?.invalid && question.get('points')?.touched"
-                             class="error-message">
-                            Le nombre de points doit être entre 10 et 100 et doit être un multiple de 10
-                        </div>
-                        <p *ngIf="question.get('type')?.value === 'QCM'">Choix:</p>
-                        <button *ngIf="question.get('type')?.value === 'QCM'"
-                                type="button" [disabled]="getChoicesArray(i).controls.length !== 0"
-                                [ngClass]="{'hidden-button': getChoicesArray(i).controls.length !== 0}"
-                                (click)="addChoice(i, getChoicesArray(i).controls.length - 1)">
-                            Ajouter choix
-                        </button>
-                        <br>
+                        </p>
+                        <p *ngIf="question.get('points')?.invalid && question.get('points')?.touched"
+                           class="text-red-600 text-sm">
+                            Le nombre de points doit être entre 10 et 100 et être un multiple de 10
+                        </p>
 
-                        <div *ngIf="question.get('type')?.value === 'QRE'">
-                            <label for="answer{{i}}">Bonne réponse:</label>
-                            <input type="number" id="answer{{i}}" formControlName="answer"><br>
-                            <div class="error-message" *ngIf="question.get('answer')?.hasError('answerOutOfRange')">
+                        <div *ngIf="question.get('type')?.value === 'QCM'" class="space-y-2">
+                            <p>Choix :</p>
+                            <button type="button" [disabled]="getChoicesArray(i).controls.length !== 0"
+                                    [ngClass]="{ 'hidden': getChoicesArray(i).controls.length !== 0 }"
+                                    (click)="addChoice(i, getChoicesArray(i).controls.length - 1)"
+                                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                Ajouter choix
+                            </button>
+                        </div>
+
+                        <div *ngIf="question.get('type')?.value === 'QRE'" class="space-y-4">
+
+                            <!-- Correct Answer -->
+                            <label for="answer{{ i }}" class="block text-sm font-medium">Bonne réponse :</label>
+                            <input type="number" id="answer{{ i }}" formControlName="answer"
+                                   class="w-full p-2 border rounded" placeholder="Entrez la valeur de la bonne réponse">
+                            <p *ngIf="question.get('answer')?.hasError('answerOutOfRange')"
+                               class="text-red-600 text-sm">
                                 La réponse doit être entre les bornes spécifiées.
-                            </div>
+                            </p>
 
-                            <label>Intervalle:</label><br>
-                            <div [formGroupName]="'interval'">
-                                <label for="minInterval{{i}}">Min:</label>
-                                <input type="number" id="minInterval{{i}}" formControlName="min"><br>
-                                <label for="maxInterval{{i}}">Max:</label>
-                                <input type="number" id="maxInterval{{i}}" formControlName="max"><br>
-                                <div *ngIf="question.get('interval')?.hasError('maxLessThanMin')" class="error-message">
-                                    La valeur maximale doit être supérieure ou égale à la valeur minimale.
+                            <label class="block text-sm font-medium">Intervalle :</label>
+                            <div [formGroupName]="'interval'" class="flex gap-4">
+                                <input type="number" id="minInterval{{ i }}" formControlName="min" placeholder="Minimum"
+                                       class="w-1/2 p-2 border rounded">
+                                <input type="number" id="maxInterval{{ i }}" formControlName="max" placeholder="Maximum"
+                                       class="w-1/2 p-2 border rounded">
+                            </div>
+                            <p *ngIf="question.get('interval')?.hasError('maxLessThanMin')"
+                               class="text-red-600 text-sm">
+                                La valeur maximale doit être supérieure ou égale à la valeur minimale.
+                            </p>
+
+                            <label for="margin{{ i }}" class="block text-sm font-medium">Marge de tolérance :</label>
+                            <input type="number" id="margin{{ i }}" formControlName="margin"
+                                   class="w-full p-2 border rounded" placeholder="Entrez la marge de tolérance">
+                            <p *ngIf="question.get('margin')?.hasError('marginTooLarge')" class="text-red-600 text-sm">
+                                La marge de tolérance doit être au maximum 25 % de la réponse
+                                ({{ calculateMarginLimit(question.get('answer')?.value) }}).
+                            </p>
+                            <p *ngIf="question.get('margin')?.hasError('min')" class="1-red-600 text-sm">
+                                La marge de tolérance doit être 0 ou plus.
+                            </p>
+                            <p *ngIf="!question.get('margin')?.errors" class="text-green-500 text-sm">
+                                L'intervalle de bonne réponse est :
+                                [
+                                {{ calculateAnswerInterval(
+                                question.get('answer')?.value,
+                                question.get('margin')?.value,
+                                question.get('interval.min')?.value,
+                                question.get('interval.max')?.value
+                            ) }}
+                                ]
+                            </p>
+
+                        </div>
+                    </div>
+
+
+                    <div formArrayName="choices" class="space-y-4 mt-4">
+                        <div *ngFor="let choix of getChoicesArray(i).controls; let j = index" [formGroupName]="j"
+                             class="border p-4 rounded mb-2">
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="choix{{ i }}{{ j }}" class="font-medium">Choix {{ j + 1 }} :</label>
+                                <div class="flex gap-2">
+                                    <button *ngIf="j !== getChoicesArray(i).controls.length - 1" type="button"
+                                            (click)="moveChoice(itemMovingDirection.DOWN, i, j)"
+                                            class="p-2 hover:bg-gray-100 rounded">
+                                        <mat-icon matTooltipClass="custom-tooltip" matTooltip="Déplacer le choix vers le bas">keyboard_arrow_down
+                                        </mat-icon>
+                                    </button>
+                                    <button *ngIf="j !== 0" type="button"
+                                            (click)="moveChoice(itemMovingDirection.UP, i, j)"
+                                            class="p-2 hover:bg-gray-100 rounded">
+                                        <mat-icon matTooltipClass="custom-tooltip" matTooltip="Déplacer le choix vers le haut">keyboard_arrow_up
+                                        </mat-icon>
+                                    </button>
+                                    <button type="button" (click)="addChoice(i, j)"
+                                            class="p-2 hover:bg-blue-100 rounded">
+                                        <mat-icon matTooltipClass="custom-tooltip" matTooltip="Ajouter un choix" class="text-blue-600">add</mat-icon>
+                                    </button>
+                                    <button type="button" (click)="removeChoice(i, j)"
+                                            class="p-2 hover:bg-red-100 rounded">
+                                        <mat-icon matTooltipClass="custom-tooltip" matTooltip="Supprimer un choix" class="text-red-600">remove</mat-icon>
+                                    </button>
                                 </div>
                             </div>
 
-                            <label for="margin{{i}}">Marge de tolérance:</label>
-                            <input type="number" id="margin{{i}}" formControlName="margin"><br>
-                            <div *ngIf="question.get('margin')?.hasError('marginTooLarge')" class="error-message">
-                                La marge de tolérance doit être au maximum 25 % de la réponse ({{ calculateMarginLimit(question.get('answer')?.value) }}).
+                            <input type="text" [attr.id]="'choix' + i + j" name="textChoix{{ i }}{{ j }}"
+                                   formControlName="text" required class="w-full p-2 border rounded" placeholder="Texte du choix">
+                            <div *ngIf="choix.get('text')?.hasError('required') && choix.get('text')?.touched"
+                                 class="text-red-600 text-sm">
+                                Le texte est requis
                             </div>
-                            <div *ngIf="!question.get('margin')?.errors" class="success-message">
-                                L'intervalle de bonne réponse est:
-                                [{{ calculateAnswerInterval(question.get('answer')?.value, question.get('margin')?.value) }}]
+                            <div class="flex gap-4 mt-2">
+                                <label class="flex items-center">
+                                    <input type="radio" [attr.id]="'trueRadio' + i + j" formControlName="isCorrect"
+                                           value="true" class="mr-1 form-radio"> Vrai
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" [attr.id]="'falseRadio' + i + j" formControlName="isCorrect"
+                                           value="false" class="mr-1 form-radio"> Faux
+                                </label>
                             </div>
                         </div>
                     </div>
 
-                    <div formArrayName='choices'>
-                        <div *ngFor="let choix of getChoicesArray(i).controls; let j = index">
-                            <div [formGroupName]="j">
-                                <div class="addDeleteChoices">
-                                    <label for="choix{{i}}{{j}}">le choix{{j + 1}}:</label>
-                                    <div class="arrow-down">
-                                        <button class="buttonOptionChoices"
-                                                *ngIf='j !== getChoicesArray(i).controls.length - 1' type="button"
-                                                (click)='moveChoice(itemMovingDirection.DOWN, i, j)'>
-                                            <mat-icon matTooltip="Deplacer le choix vers le bas">keyboard_arrow_down
-                                            </mat-icon>
-                                        </button>
-                                        <button class="buttonOptionChoices" *ngIf='j !== 0' type="button"
-                                                (click)='moveChoice(itemMovingDirection.UP, i, j)'>
-                                            <mat-icon matTooltip="Deplacer le choix vers le haut">keyboard_arrow_up
-                                            </mat-icon>
-                                        </button>
-                                    </div>
-                                    <div class="buttonChoice-container">
-                                        <button class="buttonOptionChoices" type="button" (click)="addChoice(i, j)"
-                                                matTooltip="Ajouter un choix">
-                                            <mat-icon class="add-icon">add</mat-icon>
-                                        </button>
-                                        <button class="buttonOptionChoices" type="button" (click)="removeChoice(i, j)">
-                                            <mat-icon class="delete-icon" matTooltip="Supprimer un choix">remove
-                                            </mat-icon>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class='choice-input-text'>
-                                    <input type="text" [attr.id]="'choix' + i + j" name="textChoix{{i}}{{j}}"
-                                           formControlName="text" required><br>
-                                </div>
-                                <div *ngIf="choix.get('text')?.hasError('required') && choix.get('text')?.touched"
-                                     class="error-message">
-                                    Le texte est requis
-                                </div>
-                                <input type="radio" [attr.id]="'trueRadio' + i + j" formControlName="isCorrect"
-                                       value="true">
-                                <label for="'trueRadio' + i + j">Vrai</label>
-                                <input type="radio" [attr.id]="'falseRadio' + i + j" formControlName="isCorrect"
-                                       value="false">
-                                <label for="'falseRadio' + i + j">Faux</label>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <div *ngIf="!question.get('beingModified')?.value">
-                    <p>Question {{i + 1}}:</p>
-                    <p>Type de la question: {{question.get('type')?.value}}</p>
-                    <p class="truncate">Contenu de la question : {{question.get('text')?.value}}</p>
-                    <p>Le nombre de points de la question: {{question.get('points')?.value}}</p>
+                <div *ngIf="!question.get('beingModified')?.value" class="space-y-4">
+                    <p class="font-medium text-lg">Question {{i + 1}}:</p>
+                    <p class="text-sm text-gray-600">Type de la question: {{question.get('type')?.value}}</p>
+                    <p class="truncate text-sm text-gray-600">Contenu de la question
+                        : {{question.get('text')?.value}}</p>
+                    <p class="text-sm text-gray-600">Le nombre de points de la
+                        question: {{question.get('points')?.value}}</p>
 
-                    <!-- QCM-specific display -->
-                    <p *ngIf="question.get('type')?.value === 'QCM'">Choix:</p>
-                    <div *ngIf="question.get('type')?.value === 'QCM'" class="choicesList">
-                        <div class="choice" *ngFor="let choice of getChoicesArray(i).controls; index as j">
-                            <p>le choix {{j + 1}}:</p>
-                            <ul>
-                                <li>{{choice.get('text')?.value}}</li>
-                                <li>{{choice.get('isCorrect')?.value === 'true' ? 'Vrai' : 'Faux'}}</li>
-                            </ul>
+                    <div *ngIf="question.get('type')?.value === 'QCM'" class="space-y-4">
+                        <p class="text-sm font-semibold">Choix :</p>
+                        <div class="space-y-2">
+                            <div *ngFor="let choice of getChoicesArray(i).controls; index as j"
+                                 [ngClass]="choice.get('isCorrect')?.value === 'true' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'"
+                                 class="border-l-4 p-3 rounded-lg">
+
+                                <p class="text-sm font-medium">
+                                    Choix {{ j + 1 }}
+                                    <span [ngClass]="choice.get('isCorrect')?.value === 'true' ? 'text-green-600' : 'text-red-600'">
+                    ({{ choice.get('isCorrect')?.value === 'true' ? 'Vrai' : 'Faux' }})
+                </span>
+                                </p>
+
+                                <p class="text-gray-700 ml-4">{{ choice.get('text')?.value }}</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- QRE-specific display -->
-                    <div *ngIf="question.get('type')?.value === 'QRE'">
-                        <p>Bonne réponse : {{question.get('answer')?.value}}</p>
-                        <p>Intervalle:</p>
-                        <ul>
+
+
+                    <div *ngIf="question.get('type')?.value === 'QRE'" class="space-y-2">
+                        <p class="text-sm text-gray-600">Bonne réponse : {{question.get('answer')?.value}}</p>
+                        <p class="text-sm text-gray-600">Intervalle:</p>
+                        <ul class="list-disc text-sm pl-4 text-gray-600">
                             <li>Min : {{question.get('interval.min')?.value}}</li>
                             <li>Max : {{question.get('interval.max')?.value}}</li>
                         </ul>
-                        <p>Marge de tolérance : {{question.get('margin')?.value}}</p>
+                        <p class="text-sm text-gray-600">Marge de tolérance : {{question.get('margin')?.value}}</p>
                     </div>
                 </div>
 
-
-
-                <div class='button-container'>
-                    <button class="buttonConfirm" *ngIf="question.get('beingModified')?.value" type="button"
-                            (click)="saveQuestion(i)" matTooltip="Sauvegarder la question">Confirmer
+                <div class="flex items-center space-x-4 mt-4">
+                    <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                            *ngIf="question.get('beingModified')?.value" type="button"
+                            (click)="saveQuestion(i)"  matTooltipClass="custom-tooltip" matTooltip="Sauvegarder la question">Confirmer
                     </button>
-                    <br><br>
-                    <button class="buttonOption" *ngIf="!question.get('beingModified')?.value" type="button"
-                            (click)="modifyQuestion(i)">
-                        <mat-icon class="edit-icon" matTooltip="Changer la question">edit</mat-icon>
-                    </button>
-                    <br><br>
                 </div>
-                <button *ngIf='i + 1 !== questionsArray?.length' type="button" (click)="moveQuestionDown(i)">
-                    <mat-icon matTooltip="Deplacer la question vers le bas">keyboard_arrow_down</mat-icon>
-                </button>
-                <br><br>
+
             </div>
         </ng-container>
-        <button *ngIf='(questionsArray ? questionsArray.length - 1 : 0) < 0' class="addQuestion" type="button"
-                (click)="addQuestion(questionsArray ? questionsArray.length - 1 : 0)">Ajouter une question
-        </button>
+
+
+        <div class="flex justify-center mt-4">
+            <button *ngIf='(questionsArray ? questionsArray.length - 1 : 0) < 0' class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    (click)="addQuestion(questionsArray ? questionsArray.length - 1 : 0)">
+                Ajouter une question
+            </button>
+        </div>
     </div>
-</div><br><br>
+</div>

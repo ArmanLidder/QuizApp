@@ -102,6 +102,11 @@ export class QuizValidationService {
             errors.push(`Question ${index + 1} : ${NON_DIVISIBLE_BY_TEN}`);
         }
 
+        if (question.type !== QuestionType.QCM && question.type !== QuestionType.QRE && question.type !== QuestionType.QRL) {
+            errors.push(`Question ${index + 1} : ce type de question n'est pas supporté`);
+            return errors;
+        }
+
         if (question.type === QuestionType.QCM) {
             const choicesErrors = this.validateQuestionChoices(index, question.choices);
             errors.push(...choicesErrors);
@@ -127,7 +132,10 @@ export class QuizValidationService {
                 errors.push(`Question ${index + 1} : l'intervalle min doit être inférieur ou égal à max.`);
                 return errors;
             }
-
+            if (question.margin < 0) {
+                errors.push(`Question ${index + 1} : la marge de tolérance doit être 0 ou plus.`);
+                return errors;
+            }
             if (question.answer < question.interval.min || question.answer > question.interval.max) {
                 errors.push(`Question ${index + 1} : la réponse doit être entre ${question.interval.min} et ${question.interval.max}.`);
                 return errors;
@@ -212,7 +220,5 @@ export class QuizValidationService {
         }
         return null;
     }
-
-
 
 }
