@@ -71,6 +71,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatSelectModule} from "@angular/material/select";
 import { ActiveGameListComponent } from './components/active-game-list/active-game-list.component';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
+import { QreResponseAreaComponent } from './components/qre-response-area/qre-response-area.component';
 
 /**
  * Main module that is used in main.ts.
@@ -125,6 +126,7 @@ import { ErrorDialogComponent } from './components/error-dialog/error-dialog.com
         GameConfigDialogComponent,
         ActiveGameListComponent,
         ErrorDialogComponent,
+        QreResponseAreaComponent,
     ],
     imports: [
         AppMaterialModule,
