@@ -107,6 +107,38 @@ export class QuizValidationService {
             errors.push(...choicesErrors);
         }
 
+        if (question.type === QuestionType.QRE) {
+            if (question.answer === undefined) {
+                errors.push(`Question ${index + 1} : la réponse est requise pour les questions de type QRE.`);
+                return errors;
+            }
+
+            if (!question.interval || question.interval.min === undefined || question.interval.max === undefined) {
+                errors.push(`Question ${index + 1} : l'intervalle min et max sont requis pour les questions de type QRE.`);
+                return errors;
+            }
+
+            if (question.margin === undefined) {
+                errors.push(`Question ${index + 1} : la marge est requise pour les questions de type QRE.`);
+                return errors;
+            }
+
+            if (question.interval.min > question.interval.max) {
+                errors.push(`Question ${index + 1} : l'intervalle min doit être inférieur ou égal à max.`);
+                return errors;
+            }
+
+            if (question.answer < question.interval.min || question.answer > question.interval.max) {
+                errors.push(`Question ${index + 1} : la réponse doit être entre ${question.interval.min} et ${question.interval.max}.`);
+                return errors;
+            }
+
+            const maxMargin = 0.25 * question.answer;
+            if (question.margin > maxMargin) {
+                errors.push(`Question ${index + 1} : la marge doit être au maximum ${maxMargin} de la réponse. (25% de ${question.answer})`);
+            }
+        }
+
         return errors;
     }
 
@@ -176,7 +208,6 @@ export class QuizValidationService {
         const margin = control.value;
 
         if (answer !== undefined && margin !== undefined && margin > 0.25 * answer) {
-            console.log("im in error");
             return { marginTooLarge: true };
         }
         return null;

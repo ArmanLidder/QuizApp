@@ -142,19 +142,33 @@
                 <div *ngIf="!question.get('beingModified')?.value">
                     <p>Question {{i + 1}}:</p>
                     <p>Type de la question: {{question.get('type')?.value}}</p>
-                    <p class='truncate'>Contenu de la question : {{question.get('text')?.value}}</p>
-                    <p>Le nombre de points de la question: {{question.get('points')?.value}} </p>
+                    <p class="truncate">Contenu de la question : {{question.get('text')?.value}}</p>
+                    <p>Le nombre de points de la question: {{question.get('points')?.value}}</p>
+
+                    <!-- QCM-specific display -->
                     <p *ngIf="question.get('type')?.value === 'QCM'">Choix:</p>
-                    <div class="choicesList">
+                    <div *ngIf="question.get('type')?.value === 'QCM'" class="choicesList">
                         <div class="choice" *ngFor="let choice of getChoicesArray(i).controls; index as j">
-                            <p>le choix {{j + 1}}: </p>
+                            <p>le choix {{j + 1}}:</p>
                             <ul>
                                 <li>{{choice.get('text')?.value}}</li>
                                 <li>{{choice.get('isCorrect')?.value === 'true' ? 'Vrai' : 'Faux'}}</li>
                             </ul>
                         </div>
                     </div>
+
+                    <!-- QRE-specific display -->
+                    <div *ngIf="question.get('type')?.value === 'QRE'">
+                        <p>Bonne réponse : {{question.get('answer')?.value}}</p>
+                        <p>Intervalle:</p>
+                        <ul>
+                            <li>Min : {{question.get('interval.min')?.value}}</li>
+                            <li>Max : {{question.get('interval.max')?.value}}</li>
+                        </ul>
+                        <p>Marge de tolérance : {{question.get('margin')?.value}}</p>
+                    </div>
                 </div>
+
 
 
                 <div class='button-container'>

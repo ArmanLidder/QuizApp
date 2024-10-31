@@ -4,11 +4,11 @@
     (sendNewQuizName)="receiveQuizName($event)"
     (cancelOperation)="killErrorFeedback($event)">
 </app-unique-quiz-error-feedback>
-<app-validation-quiz-error-feedback
-    *ngIf='isErrors'
-    [errors]='this.errors'
-    (cancelOperation)="killErrorFeedback($event)">
-</app-validation-quiz-error-feedback>
+<!--<app-validation-quiz-error-feedback-->
+<!--    *ngIf='isErrors'-->
+<!--    [errors]='this.errors'-->
+<!--    (cancelOperation)="killErrorFeedback($event)">-->
+<!--</app-validation-quiz-error-feedback>-->
 <div class="quizzes-container" *ngIf='!isErrors && isQuizUnique'>
     <table>
         <thead>
