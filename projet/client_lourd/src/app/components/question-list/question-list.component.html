@@ -120,7 +120,7 @@
                             <p *ngIf="question.get('margin')?.hasError('min')" class="1-red-600 text-sm">
                                 La marge de tolérance doit être 0 ou plus.
                             </p>
-                            <p *ngIf="hasValidInterval(question)" class="text-green-500 text-sm">
+                            <p *ngIf="hasValidInterval(question)" class="text-green-500 text-sm font-semibold">
                                 L'intervalle de bonne réponse est :
                                 [
                                 {{ calculateAnswerInterval(
