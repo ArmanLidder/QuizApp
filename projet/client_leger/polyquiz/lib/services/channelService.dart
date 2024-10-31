@@ -54,7 +54,13 @@ class ChannelService extends GetxController {
   }
 
   Stream<List<Canal>> getJoinableChannelStream() {
-    final isChannelIsJoinable = (Canal channel) => !(channel.name == 'general' || channel.isPrivate || channel.permittedUsers.contains(loggedInService.user?.uid));
+    final isChannelIsJoinable = (Canal channel) => 
+        !(channel.name == 'general' || 
+        channel.isPrivate ||
+        channel.permittedUsers.contains(loggedInService.user?.uid) ||
+        channel.name.contains('room') ||
+        channel.name.contains('#')
+        );
     return _db.collection(collectionName)
         .snapshots()
         .map((query) => query.docs.map((doc) => Canal.fromDocument(doc)).where(isChannelIsJoinable).toList());
@@ -91,7 +97,7 @@ class ChannelService extends GetxController {
   }
 
   Future<bool> createChannel(String channelName, List<String> permittedUsers, bool isPrivate) async {
-    final querySnapshot = await _db.collection(collectionName).where('name', isEqualTo: channelName).limit(1).get();
+    final querySnapshot = await _db.collection(collectionName).where('name', isEqualTo: channelName).where('isPrivate', isEqualTo: false).limit(1).get();
     if (querySnapshot.docs.isNotEmpty) {
       return false;
     }
