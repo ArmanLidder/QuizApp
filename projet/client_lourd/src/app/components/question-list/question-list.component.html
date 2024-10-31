@@ -120,7 +120,7 @@
                             <p *ngIf="question.get('margin')?.hasError('min')" class="1-red-600 text-sm">
                                 La marge de tolérance doit être 0 ou plus.
                             </p>
-                            <p *ngIf="!question.get('margin')?.errors" class="text-green-500 text-sm">
+                            <p *ngIf="hasValidInterval(question)" class="text-green-500 text-sm">
                                 L'intervalle de bonne réponse est :
                                 [
                                 {{ calculateAnswerInterval(
@@ -131,6 +131,8 @@
                             ) }}
                                 ]
                             </p>
+
+
 
                         </div>
                     </div>
@@ -238,7 +240,7 @@
 
 
         <div class="flex justify-center mt-4">
-            <button *ngIf='(questionsArray ? questionsArray.length - 1 : 0) < 0' class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            <button type="button" *ngIf='(questionsArray ? questionsArray.length - 1 : 0) < 0' class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                     (click)="addQuestion(questionsArray ? questionsArray.length - 1 : 0)">
                 Ajouter une question
             </button>

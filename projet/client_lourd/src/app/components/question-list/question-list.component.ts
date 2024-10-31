@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import { POPUP_TIMEOUT } from '@common/constants/quiz-creation.component.const';
 import { ChoiceService } from '@app/services/choice-service/choice.service';
 import { QuestionService } from '@app/services/question-service/question.service';
@@ -35,7 +35,8 @@ export class QuestionListComponent {
 
     addQuestion(index: number) {
         this.questionErrors = this.questionService.addQuestion(index, this.questionsArray)
-        if (index != 0 ) {
+        if (index >= 0 ) {
+            console.log(index);
             this.showPopupIfConditionMet(this.questionErrors.length !== 0);
         }
     }
@@ -97,4 +98,19 @@ export class QuestionListComponent {
         return `${lowerBound.toFixed(2)}, ${upperBound.toFixed(2)}`;
     }
 
+    hasValidInterval(question: AbstractControl): boolean {
+        const answerControl = question.get('answer');
+        const marginControl = question.get('margin');
+        const minControl = question.get('interval.min');
+        const maxControl = question.get('interval.max');
+
+        return answerControl?.value != null &&
+            marginControl?.value != null &&
+            minControl?.value != null &&
+            maxControl?.value != null &&
+            !answerControl.errors &&
+            !marginControl.errors &&
+            !minControl.errors &&
+            !maxControl.errors;
+    }
 }
