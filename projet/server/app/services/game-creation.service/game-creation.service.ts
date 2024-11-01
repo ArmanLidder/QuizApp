@@ -19,8 +19,8 @@ export class GameCreationService {
     private timerService: TimerService;
     private fs: FirebaseService;
 
-    constructor() {
-        this.fs = new FirebaseService();
+    constructor(fs: FirebaseService) {
+        this.fs = fs;
     }
 
     configureGameCreationSockets(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
@@ -80,7 +80,7 @@ export class GameCreationService {
             const banned_socket = sio.sockets.sockets.get(bannedID)
             const bannedUserID = banned_socket.handshake.auth.userId
             roomManager.banUser(data.roomId, bannedUserID);
-            await this.removeUserFromRoomCanal(data.roomId, banned_socket.handshake.auth.userId);
+            await this.removeUserFromRoomCanal(data.roomId, banned_socket.handshake.auth.userId, roomManager);
             sio.to(bannedID).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(data.roomId)).emit(SocketEvent.REMOVED_PLAYER, data.username);
             this.sendUpdateGameList(roomManager, sio)
@@ -131,7 +131,7 @@ export class GameCreationService {
     // We finally send a PLAYER_REMOVED event to the host to remove the player from the player list
     private handlePlayerLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.PLAYER_LEFT, async (roomId: number) => {
-            await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId);
+            await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             this.debug_teams("PLayer Left", roomId, roomManager);
             this.sendUpdateGameList(roomManager, sio);
@@ -163,8 +163,8 @@ export class GameCreationService {
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+            await this.deleteRoomCanal(roomId, roomManager);
             roomManager.deleteRoom(roomId);
-            await this.deleteRoomCanal(roomId);
             this.sendUpdateGameList(roomManager, sio)
             sio.to(String(roomId)).disconnectSockets(true);
         });
@@ -244,12 +244,21 @@ export class GameCreationService {
         }
     }
 
-    private async removeUserFromRoomCanal(roomCode: number, userId: string) {
+    private async removeUserFromRoomCanal(roomCode: number, userId: string, roomManager: RoomManagingService) {
         try {
             const docRef = await this.getDocRef(roomCode);
             await docRef.update({
                 permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId),
             });
+            const teams = roomManager.getRoomById(roomCode).teams;
+            if (teams) {
+                for (const [teamId, _] of teams) {
+                    const teamDocRef = await this.getTeamCanal(roomCode, teamId);
+                    await teamDocRef.update({
+                        permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId)
+                    });
+                }
+            }
         } catch (error) {
             console.log(error);
         }
@@ -291,10 +300,17 @@ export class GameCreationService {
         }
     }
 
-    private async deleteRoomCanal(roomCode: number) {
+    private async deleteRoomCanal(roomCode: number, roomManager: RoomManagingService) {
         try {
             const docRef = await this.getDocRef(roomCode);
-            await docRef.delete()
+            await docRef.delete();
+            const teams = roomManager.getRoomById(roomCode).teams;
+            if (teams) {
+                for (const [teamId, _] of teams) {
+                    const teamDocRef = await this.getTeamCanal(roomCode, teamId);
+                    await teamDocRef.delete();
+                }
+            }
         } catch (error) {
             console.log(error);
         }
@@ -304,6 +320,15 @@ export class GameCreationService {
         const querySnapshot = await this.fs.firestore
             .collection('canals')
             .where('name', '==', `room ${roomCode}`)
+            .get();
+        if (querySnapshot.empty) throw new Error(`No canal found with roomCode: ${roomCode}`);
+        return querySnapshot.docs[0].ref;
+    }
+
+    private async getTeamCanal(roomCode: number, teamId: number) {
+        const querySnapshot = await this.fs.firestore
+            .collection('canals')
+            .where('name', '==', `${roomCode} #${teamId}`)
             .get();
         if (querySnapshot.empty) throw new Error(`No canal found with roomCode: ${roomCode}`);
         return querySnapshot.docs[0].ref;
