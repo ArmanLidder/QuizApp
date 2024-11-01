@@ -5,6 +5,11 @@ import { SocketClientService } from '@app/services/socket-client.service/socket-
 import { Router } from '@angular/router';
 import { GAME_PAGE, HOME_PAGE } from '@common/page-url/page-url';
 import {GameConfig} from "@common/interfaces/game-info.interface";
+import {JoinTeamData} from "@common/interfaces/socket-manager.interface";
+
+type Team = any;
+type TeamId = string;
+type Teams = Map<TeamId, Team>;
 
 @Injectable({
     providedIn: 'root',
@@ -16,6 +21,9 @@ export class WaitingRoomManagementService {
     isTransition: boolean = false;
     players: string[] = [];
     time: number = 0;
+    gameType: 'classic' | 'equipe' = 'classic';
+    teams: Teams;
+    teamsForInterface: any;
     private router: Router = inject(Router);
 
     constructor(private socketService: SocketClientService) {}
@@ -26,6 +34,8 @@ export class WaitingRoomManagementService {
         this.isGameStarting = false;
         this.isTransition = false;
         this.players = [];
+        this.teams = new Map<TeamId, Team>();
+        this.teamsForInterface = [];
         this.time = 0;
     }
 
@@ -54,12 +64,24 @@ export class WaitingRoomManagementService {
         this.socketService.send(SocketEvent.START, { roomId: this.roomId, time: START_TRANSITION_DELAY });
     }
 
+    sendCreateTeam() {
+        this.socketService.send(SocketEvent.CREATE_TEAM, this.roomId);
+    }
+
+    joinTeam(newTeamId: string) {
+        const joinTeamData = {roomId: this.roomId, newTeamId: newTeamId as unknown as number} as JoinTeamData
+        this.socketService.send(SocketEvent.JOIN_TEAM, joinTeamData);
+    }
+
     removePlayer(username: string) {
         const index = this.players.indexOf(username);
         this.players.splice(index, DELETE_NUMBER);
     }
 
     gatherPlayers() {
+        this.socketService.send(SocketEvent.GET_GAME_TYPE, this.roomId, (gameType: 'classic' | 'equipe') => {
+            this.gameType = gameType;
+        });
         this.socketService.send(SocketEvent.GATHER_PLAYERS_USERNAME, this.roomId, (players: string[]) => {
             this.players = players;
         });
@@ -71,11 +93,32 @@ export class WaitingRoomManagementService {
         this.handleRemovedPlayer();
         this.handleTime();
         this.handleFinalTransition();
+        this.handleGetTeams();
     }
 
     private handleNewPlayer() {
         this.socketService.on(SocketEvent.NEW_PLAYER, (players: string[]) => {
             this.players = players;
+        });
+    }
+
+    private handleGetTeams() {
+        this.socketService.on(SocketEvent.GET_TEAMS, (teams: Object) => {
+            this.teams = new Map(Object.entries(teams));
+            console.log(`Teams size = ${this.teams.size}`);
+            if (this.teams) {
+                this.teams.forEach((team, id) => {
+                    console.log(`Team Id: ${id}`);
+                    console.log(`Team size = ${team?.members.length}`);
+                    team?.members.forEach((member: any) => console.log(member));
+                });
+            }
+            this.teamsForInterface = Array.from(this.teams.entries()).map(([teamName, userIds]) => ({
+                name: teamName,
+                userIds: userIds,
+            }));
+            console.log(this.teamsForInterface)
+
         });
     }
 
@@ -97,7 +140,6 @@ export class WaitingRoomManagementService {
         this.socketService.on(SocketEvent.TIME, (timeValue: number) => {
             this.isTransition = true;
             this.time = timeValue;
-
             if (this.time === 0) {
                 this.router.navigate([`${GAME_PAGE}`, this.roomId]);
                 this.isGameStarting = true;
