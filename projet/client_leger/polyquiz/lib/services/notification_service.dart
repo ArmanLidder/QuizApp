@@ -46,7 +46,7 @@ class NotificationService extends GetxController {
 
   void updateUnreadChannelValue() {
     hasUnreadChannels.value = isChannelRead.containsValue(false);
-    playNotificationNoise();
+    if (hasUnreadChannels.value) playNotificationNoise();
   }
 
   void playNotificationNoise() {
