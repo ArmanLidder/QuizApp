@@ -165,7 +165,7 @@ export class GameCreationService {
             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             await this.deleteRoomCanal(roomId, roomManager);
             roomManager.deleteRoom(roomId);
-            this.sendUpdateGameList(roomManager, sio)
+            this.sendUpdateGameList(roomManager, sio);
             sio.to(String(roomId)).disconnectSockets(true);
         });
     }
