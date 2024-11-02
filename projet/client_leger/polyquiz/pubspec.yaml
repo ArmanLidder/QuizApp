@@ -40,3 +40,4 @@ flutter:
 
   assets:
     - assets/music.mp3
+    - assets/notification.mp3
