@@ -36,12 +36,12 @@ class MyApp extends StatelessWidget {
       navigatorKey: GlobalNavigationService.navigatorKey,
       home: AuthPage(), // The starting page is set to LoginPage.
       routes: {
+        '/home': (context) => HomePage(),
         '/auth': (context) => AuthPage(),
         '/login': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
         '/join': (context) => JoinRoomPage(),
         '/game': (context) => GamePage(),
-        '/home': (context) => HomePage(),
         '/user': (context) => Userpage(),
         '/waitingRoom': (context) => WaitingRoomScreen(
             quiz: ModalRoute.of(context)!.settings.arguments as Quiz,

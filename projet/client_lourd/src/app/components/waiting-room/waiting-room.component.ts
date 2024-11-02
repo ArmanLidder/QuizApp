@@ -1,11 +1,16 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
-import { SocketEvent } from '@common/socket-event-name/socket-event-name';
-import { WaitingRoomManagementService } from '@app/services/waiting-room-management.service/waiting-room-management.service';
-import { ActivatedRoute } from '@angular/router';
-import { GameService } from '@app/services/game.service/game.service';
-import { HOST_USERNAME } from '@common/names/host-username';
-import { LOCKED, UNLOCKED } from '@common/constants/waiting-room.component.const';
+import {Component, inject, Input, OnDestroy, OnInit, HostListener} from '@angular/core';
+import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
+import {SocketEvent} from '@common/socket-event-name/socket-event-name';
+import {
+    WaitingRoomManagementService
+} from '@app/services/waiting-room-management.service/waiting-room-management.service';
+import {ActivatedRoute} from '@angular/router';
+import {GameService} from '@app/services/game.service/game.service';
+import {HOST_USERNAME} from '@common/names/host-username';
+import {LOCKED, UNLOCKED} from '@common/constants/waiting-room.component.const';
+import {GameConfigService} from "@app/services/game-config.service/game-config.service";
+import {GameConfig} from "@common/interfaces/game-info.interface";
+
 
 @Component({
     selector: 'app-waiting-room',
@@ -17,17 +22,31 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     @Input() roomId: number;
     @Input() isActive: boolean;
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
+    // private router: Router = inject(Router);
 
     constructor(
         public waitingRoomManagementService: WaitingRoomManagementService,
         public gameService: GameService,
         private socketService: SocketClientService,
+        private gameConfigService: GameConfigService,
     ) {
-        this.connect();
+        // this.connect();
+    }
+
+    // Since beforeunload automaically reconstruct the component, we need a way to go back to main page with service
+    // property on initialization
+    @HostListener('window:beforeunload')
+    removeToken() {
+        const messageType = this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
+        this.socketService.send(messageType, this.roomId);
     }
 
     async ngOnInit() {
         this.waitingRoomManagementService.setUpService();
+        if (!this.socketService.isSocketAlive()) {
+            await this.socketService.asyncConnect();
+        }
+        this.waitingRoomManagementService.configureBaseSocketFeatures();
         if (this.isHost) await this.setUpHost();
         else this.setUpPlayer();
         window.onbeforeunload = () => this.ngOnDestroy();
@@ -42,12 +61,11 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         this.socketService.socket.removeAllListeners();
     }
 
-    connect() {
-        if (!this.socketService.isSocketAlive()) {
-            this.socketService.connect();
-        }
-        this.waitingRoomManagementService.configureBaseSocketFeatures();
-    }
+    // async connect() {
+    //     if (!this.socketService.isSocketAlive()) {
+    //          this.socketService.asyncConnect();
+    //     }
+    // }
 
     banPlayer(username: string) {
         this.waitingRoomManagementService.sendBanPlayer(username);
@@ -68,7 +86,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
 
     private async setUpHost() {
         const quizId = this.route.snapshot.paramMap.get('id');
-        this.roomId = await this.waitingRoomManagementService.sendRoomCreation(quizId);
+        this.roomId = await this.waitingRoomManagementService.sendRoomCreation(quizId, (this.gameConfigService.getGameConfig() as GameConfig));
         this.gameService.gameRealService.username = HOST_USERNAME;
     }
 

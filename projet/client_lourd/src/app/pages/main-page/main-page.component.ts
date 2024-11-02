@@ -16,8 +16,6 @@ export class MainPageComponent {
         }
     }
 
-
-
     @HostListener('window:beforeunload')
     removeToken() {
         localStorage.removeItem('token');

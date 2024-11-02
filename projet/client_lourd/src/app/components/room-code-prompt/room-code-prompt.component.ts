@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
 import { RoomValidationService } from '@app/services/room-validation.service/room-validation.service';
-import { NO_COLOR, RED_BORDER, RED_TEXT } from '@common/style/style';
+import { NO_COLOR } from '@common/style/style';
 
 @Component({
     selector: 'app-room-code-prompt',
@@ -12,7 +12,7 @@ export class RoomCodePromptComponent implements OnInit {
     @Output() sendRoomData: EventEmitter<number> = new EventEmitter<number>();
     @Output() sendUsernameData: EventEmitter<string> = new EventEmitter<string>();
     @Output() validationDone: EventEmitter<boolean> = new EventEmitter<boolean>();
-    inputBorderColor: string = '';
+    inputBorderColor: string = 'black';
     error: string | undefined = '';
     textColor: string = '';
 
@@ -47,6 +47,7 @@ export class RoomCodePromptComponent implements OnInit {
     async validateRoomId() {
         this.error = await this.roomValidationService.verifyRoomId();
         this.handleError();
+        if (!this.error) await this.validateUsername();
     }
 
     async validateUsername() {
@@ -76,12 +77,12 @@ export class RoomCodePromptComponent implements OnInit {
 
     private reset() {
         this.textColor = NO_COLOR;
-        this.inputBorderColor = NO_COLOR;
+        this.inputBorderColor = 'black';
         this.error = '';
     }
 
     private showErrorFeedback() {
-        this.textColor = RED_TEXT;
-        this.inputBorderColor = RED_BORDER;
+        this.textColor = 'red-text';
+        this.inputBorderColor = 'red-border';
     }
 }

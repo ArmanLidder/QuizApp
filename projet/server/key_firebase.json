@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "polyquiz-app",
+  "private_key_id": "a09ccf884795ad44dc120234e5a2109340b7be58",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDwaThbO0c9SOQO\nE8Odwk8irYFNs9Fjott01O31NPxzo3gb7QOjTMPezS6gy/hb0bB7dh7Ka7oFqdtT\n0lEFErdrmeyD21E+KN1jj9mwkycDLyj4/kX/ZawVR6b3KVsxMkHy6sjwWVtY+Hsg\n/IuMMzD38a3CSTQXvzOHgNNk9egPo+URNLocbP+W+z3baUjBEgz2B9085JOSuJS6\nbwXSXSNHTq5Gwz19K2dgcTWXlDV2nDUGAVPe+eVYRh/G4lUUG4a4i6Wnyk6l5MIP\nJfMh9KOT/z+ITtNW+fcqxqv3cxJbAOo0nUR9uxMX0kHGIhxWZOaw2iXYl28FKDu7\nmFhuWDEDAgMBAAECggEASnlt+eUdJoEEFNBOkvp0pVt2aOnBfcofjcvAg2uMoQ4M\n0SnVLKtFKioJvcox/8+vii+HTlGc6NA7n3XRn26y32RpfldcjZL/Mi6H00lilnvv\nh2LNsFaAvn7Z3Es1csIM6AGPidVElQU0r31MhXv+OXDm0P74Yjra7akc03PSFbWo\nMsVWqqVI0H7DO6MRPcMRyNqCD1tp0Jof0B+HXPRuy+C3Clz2EssKp1KmjmyaUr6p\n+vB2JDwgkkXnjswVmlYmip6M0FkV8o6mjjvnQqrNzTb4ZDA7nvxnKIbwv46o3Bbi\n9R25/md/HUEI8WKyqTnGj3QmJc3+IId9hzc5g8ZYYQKBgQD7WiGdROKGuaa2nGC1\nyu8xiglU6vMiaaWZVfvdUUH6cVI8UHA9UQ0UGXg5epOZ8ahXPv6Drbw3mb5L/LZ8\nrJQ9NX/+jKRjUo206Feu+nh8rJjQ8hcKB9zYCIQA39mKhPHImnqKIpXerwEXiqeO\nutrAdLJddnhGaQEj+7uz5oE3KwKBgQD020uV5O7TetrGAwIOcwr68mI2YnflXsqy\n1Wo2PiBiDec5aD1BmBFYKkgssnY+30zubVNzWgrNKY4IihgEm7w8g6mIM4LZJaKk\n/DRpCu+f7jmL+k4VILXL+XRb+Srp+tT2bUMYbAX9S8myllKhbkp5PbXFlaSLNd5V\nrcuiwK+BiQKBgH2gyvREHcSgvga/mkbCq1LjX06mL+efTjmZlE1F8+gtA6FJww+i\nlxrYsBJqhaOH+U/CGIvQJibUHRz1rnAaAe2l89dSjEdoV5N4HXtDjT0jNy4YEhPd\nYjBH8VJOj/iAAij1rRGlv6qRZcZScvUPx44xxYSZVfw7N2q4w1RjfWoJAoGAVGwX\nz4KzZW8CZys6VkkMDCHuAtpIhGj+clJq4HDjMWuhwYVTOX543HEXmXGem2baW4qO\nL0NoXfxp4D/csBoR+LtchH1eLAhx33iliWIf5IB6juyqZ1Zz1/QWTm/GgA3fx2c8\nrvrvxbmPvWde7hHc05iXR5yksurL0bauc1sEKCECgYA+3bNv+tuR+FvD03Ru6mIa\n/qcc9vcsJpTZ3KGxcuLSJh7am18VnklaOGCh6+i9/4YQCOxRn7Tw4mp4HnT4Y6v5\nxKFgAH+xlFYba/P+C1cqhXG3G0rQo+lCat8XS6FRbbXrFT08M4+bI4eaygCJ58HG\nBY2a7gr+K8eDks/yKz6bMg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-ebvag@polyquiz-app.iam.gserviceaccount.com",
+  "client_id": "106325659670369340876",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-ebvag%40polyquiz-app.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

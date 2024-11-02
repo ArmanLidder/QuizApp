@@ -12,14 +12,12 @@ import { GameInterfaceComponent } from '@app/components/game-interface/game-inte
 import { GameItemComponent } from '@app/components/game-item/game-item.component';
 import { GamesListComponent } from '@app/components/games-list/games-list.component';
 import { HostInterfaceComponent } from '@app/components/host-interface/host-interface.component';
-import { PasswordPromptComponent } from '@app/components/password-prompt/password-prompt.component';
 import { PlayerListComponent } from '@app/components/player-list/player-list.component';
 import { QrlResponseAreaComponent } from '@app/components/qrl-response-area/qrl-response-area.component';
 import { QuestionListComponent } from '@app/components/question-list/question-list.component';
 import { QuizCreationComponent } from '@app/components/quiz-creation/quiz-creation.component';
 import { QuizInfoComponent } from '@app/components/quiz-info/quiz-info.component';
 import { RoomCodePromptComponent } from '@app/components/room-code-prompt/room-code-prompt.component';
-import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { StatisticHistogramComponent } from '@app/components/statistic-histogram/statistic-histogram.component';
 import { UniqueQuizErrorFeedbackComponent } from '@app/components/unique-quiz-error-feedback/unique-quiz-error-feedback.component';
 import { ValidationQuizErrorFeedbackComponent } from '@app/components/validation-quiz-error-feedback/validation-quiz-error-feedback.component';
@@ -68,6 +66,10 @@ import { FriendsComponent } from './components/friends/friends.component';
 import {MatTabsModule} from "@angular/material/tabs";
 import { AvatarWithLevelComponent } from './components/avatar-with-level/avatar-with-level.component';
 import { PopoutWindowModule } from 'angular-popout-window';
+import { GameConfigDialogComponent } from './components/game-config-dialog/game-config-dialog.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatSelectModule} from "@angular/material/select";
+import { ActiveGameListComponent } from './components/active-game-list/active-game-list.component';
 
 /**
  * Main module that is used in main.ts.
@@ -80,13 +82,11 @@ import { PopoutWindowModule } from 'angular-popout-window';
         AppComponent,
         GamePageComponent,
         MainPageComponent,
-        SidebarComponent,
         QuizCreationComponent,
         QuizCreationPageComponent,
         QuestionListComponent,
         GameCreationPageComponent,
         GameAdministrationPageComponent,
-        PasswordPromptComponent,
         GameItemComponent,
         GamesListComponent,
         GameHistoryListComponent,
@@ -121,6 +121,8 @@ import { PopoutWindowModule } from 'angular-popout-window';
         UserSearchDialogComponent,
         FriendsComponent,
         AvatarWithLevelComponent,
+        GameConfigDialogComponent,
+        ActiveGameListComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -149,6 +151,8 @@ import { PopoutWindowModule } from 'angular-popout-window';
         MatListModule,
         MatTabsModule,
         PopoutWindowModule,
+        MatCheckboxModule,
+        MatSelectModule,
     ],
     providers: [
         CanalService,

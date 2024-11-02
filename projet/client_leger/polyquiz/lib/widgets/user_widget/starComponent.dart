@@ -98,7 +98,7 @@ class StarCardGrid extends StatelessWidget {
       );
     }
     return Column(
-      children: rows,
+      children: [...rows],
     );
   }
 }

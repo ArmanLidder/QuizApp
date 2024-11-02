@@ -1,13 +1,19 @@
+<app-header></app-header>
 <div *ngIf='isValidation'>
-    <app-room-code-prompt
-        (sendRoomData)='receiveRoomId($event)'
-        (validationDone)='receiveValidation($event)'>
+    <button class="solo-btn" (click)="togglePrivate()">{{isPrivate ? "Rejoindre Jeu Public": "Rejoindre Jeu Privé"}}</button>
+    <app-room-code-prompt *ngIf="isPrivate"
+            (sendRoomData)='receiveRoomId($event)'
+            (validationDone)='receiveValidation($event)'>
     </app-room-code-prompt>
+    <app-active-game-list  *ngIf="!isPrivate"
+            (sendRoomData)='receiveRoomId($event)'
+            (validationDone)='receiveValidation($event)'>
+    </app-active-game-list>
 </div>
 <div *ngIf='!isValidation'>
     <app-waiting-room
-        [isHost]='false'
-        [roomId]='this.roomId'
-        [isActive]='!isValidation'>
+            [isHost]='false'
+            [roomId]='this.roomId'
+            [isActive]='!isValidation'>
     </app-waiting-room>
 </div>

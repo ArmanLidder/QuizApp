@@ -4,8 +4,9 @@ import 'package:polyquiz/services/logged_in_user_service.dart';
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String sourceImgUrl;
   final String name;
+  final BuildContext context;
 
-  FancyAppBar({required this.sourceImgUrl, required this.name});
+  FancyAppBar({required this.sourceImgUrl, required this.name, required this.context});
 
   @override
   _FancyAppBarState createState() => _FancyAppBarState();
@@ -34,7 +35,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext barContext) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -56,7 +57,11 @@ class _FancyAppBarState extends State<FancyAppBar> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
+        leading:IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.red),
+            onPressed: () {
+            Navigator.pushReplacementNamed(widget.context, '/home');   }),
+    actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Row(

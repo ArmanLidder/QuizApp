@@ -1,0 +1,120 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+thead th {
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 15px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Parent container for each game item */
+.game-item {
+  display: flex;
+  align-items: center; /* Vertically center elements */
+  justify-content: space-between; /* Spread content evenly */
+  padding: 10px;
+  font-size: 1rem;
+  gap: 10px;
+  cursor: pointer;
+}
+
+tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+.on-going-game {
+  display: flex;
+  align-items: center; /* Vertically center elements */
+  justify-content: space-between; /* Spread content evenly */
+  padding: 10px;
+  font-size: 1rem;
+  gap: 10px;
+  cursor: not-allowed;
+}
+
+/* Individual spans adjusted for consistent alignment */
+.quiz-title {
+  flex: 2; /* Allow more space for titles */
+  font-weight: bold;
+  color: #343a40;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Truncate long titles */
+}
+
+.no-game {
+  font-weight: bold;
+  color: #343a40;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Truncate long titles */
+  align-items: center;
+}
+
+.players, .game-type, .price {
+  flex: 1; /* Equal space for other items */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align to the right side */
+  gap: 5px; /* Small space between text and icon */
+}
+
+/* Icon alignment to ensure consistency */
+.players img, .price img {
+  height: 16px;
+  width: 16px;
+}
+
+/* Table styles for a clean look */
+.games-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-bottom: 1px solid #ddd;
+  transition: background-color 0.2s ease;
+}
+
+
+/* Button styling */
+.button-container {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.cancel {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.cancel:hover {
+  background-color: #c82333;
+}
+
+tbody {
+  display: block;
+  max-height: 450px; /* Adjust based on your preference */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+

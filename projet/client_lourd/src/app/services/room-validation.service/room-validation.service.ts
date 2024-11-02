@@ -1,50 +1,64 @@
 import { Injectable } from '@angular/core';
 import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
 import { ErrorDictionary } from '@common/browser-message/error-message/error-message';
-import { RoomValidationResult, UsernameValidation } from '@common/interfaces/socket-manager.interface';
-import { HOST_USERNAME } from '@common/names/host-username';
+// import { RoomValidationResult, UsernameValidation } from '@common/interfaces/socket-manager.interface';
+// import { HOST_USERNAME } from '@common/names/host-username';
+import {RoomValidationResult, UsernameValidation} from '@common/interfaces/socket-manager.interface';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
+import {UsersService} from "@app/services/users.service/users.service";
+import {firstValueFrom, Observable} from "rxjs";
+import {User} from "@common/interfaces/user-data.interface";
 
 @Injectable({
     providedIn: 'root',
 })
 export class RoomValidationService {
+    user$: Observable<User | null>;
     isActive: boolean = true;
     isLocked: boolean = false;
     isRoomIdValid: boolean = false;
-    isUsernameValid: boolean = false;
     roomId: string | undefined = '';
-    username: string = '';
+    username: string | undefined;
+    isUsernameValid: boolean = false
 
-    constructor(private socketService: SocketClientService) {}
+    constructor(private socketService: SocketClientService, private usersService: UsersService) {
+        this.user$ = this.usersService.currentUserProfile$
+        this.user$.subscribe((user: User | null) => {
+            this.username = user?.uid;
+        })
+    }
 
     resetService() {
         this.isActive = true;
         this.isLocked = false;
         this.isRoomIdValid = false;
-        this.isUsernameValid = false;
         this.roomId = '';
         this.username = '';
+        this.isUsernameValid = false;
     }
+
 
     async verifyRoomId() {
         return this.isOnlyDigit() ? await this.sendRoomId() : ErrorDictionary.VALIDATION_CODE_ERROR;
     }
 
+    async getCurrentUser() {
+        return ((await firstValueFrom(this.usersService.currentUserProfile$)) as User);
+    }
+
     async verifyUsername() {
-        const whitespacePattern = /^\s*$/;
-        const isFormatValid = this.username === undefined || whitespacePattern.test(this.username);
-        const isHost = this.username?.toLowerCase() === HOST_USERNAME.toLowerCase();
-        if (isFormatValid) return ErrorDictionary.CHAR_NUM_ERROR;
-        else if (isHost) return ErrorDictionary.ORGANISER_NAME_ERROR;
-        else return await this.sendUsername();
+        // const whitespacePattern = /^\s*$/;
+        // const isFormatValid = this.username === undefined || whitespacePattern.test(this.username);
+        // const isHost = this.username?.toLowerCase() === HOST_USERNAME.toLowerCase();
+        // if (isFormatValid) return ErrorDictionary.CHAR_NUM_ERROR;
+        // else if (isHost) return ErrorDictionary.ORGANISER_NAME_ERROR;
+        return await this.sendUsername();
     }
 
     async sendJoinRoomRequest() {
-        const error = await this.sendUsername();
-        if (error !== '') return error;
+        const user = await this.getCurrentUser();
         return new Promise<string>((resolve) => {
-            const usernameData = { roomId: Number(this.roomId), username: this.username };
+            const usernameData = { roomId: Number(this.roomId), username: user.uid };
             this.socketService.send(SocketEvent.JOIN_GAME, usernameData, (isLocked: boolean) => {
                 resolve(this.handleJoiningRoomValidation(isLocked));
             });
@@ -52,10 +66,9 @@ export class RoomValidationService {
     }
 
     private async sendUsername() {
-        const error = await this.sendRoomId();
-        if (error !== '') return error;
+        const user = await this.getCurrentUser();
         return new Promise<string>((resolve) => {
-            const usernameData = { roomId: Number(this.roomId), username: this.username };
+            const usernameData = { roomId: Number(this.roomId), username: user.uid };
             this.socketService.send(SocketEvent.VALIDATE_USERNAME, usernameData, (data: UsernameValidation) => {
                 resolve(this.handleUsernameValidation(data));
             });

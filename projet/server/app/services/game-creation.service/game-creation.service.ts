@@ -1,19 +1,32 @@
-import { RoomManagingService } from '@app/services/room-managing.service/room-managing.service';
-import { TRANSITION_QUESTIONS_DELAY } from '@common/constants/socket-manager.service.const';
-import { TimerService } from '@app/services/timer.service/timer.service';
-import { ErrorDictionary } from '@common/browser-message/error-message/error-message';
-import { PlayerUsername } from '@common/interfaces/socket-manager.interface';
-import { HOST_USERNAME } from '@common/names/host-username';
-import { SocketEvent } from '@common/socket-event-name/socket-event-name';
+import {RoomManagingService} from '@app/services/room-managing.service/room-managing.service';
+import {TRANSITION_QUESTIONS_DELAY} from '@common/constants/socket-manager.service.const';
+import {TimerService} from '@app/services/timer.service/timer.service';
+import {ErrorDictionary} from '@common/browser-message/error-message/error-message';
+import {PlayerUsername} from '@common/interfaces/socket-manager.interface';
+import {HOST_USERNAME} from '@common/names/host-username';
+import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 import * as io from 'socket.io';
-import { Service } from 'typedi';
+import {Service} from 'typedi';
+import {FirebaseService} from "@app/services/firebase.service/firebase.service";
+import {Canal} from "@common/interfaces/message.interface";
+import {GameConfig} from "@common/interfaces/game-info.interface";
+import {Score} from "@common/interfaces/score.interface";
+import {Game} from "@app/classes/game/game";
+import {GameHistory, User, UserStats} from "@common/interfaces/user-data.interface";
+
 
 @Service()
 export class GameCreationService {
     private timerService: TimerService;
+    private fs: FirebaseService;
+
+    constructor() {
+        this.fs = new FirebaseService();
+    }
+
     configureGameCreationSockets(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         this.timerService = new TimerService(roomManager, sio);
-        this.handleRoomCreation(roomManager, socket);
+        this.handleRoomCreation(roomManager, socket, sio);
         this.handleJoinGame(roomManager, socket, sio);
         this.handleBanPlayer(roomManager, socket, sio);
         this.handleToggleRoomLock(roomManager, socket);
@@ -22,36 +35,53 @@ export class GameCreationService {
         this.handleValidateRoomId(roomManager, socket);
         this.handlePlayerLeft(roomManager, socket, sio);
         this.handleHostLeft(roomManager, socket, sio);
+        this.handleGetGameList(roomManager, socket, sio);
+        this.handleSaveStats(roomManager, socket);
     }
 
-    private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket) {
-        socket.on(SocketEvent.CREATE_ROOM, (quizID: string, callback) => {
-            const roomCode = roomManager.addRoom(quizID);
+    private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.CREATE_ROOM, async (data: { quizId: string, gameConfig: GameConfig }, callback) => {
+            const userId = socket.handshake.auth.userId;
+            const roomCode = roomManager.addRoom(data.quizId, data.gameConfig);
+            await this.fs.firestore.collection('canals').add(this.generateRoomCanal(roomCode, userId))
             roomManager.addUser(roomCode, HOST_USERNAME, socket.id);
             socket.join(String(roomCode));
+            this.sendUpdateGameList(roomManager, sio)
             callback(roomCode);
         });
     }
 
     private handleJoinGame(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.JOIN_GAME, (data: PlayerUsername, callback) => {
+        socket.on(SocketEvent.JOIN_GAME, async (data: PlayerUsername, callback) => {
             const isLocked = roomManager.isRoomLocked(data.roomId);
             if (!isLocked) {
-                roomManager.addUser(data.roomId, data.username, socket.id);
-                const players = roomManager.getUsernamesArray(data.roomId);
-                socket.join(String(data.roomId));
+                const roomCode = data.roomId;
+                const userId = socket.handshake.auth.userId;
+                console.log(`userId joining game: ${userId}`);
+                // roomManager.addUser(roomCode, data.username, socket.id);
+                roomManager.addUser(roomCode, userId, socket.id);
+                const players = roomManager.getUsernamesArray(roomCode);
+                socket.join(String(roomCode));
+                await this.addUserToRoomCanal(roomCode, userId);
                 sio.to(String(data.roomId)).emit(SocketEvent.NEW_PLAYER, players);
+                this.sendUpdateGameList(roomManager, sio)
             }
             callback(isLocked);
         });
     }
 
     private handleBanPlayer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.BAN_PLAYER, (data: PlayerUsername) => {
+        socket.on(SocketEvent.BAN_PLAYER, async (data: PlayerUsername) => {
             const bannedID = roomManager.getSocketIdByUsername(data.roomId, data.username);
-            roomManager.banUser(data.roomId, data.username);
+            const banned_socket = sio.sockets.sockets.get(bannedID)
+            // added 73
+            const bannedUserID = banned_socket.handshake.auth.userId
+            // roomManager.banUser(data.roomId, data.username);
+            roomManager.banUser(data.roomId, bannedUserID);
+            await this.removeUserFromRoomCanal(data.roomId, banned_socket.handshake.auth.userId);
             sio.to(bannedID).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(data.roomId)).emit(SocketEvent.REMOVED_PLAYER, data.username);
+            this.sendUpdateGameList(roomManager, sio)
         });
     }
 
@@ -66,7 +96,11 @@ export class GameCreationService {
             let error = '';
             if (roomManager.isNameUsed(data.roomId, data.username)) error = ErrorDictionary.NAME_ALREADY_USED;
             else if (roomManager.isNameBanned(data.roomId, data.username)) error = ErrorDictionary.BAN_MESSAGE;
-            callback({ isValid: error.length === 0, error });
+            console.log(`
+            Validation des username: ${data.username} in room ${data.roomId}
+            Erreur: ${error}
+            `)
+            callback({isValid: error.length === 0, error});
         });
     }
 
@@ -82,7 +116,7 @@ export class GameCreationService {
             let isLocked = false;
             const isRoom = roomManager.roomMap.has(roomId);
             if (isRoom) isLocked = roomManager.getRoomById(roomId).locked;
-            callback({ isRoom, isLocked });
+            callback({isRoom, isLocked});
         });
     }
 
@@ -92,15 +126,20 @@ export class GameCreationService {
     // validated his response, if it is the case, we send an END_QUESTION event
     // We finally send a PLAYER_REMOVED event to the host to remove the player from the player list
     private handlePlayerLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.PLAYER_LEFT, (roomId: number) => {
+        socket.on(SocketEvent.PLAYER_LEFT, async (roomId: number) => {
+            await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId);
             const userInfo = roomManager.removeUserBySocketId(socket.id);
+            this.sendUpdateGameList(roomManager, sio)
             if (userInfo) {
                 const game = roomManager.getGameByRoomId(roomId);
                 if (game) {
                     game.removePlayer(userInfo.username);
                     if (game.players.size === 0) {
                         roomManager.clearRoomTimer(roomId);
-                        this.timerService.startTimer({ roomId, time: TRANSITION_QUESTIONS_DELAY }, SocketEvent.FINAL_TIME_TRANSITION);
+                        this.timerService.startTimer({
+                            roomId,
+                            time: TRANSITION_QUESTIONS_DELAY
+                        }, SocketEvent.FINAL_TIME_TRANSITION);
                     } else if (game.playersAnswers.size === game.players.size) {
                         roomManager.getGameByRoomId(roomId).updateScores();
                         roomManager.clearRoomTimer(roomId);
@@ -116,10 +155,197 @@ export class GameCreationService {
     }
 
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.HOST_LEFT, (roomId: number) => {
+        socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
+            console.log('Host left');
             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             roomManager.deleteRoom(roomId);
+            await this.deleteRoomCanal(roomId);
+            this.sendUpdateGameList(roomManager, sio);
             sio.to(String(roomId)).disconnectSockets(true);
         });
     }
+
+    private handleGetGameList(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.GET_GAME_LIST, () => {
+            console.log(`sending game list ${roomManager.getGamesConfig()}`)
+            sio.to(socket.id).emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig());
+        });
+    }
+
+    // type are winner, loser or none
+    private handleSaveStats(roomManager: RoomManagingService, socket: io.Socket) {
+        socket.on(SocketEvent.SAVE_FINAL_GAME_STATS, async (roomId: number) => {
+            const game = roomManager.getGameByRoomId(roomId);
+            const gameType = roomManager.getRoomById(roomId).gameType;
+            const { highestScorers,nonExtremes, lowestScorers} = this.getExtremeScores(game.players)
+            for (let winner of highestScorers) await this.updateStats(winner, game, gameType, 'winner');
+            for (let loser of lowestScorers) await this.updateStats(loser, game, gameType, 'loser');
+            for (let loser of nonExtremes) await this.updateStats(loser, game, gameType, 'none');
+        });
+    }
+
+    private sendUpdateGameList(roomManager: RoomManagingService, sio: io.Server) {
+        console.log(`sending game list on update ${roomManager.getGamesConfig()}`)
+        sio.emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig())
+    }
+
+    private generateRoomCanal(roomId: number, userId: string): Canal {
+        return {
+            name: `room ${roomId}`,
+            isPrivate: false,
+            permittedUsers: [userId],
+            messages: []
+        } as Canal;
+    }
+
+    private async addUserToRoomCanal(roomCode: number, userId: string) {
+        try {
+            const docRef = await this.getDocRef(roomCode);
+            await docRef.update({
+                permittedUsers: this.fs.firebase.firestore.FieldValue.arrayUnion(userId),
+            });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    private async removeUserFromRoomCanal(roomCode: number, userId: string) {
+        try {
+            const docRef = await this.getDocRef(roomCode);
+            await docRef.update({
+                permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId),
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // Method that updates player stats online type is either winner, loser
+    // Update money has to be done here also but some logic has to be made in the class game when joining
+    // with a price
+    private async updateStats(userId: string, game: Game, gameType: string, type: string) {
+        const score = game.players.get(userId)
+        const finalResult = type === 'winner' ? 'win': 'loss';
+        let prestige = type === 'winner' ? 10 : type === 'loser' ? -10 : 0;
+        const history = {
+            result: finalResult,
+            timestamp: game.gameHistoryInfo.startTime,
+            score: score.points,
+            gameMode: gameType,
+        } as GameHistory
+        const startTime = game.startTimeCalcul;
+        const currentTime = new Date().getTime();
+        const timeDifferenceInSeconds = Math.floor((currentTime - startTime) / 1000);
+        try {
+            const docRef = await this.getDocRefUsers(userId);
+            const user = (await docRef.get()).data() as User;
+            if (user.prestige === 0 && prestige === -10) prestige = 0;
+            const newStats = this.calculateNewStats(user.stats, score, timeDifferenceInSeconds, type);
+            const achievements = this.checkAchievements(newStats, prestige, user, gameType);
+            await docRef.update({
+                gameHistory: this.fs.firebase.firestore.FieldValue.arrayUnion(history),
+                level: this.fs.firebase.firestore.FieldValue.increment(score.points),
+                prestige: this.fs.firebase.firestore.FieldValue.increment(prestige),
+                stats: newStats,
+                achievements: this.fs.firebase.firestore.FieldValue.arrayUnion(...achievements)
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    private async deleteRoomCanal(roomCode: number) {
+        try {
+            const docRef = await this.getDocRef(roomCode);
+            await docRef.delete()
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    private async getDocRef(roomCode: number) {
+        const querySnapshot = await this.fs.firestore
+            .collection('canals')
+            .where('name', '==', `room ${roomCode}`)
+            .get();
+        if (querySnapshot.empty) throw new Error(`No canal found with roomCode: ${roomCode}`);
+        return querySnapshot.docs[0].ref;
+    }
+
+    private async getDocRefUsers(userId: string) {
+        const docRef = this.fs.firestore.collection('users').doc(userId);
+        const docSnapshot = await docRef.get();
+        if (!docSnapshot.exists) {
+            throw new Error(`No User found with id: ${userId}`);
+        }
+        return docRef;
+    }
+
+    private calculateNewStats(oldStats: UserStats, score: Score, timeDifferenceInSeconds: number, type: string) {
+        return {
+            gamesPlayed: oldStats.gamesPlayed + 1,
+            gamesWon: type === 'winner' ? oldStats.gamesWon + 1: oldStats.gamesWon,
+            correctAnswers: oldStats.correctAnswers + score.goodAnswerCounter,
+            gameTime: oldStats.gameTime + timeDifferenceInSeconds,
+            avgCorrectAnswers: parseFloat(((oldStats.correctAnswers + score.goodAnswerCounter)/(oldStats.gamesPlayed + 1)).toFixed(2)),
+            avgGameTime: parseFloat(((oldStats.gameTime + timeDifferenceInSeconds)/(oldStats.gamesPlayed + 1)).toFixed(2)),
+        } as UserStats
+    }
+
+    private getExtremeScores(players: Map<string, Score>) {
+        let highestScore = -Infinity;
+        let lowestScore = Infinity;
+        const highestScorers: string[] = [];
+        let lowestScorers: string[] = [];
+        let nonExtremes: string[] = [];
+        players.forEach((score: Score, userId: string) => {
+            if (score.points > highestScore) {
+                highestScore = score.points;
+                highestScorers.length = 0;
+                highestScorers.push(userId);
+            } else if (score.points === highestScore) {
+                highestScorers.push(userId);
+            }
+
+            if (score.points < lowestScore) {
+                lowestScore = score.points;
+                lowestScorers.length = 0;
+                lowestScorers.push(userId);
+            } else if (score.points === lowestScore) {
+                lowestScorers.push(userId);
+            }
+        });
+
+        players.forEach((score: Score, userId: string) => {
+            if (!highestScorers.includes(userId) && !lowestScorers.includes(userId)) {
+                nonExtremes.push(userId);
+            }
+        });
+
+        if (players.size === 1) {
+            lowestScorers = []
+            nonExtremes = []
+        }
+
+        return {
+            highestScorers,
+            nonExtremes,
+            lowestScorers,
+        };
+    }
+
+    // Two game types equipe or classic
+    private checkAchievements(newStats: UserStats, prestige: number, user: User, gameType: string) {
+        const achievements: number[] = [1000]; // 1000 is a based number that allows to return an array of 1 with is usable in arrayUnion
+        if (newStats.gamesWon === 1) achievements.push(1);
+        if (newStats.gamesWon > user.stats.gamesWon && gameType === 'equipe') achievements.push(2);
+        if (newStats.gamesWon === 5) achievements.push(3);
+        if (newStats.gamesWon === 10) achievements.push(4);
+        if ((user.prestige + prestige) === 50) achievements.push(5);
+        if ((user.prestige + prestige) === 100) achievements.push(6);
+        if ((user.prestige + prestige) === 150) achievements.push(7);
+        if ((user.prestige + prestige) === 200) achievements.push(8);
+        return achievements
+    }
+
 }
