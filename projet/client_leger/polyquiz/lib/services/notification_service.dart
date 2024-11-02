@@ -27,6 +27,7 @@ class NotificationService extends GetxController {
     if (!channelMessageCount.containsKey(channel.id)) {
       channelMessageCount[channel.id!] = channel.messages.length;
       isChannelRead[channel.id!] = false;
+      playNotificationNoise();
       return;
     }
 
@@ -35,6 +36,7 @@ class NotificationService extends GetxController {
     if (channel.messages.length > channelMessageCount[channel.id]!) {
       channelMessageCount[channel.id!] = channel.messages.length;
       isChannelRead[channel.id!] = false;
+      playNotificationNoise();
       print("New unread message in ${channel.name}");
     }
   }
@@ -46,7 +48,6 @@ class NotificationService extends GetxController {
 
   void updateUnreadChannelValue() {
     hasUnreadChannels.value = isChannelRead.containsValue(false);
-    if (hasUnreadChannels.value) playNotificationNoise();
   }
 
   void playNotificationNoise() {
