@@ -15,7 +15,8 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _loginUsernameController = TextEditingController();
   final TextEditingController _loginPasswordController = TextEditingController();
   final String baseUrl = 'http://ec2-35-183-137-76.ca-central-1.compute.amazonaws.com:8000/api/auth';
-  // final String baseUrl = 'http://10.0.2.2:8000/api/auth'; // LocalServer 
+
+  // final String baseUrl = 'http://10.0.2.2:8000/api/auth'; // LocalServer
   TokenSingleton t_storage = TokenSingleton.instance;
 
   bool _isRegistering = true;
@@ -88,3 +89,4 @@ class _AuthScreenState extends State<AuthScreen> {
       _showDialog('Error', 'Login failed. Please try again.');
     }
   }
+}
