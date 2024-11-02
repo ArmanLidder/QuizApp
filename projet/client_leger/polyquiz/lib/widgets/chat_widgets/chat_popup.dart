@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:polyquiz/services/notification_service.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_widget.dart';
 
 class ChatPopup extends StatefulWidget {
@@ -10,6 +12,7 @@ class ChatPopup extends StatefulWidget {
 
 class _ChatPopupState extends State<ChatPopup> {
   bool _isChatOpen = false;
+  NotificationService notificationService = NotificationService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +27,11 @@ class _ChatPopupState extends State<ChatPopup> {
   }
 
   Widget buildHoveringButton(BuildContext context) {
-    return IconButton(
+    return Obx(() => IconButton(
         onPressed: () => openChat(context),
         icon: Icon(Icons.message_rounded),
-        color: _isChatOpen ? Colors.red : Colors.green,
-    );
+        color: notificationService.hasUnreadChannels.value ? Colors.red : Colors.green,
+    ));
   }
 
   void openChat(BuildContext context) {
