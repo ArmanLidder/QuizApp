@@ -16,14 +16,17 @@ class ChannelService extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    channels.bindStream(getChannelStream());
+    channels.bindStream(getFilteredChannelStream());
     permittedChannels.bindStream(getPermittedChannelStream());
     joinableChannels.bindStream(getJoinableChannelStream());
   }
 
-  Stream<List<Canal>> getChannelStream() {
-    return _db.collection(collectionName)
-        .snapshots()
+  Stream<QuerySnapshot<Map<String, dynamic>>> getChannelStream() {
+    return _db.collection(collectionName).snapshots();
+  }
+
+  Stream<List<Canal>> getFilteredChannelStream() {
+    return getChannelStream()
         .map((query) {
        return query.docs.map((doc) => Canal.fromDocument(doc)).toList();
     });
@@ -111,6 +114,10 @@ class ChannelService extends GetxController {
 
     await _db.collection(collectionName).add(newChannel.toJson());
     return true;
+  }
+
+  List<String> getListOfPermittedChannelIds() {
+    return permittedChannels.map((channel) => channel.id ?? "").toList();
   }
 
   DocumentReference _getChannelRefById(String id) => _db.collection(collectionName).doc(id);
