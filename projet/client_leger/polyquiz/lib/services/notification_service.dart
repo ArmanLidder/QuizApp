@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
@@ -9,11 +10,14 @@ class NotificationService extends GetxController {
   Map<String, int> channelMessageCount = {};
   Map<String, bool> isChannelRead = {};
   RxBool hasUnreadChannels = false.obs;
+  final player = AudioPlayer();
+
 
   @override
   void onInit() {
     super.onInit();
     setUpChannelListener();
+    setUpMaps();
   }
 
   bool isChannelPermitted(String channelId) => channelService.getListOfPermittedChannelIds().contains(channelId);
@@ -22,7 +26,7 @@ class NotificationService extends GetxController {
     if (channel.id == null) return;
     if (!channelMessageCount.containsKey(channel.id)) {
       channelMessageCount[channel.id!] = channel.messages.length;
-      isChannelRead[channel.id!] = true;
+      isChannelRead[channel.id!] = false;
       return;
     }
 
@@ -41,11 +45,17 @@ class NotificationService extends GetxController {
   }
 
   void updateUnreadChannelValue() {
-    hasUnreadChannels = isChannelRead.containsValue(false).obs;
+    hasUnreadChannels.value = isChannelRead.containsValue(false);
+    playNotificationNoise();
+  }
+
+  void playNotificationNoise() {
+    player.play(AssetSource('notification.mp3'));
   }
 
   void readChannel(String channelId) {
     if (isChannelRead.containsKey(channelId)) isChannelRead[channelId] = true;
+    updateUnreadChannelValue();
   }
 
   void setUpChannelListener() {
@@ -62,4 +72,11 @@ class NotificationService extends GetxController {
     });
   }
 
+  void setUpMaps() {
+    channelService.permittedChannels.forEach((channel) {
+      if (channel.id == null) return;
+      isChannelRead[channel.id!] = true;
+      channelMessageCount[channel.id!] = channel.messages.length;
+    });
+  }
 }
