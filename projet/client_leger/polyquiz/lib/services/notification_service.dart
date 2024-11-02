@@ -10,6 +10,12 @@ class NotificationService extends GetxController {
   Map<String, bool> isChannelRead = {};
   RxBool hasUnreadChannels = false.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    setUpChannelListener();
+  }
+
   bool isChannelPermitted(String channelId) => channelService.getListOfPermittedChannelIds().contains(channelId);
 
   void handlePermittedChannel(Canal channel) {
@@ -25,6 +31,7 @@ class NotificationService extends GetxController {
     if (channel.messages.length > channelMessageCount[channel.id]!) {
       channelMessageCount[channel.id!] = channel.messages.length;
       isChannelRead[channel.id!] = false;
+      print("New unread message in ${channel.name}");
     }
   }
 
