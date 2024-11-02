@@ -181,10 +181,10 @@ export class GameCreationService {
         socket.on(SocketEvent.SAVE_FINAL_GAME_STATS, async (roomId: number) => {
             const game = roomManager.getGameByRoomId(roomId);
             const gameType = roomManager.getRoomById(roomId).gameType;
-            const { highestScorers,nonExtremes, lowestScorers} = this.getExtremeScores(game.players)
-            for (let winner of highestScorers) await this.updateStats(winner, game, gameType, 'winner');
-            for (let loser of lowestScorers) await this.updateStats(loser, game, gameType, 'loser');
-            for (let loser of nonExtremes) await this.updateStats(loser, game, gameType, 'none');
+            const { highestScorers,nonExtremes, lowestScorers} = gameType === 'classic' ? this.getExtremeScoresClassicGame(game.players): this.getExtremeScoresTeamGame(this.calculateTeamsFinalScore(roomId, roomManager, game.players))
+            for (let winner of highestScorers) await this.dispatchUpdateStats(winner, game, gameType, 'winner', roomId, roomManager);
+            for (let loser of lowestScorers) await this.dispatchUpdateStats(loser, game, gameType, 'loser', roomId, roomManager);
+            for (let loser of nonExtremes) await this.dispatchUpdateStats(loser, game, gameType, 'none', roomId, roomManager);
         });
     }
 
@@ -264,11 +264,23 @@ export class GameCreationService {
         }
     }
 
+    private async dispatchUpdateStats(userIdOrTeamId: string | number, game: Game, gameType: string, type: string, roomId:number, roomManager: RoomManagingService) {
+        if (gameType === "classic") {
+            await this.updateStats(userIdOrTeamId.toString(), game, gameType, type);
+        } else {
+            const teams = roomManager.getRoomById(roomId).teams;
+            if (teams) {
+                const members = teams.get(Number(userIdOrTeamId)).members
+                if (members) for (const userId of members) await this.updateStats(userId, game, gameType, type);
+            }
+        }
+    }
+
     // Method that updates player stats online type is either winner, loser
     // Update money has to be done here also but some logic has to be made in the class game when joining
     // with a price
     private async updateStats(userId: string, game: Game, gameType: string, type: string) {
-        const score = game.players.get(userId)
+        const score = game.players.get(userId);
         const finalResult = type === 'winner' ? 'win': 'loss';
         const money = type === 'winner' ? 10 : 1;
         let prestige = type === 'winner' ? 10 : type === 'loser' ? -10 : 0;
@@ -354,7 +366,7 @@ export class GameCreationService {
         } as UserStats
     }
 
-    private getExtremeScores(players: Map<string, Score>) {
+    private getExtremeScoresClassicGame(players: Map<string, Score>) {
         let highestScore = -Infinity;
         let lowestScore = Infinity;
         const highestScorers: string[] = [];
@@ -394,6 +406,69 @@ export class GameCreationService {
             nonExtremes,
             lowestScorers,
         };
+    }
+
+    private getExtremeScoresTeamGame(teamsScore: Map<number, number>) {
+        let highestScore = -Infinity;
+        let lowestScore = Infinity;
+        const highestScorers: number[] = [];
+        const lowestScorers: number[] = [];
+        const nonExtremes: number[] = [];
+
+        teamsScore.forEach((score, teamId) => {
+            // Check for the highest scoring teams
+            if (score > highestScore) {
+                highestScore = score;
+                highestScorers.length = 0;
+                highestScorers.push(teamId);
+            } else if (score === highestScore) {
+                highestScorers.push(teamId);
+            }
+
+            // Check for the lowest scoring teams
+            if (score < lowestScore) {
+                lowestScore = score;
+                lowestScorers.length = 0;
+                lowestScorers.push(teamId);
+            } else if (score === lowestScore) {
+                lowestScorers.push(teamId);
+            }
+        });
+
+        // Populate the non-extreme teams (those not in the highest or lowest scoring groups)
+        teamsScore.forEach((score, teamId) => {
+            if (!highestScorers.includes(teamId) && !lowestScorers.includes(teamId)) {
+                nonExtremes.push(teamId);
+            }
+        });
+
+        // If there's only one team, there won't be any lowest or non-extreme teams
+        if (teamsScore.size === 1) {
+            lowestScorers.length = 0;
+            nonExtremes.length = 0;
+        }
+
+        return {
+            highestScorers,
+            nonExtremes,
+            lowestScorers,
+        };
+    }
+
+    private calculateTeamsFinalScore(roomId: number, roomManager: RoomManagingService, players: Map<string, Score>) {
+        const teams = roomManager.getRoomById(roomId).teams;
+        const teamsScore = new Map<number, number>(); // teamId as key and total point
+        if (teams && players) {
+            teams.forEach((team, teamId) => {
+                let total = 0;
+                team.members.forEach((userId) => {
+                    const score = players.get(userId);
+                    total += score.points;
+                });
+                teamsScore.set(teamId, total);
+            });
+        }
+        return teamsScore ? teamsScore : new Map<number,number>();
     }
 
     // Two game types equipe or classic
