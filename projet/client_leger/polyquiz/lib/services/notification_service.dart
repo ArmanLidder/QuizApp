@@ -8,6 +8,7 @@ class NotificationService extends GetxController {
   static NotificationService get instance => Get.find();
   Map<String, int> channelMessageCount = {};
   Map<String, bool> isChannelRead = {};
+  RxBool hasUnreadChannels = false.obs;
 
   bool isChannelPermitted(String channelId) => channelService.getListOfPermittedChannelIds().contains(channelId);
 
@@ -32,6 +33,14 @@ class NotificationService extends GetxController {
     if (isChannelRead.containsKey(channel.id)) isChannelRead.remove(channel.id);
   }
 
+  void updateUnreadChannelValue() {
+    hasUnreadChannels = isChannelRead.containsValue(false).obs;
+  }
+
+  void readChannel(String channelId) {
+    if (isChannelRead.containsKey(channelId)) isChannelRead[channelId] = true;
+  }
+
   void setUpChannelListener() {
     channelService.getChannelStream().listen((snapshot) {
       snapshot.docChanges.forEach((element) {
@@ -40,6 +49,8 @@ class NotificationService extends GetxController {
 
         if (isChannelPermitted(changedChannel.id!)) handlePermittedChannel(changedChannel);
         else handleUnpermittedChannel(changedChannel);
+
+        updateUnreadChannelValue();
       });
     });
   }
