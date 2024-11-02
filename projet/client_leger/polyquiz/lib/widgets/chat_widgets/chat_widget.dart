@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/notification_service.dart';
 import 'package:polyquiz/widgets/chat_widgets/channel_window_widget.dart';
 import 'package:polyquiz/widgets/chat_widgets/message_window_widget.dart';
 
@@ -11,6 +12,7 @@ class ChatWidget extends StatefulWidget {
 class _ChatWidgetState extends State<ChatWidget> {
   Page page = Page.Channel;
   String currentChannelId = "Clavardage";
+  NotificationService notificationService = NotificationService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +54,11 @@ class _ChatWidgetState extends State<ChatWidget> {
     }
   }
 
-  void selectChannel(String name) {
+  void selectChannel(String id) {
     setState(() {
-      currentChannelId = name;
+      currentChannelId = id;
       page = Page.Message;
     });
+    notificationService.readChannel(id);
   }
 }
