@@ -1,5 +1,10 @@
 import { Message } from './message.interface';
 
+export interface JoinTeamData {
+    roomId: number;
+    newTeamId: number;
+}
+
 export interface PlayerUsername {
     roomId: number;
     username: string;

@@ -1,4 +1,3 @@
-<app-header></app-header>
 <div *ngIf='isValidation'>
     <button class="solo-btn" (click)="togglePrivate()">{{isPrivate ? "Rejoindre Jeu Public": "Rejoindre Jeu Privé"}}</button>
     <app-room-code-prompt *ngIf="isPrivate"

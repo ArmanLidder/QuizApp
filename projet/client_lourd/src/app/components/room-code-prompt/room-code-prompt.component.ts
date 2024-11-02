@@ -1,7 +1,12 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
-import { RoomValidationService } from '@app/services/room-validation.service/room-validation.service';
-import { NO_COLOR } from '@common/style/style';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
+import {RoomValidationService} from '@app/services/room-validation.service/room-validation.service';
+import {NO_COLOR} from '@common/style/style';
+import {GameListService} from "@app/services/game-list.service/game-list.service";
+import {UsersService} from "@app/services/users.service/users.service";
+import {GameListItem} from "@common/interfaces/room-interface";
+import {firstValueFrom} from "rxjs";
+import {User} from "@common/interfaces/user-data.interface";
 
 @Component({
     selector: 'app-room-code-prompt',
@@ -19,7 +24,10 @@ export class RoomCodePromptComponent implements OnInit {
     constructor(
         public roomValidationService: RoomValidationService,
         private socketService: SocketClientService,
-    ) {}
+        private gameListService: GameListService,
+        private userService: UsersService,
+    ) {
+    }
 
     ngOnInit() {
         this.connect();
@@ -45,9 +53,16 @@ export class RoomCodePromptComponent implements OnInit {
     }
 
     async validateRoomId() {
-        this.error = await this.roomValidationService.verifyRoomId();
-        this.handleError();
-        if (!this.error) await this.validateUsername();
+        const game = (await this.getGame()) as GameListItem;
+        const isHostFriend = await this.validateFriendship(game);
+        if (game.friendsOnly && !isHostFriend) {
+            this.error = "Cette partie est exclusive aux amis de l'hôte."
+            this.handleError();
+        } else {
+            this.error = await this.roomValidationService.verifyRoomId();
+            this.handleError();
+            if (!this.error) await this.validateUsername();
+        }
     }
 
     async validateUsername() {
@@ -61,6 +76,7 @@ export class RoomCodePromptComponent implements OnInit {
             !this.roomValidationService.isLocked && this.roomValidationService.isRoomIdValid && this.roomValidationService.isUsernameValid;
         if (isValid) this.sendAllDataToWaitingRoom();
         else this.handleError();
+
     }
 
     private sendAllDataToWaitingRoom() {
@@ -84,5 +100,18 @@ export class RoomCodePromptComponent implements OnInit {
     private showErrorFeedback() {
         this.textColor = 'red-text';
         this.inputBorderColor = 'red-border';
+    }
+
+    private async getGame() {
+        const games: GameListItem[] = (await firstValueFrom(this.gameListService.games$));
+        for (let game of games)
+            if (game.room === Number(this.roomValidationService.roomId)) return game;
+        return undefined;
+    }
+
+    private async validateFriendship(game: GameListItem) {
+        const currentUserId = (await firstValueFrom(this.roomValidationService.user$) as User)?.uid;
+        const hostProfile = await firstValueFrom(this.userService.getUser(game.hostUserId)) as User;
+        return hostProfile.friends.includes(currentUserId);
     }
 }

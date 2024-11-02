@@ -13,6 +13,8 @@
                         <div [class]="game.onGoing ?'on-going-game':'game-item'" (click)="joinRoom(game)">
                             <span class="quiz-title">{{ getQuizName(game.quizId) }}</span>
                             <ng-container *ngIf="!game.onGoing">
+                                <span *ngIf="game.friendsOnly">Amis seulement</span>
+                                <span *ngIf="game.prestige">Prestige minimum: </span>
                                 <span class="players">{{ game.numberOfPlayers }} <i class="bi bi-people"></i></span>
                                 <span class="game-type"> Mode de jeu : {{ game.gameType == 'classic' ? 'Classique' : 'En Équipe' }}</span>
                                 <span class="price">{{ game.price == 0 ? "Gratuit " : game.price }} <i

@@ -1,11 +1,13 @@
 import {Component, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
 import {GameListService} from "@app/services/game-list.service/game-list.service";
 import {GameListItem} from "@common/interfaces/room-interface";
-import {Observable, of} from 'rxjs';
+import {Observable, of, firstValueFrom} from 'rxjs';
 import {QuizService} from "@app/services/quiz.service/quiz.service";
 import {catchError, switchMap} from 'rxjs/operators';
 import {RoomValidationService} from "@app/services/room-validation.service/room-validation.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
+import {User} from "@common/interfaces/user-data.interface";
+import {UsersService} from "@app/services/users.service/users.service";
 
 @Component({
     selector: 'app-active-game-list',
@@ -24,6 +26,7 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         private quizService: QuizService,
         private roomValidationService: RoomValidationService,
         private snackbarService: SnackbarService,
+        private userService: UsersService,
     ) {
         this.games$ = this.gameListService.games$;
     }
@@ -73,12 +76,17 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
 
     async joinRoom(game: GameListItem) {
         this.roomValidationService.roomId = game.room as unknown as string;
-        await this.roomValidationService.verifyUsername();
-        if (!this.roomValidationService.isUsernameValid) this.snackbarService.show("Vous avez été banni de cette partie.")
-        else await this.roomValidationService.sendJoinRoomRequest();
-        if (this.roomValidationService.isLocked) this.snackbarService.show("La partie est actuellement verouillez.")
-        const isValid = !this.roomValidationService.isLocked && this.roomValidationService.isUsernameValid;
-        if (isValid) this.sendAllDataToWaitingRoom();
+        const isHostFriend = await this.validateFriendship(game);
+        if (game.friendsOnly && !isHostFriend)  {
+            this.snackbarService.show("Cette partie est exclusive aux amis de l'hôte.")
+        } else {
+            await this.roomValidationService.verifyUsername();
+            if (!this.roomValidationService.isUsernameValid) this.snackbarService.show("Vous avez été banni de cette partie.")
+            else await this.roomValidationService.sendJoinRoomRequest();
+            if (this.roomValidationService.isLocked) this.snackbarService.show("La partie est actuellement verouillez.")
+            const isValid = !this.roomValidationService.isLocked && this.roomValidationService.isUsernameValid;
+            if (isValid) this.sendAllDataToWaitingRoom();
+        }
     }
 
     private sendAllDataToWaitingRoom() {
@@ -86,5 +94,11 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         this.sendUsernameToWaitingRoom();
         this.roomValidationService.isActive = false;
         this.sendValidationDone();
+    }
+
+    private async validateFriendship(game: GameListItem) {
+        const currentUserId = (await firstValueFrom(this.roomValidationService.user$) as User)?.uid;
+        const hostProfile = await firstValueFrom(this.userService.getUser(game.hostUserId)) as User;
+        return hostProfile.friends.includes(currentUserId);
     }
 }

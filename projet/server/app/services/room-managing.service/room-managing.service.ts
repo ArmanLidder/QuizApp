@@ -1,11 +1,15 @@
-import { Service } from 'typedi';
-import { HOST_USERNAME } from '@common/names/host-username';
-import { RoomData } from '@app/interface/room-data-interface';
-import { GameConfig } from "@common/interfaces/game-info.interface";
-import { GameListItem } from "@common/interfaces/room-interface";
+import {Service} from 'typedi';
+import {HOST_USERNAME} from '@common/names/host-username';
+import {RoomData} from '@app/interface/room-data-interface';
+import {GameConfig} from "@common/interfaces/game-info.interface";
+import {GameListItem} from "@common/interfaces/room-interface";
+import {Team} from "@app/classes/team/team";
 
 type SocketId = string;
 type Username = string;
+type TeamId = number;
+
+const DEFAULT_TEAM_ID = 1;
 
 @Service()
 export class RoomManagingService {
@@ -48,6 +52,7 @@ export class RoomManagingService {
             onGoing: false,
             price: config.price,
             friendsOnly: config.friendsOnly,
+            teams: new Map<TeamId, Team>(),
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -60,6 +65,8 @@ export class RoomManagingService {
 
     addUser(roomId: number, username: string, socketId: string) {
         this.getRoomById(roomId).players.set(username, socketId);
+        // new code
+        if (this.getRoomById(roomId).gameType !== 'classic' && HOST_USERNAME !== username) this.addNewUserInTeam(roomId, username)
     }
 
     getSocketIdByUsername(roomId: number, username: string): string {
@@ -80,8 +87,8 @@ export class RoomManagingService {
         this.rooms.set(roomId, gameConfig)
     }
 
-    getGamesConfig() :GameListItem[] {
-        const gameList:GameListItem[] = []
+    getGamesConfig(): GameListItem[] {
+        const gameList: GameListItem[] = []
         this.rooms.forEach((roomData: RoomData, roomCode: number) => {
             let gameItem = {
                 room: roomCode,
@@ -99,9 +106,28 @@ export class RoomManagingService {
         return gameList;
     }
 
+    createNewTeam(roomId: number, name: string) {
+        this.removeUserInTeam(roomId, name);
+        const teams = this.getRoomById(roomId).teams;
+        const newTeamId = teams.size + 1;
+        teams.set(newTeamId, new Team(name));
+    }
+
+    joinTeam(roomId: number, name: string, newTeamId: number) {
+        const team = this.getRoomById(roomId).teams.get(Number(newTeamId));
+        if (team) {
+            this.removeUserInTeam(roomId, name);
+            team.addMember(name);
+        } else {
+            this.createNewTeam(roomId, name)
+        }
+    }
+
     removeUserFromRoom(roomId: number, name: string): void {
         const playerMap = this.getRoomById(roomId).players;
         playerMap.delete(name);
+        // new code
+        if (this.getRoomById(roomId).gameType !== 'classic') this.removeUserInTeam(roomId, name);
     }
 
     removeUserBySocketId(userSocketId: string) {
@@ -109,7 +135,7 @@ export class RoomManagingService {
             for (const [username, socketId] of roomData.players.entries()) {
                 if (userSocketId === socketId) {
                     this.removeUserFromRoom(roomId, username);
-                    return { roomId, username };
+                    return {roomId, username};
                 }
             }
         }
@@ -160,5 +186,34 @@ export class RoomManagingService {
             roomId = Math.floor(Math.random() * UPPER_BOUND_MULTIPLIER) + LOWER_BOUND;
         } while (this.isRoomExistent(roomId));
         return roomId;
+    }
+
+    private addNewUserInTeam(roomId: number, username: string) {
+        const teams = this.getRoomById(roomId).teams;
+        if (teams.size === 0) teams.set(DEFAULT_TEAM_ID, new Team(username));
+        else teams.get(DEFAULT_TEAM_ID).addMember(username);
+    }
+
+    private removeUserInTeam(roomId: number, name: string) {
+        const teamMap = this.getRoomById(roomId).teams
+        teamMap.forEach((team: Team, teamId: number) => {
+            if (team.members.includes(name)) {
+                const isEmpty = team.removeMember(name);
+                if (isEmpty) {
+                    teamMap.delete(teamId);
+                    this.reassignTeamId(roomId);
+                }
+            }
+        });
+    }
+
+    private reassignTeamId(roomId: number) {
+        const teamMap = this.getRoomById(roomId).teams
+        let id = 1;
+        const newTeamMap = new Map<TeamId, Team>();
+        if (teamMap) teamMap.forEach((team: Team, teamId: number) => {
+            newTeamMap.set(id++, team);
+        });
+        if (teamMap.size > 0) this.getRoomById(roomId).teams = newTeamMap;
     }
 }
