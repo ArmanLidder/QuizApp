@@ -27,10 +27,33 @@ class _ChatPopupState extends State<ChatPopup> {
   }
 
   Widget buildHoveringButton(BuildContext context) {
-    return Obx(() => IconButton(
-        onPressed: () => openChat(context),
-        icon: Icon(Icons.message_rounded),
-        color: notificationService.hasUnreadChannels.value ? Colors.red : Colors.green,
+    return  Obx(() => Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            shape: BoxShape.circle,
+          ),
+          padding: EdgeInsets.all(8), // Adjusts the padding to control icon size
+          child: IconButton(
+            onPressed: () => openChat(context),
+            icon: Icon(Icons.message_rounded, color: Colors.white, size: 30),
+          ),
+        ),
+        if (notificationService.hasUnreadChannels.value)
+          Positioned(
+            top: 4,
+            left: 4,
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+      ],
     ));
   }
 
