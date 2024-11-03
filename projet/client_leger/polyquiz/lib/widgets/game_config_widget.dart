@@ -17,6 +17,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
   double _price = 0.0;
   bool _friendsOnly = false;
   bool _private = true;
+  double _prestige = 0.0;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   User? userData;
 
@@ -105,6 +106,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       gameConfigService.setPrice(_price);
                       gameConfigService.setFriendsOnly(_friendsOnly);
                       gameConfigService.setPrivacy(_private);
+                      gameConfigService.setPrestige(_prestige);
                       gameConfigService.setUser(this.userData!);
                       Navigator.of(context).pop(); // Close the dialog
                     }
