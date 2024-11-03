@@ -15,6 +15,8 @@ import 'package:get/get.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/pages/userPage.dart';
+import 'package:polyquiz/pages/storePage.dart';
+import 'package:polyquiz/services/StoreService.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +24,7 @@ void main() async {
   Get.put(UserService());
   Get.put(LoggedInUserService());
   Get.put(ImageStorageService());
+  Get.put(StoreService());
 
   runApp(const MyApp());
 }
@@ -43,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/join': (context) => JoinRoomPage(),
         '/game': (context) => GamePage(),
         '/user': (context) => Userpage(),
+        '/store' :(context) => Storepage(),
         '/waitingRoom': (context) => WaitingRoomScreen(
             quiz: ModalRoute.of(context)!.settings.arguments as Quiz,
             isHost: true),

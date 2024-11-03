@@ -4,7 +4,7 @@ import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class ChannelService extends GetxController {
-  final loggedInService = Get.put(LoggedInUserService());
+  final loggedInService = Get.find();
   final String collectionName = "canals";
   static ChannelService get instance => Get.find();
   RxList<Canal> channels = <Canal>[].obs;

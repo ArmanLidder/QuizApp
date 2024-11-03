@@ -48,6 +48,13 @@ class _HomePageState extends State<HomePage> {
                   Navigator.pushReplacementNamed(context, '/user');
                 },
                 child: Text("user page")),
+            const SizedBox(height: 20),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/store');
+                },
+                child: Text("store")),
+
             ChatPopup(),
           ],
         ),
