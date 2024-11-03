@@ -19,6 +19,7 @@ class GameConfig {
   final String? onGoing;
   final double? price;
   final bool? friendsOnly;
+  final double? prestige;
 
   GameConfig({
     this.hostUserId,
@@ -27,6 +28,7 @@ class GameConfig {
     this.onGoing,
     this.price,
     this.friendsOnly,
+    this.prestige,
   });
 
   Map<String, dynamic> toJson() {
@@ -37,6 +39,7 @@ class GameConfig {
       'onGoing': onGoing,
       'price': price,
       'friendsOnly': friendsOnly,
+      'prestige': prestige,
     };
   }
 }
