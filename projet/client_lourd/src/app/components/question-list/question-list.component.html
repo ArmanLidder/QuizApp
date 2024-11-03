@@ -44,7 +44,7 @@
                     </div>
                     <div [attr.id]="'question' + i" class="space-y-4">
                         <p class="font-medium text-lg">Question {{i + 1}}:</p>
-                        <label for="type{{ i }}" class="block text-sm font-medium">Type de la question :</label>
+                        <label for="type{{ i }}" class="block text-sm font-medium font-semibold">Type de la question :</label>
                         <select formControlName="type" name="type{{ i }}" class="w-full p-2 border rounded">
                             <option value="QCM">QCM</option>
                             <option value="QRL">QRL</option>
@@ -136,7 +136,7 @@
                             <label for="answer{{ i }}" class="block text-sm font-medium">Bonne réponse :</label>
                             <input m type="number" id="answer{{ i }}" formControlName="answer"
                                    class="w-full p-2 border rounded" placeholder="Entrez la valeur de la bonne réponse">
-                            <p *ngIf="question.get('answer')?.hasError('answerOutOfRange')"
+                            <p *ngIf="question.get('answer')?.hasError('answerOutOfRange') && question.get('answer')?.touched"
                                class="text-red-600 text-sm">
                                 La réponse doit être entre les bornes spécifiées.
                             </p>
@@ -157,10 +157,11 @@
                             <label for="margin{{ i }}" class="block text-sm font-medium">Marge de tolérance :</label>
                             <input type="number" id="margin{{ i }}" formControlName="margin"
                                    class="w-full p-2 border rounded" placeholder="Entrez la marge de tolérance">
-                            <p *ngIf="question.get('margin')?.hasError('marginTooLarge') && question.get('margin')?.touched" class="text-red-600 text-sm">
-                                La marge de tolérance doit être au maximum 25 % de la réponse
-                                ({{ calculateMarginLimit(question.get('answer')?.value) }}).
+                            <p *ngIf="question.get('margin')?.hasError('marginTooLarge') && question.get('margin')?.dirty" class="text-red-600 text-sm">
+                                La marge de tolérance doit être au maximum 25 % de l'intervalle
+                                ({{ calculateMarginLimit(question.get('interval.min')?.value, question.get('interval.max')?.value) }}).
                             </p>
+
                             <p *ngIf="question.get('margin')?.hasError('required') && question.get('margin')?.touched" class="text-red-600 text-sm">
                                 La marge de tolérance est requis.
                             </p>
@@ -170,7 +171,7 @@
                                 La marge doit être un nombre entier supérieure ou égale à 0.
                             </p>
 
-                            <p *ngIf="hasValidInterval(question)" class="text-green-500 text-sm font-semibold">
+                            <p *ngIf="hasValidInterval(question)" class="bg-green-50 text-green-700 p-2 rounded-lg text-sm font-medium mt-2">
                                 L'intervalle de bonne réponse est :
                                 [
                                 {{ calculateAnswerInterval(
@@ -181,6 +182,7 @@
                             ) }}
                                 ]
                             </p>
+
                         </div>
                     </div>
 
@@ -237,11 +239,15 @@
 
                 <div *ngIf="!question.get('beingModified')?.value" class="space-y-4">
                     <p class="font-medium text-lg">Question {{i + 1}}:</p>
-                    <p class="text-sm text-gray-600">Type de la question: {{question.get('type')?.value}}</p>
-                    <p class="truncate text-sm text-gray-600">Contenu de la question
-                        : {{question.get('text')?.value}}</p>
-                    <p class="text-sm text-gray-600">Le nombre de points de la
-                        question: {{question.get('points')?.value}}</p>
+                    <p class="text-sm text-gray-600">
+                        <span class="font-semibold">Type de la question:</span> {{question.get('type')?.value}}
+                    </p>
+                    <p class="truncate text-sm text-gray-600">
+                        <span class="font-semibold">Contenu de la question:</span> {{question.get('text')?.value}}
+                    </p>
+                    <p class="truncate text-sm text-gray-600">
+                        <span class="font-semibold">Points:</span> {{question.get('points')?.value}}
+                    </p>
 
                     <div *ngIf="question.get('type')?.value === 'QCM'" class="space-y-4">
                         <p class="text-sm font-semibold">Choix :</p>
@@ -265,14 +271,20 @@
 
 
                     <div *ngIf="question.get('type')?.value === 'QRE'" class="space-y-2">
-                        <p class="text-sm text-gray-600">Intervalle:</p>
-                        <ul class="list-disc text-sm pl-4 text-gray-600">
+                        <p class="text-sm text-gray-700 font-semibold">Intervalle:</p>
+                        <ul class="list-none text-sm pl-4 bg-gray-50 text-gray-800 p-2 rounded-lg">
                             <li>Min : {{question.get('interval.min')?.value}}</li>
                             <li>Max : {{question.get('interval.max')?.value}}</li>
                         </ul>
-                        <p class="text-sm text-gray-600">Bonne réponse : {{question.get('answer')?.value}}</p>
-                        <p class="text-sm text-gray-600">Marge de tolérance : {{question.get('margin')?.value}}</p>
+                        <p class="truncate text-sm text-gray-600">
+                            <span class="font-semibold">Bonne réponse :</span> {{question.get('answer')?.value}}
+                        </p>
+                        <p class="truncate text-sm text-gray-600">
+                            <span class="font-semibold">Marge de tolérance :</span> {{question.get('margin')?.value}}
+                        </p>
                     </div>
+
+
                 </div>
 
                 <div class="flex items-center space-x-4 mt-4">

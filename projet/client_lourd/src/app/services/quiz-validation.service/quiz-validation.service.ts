@@ -192,10 +192,11 @@ export class QuizValidationService {
                 errors.push(`Question ${index + 1} : la marge ne doit pas être en notation scientifique.`);
             }
 
-
-            const maxMargin = 0.25 * Math.abs(question.answer);
-            if (question.margin > maxMargin) {
-                errors.push(`Question ${index + 1} : la marge doit être au maximum ${Math.floor(maxMargin)} (25% de ${Math.abs(question.answer)})`);
+            if (question.interval?.min !== undefined && question.interval?.max !== undefined) {
+                const maxMargin = Math.abs((question.interval.max - question.interval.min) * 0.25);
+                if (question.margin > maxMargin) {
+                    errors.push(`Question ${index + 1} : la marge doit être au maximum ${Math.floor(maxMargin)} (25% de l'intervalle)`);
+                }
             }
         }
 
@@ -267,13 +268,18 @@ export class QuizValidationService {
 
 
     validateMarginWithinLimit(control: AbstractControl): { [key: string]: boolean } | null {
-        const answer = control.parent?.get('answer')?.value;
+        const min = control.parent?.get('interval.min')?.value;
+        const max = control.parent?.get('interval.max')?.value;
         const margin = control.value;
 
-        if (answer !== undefined && margin !== undefined && margin > 0.25 * Math.abs(answer)) {
-            return { marginTooLarge: true };
+        if (min !== undefined && max !== undefined && margin !== undefined) {
+            const maxMargin = Math.abs((max - min) / 4);
+            if (margin > maxMargin) {
+                return { marginTooLarge: true };
+            }
         }
         return null;
     }
+
 
 }

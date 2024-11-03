@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Injector} from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +12,7 @@ import { Quiz } from '@common/interfaces/quiz.interface';
 import { PageMode } from 'src/enums/page-mode.enum';
 import { generateRandomId } from 'src/utils/random-id-generator/random-id-generator';
 import { GAME_ADMIN_PAGE } from '@common/page-url/page-url';
+import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 
 @Component({
     selector: 'app-quiz-creation',
@@ -31,7 +32,7 @@ export class QuizCreationComponent {
     private quizService: QuizService;
     private route: ActivatedRoute;
     private navigateRoute: Router;
-
+    private snackBar: SnackbarService;
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -41,6 +42,8 @@ export class QuizCreationComponent {
         this.quizService = injector.get<QuizService>(QuizService);
         this.route = injector.get<ActivatedRoute>(ActivatedRoute);
         this.navigateRoute = injector.get<Router>(Router);
+        this.snackBar = injector.get<SnackbarService>(SnackbarService)
+
         this.isPopupVisibleDuration = false;
         this.isPopupVisibleForm = false;
         this.formErrors = [];
@@ -96,12 +99,20 @@ export class QuizCreationComponent {
         };
         if (this.mode === PageMode.MODIFICATION) {
             quiz.id = this.quiz.id;
-            this.quizService.basicPut(quiz).subscribe(navigateToAdminCallBack);
+            this.quizService.basicPut(quiz).subscribe(() => {
+                this.snackBar.show('Le quiz a été mis à jour avec succès');
+                navigateToAdminCallBack();
+            });
         } else {
             quiz.id = generateRandomId();
-            this.quizService.basicPost(quiz).subscribe(navigateToAdminCallBack);
+            this.quizService.basicPost(quiz).subscribe(() => {
+                this.snackBar.show('Le quiz a été ajouté avec succès');
+                navigateToAdminCallBack();
+            });
         }
     }
+
+
 
     private openQuizExistsDialog() {
         this.dialog.open(AlertDialogComponent, {

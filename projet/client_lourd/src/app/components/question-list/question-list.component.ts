@@ -76,11 +76,12 @@ export class QuestionListComponent {
         return this.choiceService.getChoicesArray(index, this.questionsArray);
     }
 
-    calculateMarginLimit(answer: number | null): string {
-        if (answer === null || answer === undefined) return '';
-        const limit = 0.25 * answer;
-        return Math.floor(Math.abs(limit)).toString() ;
+    calculateMarginLimit(min: number | null, max: number | null): string {
+        if (min === null || max === null) return '';
+        const limit = Math.abs((max - min) / 4);
+        return Math.floor(limit).toString();
     }
+
 
     calculateAnswerInterval(answer: number | null, margin: number | null, min: number | null, max: number | null): string {
         if (
