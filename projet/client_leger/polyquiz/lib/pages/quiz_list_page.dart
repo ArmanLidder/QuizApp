@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/question_statistics.dart';
 import 'package:polyquiz/services/quiz_file_service.dart';
 import '../models/quiz.dart';
 import '../services/quiz_service.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/widgets/game_config_widget.dart';
 import '../services/waiting_room_service.dart';
+import 'package:polyquiz/enums/question_type.dart';
 
 class QuizListPage extends StatefulWidget {
   @override
@@ -52,6 +54,15 @@ class _QuizListPageState extends State<QuizListPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  bool _areAllQuestionsQCM(Quiz quiz) {
+    bool result =
+        !quiz.questions.any((question) => question.type != QuestionType.QCM);
+
+    print(quiz.title);
+    print(result);
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,14 +86,16 @@ class _QuizListPageState extends State<QuizListPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Duration: ${quiz.duration} minutes'),
-                                IconButton(
+                                if (_areAllQuestionsQCM(quiz))
+                                  IconButton(
                                     iconSize: 35.0,
                                     onPressed: () async {
                                       String message = await _quizFileService
                                           .downloadQuiz(quiz);
                                       showPopup(context, message);
                                     },
-                                    icon: Icon(Icons.download))
+                                    icon: Icon(Icons.download),
+                                  )
                               ],
                             ),
                             onTap: () async {

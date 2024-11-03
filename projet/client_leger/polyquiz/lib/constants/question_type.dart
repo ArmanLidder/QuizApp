@@ -1,4 +1,0 @@
-enum QuestionType {
-  QCM,
-  QRL,
-}
