@@ -18,7 +18,9 @@ class Userpage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(this.userData);
     this.userData = this.loggedInUserService.getUser();
+    print(this.userData);
     List<num> achievements = this.userData?.achievements ?? [];
 
     return MaterialApp(
