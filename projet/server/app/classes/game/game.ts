@@ -78,7 +78,6 @@ export class Game {
 
         const userAnswer = Number(answer);
         if (isNaN(userAnswer)) {
-            console.error('Invalid number format for answer:', answer);
             return false;
         }
         const min = this.currentQuizQuestion.interval.min;
@@ -130,16 +129,14 @@ export class Game {
 
         const isExactMatch = playerAnswer === correctAnswer;
 
-        if (isExactMatch) {
-            console.log(`Handling Bonus for ${username} ; His answer is ${playerAnswer}`)
+        if (isExactMatch && this.currentQuizQuestion.margin !== 0) {
             newScore = {
                 points: oldScore.points + this.addBonusPoint(points),
                 bonusCount: oldScore.bonusCount + 1,
-                isBonus: this.currentQuizQuestion.margin !== 0,
+                isBonus: true,
                 goodAnswerCounter: oldScore.goodAnswerCounter + 1,
             };
         }  else {
-            console.log(`Handling regular good ans for ${username} ; His answer is ${playerAnswer}`)
             newScore = {
                 points: oldScore.points + points,
                 bonusCount: oldScore.bonusCount,
@@ -147,7 +144,6 @@ export class Game {
                 goodAnswerCounter: oldScore.goodAnswerCounter + 1,
             };
         }
-        console.log(`Setting newscore to ${newScore}`);
         this.players.set(username, newScore);
     }
 

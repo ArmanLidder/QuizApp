@@ -94,7 +94,6 @@ export class GameManagementService {
 
     private handleSubmitAnswer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.SUBMIT_ANSWER, (data: PlayerAnswerData) => {
-            console.log(`Receiving SUBMIT with data :${data}`)
             const game = roomManager.getGameByRoomId(data.roomId);
             roomManager.getGameByRoomId(data.roomId).storePlayerAnswer(data.username, data.timer, data.answers);
             if (data.timer !== 0) {
