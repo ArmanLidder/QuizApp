@@ -48,6 +48,12 @@ export namespace SocketEvent {
     export const UPDATE_GAME_LIST = 'update_game_list';
     export const GET_GAME_LIST = 'get_game_list';
     export const SAVE_FINAL_GAME_STATS = 'save_final_game_stats';
+
+    export const GET_TEAMS = "get_teams";
+    export const CREATE_TEAM = "create_team";
+    export const JOIN_TEAM = "join_team";
+
+    export const GET_GAME_TYPE = "get_game_type";
 }
 
 

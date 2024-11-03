@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import {Component, Input} from '@angular/core';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import { POPUP_TIMEOUT } from '@common/constants/quiz-creation.component.const';
 import { ChoiceService } from '@app/services/choice-service/choice.service';
 import { QuestionService } from '@app/services/question-service/question.service';
@@ -23,6 +23,7 @@ export class QuestionListComponent {
         private choiceService: ChoiceService,
     ) {}
     showPopupIfConditionMet(condition: boolean) {
+        console.log("setting")
         if (condition) {
             this.isPopUpVisible = true;
             setTimeout(() => {
@@ -33,8 +34,11 @@ export class QuestionListComponent {
     }
 
     addQuestion(index: number) {
-        this.questionErrors = this.questionService.addQuestion(index, this.questionsArray);
-        this.showPopupIfConditionMet(this.questionErrors.length !== 0);
+        this.questionErrors = this.questionService.addQuestion(index, this.questionsArray)
+        if (index >= 0 ) {
+            console.log(index);
+            this.showPopupIfConditionMet(this.questionErrors.length !== 0);
+        }
     }
 
     removeQuestion(index: number) {
@@ -72,5 +76,42 @@ export class QuestionListComponent {
     }
     getChoicesArray(index: number) {
         return this.choiceService.getChoicesArray(index, this.questionsArray);
+    }
+
+    calculateMarginLimit(answer: number | null): string {
+        if (answer === null || answer === undefined) return '';
+        const limit = 0.25 * answer; // 25% of the answer
+        return limit.toFixed(2); // Format with two decimal places
+    }
+
+    calculateAnswerInterval(answer: number | null, margin: number | null, min: number | null, max: number | null): string {
+        if (
+            answer === null || answer === undefined ||
+            margin === null || margin === undefined ||
+            min === null || min === undefined ||
+            max === null || max === undefined
+        ) return '';
+
+        const lowerBound = Math.max(answer - margin, min);
+        const upperBound = Math.min(answer + margin, max);
+
+        return `${lowerBound}, ${upperBound}`;
+    }
+
+    hasValidInterval(question: AbstractControl): boolean {
+        const answerControl = question.get('answer');
+        const marginControl = question.get('margin');
+        const minControl = question.get('interval.min');
+        const maxControl = question.get('interval.max');
+
+        return answerControl?.value != null &&
+            marginControl?.value != null &&
+            minControl?.value != null &&
+            maxControl?.value != null &&
+            marginControl?.value >=0 &&
+            !answerControl.errors &&
+            !marginControl.errors &&
+            !minControl.errors &&
+            !maxControl.errors;
     }
 }
