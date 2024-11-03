@@ -79,4 +79,16 @@ class QuizService {
       throw Exception('Failed to delete quiz: $e');
     }
   }
+
+  Future<Quiz> basicGetById(String id) {
+    return http.get(Uri.parse('$baseUrl/quiz/$id')).then((response) {
+      if (response.statusCode == 200) {
+        return Quiz.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Failed to load quiz');
+      }
+    }).catchError((error) {
+      throw Exception('Failed to load quiz: $error');
+    });
+  }
 }
