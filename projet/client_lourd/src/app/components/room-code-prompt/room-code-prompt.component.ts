@@ -59,9 +59,15 @@ export class RoomCodePromptComponent implements OnInit {
             this.error = "Cette partie est exclusive aux amis de l'hôte."
             this.handleError();
         } else {
-            this.error = await this.roomValidationService.verifyRoomId();
-            this.handleError();
-            if (!this.error) await this.validateUsername();
+            const isPrestigeValid = await this.validatePrestige(game.prestige);
+            if (!isPrestigeValid) {
+                this.error = "Vous n'avez pas le prestige minimum pour rejoindre cette partie.";
+                this.handleError();
+            } else {
+                this.error = await this.roomValidationService.verifyRoomId();
+                this.handleError();
+                if (!this.error) await this.validateUsername();
+            }
         }
     }
 
@@ -113,5 +119,10 @@ export class RoomCodePromptComponent implements OnInit {
         const currentUserId = (await firstValueFrom(this.roomValidationService.user$) as User)?.uid;
         const hostProfile = await firstValueFrom(this.userService.getUser(game.hostUserId)) as User;
         return hostProfile.friends.includes(currentUserId);
+    }
+
+    private async validatePrestige(prestige: number) {
+        const currentUserPrestige = (await firstValueFrom(this.roomValidationService.user$) as User)?.prestige;
+        return currentUserPrestige >= prestige;
     }
 }
