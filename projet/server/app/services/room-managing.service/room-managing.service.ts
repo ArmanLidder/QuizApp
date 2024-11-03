@@ -53,6 +53,7 @@ export class RoomManagingService {
             price: config.price,
             friendsOnly: config.friendsOnly,
             teams: new Map<TeamId, Team>(),
+            prestige: config.prestige,
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -100,6 +101,7 @@ export class RoomManagingService {
                 onGoing: roomData.onGoing,
                 price: roomData.price,
                 friendsOnly: roomData.friendsOnly,
+                prestige: roomData.prestige,
             } as GameListItem;
             gameList.push(gameItem);
         });
