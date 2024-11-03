@@ -22,6 +22,12 @@ class GameConfigService with ChangeNotifier {
     }
   }
 
+  void setUser(User user) {
+    _currentUser = user;
+    hostId = user.uid;
+    notifyListeners();
+  }
+
   void setGameType(String gameType) {
     this.gameType = gameType;
     notifyListeners();

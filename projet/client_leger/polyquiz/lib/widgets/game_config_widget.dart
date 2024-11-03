@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
+import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/models/game_info_interface.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class GameConfigWidget extends StatefulWidget {
   @override
@@ -12,7 +16,9 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
   String _gameType = 'classic';
   double _price = 0.0;
   bool _friendsOnly = false;
-  bool _private = false;
+  bool _private = true;
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
+  User? userData;
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +99,13 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    this.userData = this.loggedInUserService.getUser();
                     if (_formKey.currentState!.validate()) {
                       gameConfigService.setGameType(_gameType);
                       gameConfigService.setPrice(_price);
                       gameConfigService.setFriendsOnly(_friendsOnly);
                       gameConfigService.setPrivacy(_private);
+                      gameConfigService.setUser(this.userData!);
                       Navigator.of(context).pop(); // Close the dialog
                     }
                   },
