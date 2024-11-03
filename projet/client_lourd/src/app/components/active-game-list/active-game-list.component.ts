@@ -37,6 +37,14 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         this.prefetchQuizNames();
     }
 
+    minimumPrestige(prestige: number) {
+        if (prestige >= 200) return '🏅'; // Platinum medal
+        if (prestige >= 150) return '🥇'; // Gold medal
+        if (prestige >= 100) return '🥈'; // Silver medal
+        if (prestige >= 50) return  '🥉';  // Bronze medal
+        return '🚫';  // Default icon
+    }
+
     sendRoomIdToWaitingRoom() {
         this.sendRoomData.emit(Number(this.roomValidationService.roomId));
     }
@@ -80,12 +88,17 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         if (game.friendsOnly && !isHostFriend)  {
             this.snackbarService.show("Cette partie est exclusive aux amis de l'hôte.")
         } else {
-            await this.roomValidationService.verifyUsername();
-            if (!this.roomValidationService.isUsernameValid) this.snackbarService.show("Vous avez été banni de cette partie.")
-            else await this.roomValidationService.sendJoinRoomRequest();
-            if (this.roomValidationService.isLocked) this.snackbarService.show("La partie est actuellement verouillez.")
-            const isValid = !this.roomValidationService.isLocked && this.roomValidationService.isUsernameValid;
-            if (isValid) this.sendAllDataToWaitingRoom();
+            const isPrestigeValid = await this.validatePrestige(game.prestige);
+            if (!isPrestigeValid) {
+                this.snackbarService.show("Vous n'avez pas le prestige minimum pour rejoindre cette partie.")
+            } else {
+                await this.roomValidationService.verifyUsername();
+                if (!this.roomValidationService.isUsernameValid) this.snackbarService.show("Vous avez été banni de cette partie.")
+                else await this.roomValidationService.sendJoinRoomRequest();
+                if (this.roomValidationService.isLocked) this.snackbarService.show("La partie est actuellement verouillez.")
+                const isValid = !this.roomValidationService.isLocked && this.roomValidationService.isUsernameValid;
+                if (isValid) this.sendAllDataToWaitingRoom();
+            }
         }
     }
 
@@ -100,5 +113,10 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         const currentUserId = (await firstValueFrom(this.roomValidationService.user$) as User)?.uid;
         const hostProfile = await firstValueFrom(this.userService.getUser(game.hostUserId)) as User;
         return hostProfile.friends.includes(currentUserId);
+    }
+
+    private async validatePrestige(prestige: number) {
+        const currentUserPrestige = (await firstValueFrom(this.roomValidationService.user$) as User)?.prestige;
+        return currentUserPrestige >= prestige;
     }
 }

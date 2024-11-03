@@ -10,15 +10,16 @@
             <tr *ngFor="let game of games$ | async as games" class="hover">
                 <ng-container *ngIf="!game.private">
                     <td>
-                        <div [class]="game.onGoing ?'on-going-game':'game-item'" (click)="joinRoom(game)">
+                        <div [class]="game.onGoing ? 'on-going-game' : 'game-item'" (click)="joinRoom(game)">
                             <span class="quiz-title">{{ getQuizName(game.quizId) }}</span>
                             <ng-container *ngIf="!game.onGoing">
-                                <span *ngIf="game.friendsOnly">Amis seulement</span>
-                                <span *ngIf="game.prestige">Prestige minimum: </span>
+                                <span class="prestige-info">
+                                    <span>Prestige minimum: {{minimumPrestige(game.prestige)}}</span>
+                                </span>
+                                <span class="friends-only">{{game.friendsOnly ? "Amis seulement": "Amis et autres"}}</span>
                                 <span class="players">{{ game.numberOfPlayers }} <i class="bi bi-people"></i></span>
-                                <span class="game-type"> Mode de jeu : {{ game.gameType == 'classic' ? 'Classique' : 'En Équipe' }}</span>
-                                <span class="price">{{ game.price == 0 ? "Gratuit " : game.price }} <i
-                                        class="bi bi-cash-coin"></i></span>
+                                <span class="game-type">Mode de jeu : {{ game.gameType == 'classic' ? 'Classique' : 'Équipe' }}</span>
+                                <span class="price">{{ game.price == 0 ? "Gratuit " : game.price }} <i class="bi bi-cash-coin"></i></span>
                             </ng-container>
                             <ng-container *ngIf="game.onGoing">
                                 <span class="players">Partie en cours</span>
