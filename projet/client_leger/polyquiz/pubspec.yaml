@@ -29,6 +29,7 @@ dependencies:
   audioplayers: ^6.1.0
   get: ^4.6.6
   flutter_tts: ^4.0.2
+  rxdart: ^0.28.0
 
 
 dev_dependencies:
