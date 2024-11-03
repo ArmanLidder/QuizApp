@@ -4,11 +4,11 @@
     (sendNewQuizName)="receiveQuizName($event)"
     (cancelOperation)="killErrorFeedback($event)">
 </app-unique-quiz-error-feedback>
-<app-validation-quiz-error-feedback
-    *ngIf='isErrors'
-    [errors]='this.errors'
-    (cancelOperation)="killErrorFeedback($event)">
-</app-validation-quiz-error-feedback>
+<!--<app-validation-quiz-error-feedback-->
+<!--    *ngIf='isErrors'-->
+<!--    [errors]='this.errors'-->
+<!--    (cancelOperation)="killErrorFeedback($event)">-->
+<!--</app-validation-quiz-error-feedback>-->
 <div class="quizzes-container" *ngIf='!isErrors && isQuizUnique'>
     <table>
         <thead>
@@ -25,7 +25,7 @@
                     <app-quiz-info *ngIf="quiz === selectedQuiz && !isAdmin" [selectedQuiz]="quiz"></app-quiz-info>
                 </td>
                 <td *ngIf="isAdmin">
-                    <label class="switch-btn" matTooltip="Afficher le questionnaire">
+                    <label class="switch-btn" matTooltipClass="custom-tooltip" matTooltip="Afficher le questionnaire">
                         <input type="checkbox" [(ngModel)]="quiz.visible" (click)="updateVisibility(quiz)" />
                         <span class="slider round"></span>
                     </label>

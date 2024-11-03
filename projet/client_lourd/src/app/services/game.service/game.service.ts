@@ -6,6 +6,7 @@ import { SocketClientService } from '@app/services/socket-client.service/socket-
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { HOST_USERNAME } from '@common/names/host-username';
 
+
 @Injectable({
     providedIn: 'root',
 })
@@ -18,6 +19,7 @@ export class GameService {
     isActive: boolean = false;
     hasInteracted: boolean = false;
     lastQrlScore: number | undefined = undefined;
+    qreAnswer: number;
 
     constructor(
         public gameTestService: GameTestService,
@@ -94,6 +96,7 @@ export class GameService {
         if (!this.isTestMode) {
             this.gameRealService.answers = this.answers;
             this.gameRealService.qrlAnswer = this.qrlAnswer;
+            this.gameRealService.qreAnswer = this.qreAnswer;
             this.gameRealService.sendAnswer();
             this.isActive = false;
             this.hasInteracted = false;
@@ -117,7 +120,7 @@ export class GameService {
 
     private reset() {
         this.isTestMode = false;
-        this.qrlAnswer = '';
+        this.qrlAnswer = ''
         this.isActive = false;
         this.hasInteracted = false;
         this.audio.pause();

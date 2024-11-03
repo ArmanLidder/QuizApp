@@ -11,6 +11,7 @@ import {Quiz} from '@common/interfaces/quiz.interface';
 import {getCurrentDateService} from 'src/utils/current-date-format/current-date-format';
 import {generateRandomId} from 'src/utils/random-id-generator/random-id-generator';
 import {QUIZ_TESTING_PAGE, WAITING_ROOM_HOST_PAGE} from '@common/page-url/page-url';
+import {ErrorDialogComponent} from "@app/components/error-dialog/error-dialog.component";
 
 @Component({
     selector: 'app-games-list',
@@ -139,8 +140,14 @@ export class GamesListComponent implements OnInit {
             this.checkQuizNameUnique();
         } else {
             this.errors = this.setValidatorError(errors);
-            this.isErrors = true;
+            this.showErrorDialog(this.errors)
         }
+    }
+
+    showErrorDialog(errorMessage: string): void {
+        this.dialog.open(ErrorDialogComponent, {
+            data: { errorMessage }
+        });
     }
 
     setValidatorError(errors: string[]) {

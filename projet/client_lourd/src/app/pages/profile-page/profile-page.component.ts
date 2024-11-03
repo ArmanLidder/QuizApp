@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { UsersService} from "@app/services/users.service/users.service";
 import { MatDialog } from "@angular/material/dialog";
 import { Observable} from 'rxjs';
@@ -17,7 +17,6 @@ import {UserSearchDialogComponent} from "@app/components/user-search-dialog/user
   selector: 'app-profile',
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss'],
-  encapsulation: ViewEncapsulation.None
 })
 export class ProfilePageComponent implements OnInit {
   private usersService = inject(UsersService);

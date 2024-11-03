@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:polyquiz/models/game_config.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'socket_service.dart';
 import 'package:polyquiz/constants/socket-event.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/models/game_info_interface.dart';
 
 class WaitingRoomService extends ChangeNotifier {
   static final WaitingRoomService _instance = WaitingRoomService._internal();
   final SocketService _socketService =
       SocketService(); // Use the SocketService instance
   GlobalNavigationService _globalNavigationService = GlobalNavigationService();
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
+  User? userData;
 
   int roomId = 0;
   bool isRoomLocked = false;
@@ -39,9 +44,11 @@ class WaitingRoomService extends ChangeNotifier {
 
   Future<void> connectToSocket(String roomId,
       {required bool isHost, String? username}) async {
+    this.userData = this.loggedInUserService.getUser();
+    print(this.userData?.uid);
     if (!_socketService.isSocketAlive()) {
       print("Socket is not connected. Attempting to connect...");
-      _socketService.connect();
+      _socketService.connect(this.userData?.uid);
     }
 
     _socketService.onMessage(SocketEvent.CONNECTION, (_) {
@@ -61,7 +68,10 @@ class WaitingRoomService extends ChangeNotifier {
       await connectToSocket("roomId", isHost: true);
     }
 
-    var data = {quizId, gameConfig};
+    final data = {
+      'quizId': quizId,
+      'gameConfig': gameConfig.toJson(),
+    };
 
     _socketService.sendMessageWithAck(SocketEvent.CREATE_ROOM, data,
         (roomCode) {

@@ -19,6 +19,7 @@ class LoggedInUserService extends GetxController {
   }
 
   Future<void> setUserByEmail(String email) async {
+    
     User? fetchedUser = await this.userService.getUserByEmail(email); // Fetch user by email
     if (fetchedUser != null) {
       setUser(fetchedUser); // Set the fetched user

@@ -1,61 +1,68 @@
-import 'package:polyquiz/models/game_config.dart';
+import 'package:flutter/material.dart';
+import 'package:polyquiz/models/game_info_interface.dart';
+import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
-import 'package:polyquiz/services/logged_in_user_service.dart';
-import 'package:rxdart/rxdart.dart';
 
-class GameConfigService {
-  static final GameConfigService _instance = GameConfigService._internal();
-
-  GameConfigService._internal();
-
-  factory GameConfigService() {
-    return _instance;
-  }
-
-  late BehaviorSubject<User?> user;
-  String? hostId = "";
-  String gameType = "";
-  int price = 0;
+class GameConfigService with ChangeNotifier {
+  final UserService _userService = UserService();
+  User? _currentUser;
+  String? hostId;
+  String gameType = '';
+  double price = 0.0;
   bool friendsOnly = false;
   bool private = false;
 
-  void init(LoggedInUserService loggedInUserService) {
-    this.user = loggedInUserService.user as BehaviorSubject<User?>;
-    this.user.listen((User? user) {
-      hostId = user?.uid;
-    });
+  GameConfigService([User? user]) {
+    if (user != null) {
+      _currentUser = user;
+      hostId = user.uid;
+    } else {
+      hostId = 'null';
+    }
   }
 
-  setGameType(String gameType) {
+  void setUser(User user) {
+    _currentUser = user;
+    hostId = user.uid;
+    notifyListeners();
+  }
+
+  void setGameType(String gameType) {
     this.gameType = gameType;
+    notifyListeners();
   }
 
-  setPrice(int price) {
+  void setPrice(double price) {
     this.price = price;
+    notifyListeners();
   }
 
-  setFriendsOnly(bool isFriends) {
+  void setFriendsOnly(bool isFriends) {
     this.friendsOnly = isFriends;
+    notifyListeners();
   }
 
-  setPrivacy(bool isPrivate) {
+  void setPrivacy(bool isPrivate) {
     this.private = isPrivate;
+    notifyListeners();
   }
 
-  getGameConfig() {
-    return {
-      this.hostId,
-      this.gameType,
-      this.private,
-      false, // this will change to true when sent in server
-      this.price,
-      this.friendsOnly,
-    } as GameConfig;
+  GameConfig getGameConfig() {
+    return GameConfig(
+      hostUserId: hostId,
+      gameType: gameType,
+      private: private,
+      onGoing: 'false', // this will change to 'true' when sent to server
+      price: price,
+      friendsOnly: friendsOnly,
+    );
   }
 
-  reset() {
-    this.gameType = '';
-    this.price = 0;
-    this.friendsOnly = false;
+  void reset() {
+    gameType = '';
+    price = 0.0;
+    friendsOnly = false;
+    private = false;
+    notifyListeners();
   }
 }

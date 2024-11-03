@@ -6,12 +6,14 @@ import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { HistoryService } from '@app/services/history.service/history.service';
 import { GameCreationService } from '@app/services/game-creation.service/game-creation.service';
 import { GameManagementService } from '@app/services/game-management.service/game-management.service';
+import {FirebaseService} from "@app/services/firebase.service/firebase.service";
 
 export class SocketManager {
     sio: io.Server;
     private roomManager: RoomManagingService;
     private gameCreationService: GameCreationService;
     private gameManagementService: GameManagementService;
+    private fs: FirebaseService;
 
     constructor(
         private quizService: QuizService,
@@ -26,9 +28,10 @@ export class SocketManager {
                 credentials: true // added
             }
         });
+        this.fs = new FirebaseService();
         this.roomManager = new RoomManagingService();
-        this.gameCreationService = new GameCreationService();
-        this.gameManagementService = new GameManagementService(this.quizService, this.historyService);
+        this.gameCreationService = new GameCreationService(this.fs);
+        this.gameManagementService = new GameManagementService(this.quizService, this.historyService, this.fs);
     }
 
     handleSockets(): void {

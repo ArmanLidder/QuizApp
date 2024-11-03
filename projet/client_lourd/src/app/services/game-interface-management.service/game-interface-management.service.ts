@@ -79,7 +79,7 @@ export class GameInterfaceManagementService {
             this.gameService.audio.currentTime = 0;
             this.gameService.gameRealService.audioPaused = false;
             this.inPanicMode = false;
-            if (this.gameService.question?.type === QuestionType.QCM) {
+            if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
                 this.getScore();
             } else {
                 this.gameService.qrlAnswer = '';

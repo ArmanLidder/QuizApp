@@ -63,7 +63,7 @@ export class HostInterfaceManagementService {
         const question = this.gameService.gameRealService.question;
         if (question !== null) {
             const savedStats: QuestionStatistics = [this.histogramDataValue, this.histogramDataChangingResponses, question];
-            if (question.type !== QuestionType.QRL) this.gameStats.push(savedStats);
+            if (question.type !== QuestionType.QRL && question.type !== QuestionType.QRE) this.gameStats.push(savedStats);
         }
     }
 
@@ -115,7 +115,7 @@ export class HostInterfaceManagementService {
             this.gameService.gameRealService.audioPaused = false;
             this.gameService.gameRealService.inTimeTransition = true;
             this.resetInterface();
-            if (this.gameService.question?.type === QuestionType.QCM) {
+            if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
                 this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
             } else {
                 this.sendQrlAnswer();

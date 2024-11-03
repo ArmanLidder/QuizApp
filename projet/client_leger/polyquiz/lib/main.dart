@@ -15,6 +15,8 @@ import 'package:get/get.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/pages/userPage.dart';
+import 'package:provider/provider.dart';
+import 'package:polyquiz/services/game_config_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +25,14 @@ void main() async {
   Get.put(LoggedInUserService());
   Get.put(ImageStorageService());
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GameConfigService()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
