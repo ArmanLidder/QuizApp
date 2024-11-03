@@ -66,4 +66,19 @@ class QuizFileService {
       return quizzes;
     }
   }
+
+  Future<String> deleteQuiz(Quiz quiz) async {
+    try {
+      final String quizName = quiz.title.replaceAll(' ', '_');
+      final File file = File('${this.path}/${quizName}.json');
+      if (await file.exists()) {
+        await file.delete();
+        return "Quiz supprimé avec succès";
+      } else {
+        return "Le quiz n'existe pas";
+      }
+    } catch (e) {
+      return "Erreur lors de la suppression du quiz : ${e}";
+    }
+  }
 }

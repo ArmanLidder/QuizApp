@@ -23,6 +23,16 @@ class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
     });
   }
 
+  void showPopup(BuildContext context, String message) {
+    final SnackBar snackBar = SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.all(16.0));
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -42,15 +52,17 @@ class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
           : errorMessage.isNotEmpty
               ? Center(child: Text(errorMessage))
               : quizzes.isEmpty
-                  ? Column(children: [
-                      Text("Aucun quiz téléchargé"),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/home');
-                        },
-                        child: Text("Retours a la page d'origine"),
-                      )
-                    ])
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                          Text("Aucun quiz téléchargé"),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, '/home');
+                            },
+                            child: Text("Retour a la page d'origine"),
+                          )
+                        ])
                   : Column(
                       children: [
                         Expanded(
@@ -67,7 +79,15 @@ class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
                                     Text('Duration: ${quiz.duration} minutes'),
                                     IconButton(
                                         iconSize: 35.0,
-                                        onPressed: () {},
+                                        onPressed: () async {
+                                          String message = await this
+                                              ._quizFileService
+                                              .deleteQuiz(quiz);
+                                          this.showPopup(context, message);
+                                          setState(() {
+                                            this.quizzes.remove(quiz);
+                                          });
+                                        },
                                         icon: Icon(Icons.delete_forever))
                                   ],
                                 ),
@@ -80,7 +100,7 @@ class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
                           onPressed: () {
                             Navigator.pushReplacementNamed(context, '/home');
                           },
-                          child: Text("Retours a la page d'origine"),
+                          child: Text("Retour a la page d'origine"),
                         ),
                       ],
                     ),
