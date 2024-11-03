@@ -30,6 +30,9 @@ class QuizFileService {
     try {
       final String quizName = quiz.title.replaceAll(' ', '_');
       final File file = File('${this.path}/${quizName}.json');
+      if (await file.exists()) {
+        return "Le quiz a déjà été téléchargé";
+      }
       String fileContent = jsonEncode(quiz.toJson());
       await file.writeAsString(fileContent);
       return "Téléchargement réussi";
