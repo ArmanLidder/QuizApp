@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(this.userData);
     this.userData = this.loggedInUserService.getUser();
     print(this.userData);
     return Scaffold(
