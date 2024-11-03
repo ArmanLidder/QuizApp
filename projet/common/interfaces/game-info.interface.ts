@@ -12,4 +12,5 @@ export interface GameConfig {
     onGoing?: string; // partie en cours
     price?: number; // prix d'une partie
     friendsOnly?: boolean; // prix d'une partie
+    prestige?: number; // niveau de prestige
 }

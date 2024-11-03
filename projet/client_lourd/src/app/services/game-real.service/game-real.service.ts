@@ -27,6 +27,7 @@ export class GameRealService implements GameServiceInterface {
     audioPaused: boolean = false;
     inTimeTransition: boolean = false;
     qreAnswer: number | null = null;
+    gameType: 'classic' | 'equipe' = 'classic';
 
     constructor(public socketService: SocketClientService) {
         if (this.socketService.isSocketAlive()) {

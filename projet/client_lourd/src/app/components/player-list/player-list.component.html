@@ -11,7 +11,7 @@
             <th>Nom</th>
             <th>Points</th>
             <th>Bonus</th>
-            <th *ngIf='isHost'>Chat</th>
+            <th *ngIf='waitingRoomService.gameType === "equipe"'>Équipe</th>
         </tr>
         </thead>
         <tbody>
@@ -21,11 +21,8 @@
             </td>
             <td> {{player[1]}} </td>
             <td> {{player[2]}} </td>
-            <td *ngIf='isHost'>
-                <label *ngIf='!interactiveListService.isPlayerGone(player[0], leftPlayers)' class="switch-btn">
-                    <input type="checkbox" [checked]='player[4]' (click)='toggleChatPermission(player[0])'  >
-                    <span class="slider round" [matTooltip]= "player[4] ? 'Desactiver le chat' : 'Activer le chat'"></span>
-                </label>
+            <td *ngIf='waitingRoomService.gameType === "equipe"'>
+               {{findTeam(player[0])}}
             </td>
         </tr>
         </tbody>
