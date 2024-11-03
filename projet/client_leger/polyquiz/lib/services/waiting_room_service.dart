@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/game_config.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'socket_service.dart';
 import 'package:polyquiz/constants/socket-event.dart';
@@ -51,7 +52,7 @@ class WaitingRoomService extends ChangeNotifier {
     });
   }
 
-  Future<String> createRoom(String quizId) async {
+  Future<String> createRoom(String quizId, GameConfig gameConfig) async {
     final completer = Completer<String>();
     print('Creating room for quiz: $quizId');
 
@@ -60,7 +61,9 @@ class WaitingRoomService extends ChangeNotifier {
       await connectToSocket("roomId", isHost: true);
     }
 
-    _socketService.sendMessageWithAck(SocketEvent.CREATE_ROOM, quizId,
+    var data = {quizId, gameConfig};
+
+    _socketService.sendMessageWithAck(SocketEvent.CREATE_ROOM, data,
         (roomCode) {
       if (roomCode != null) {
         print("Room created with ID: $roomCode");

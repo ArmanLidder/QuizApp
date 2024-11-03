@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import '../services/waiting_room_service.dart';
@@ -29,6 +30,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   bool showPopup = false;
   WaitingRoomService waitingRoomService = WaitingRoomService();
   RealGameService realGameService = RealGameService();
+  GameConfigService gameConfigService = GameConfigService();
 
   @override
   void initState() {
@@ -49,7 +51,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   Future<void> _initRoom() async {
     try {
       if (widget.isHost) {
-        roomId = await waitingRoomService.createRoom(widget.quiz.id);
+        roomId = await waitingRoomService.createRoom(
+            widget.quiz.id, gameConfigService.getGameConfig());
         realGameService.username = 'host';
         realGameService.roomId = waitingRoomService.roomId;
       } else {
