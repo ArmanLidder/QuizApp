@@ -15,14 +15,17 @@ class QuizFileService {
   late final Directory appDocumentsDir;
   late final Directory folder;
   late final String path;
+  bool setUpServiceCalled = false;
 
-  void setUpService() async {
-    this.appDocumentsDir = await getApplicationDocumentsDirectory();
-    this.path = "${appDocumentsDir.path}/PolyQuiz";
-    print("PATH: ${this.path}");
-    this.folder = Directory(path);
-    if (!await this.folder.exists()) {
-      await folder.create(recursive: true);
+  Future<void> setUpService() async {
+    if (!setUpServiceCalled) {
+      this.appDocumentsDir = await getApplicationDocumentsDirectory();
+      this.path = "${appDocumentsDir.path}/PolyQuiz";
+      this.folder = Directory(path);
+      if (!await this.folder.exists()) {
+        await folder.create(recursive: true);
+      }
+      this.setUpServiceCalled = true;
     }
   }
 
@@ -43,16 +46,16 @@ class QuizFileService {
 
   Future<List<Quiz>> getQuizzes() async {
     List<Quiz> quizzes = <Quiz>[];
+    final Directory directory = Directory(this.path);
     try {
-      final files = this.folder.listSync();
+      final files = directory.listSync();
       for (var file in files) {
         if (file is File && file.path.endsWith(".json")) {
           try {
             String fileContent = await file.readAsString();
-            print('FILE CONTENT: ${fileContent}');
             Quiz quiz = Quiz.fromJson(jsonDecode(fileContent));
             quizzes.add(quiz);
-          } on Exception catch (e) {
+          } catch (e) {
             print('ERROR WHILE TRANSFORMING JSON TO QUIZ: ${e}');
           }
         }

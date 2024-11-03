@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/pages/login-page.dart';
+import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/auth': (context) => AuthPage(),
         '/login': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
+        '/offline': (context) => OfflineQuizListPage(),
         '/join': (context) => JoinRoomPage(),
         '/game': (context) => GamePage(),
         '/user': (context) => Userpage(),

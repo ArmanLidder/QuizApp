@@ -15,7 +15,6 @@ class _HomePageState extends State<HomePage> {
   final SocketService _socketService = SocketService();
   User? userData;
 
-
   @override
   void initState() {
     super.initState();
@@ -51,6 +50,12 @@ class _HomePageState extends State<HomePage> {
               },
               child: Text('Quizz'),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/offline');
+                },
+                child: Text('Jouer hors-ligne')),
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {
