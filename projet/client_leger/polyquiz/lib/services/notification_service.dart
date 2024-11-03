@@ -1,7 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
+import 'package:polyquiz/services/background_notification_service.dart';
 import 'package:polyquiz/services/channelService.dart';
 
 class NotificationService extends GetxController {
@@ -27,7 +27,7 @@ class NotificationService extends GetxController {
     if (!channelMessageCount.containsKey(channel.id)) {
       channelMessageCount[channel.id!] = channel.messages.length;
       isChannelRead[channel.id!] = false;
-      playNotificationNoise();
+      notify();
       return;
     }
 
@@ -36,7 +36,7 @@ class NotificationService extends GetxController {
     if (channel.messages.length > channelMessageCount[channel.id]!) {
       channelMessageCount[channel.id!] = channel.messages.length;
       isChannelRead[channel.id!] = false;
-      playNotificationNoise();
+      notify();
       print("New unread message in ${channel.name}");
     }
   }
@@ -50,8 +50,9 @@ class NotificationService extends GetxController {
     hasUnreadChannels.value = isChannelRead.containsValue(false);
   }
 
-  void playNotificationNoise() {
+  void notify() {
     player.play(AssetSource('notification.mp3'));
+    BackgroundNotificationService.instance.showNotification("Nouveau message", "Vous avez de nouveaux messages");
   }
 
   void readChannel(String channelId) {
