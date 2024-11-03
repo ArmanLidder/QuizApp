@@ -32,6 +32,20 @@
             </label>
         </div>
 
+        <div class="field-container">
+            <label for="prestige">Prestige minimum</label>
+            <select formControlName="prestige" id="prestige" class="select-field">
+                <option value="0"> Aucun  </option>
+                <option value="50"> 🥉Bronze  </option>
+                <option value="100"> 🥈Argent </option>
+                <option value="150"> 🥇Or </option>
+                <option value="200" > 🏅Platine</option>
+            </select>
+            <div class="error-message" *ngIf="gameConfigForm.get('gameType')?.hasError('required')">
+                Le prestige minimum est requis. Veuillez sélectionné un prestige minimum.
+            </div>
+        </div>
+
         <div class="actions">
             <button class="btn btn-cancel" type="button" (click)="closeDialog()">Annuler</button>
             <button class="btn btn-primary" type="submit" [disabled]="!gameConfigForm.valid">
