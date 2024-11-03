@@ -8,5 +8,5 @@ export interface GameListItem {
     onGoing: boolean; // partie en cours
     price: number; // prix d'une partie
     friendsOnly: boolean; // prix d'une partie
-    prestige?: number;
+    prestige: number;
 }

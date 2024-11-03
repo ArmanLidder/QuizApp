@@ -18,5 +18,6 @@ export interface RoomData {
     price?: number; // prix d'une partie
     friendsOnly?: boolean; // prix d'une partie
     teams?: Map<TeamId, Team>; // teams
+    prestige: number;
 }
 
