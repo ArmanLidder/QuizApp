@@ -7,7 +7,6 @@ import 'user_service.dart';
 
 class LoggedInUserService extends GetxController {
   static LoggedInUserService get instance => Get.find();
-
   final UserService userService = UserService();
   final ImageStorageService imageStorageService = ImageStorageService();
 
