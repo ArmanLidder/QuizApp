@@ -8,6 +8,14 @@
 @import "tailwindcss/utilities";
 @import "bootstrap-icons";
 
+.mdc-notched-outline__notch {
+  border-style: none;
+}
+
+.mat-mdc-icon-button {
+  line-height: normal;
+}
+
 .my-snack-bar {
   background-color: #fff;
 }
@@ -25,6 +33,10 @@
   font-size: 14px;
   border-radius: 4px;
   text-align: center;
+}
+
+.container {
+  width: 100%;
 }
 
 

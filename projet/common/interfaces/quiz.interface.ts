@@ -14,7 +14,10 @@ export interface QuizQuestion {
     type: QuestionType;
     text: string;
     points: number;
-    choices?: QuizChoice[];
+    choices?: QuizChoice[]; //Only QCM
+    answer? : number, //Only QRE
+    interval? : {max:number, min:number} //Only QRE
+    margin?: number //Only QRE
 }
 
 export interface QuizChoice {

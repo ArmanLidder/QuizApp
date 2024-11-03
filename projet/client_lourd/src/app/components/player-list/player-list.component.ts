@@ -9,6 +9,9 @@ import {
 } from '@common/constants/player-list.component.const';
 import { InteractiveListSocketService } from '@app/services/interactive-list-socket.service/interactive-list-socket.service';
 import { SortListService } from '@app/services/sort-list.service/sort-list.service';
+import {
+    WaitingRoomManagementService
+} from "@app/services/waiting-room-management.service/waiting-room-management.service";
 
 @Component({
     selector: 'app-player-list',
@@ -30,6 +33,7 @@ export class PlayerListComponent {
 
     constructor(
         public interactiveListService: InteractiveListSocketService,
+        public waitingRoomService: WaitingRoomManagementService,
         private sortListService: SortListService,
     ) {
         if (!this.isHost) this.sortListService.sortByScore();
@@ -39,6 +43,14 @@ export class PlayerListComponent {
         this.order *= ORDER_MULTIPLIER;
         this.orderIcon = this.order !== ORDER_MULTIPLIER ? ORDER_ICON_UP : ORDER_ICON_DOWN;
         this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
+    }
+
+    findTeam(userId: string) {
+        let result;
+        this.waitingRoomService.teams.forEach((team: any, teamId) => {
+            if (team.members.includes(userId)) result = teamId;
+        });
+        return result ? result : "Quitté";
     }
 
     sort(sortOption: SortType) {

@@ -1,11 +1,12 @@
-import { Answers } from '@app/interface/game-interface';
-import { QuizService } from '@app/services/quiz.service/quiz.service';
-import { Quiz, QuizChoice, QuizQuestion } from '@common/interfaces/quiz.interface';
-import { Score } from '@common/interfaces/score.interface';
-import { BONUS_MULTIPLIER, MAX_PERCENTAGE } from '@common/constants/game.const';
-import { format } from 'date-fns-tz';
-import { GameInfo } from '@common/interfaces/game-info.interface';
-import { HistoryService } from '@app/services/history.service/history.service';
+import {Answers} from '@app/interface/game-interface';
+import {QuizService} from '@app/services/quiz.service/quiz.service';
+import {Quiz, QuizChoice, QuizQuestion} from '@common/interfaces/quiz.interface';
+import {Score} from '@common/interfaces/score.interface';
+import {BONUS_MULTIPLIER, MAX_PERCENTAGE} from '@common/constants/game.const';
+import {format} from 'date-fns-tz';
+import {GameInfo} from '@common/interfaces/game-info.interface';
+import {HistoryService} from '@app/services/history.service/history.service';
+import {QuestionType} from "@common/enums/question-type.enum";
 
 type Username = string;
 type Players = Map<Username, Score>;
@@ -61,10 +62,91 @@ export class Game {
 
     updateScores() {
         this.playersAnswers.forEach((player, username) => {
-            if (this.validateAnswer(player.answers as string[])) this.handleGoodAnswer(username);
-            else this.handleWrongAnswer(username);
+            if (this.currentQuizQuestion.type === QuestionType.QCM ){
+                if (this.validateAnswer(player.answers as string[])) this.handleGoodAnswer(username);
+                else this.handleWrongAnswer(username);
+            } else if (this.currentQuizQuestion.type === QuestionType.QRE ){
+                const userAnswer = player.answers as string
+                const isCorrect = this.validateQREAnswer(userAnswer);
+                isCorrect ? this.handleQREGoodAnswer(username) : this.handleWrongAnswer(username);
+            }
         });
     }
+
+    validateQREAnswer(answer: string) {
+        if (answer === '' || answer === null || answer === undefined) return false;
+
+        const userAnswer = Number(answer);
+        if (isNaN(userAnswer)) {
+            return false;
+        }
+        const min = this.currentQuizQuestion.interval.min;
+        const max = this.currentQuizQuestion.interval.max;
+        const correctAnswer = this.currentQuizQuestion.answer;
+        const margin = this.currentQuizQuestion.margin;
+
+        if (userAnswer < min || userAnswer > max) {
+            return false;
+        }
+
+        const lowerBound = correctAnswer - margin;
+        const upperBound = correctAnswer + margin;
+        return userAnswer >= lowerBound && userAnswer <= upperBound;
+    }
+
+
+    private handleGoodAnswer(username: string) {
+        const oldScore = this.players.get(username);
+        const points = this.currentQuizQuestion.points;
+        let newScore: Score;
+
+        const fastestPlayers = this.getFastestPlayer();
+        if (fastestPlayers) {
+            newScore = {
+                points: fastestPlayers.has(username) ? oldScore.points + this.addBonusPoint(points) : oldScore.points + points,
+                bonusCount: fastestPlayers.has(username) ? oldScore.bonusCount + 1 : oldScore.bonusCount,
+                isBonus: fastestPlayers.has(username),
+                goodAnswerCounter: oldScore.goodAnswerCounter + 1,
+            };
+        } else {
+            newScore = {
+                points: oldScore.points + points,
+                bonusCount: oldScore.bonusCount,
+                isBonus: false,
+                goodAnswerCounter: oldScore.goodAnswerCounter + 1,
+            };
+        }
+        this.players.set(username, newScore);
+    }
+
+    private handleQREGoodAnswer(username: string) {
+        const oldScore = this.players.get(username);
+        const points = this.currentQuizQuestion.points;
+        const correctAnswer = this.currentQuizQuestion.answer;
+
+        let newScore: Score;
+        const playerAnswer = Number(this.playersAnswers.get(username)?.answers);
+
+        const isExactMatch = playerAnswer === correctAnswer;
+
+        if (isExactMatch && this.currentQuizQuestion.margin !== 0) {
+            newScore = {
+                points: oldScore.points + this.addBonusPoint(points),
+                bonusCount: oldScore.bonusCount + 1,
+                isBonus: true,
+                goodAnswerCounter: oldScore.goodAnswerCounter + 1,
+            };
+        }  else {
+            newScore = {
+                points: oldScore.points + points,
+                bonusCount: oldScore.bonusCount,
+                isBonus: false,
+                goodAnswerCounter: oldScore.goodAnswerCounter + 1,
+            };
+        }
+        this.players.set(username, newScore);
+    }
+
 
     updateChoicesStats(isSelected: boolean, index: number) {
         const answer = this.currentQuizQuestion.choices[index].text;
@@ -107,28 +189,6 @@ export class Game {
         return true;
     }
 
-    private handleGoodAnswer(username: string) {
-        const oldScore = this.players.get(username);
-        const points = this.currentQuizQuestion.points;
-        let newScore: Score;
-        const fastestPlayers = this.getFastestPlayer();
-        if (fastestPlayers) {
-            newScore = {
-                points: fastestPlayers.has(username) ? oldScore.points + this.addBonusPoint(points) : oldScore.points + points,
-                bonusCount: fastestPlayers.has(username) ? oldScore.bonusCount + 1 : oldScore.bonusCount,
-                isBonus: fastestPlayers.has(username),
-                goodAnswerCounter: oldScore.goodAnswerCounter + 1,
-            };
-        } else {
-            newScore = {
-                points: oldScore.points + points,
-                bonusCount: oldScore.bonusCount,
-                isBonus: false,
-                goodAnswerCounter: oldScore.goodAnswerCounter + 1,
-            };
-        }
-        this.players.set(username, newScore);
-    }
 
     private addBonusPoint(points: number) {
         return points * BONUS_MULTIPLIER;

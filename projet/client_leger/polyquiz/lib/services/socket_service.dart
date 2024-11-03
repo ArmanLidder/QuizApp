@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
-  final LoggedInUserService loggedInUserService = Get.find();
   static final String baseUrl = IP_URL;
   static final String socketUrl = baseUrl + '/';
   IO.Socket? _socket;
@@ -16,9 +15,10 @@ class SocketService {
 
   SocketService._internal();
 
-  void connect() {
+  void connect([String? id]) {
+
     if (_socket == null) {
-      String? id = this.loggedInUserService.getUid();
+      print('Connecting to socket server with id: $id');
       _socket = IO.io(socketUrl, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
@@ -43,8 +43,12 @@ class SocketService {
     _socket = null;
   }
 
-  void sendMessage(String event, dynamic data) {
-    _socket?.emit(event, data);
+  void sendMessage(String event, [dynamic data]) {
+    if(data !=event){
+       _socket?.emit(event, data);
+    } else {
+       _socket?.emit(event);
+    }
   }
 
   void onMessage(String event, Function(dynamic) callback) {
@@ -58,6 +62,10 @@ class SocketService {
   void clearAllListeners() {
     _socket?.clearListeners();
     _socket?.off('*');
+  }
+
+  void clearListener(String event) {
+    _socket?.off(event);
   }
 
   bool isSocketAlive() {

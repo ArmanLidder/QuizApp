@@ -56,6 +56,7 @@ export class QuizCreationComponent {
             this.mode = PageMode.CREATION;
             this.quizForm = this.quizFormService.fillForm();
         }
+        this.isPopupVisibleForm = false;
     }
 
     get questionsArray() {

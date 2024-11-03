@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/models/user.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -8,7 +11,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final SocketService _socketService = SocketService();
+  User? userData;
 
   @override
   void initState() {
@@ -21,6 +26,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    this.userData = this.loggedInUserService.getUser();
+    print(this.userData);
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
@@ -42,6 +49,12 @@ class _HomePageState extends State<HomePage> {
               },
               child: Text('Quizz'),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/offline');
+                },
+                child: Text('Jouer hors-ligne')),
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {

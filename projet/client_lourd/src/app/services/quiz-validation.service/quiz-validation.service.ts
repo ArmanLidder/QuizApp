@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import {AbstractControl} from '@angular/forms';
 import { Quiz, QuizChoice, QuizQuestion } from '@common/interfaces/quiz.interface';
 import {
     DIVIDER,
@@ -102,9 +102,70 @@ export class QuizValidationService {
             errors.push(`Question ${index + 1} : ${NON_DIVISIBLE_BY_TEN}`);
         }
 
+        if (question.type !== QuestionType.QCM && question.type !== QuestionType.QRE && question.type !== QuestionType.QRL) {
+            errors.push(`Question ${index + 1} : ce type de question n'est pas supporté`);
+            return errors;
+        }
+
         if (question.type === QuestionType.QCM) {
             const choicesErrors = this.validateQuestionChoices(index, question.choices);
             errors.push(...choicesErrors);
+        }
+
+        if (question.type === QuestionType.QRE) {
+            if (question.answer === undefined) {
+                errors.push(`Question ${index + 1} : la réponse est requise pour les questions de type QRE.`);
+                return errors;
+            }
+
+            if (!question.interval || question.interval.min === undefined || question.interval.max === undefined) {
+                errors.push(`Question ${index + 1} : l'intervalle min et max sont requis pour les questions de type QRE.`);
+                return errors;
+            }
+
+            if (question.margin === undefined) {
+                errors.push(`Question ${index + 1} : la marge est requise pour les questions de type QRE.`);
+                return errors;
+            }
+            if (question.interval.min > question.interval.max) {
+                errors.push(`Question ${index + 1} : l'intervalle min doit être inférieur ou égal à max.`);
+                return errors;
+            }
+
+            if (question.interval.min > question.interval.max) {
+                errors.push(`Question ${index + 1} : l'intervalle min doit être inférieur ou égal à max.`);
+                return errors;
+            }
+            if (question.margin < 0) {
+                errors.push(`Question ${index + 1} : la marge de tolérance doit être 0 ou plus.`);
+                return errors;
+            }
+            if (question.margin % 1 !== 0) {
+                errors.push(`Question ${index + 1} : la marge de tolérance doit être un nombre entier.`);
+                return errors;
+            }
+            if (question.answer % 1 !== 0) {
+                errors.push(`Question ${index + 1} : la réponse doit être un nombre entier.`);
+                return errors;
+            }
+            if (question.interval.min % 1 !== 0) {
+                errors.push(`Question ${index + 1} : le minimum doit être un nombre entier.`);
+                return errors;
+            }
+            if (question.interval.max % 1 !== 0) {
+                errors.push(`Question ${index + 1} : le maximum doit être un nombre entier.`);
+                return errors;
+            }
+
+            if (question.answer < question.interval.min || question.answer > question.interval.max) {
+                errors.push(`Question ${index + 1} : la réponse doit être entre ${question.interval.min} et ${question.interval.max}.`);
+                return errors;
+            }
+
+            const maxMargin = 0.25 * question.answer;
+            if (question.margin > maxMargin) {
+                errors.push(`Question ${index + 1} : la marge doit être au maximum ${maxMargin} de la réponse. (25% de ${question.answer})`);
+            }
         }
 
         return errors;
@@ -151,4 +212,34 @@ export class QuizValidationService {
             )
         );
     }
+
+    validateInterval(control: AbstractControl): { [key: string]: boolean } | null {
+        const min = control.get('min')?.value;
+        const max = control.get('max')?.value;
+        if (min !== undefined && max !== undefined && max < min) {
+            return { maxLessThanMin: true };
+        }
+        return null;
+    }
+
+
+    validateAnswerInRange(control: AbstractControl, min: number, max: number): { [key: string]: boolean } | null {
+        const answer = control.value;
+        if (answer < min || answer > max) {
+            return { answerOutOfRange: true };
+        }
+        return null;
+    }
+
+
+    validateMarginWithinLimit(control: AbstractControl): { [key: string]: boolean } | null {
+        const answer = control.parent?.get('answer')?.value;
+        const margin = control.value;
+
+        if (answer !== undefined && margin !== undefined && margin > 0.25 * answer) {
+            return { marginTooLarge: true };
+        }
+        return null;
+    }
+
 }

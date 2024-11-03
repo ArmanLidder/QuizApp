@@ -10,6 +10,9 @@ import {HOST_USERNAME} from '@common/names/host-username';
 import {LOCKED, UNLOCKED} from '@common/constants/waiting-room.component.const';
 import {GameConfigService} from "@app/services/game-config.service/game-config.service";
 import {GameConfig} from "@common/interfaces/game-info.interface";
+import {UsersService} from "@app/services/users.service/users.service";
+import {firstValueFrom, Observable} from "rxjs";
+import {User} from "@common/interfaces/user-data.interface";
 
 
 @Component({
@@ -21,19 +24,23 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     @Input() isHost: boolean;
     @Input() roomId: number;
     @Input() isActive: boolean;
+    currentUser$: Observable<User | null> ;
+    currentUserId : string;
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
     // private router: Router = inject(Router);
 
     constructor(
         public waitingRoomManagementService: WaitingRoomManagementService,
         public gameService: GameService,
+        public usersService: UsersService,
         private socketService: SocketClientService,
         private gameConfigService: GameConfigService,
     ) {
         // this.connect();
+        this.currentUser$ = this.usersService.currentUserProfile$;
     }
 
-    // Since beforeunload automaically reconstruct the component, we need a way to go back to main page with service
+    // Since beforeunload automatically reconstruct the component, we need a way to go back to main page with service
     // property on initialization
     @HostListener('window:beforeunload')
     removeToken() {
@@ -49,6 +56,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         this.waitingRoomManagementService.configureBaseSocketFeatures();
         if (this.isHost) await this.setUpHost();
         else this.setUpPlayer();
+        this.currentUserId = (await firstValueFrom(this.currentUser$) as User).uid
         window.onbeforeunload = () => this.ngOnDestroy();
     }
 
@@ -84,10 +92,31 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         this.waitingRoomManagementService.sendStartSignal();
     }
 
+    onlyOneMember() {
+        let result = false;
+        this.waitingRoomManagementService.teamsForInterface.forEach((team: any) => {
+            if (team.userIds.members.includes(this.currentUserId) && team.userIds.members.length < 2) result = true;
+        });
+        return result;
+    }
+
+    // Has to be changed to teams.siza < 2 for prod
+    validationBeforeEntry() {
+        if (this.waitingRoomManagementService.gameType === 'classic')
+            return this.waitingRoomManagementService.players.length===0||!this.waitingRoomManagementService.isRoomLocked;
+        let moreThanTwoMembers = 0;
+        this.waitingRoomManagementService.teamsForInterface.forEach((team: any) => {
+            if (team.userIds.members.length > 1) moreThanTwoMembers += 1;
+        });
+        return moreThanTwoMembers < 1 || this.waitingRoomManagementService.teams.size < 1 || !this.waitingRoomManagementService.isRoomLocked
+
+    }
+
     private async setUpHost() {
         const quizId = this.route.snapshot.paramMap.get('id');
         this.roomId = await this.waitingRoomManagementService.sendRoomCreation(quizId, (this.gameConfigService.getGameConfig() as GameConfig));
         this.gameService.gameRealService.username = HOST_USERNAME;
+        this.waitingRoomManagementService.gameType = this.gameConfigService.gameType as unknown as "classic" | "equipe";
     }
 
     private setUpPlayer() {

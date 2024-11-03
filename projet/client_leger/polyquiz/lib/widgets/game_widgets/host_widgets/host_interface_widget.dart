@@ -38,7 +38,7 @@ class _HostInterfaceState extends State<HostInterface> {
   void initState() {
     super.initState();
     if (this._socketService.isSocketAlive()) {
-      this.hostInterfaceManagementService.configureBaseSocketFeatures();
+      this.hostInterfaceManagementService.configureBaseSocketFeatures(context);
       this.gameService.init(this.gameService.realGameService.roomId.toString());
     }
   }

@@ -14,6 +14,7 @@ export class GameConfigService {
   price: number;
   firendsOnly: boolean;
   private: boolean;
+  prestige: number;
 
 
   constructor(private usersService: UsersService) {
@@ -39,6 +40,10 @@ export class GameConfigService {
     this.private = isPrivate;
   }
 
+  setPrestige(prestige: string) {
+    this.prestige = Number(prestige);
+  }
+
   getGameConfig() {
     return {
       hostUserId: this.hostId,
@@ -47,6 +52,7 @@ export class GameConfigService {
       onGoing: false, // this will change to true when sent in server
       price: this.price,
       friendsOnly: this.firendsOnly,
+      prestige: this.prestige
     } as unknown as GameConfig;
   }
 

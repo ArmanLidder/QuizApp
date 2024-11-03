@@ -4,7 +4,7 @@ import 'package:polyquiz/services/quiz_service.dart';
 import 'package:polyquiz/models/timer.dart';
 import 'package:polyquiz/models/player.dart';
 import 'package:polyquiz/constants/constants.dart';
-import 'package:polyquiz/constants/question_type.dart';
+import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/time_service.dart';
 
 class GameTestService {
@@ -35,7 +35,8 @@ class GameTestService {
       this.quiz = quiz;
       this.question = quiz.questions[currQuestionIndex];
       timeService.deleteAllTimers();
-      startTimer(question?.type == QuestionType.QCM ? quiz.duration : QRL_DURATION);
+      startTimer(
+          question?.type == QuestionType.QCM ? quiz.duration : QRL_DURATION);
       handleQuestionTimerEnd();
     });
   }
@@ -65,7 +66,8 @@ class GameTestService {
   void updateScore(Map<int, String?> answers) {
     final questionPoints = quiz.questions[currQuestionIndex].points;
     if (question?.type == QuestionType.QCM) {
-      final choices = quiz.questions[currQuestionIndex].choices as List<QuizChoice>;
+      final choices =
+          quiz.questions[currQuestionIndex].choices as List<QuizChoice>;
       final correctChoices = extractCorrectChoices(choices);
       if (answers.length != correctChoices?.length) {
         isBonus = false;
@@ -117,7 +119,8 @@ class GameTestService {
 
   void handleTransitionTimer() {
     const tick = Duration(seconds: 1);
-    timeouts[1] = Future.delayed(Duration(seconds: TESTING_TRANSITION_TIMER), () {
+    timeouts[1] =
+        Future.delayed(Duration(seconds: TESTING_TRANSITION_TIMER), () {
       hideFeedback();
       if (next()) {
         startTimer(quiz.duration);

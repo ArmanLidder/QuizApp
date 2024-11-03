@@ -43,8 +43,11 @@
                 <span class="color-box" style="background-color: #f64343;"></span>
                 Inactif
 
-                <span class="color-box" style="background-color: #cea43b;"></span>
+                <ng-container *ngIf="gameService.question?.type !== 2">
+                   <span  class="color-box" style="background-color: #cea43b;"></span>
                 Interaction
+                </ng-container>
+
 
                 <span class="color-box" style="background-color: #53b953;"></span>
                 Validation
