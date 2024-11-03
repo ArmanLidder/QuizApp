@@ -14,11 +14,10 @@ class GameConfigService with ChangeNotifier {
   double prestige = 0.0;
 
   GameConfigService([User? user]) {
-    if(user != null) {
+    if (user != null) {
       _currentUser = user;
       hostId = user.uid;
-    }
-    else {
+    } else {
       hostId = 'null';
     }
   }

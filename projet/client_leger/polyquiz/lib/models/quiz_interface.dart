@@ -1,4 +1,4 @@
-import '../constants/question_type.dart';
+import 'package:polyquiz/enums/question_type.dart';
 
 class Quiz {
   final String id;

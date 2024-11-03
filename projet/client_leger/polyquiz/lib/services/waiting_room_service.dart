@@ -69,7 +69,7 @@ class WaitingRoomService extends ChangeNotifier {
     }
 
     final data = {
-      'quizId' : quizId,
+      'quizId': quizId,
       'gameConfig': gameConfig.toJson(),
     };
 

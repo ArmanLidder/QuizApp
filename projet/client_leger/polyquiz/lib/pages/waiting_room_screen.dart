@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import '../services/waiting_room_service.dart';
@@ -15,7 +16,11 @@ class WaitingRoomScreen extends StatefulWidget {
   final GameConfigService? gameConfigService;
 
   const WaitingRoomScreen(
-      {Key? key, required this.quiz, required this.isHost, this.username, this.gameConfigService})
+      {Key? key,
+      required this.quiz,
+      required this.isHost,
+      this.username,
+      this.gameConfigService})
       : super(key: key);
 
   @override
@@ -31,7 +36,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   bool showPopup = false;
   WaitingRoomService waitingRoomService = WaitingRoomService();
   RealGameService realGameService = RealGameService();
-  
 
   @override
   void initState() {
@@ -54,7 +58,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       print(widget.isHost);
       if (widget.isHost) {
         print(widget.gameConfigService!.getGameConfig());
-        roomId = await waitingRoomService.createRoom(widget.quiz.id, widget.gameConfigService!.getGameConfig());
+        roomId = await waitingRoomService.createRoom(
+            widget.quiz.id, widget.gameConfigService!.getGameConfig());
         realGameService.username = 'host';
         realGameService.roomId = waitingRoomService.roomId;
       } else {

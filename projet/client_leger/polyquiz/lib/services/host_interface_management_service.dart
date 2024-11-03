@@ -78,8 +78,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this._socketService.sendMessage(SocketEvent.SHOW_RESULT, this.roomId);
   }
 
-  configureBaseSocketFeatures() {
-    this.reset();
+  configureBaseSocketFeatures(BuildContext context) {
+    this.reset(context);
     this.handleTimeTransition();
     this.handleEndQuestion();
     this.handleFinalTimeTransition();
@@ -297,7 +297,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     return data;
   }
 
-  void reset() {
+  void reset(BuildContext context) {
     this.timerText = 'Temps restant: ';
     this.isGameOver = false;
     this.histogramDataChangingResponses.clear();
@@ -308,7 +308,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.gameStats.clear();
     this.isPaused = false;
     this.isPanicMode = false;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   Map<String, ResponseData> transformIntoResponsesQrl(
