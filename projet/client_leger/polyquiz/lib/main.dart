@@ -3,6 +3,7 @@ import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/pages/login-page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
+import 'package:polyquiz/services/background_notification_service.dart';
 import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
@@ -26,6 +27,7 @@ void main() async {
   Get.put(UserService());
   Get.put(ImageStorageService());
   Get.put(NotificationService());
+  Get.put(BackgroundNotificationService());
 
   runApp(const MyApp());
 }
