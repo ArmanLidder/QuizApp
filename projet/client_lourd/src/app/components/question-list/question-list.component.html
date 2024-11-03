@@ -97,6 +97,10 @@
                                class="text-red-600 text-sm">
                                 La réponse doit être entre les bornes spécifiées.
                             </p>
+                            <p *ngIf="question.get('answer')?.hasError('pattern') && question.get('answer')?.touched"
+                               class="text-red-600 text-sm">
+                                La réponse doit être un nombre entier.
+                            </p>
 
                             <label class="block text-sm font-medium">Intervalle :</label>
                             <div [formGroupName]="'interval'" class="flex gap-4">
@@ -109,7 +113,14 @@
                                class="text-red-600 text-sm">
                                 La valeur maximale doit être supérieure ou égale à la valeur minimale.
                             </p>
-
+                            <p *ngIf="question.get('interval.min')?.hasError('pattern') && question.get('interval.min')?.touched"
+                               class="text-red-600 text-sm">
+                                Le minimum doit être un nombre entier.
+                            </p>
+                            <p *ngIf="question.get('interval.max')?.hasError('pattern') && question.get('interval.max')?.touched"
+                               class="text-red-600 text-sm">
+                                La maximum doit être un nombre entier.
+                            </p>
                             <label for="margin{{ i }}" class="block text-sm font-medium">Marge de tolérance :</label>
                             <input type="number" id="margin{{ i }}" formControlName="margin"
                                    class="w-full p-2 border rounded" placeholder="Entrez la marge de tolérance">
@@ -117,9 +128,12 @@
                                 La marge de tolérance doit être au maximum 25 % de la réponse
                                 ({{ calculateMarginLimit(question.get('answer')?.value) }}).
                             </p>
-                            <p *ngIf="question.get('margin')?.hasError('min')" class="1-red-600 text-sm">
-                                La marge de tolérance doit être 0 ou plus.
+
+                            <p *ngIf="question.get('margin')?.hasError('pattern') && question.get('margin')?.touched"
+                               class="text-red-600 text-sm">
+                                La marge doit être un nombre entier.
                             </p>
+
                             <p *ngIf="hasValidInterval(question)" class="text-green-500 text-sm font-semibold">
                                 L'intervalle de bonne réponse est :
                                 [

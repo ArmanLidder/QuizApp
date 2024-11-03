@@ -76,6 +76,7 @@ export class GameManagementService {
 
     private handleSubmitAnswer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.SUBMIT_ANSWER, (data: PlayerAnswerData) => {
+            console.log(`Receiving SUBMIT with data :${data}`)
             const game = roomManager.getGameByRoomId(data.roomId);
             roomManager.getGameByRoomId(data.roomId).storePlayerAnswer(data.username, data.timer, data.answers);
             if (data.timer !== 0) {
@@ -83,7 +84,7 @@ export class GameManagementService {
                 sio.to(hostSocketId).emit(SocketEvent.SUBMIT_ANSWER, data.username);
             }
             if (game.playersAnswers.size === game.players.size) {
-                if (game.currentQuizQuestion.type === QuestionType.QCM) roomManager.getGameByRoomId(data.roomId).updateScores();
+                if (game.currentQuizQuestion.type === QuestionType.QCM || game.currentQuizQuestion.type === QuestionType.QRE) roomManager.getGameByRoomId(data.roomId).updateScores();
                 roomManager.clearRoomTimer(data.roomId);
                 sio.to(String(data.roomId)).emit(SocketEvent.END_QUESTION);
             }

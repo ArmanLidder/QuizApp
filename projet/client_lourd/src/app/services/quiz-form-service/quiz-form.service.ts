@@ -73,21 +73,31 @@ export class QuizFormService {
             answer: [
                 question?.answer ?? null,
                 question?.type === QuestionType.QRE
-                    ? [Validators.required, (control: any) => this.validationService.validateAnswerInRange(control, question?.interval?.min || 0, question?.interval?.max || 0)]
+                    ? [Validators.required,Validators.pattern("^[0-9]*$"), (control: any) => this.validationService.validateAnswerInRange(control, question?.interval?.min || 0, question?.interval?.max || 0)]
                     : []
             ],
 
             interval: this.formBuilder.group(
                 {
-                    min: [question?.interval?.min ?? null, question?.type === QuestionType.QRE ? Validators.required : []],
-                    max: [question?.interval?.max ?? null, question?.type === QuestionType.QRE ? Validators.required : []],
+                    min: [
+                        question?.interval?.min ?? null,
+                        question?.type === QuestionType.QRE
+                            ? [Validators.required, Validators.pattern("^[0-9]*$")]
+                            : []
+                    ],
+                    max: [
+                        question?.interval?.max ?? null,
+                        question?.type === QuestionType.QRE
+                            ? [Validators.required, Validators.pattern("^[0-9]*$")]
+                            : []
+                    ],
                 },
                 { validators: question?.type === QuestionType.QRE ? this.validationService.validateInterval : [] }
             ),
 
             margin: [
                 question?.margin ?? null,
-                question?.type === QuestionType.QRE ? [Validators.required, this.validationService.validateMarginWithinLimit, Validators.min(0)] : []
+                question?.type === QuestionType.QRE ? [Validators.required, Validators.pattern("^[0-9]*$"), this.validationService.validateMarginWithinLimit, Validators.min(0)] : []
             ],
             beingModified: question === undefined,
         });
@@ -199,22 +209,37 @@ export class QuizFormService {
             choicesControl?.updateValueAndValidity();
         });
 
-        questionForm.get('interval.min')?.valueChanges.subscribe((minValue) => {
+        // Function to set answer validators
+        const updateAnswerValidators = () => {
+            const minValue = questionForm.get('interval.min')?.value || 0;
+            const maxValue = questionForm.get('interval.max')?.value || 0;
+
             questionForm.get('answer')?.setValidators([
                 Validators.required,
-                (control) => this.validationService.validateAnswerInRange(control, minValue, questionForm.get('interval.max')?.value || 0)
+                Validators.pattern("^[0-9]*$"),
+                (control) => this.validationService.validateAnswerInRange(control, minValue, maxValue)
             ]);
             questionForm.get('answer')?.updateValueAndValidity();
-        });
+        };
 
-        questionForm.get('interval.max')?.valueChanges.subscribe((maxValue) => {
-            questionForm.get('answer')?.setValidators([
+        questionForm.get('interval.min')?.valueChanges.subscribe(updateAnswerValidators);
+        questionForm.get('interval.max')?.valueChanges.subscribe(updateAnswerValidators);
+
+        // Function to set margin validators
+        const updateMarginValidators = () => {
+            questionForm.get('margin')?.setValidators([
                 Validators.required,
-                (control) => this.validationService.validateAnswerInRange(control, questionForm.get('interval.min')?.value || 0, maxValue)
+                Validators.pattern("^[0-9]*$"),
+                Validators.min(0),
+                (control) => this.validationService.validateMarginWithinLimit(control)
             ]);
-            questionForm.get('answer')?.updateValueAndValidity();
-        });
+            questionForm.get('margin')?.updateValueAndValidity();
+        };
 
+        // Ensure that the margin validators are set correctly whenever the answer changes
+        questionForm.get('answer')?.valueChanges.subscribe(updateMarginValidators);
+
+        // Additional subscriptions to update interval validation
         questionForm.get('interval.min')?.valueChanges.subscribe(() => {
             questionForm.get('interval')?.setValidators(this.validationService.validateInterval);
             questionForm.get('interval')?.updateValueAndValidity();
@@ -223,13 +248,6 @@ export class QuizFormService {
             questionForm.get('interval')?.setValidators(this.validationService.validateInterval);
             questionForm.get('interval')?.updateValueAndValidity();
         });
-
-        questionForm.get('answer')?.valueChanges.subscribe((answerValue) => {
-            questionForm.get('margin')?.setValidators([
-                Validators.required,
-                (control) => this.validationService.validateMarginWithinLimit(control)
-            ]);
-            questionForm.get('margin')?.updateValueAndValidity();
-        });
     }
+
 }

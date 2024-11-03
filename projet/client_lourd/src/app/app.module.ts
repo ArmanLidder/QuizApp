@@ -72,7 +72,8 @@ import {MatSelectModule} from "@angular/material/select";
 import { ActiveGameListComponent } from './components/active-game-list/active-game-list.component';
 import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
 import { QreResponseAreaComponent } from './components/qre-response-area/qre-response-area.component';
-
+import {MatSliderModule} from "@angular/material/slider";
+import {NgxSliderModule} from "@angular-slider/ngx-slider";
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -157,6 +158,8 @@ import { QreResponseAreaComponent } from './components/qre-response-area/qre-res
         PopoutWindowModule,
         MatCheckboxModule,
         MatSelectModule,
+        MatSliderModule,
+        NgxSliderModule,
     ],
     providers: [
         CanalService,

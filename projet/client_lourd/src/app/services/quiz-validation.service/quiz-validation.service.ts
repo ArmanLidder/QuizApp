@@ -127,6 +127,10 @@ export class QuizValidationService {
                 errors.push(`Question ${index + 1} : la marge est requise pour les questions de type QRE.`);
                 return errors;
             }
+            if (question.interval.min > question.interval.max) {
+                errors.push(`Question ${index + 1} : l'intervalle min doit être inférieur ou égal à max.`);
+                return errors;
+            }
 
             if (question.interval.min > question.interval.max) {
                 errors.push(`Question ${index + 1} : l'intervalle min doit être inférieur ou égal à max.`);
@@ -136,6 +140,23 @@ export class QuizValidationService {
                 errors.push(`Question ${index + 1} : la marge de tolérance doit être 0 ou plus.`);
                 return errors;
             }
+            if (question.margin % 1 !== 0) {
+                errors.push(`Question ${index + 1} : la marge de tolérance doit être un nombre entier.`);
+                return errors;
+            }
+            if (question.answer % 1 !== 0) {
+                errors.push(`Question ${index + 1} : la réponse doit être un nombre entier.`);
+                return errors;
+            }
+            if (question.interval.min % 1 !== 0) {
+                errors.push(`Question ${index + 1} : le minimum doit être un nombre entier.`);
+                return errors;
+            }
+            if (question.interval.max % 1 !== 0) {
+                errors.push(`Question ${index + 1} : le maximum doit être un nombre entier.`);
+                return errors;
+            }
+
             if (question.answer < question.interval.min || question.answer > question.interval.max) {
                 errors.push(`Question ${index + 1} : la réponse doit être entre ${question.interval.min} et ${question.interval.max}.`);
                 return errors;

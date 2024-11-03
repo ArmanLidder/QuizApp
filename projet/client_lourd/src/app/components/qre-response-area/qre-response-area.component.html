@@ -1,1 +1,22 @@
-<p>qre-response-area works!</p>
+<div class="p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
+
+    <div class="mb-6">
+        <ngx-slider
+                [(value)]="selectedValue"
+                [options]="options"
+                (userChangeEnd)="onSliderChange()">>
+        </ngx-slider>
+    </div>
+
+    <div class="flex justify-between text-xs mb-4 text-gray-500">
+        <span class="mx-auto font-bold">Tolérance: ±{{ margin.toLocaleString() }}</span>
+    </div>
+    <div class="mt-4 text-sm text-gray-700">
+        <p>Votre intervalle de réponse est: <strong>{{ responseInterval }}</strong></p>
+        <p *ngIf="gameService.validatedStatus">La bonne réponse était: {{gameService.question?.answer}}</p>
+        <div class='btn-container'>
+            <button class='enter' [disabled]='gameService.lockedStatus' (click)='validate()'>Valider</button>
+            <app-leave-boutton></app-leave-boutton>
+        </div>
+    </div>
+</div>

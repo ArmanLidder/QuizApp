@@ -26,6 +26,7 @@ export class GameRealService implements GameServiceInterface {
     audio = new Audio('assets/music.mp3');
     audioPaused: boolean = false;
     inTimeTransition: boolean = false;
+    qreAnswer: number | null = null;
 
     constructor(public socketService: SocketClientService) {
         if (this.socketService.isSocketAlive()) {
@@ -46,10 +47,12 @@ export class GameRealService implements GameServiceInterface {
 
     sendAnswer() {
         const isMultipleChoiceQuestion: boolean = this.question?.type === QuestionType.QCM;
+        const isQREQuestion = this.question?.type === QuestionType.QRE;
         const answers = Array.from(this.answers.values());
+        if (isQREQuestion && this.qreAnswer === null) throw new Error('qreAnswer is null');
         this.socketService.send(SocketEvent.SUBMIT_ANSWER, {
             roomId: this.roomId,
-            answers: isMultipleChoiceQuestion ? answers : this.qrlAnswer.trim(),
+            answers: isMultipleChoiceQuestion ? answers : isQREQuestion ? this.qreAnswer!.toString() : this.qrlAnswer.trim(),
             timer: this.timer,
             username: this.username,
         });
@@ -90,6 +93,7 @@ export class GameRealService implements GameServiceInterface {
         this.isLast = false;
         this.players = [];
         this.answers.clear();
+        this.qreAnswer = null;
         this.qrlAnswer = '';
         this.questionNumber = 1;
         this.audioPaused = false;

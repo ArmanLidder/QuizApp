@@ -95,7 +95,7 @@ export class QuestionListComponent {
         const lowerBound = Math.max(answer - margin, min);
         const upperBound = Math.min(answer + margin, max);
 
-        return `${lowerBound.toFixed(2)}, ${upperBound.toFixed(2)}`;
+        return `${lowerBound}, ${upperBound}`;
     }
 
     hasValidInterval(question: AbstractControl): boolean {
@@ -108,6 +108,7 @@ export class QuestionListComponent {
             marginControl?.value != null &&
             minControl?.value != null &&
             maxControl?.value != null &&
+            marginControl?.value >=0 &&
             !answerControl.errors &&
             !marginControl.errors &&
             !minControl.errors &&
