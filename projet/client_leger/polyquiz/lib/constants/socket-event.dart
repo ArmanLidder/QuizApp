@@ -43,4 +43,11 @@ class SocketEvent {
   static const String PAUSE_TIMER = 'pauseTimer';
   static const String PANIC_MODE = 'panicMode';
   static const String GAME_STATUS_DISTRIBUTION = 'gameStatsDistribution';
+  static const String UPDATE_GAME_LIST = 'update_game_list';
+  static const String GET_GAME_LIST = 'get_game_list';
+  static const String SAVE_FINAL_GAME_STATS = 'save_final_game_stats';
+  static const String GET_TEAMS = 'get_teams';
+  static const String CREATE_TEAM = 'create_team';
+  static const String JOIN_TEAM = 'join_team';
+  static const String GET_GAME_TYPE = 'get_game_type';
 }
