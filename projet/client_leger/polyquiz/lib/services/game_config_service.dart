@@ -11,6 +11,7 @@ class GameConfigService with ChangeNotifier {
   double price = 0.0;
   bool friendsOnly = false;
   bool private = false;
+  double prestige = 0.0;
 
   GameConfigService([User? user]) {
     if(user != null) {
@@ -38,6 +39,11 @@ class GameConfigService with ChangeNotifier {
     notifyListeners();
   }
 
+  void setPrestige(double prestige) {
+    this.prestige = prestige;
+    notifyListeners();
+  }
+
   void setFriendsOnly(bool isFriends) {
     this.friendsOnly = isFriends;
     notifyListeners();
@@ -56,6 +62,7 @@ class GameConfigService with ChangeNotifier {
       onGoing: 'false', // this will change to 'true' when sent to server
       price: price,
       friendsOnly: friendsOnly,
+      prestige: prestige,
     );
   }
 
