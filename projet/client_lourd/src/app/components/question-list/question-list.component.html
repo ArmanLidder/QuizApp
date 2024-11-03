@@ -43,6 +43,7 @@
                         <span class="popuptext" [innerHTML]="questionErrors.join('<br>')"></span>
                     </div>
                     <div [attr.id]="'question' + i" class="space-y-4">
+                        <p class="font-medium text-lg">Question {{i + 1}}:</p>
                         <label for="type{{ i }}" class="block text-sm font-medium">Type de la question :</label>
                         <select formControlName="type" name="type{{ i }}" class="w-full p-2 border rounded">
                             <option value="QCM">QCM</option>
@@ -56,7 +57,7 @@
 
 
                         <label for="text{{ i }}" class="block text-sm font-medium">Texte de la question :</label>
-                        <input type="text" [attr.id]="'text' + i" name="text{{ i }}" formControlName="text"
+                        <input maxlength="100" type="text" [attr.id]="'text' + i" name="text{{ i }}" formControlName="text"
                                class="w-full p-2 border rounded" placeholder="Saisissez le texte de la question">
                         <p *ngIf="question.get('text')?.hasError('required') && question.get('text')?.touched"
                            class="text-red-600 text-sm">
@@ -67,7 +68,7 @@
                         <label for="points{{ i }}" class="block text-sm font-medium">Le nombre de points de la question
                             :</label>
                         <input type="number" [attr.id]="'points' + i" name="points{{ i }}" formControlName="points"
-                               class="w-full p-2 border rounded" placeholder="Entrez le nombre de points (Multiple de 10 - Entre 10 et 100)">
+                               class="w-full p-2 border rounded" placeholder="Entrez le nombre de points">
                         <p *ngIf="question.get('points')?.hasError('required') && question.get('points')?.touched"
                            class="text-red-600 text-sm">
                             Le nombre de points est requis
@@ -88,21 +89,7 @@
                         </div>
 
                         <div *ngIf="question.get('type')?.value === 'QRE'" class="space-y-4">
-
-                            <!-- Correct Answer -->
-                            <label for="answer{{ i }}" class="block text-sm font-medium">Bonne réponse :</label>
-                            <input type="number" id="answer{{ i }}" formControlName="answer"
-                                   class="w-full p-2 border rounded" placeholder="Entrez la valeur de la bonne réponse">
-                            <p *ngIf="question.get('answer')?.hasError('answerOutOfRange')"
-                               class="text-red-600 text-sm">
-                                La réponse doit être entre les bornes spécifiées.
-                            </p>
-                            <p *ngIf="question.get('answer')?.hasError('pattern') && question.get('answer')?.touched"
-                               class="text-red-600 text-sm">
-                                La réponse doit être un nombre entier.
-                            </p>
-
-                            <label class="block text-sm font-medium">Intervalle :</label>
+                            <label class="block text-sm font-medium">Intervalle de réponse:</label>
                             <div [formGroupName]="'interval'" class="flex gap-4">
                                 <input type="number" id="minInterval{{ i }}" formControlName="min" placeholder="Minimum"
                                        class="w-1/2 p-2 border rounded">
@@ -113,25 +100,74 @@
                                class="text-red-600 text-sm">
                                 La valeur maximale doit être supérieure ou égale à la valeur minimale.
                             </p>
-                            <p *ngIf="question.get('interval.min')?.hasError('pattern') && question.get('interval.min')?.touched"
+                            <p *ngIf="question.get('interval.min')?.hasError('pattern') && question.get('interval.min')?.touched && !question.get('interval.min')?.hasError('max') && !question.get('interval.min')?.hasError('min')"
                                class="text-red-600 text-sm">
                                 Le minimum doit être un nombre entier.
                             </p>
-                            <p *ngIf="question.get('interval.max')?.hasError('pattern') && question.get('interval.max')?.touched"
+                            <p *ngIf="question.get('interval.min')?.hasError('required') && question.get('interval.min')?.touched"
+                               class="text-red-600 text-sm">
+                                Le minimum est requis.
+                            </p>
+                            <p *ngIf="question.get('interval.max')?.hasError('pattern') && question.get('interval.max')?.touched && !question.get('interval.max')?.hasError('max') && !question.get('interval.max')?.hasError('min')"
                                class="text-red-600 text-sm">
                                 La maximum doit être un nombre entier.
                             </p>
+                            <p *ngIf="question.get('interval.max')?.hasError('required') && question.get('interval.max')?.touched"
+                               class="text-red-600 text-sm">
+                                La maximum est requis.
+                            </p>
+                            <p *ngIf="question.get('interval.max')?.hasError('max') && question.get('interval.max')?.touched"
+                               class="text-red-600 text-sm">
+                                La valeur maximale est trop grande (plus que 15 chiffres)
+                            </p>
+                            <p *ngIf="question.get('interval.min')?.hasError('max') && question.get('interval.min')?.touched"
+                               class="text-red-600 text-sm">
+                                La valeur minimale est trop grande (plus que 15 chiffres)
+                            </p>
+                            <p *ngIf="question.get('interval.max')?.hasError('min') && question.get('interval.max')?.touched"
+                               class="text-red-600 text-sm">
+                                La valeur maximale est trop petite (plus que 15 chiffres)
+                            </p>
+                            <p *ngIf="question.get('interval.min')?.hasError('min') && question.get('interval.min')?.touched"
+                               class="text-red-600 text-sm">
+                                La valeur minimale est trop petite (plus que 15 chiffres)
+                            </p>
+
+                            <label for="answer{{ i }}" class="block text-sm font-medium">Bonne réponse :</label>
+                            <input m type="number" id="answer{{ i }}" formControlName="answer"
+                                   class="w-full p-2 border rounded" placeholder="Entrez la valeur de la bonne réponse">
+                            <p *ngIf="question.get('answer')?.hasError('answerOutOfRange')"
+                               class="text-red-600 text-sm">
+                                La réponse doit être entre les bornes spécifiées.
+                            </p>
+                            <p *ngIf="question.get('answer')?.hasError('pattern') && question.get('answer')?.touched && !question.get('answer')?.hasError('answerOutOfRange')"
+                               class="text-red-600 text-sm">
+                                La réponse doit être un nombre entier.
+                            </p>
+                            <p *ngIf="question.get('answer')?.hasError('max') && question.get('answer')?.touched &&!question.get('answer')?.hasError('answerOutOfRange')"
+                               class="text-red-600 text-sm">
+                                La valeur de la réponse est trop grande (plus que 15 chiffres)
+                            </p>
+                            <p *ngIf="question.get('answer')?.hasError('min') && question.get('answer')?.touched &&!question.get('answer')?.hasError('answerOutOfRange')"
+                               class="text-red-600 text-sm">
+                                La valeur de la réponse est trop petite (plus que 15 chiffres)
+                            </p>
+
+
                             <label for="margin{{ i }}" class="block text-sm font-medium">Marge de tolérance :</label>
                             <input type="number" id="margin{{ i }}" formControlName="margin"
                                    class="w-full p-2 border rounded" placeholder="Entrez la marge de tolérance">
-                            <p *ngIf="question.get('margin')?.hasError('marginTooLarge')" class="text-red-600 text-sm">
+                            <p *ngIf="question.get('margin')?.hasError('marginTooLarge') && question.get('margin')?.touched" class="text-red-600 text-sm">
                                 La marge de tolérance doit être au maximum 25 % de la réponse
                                 ({{ calculateMarginLimit(question.get('answer')?.value) }}).
                             </p>
+                            <p *ngIf="question.get('margin')?.hasError('required') && question.get('margin')?.touched" class="text-red-600 text-sm">
+                                La marge de tolérance est requis.
+                            </p>
 
-                            <p *ngIf="question.get('margin')?.hasError('pattern') && question.get('margin')?.touched"
+                            <p *ngIf="question.get('margin')?.hasError('min') && question.get('margin')?.touched"
                                class="text-red-600 text-sm">
-                                La marge doit être un nombre entier.
+                                La marge doit être un nombre entier supérieure ou égale à 0.
                             </p>
 
                             <p *ngIf="hasValidInterval(question)" class="text-green-500 text-sm font-semibold">
@@ -145,9 +181,6 @@
                             ) }}
                                 ]
                             </p>
-
-
-
                         </div>
                     </div>
 
@@ -176,12 +209,12 @@
                                     </button>
                                     <button type="button" (click)="removeChoice(i, j)"
                                             class="p-2 hover:bg-red-100 rounded">
-                                        <mat-icon matTooltipClass="custom-tooltip" matTooltip="Supprimer un choix" class="text-red-600">remove</mat-icon>
+                                        <mat-icon matTooltipClass="custom-tooltip" matTooltip="Supprimer le choix" class="text-red-600">remove</mat-icon>
                                     </button>
                                 </div>
                             </div>
 
-                            <input type="text" [attr.id]="'choix' + i + j" name="textChoix{{ i }}{{ j }}"
+                            <input maxlength="50" type="text" [attr.id]="'choix' + i + j" name="textChoix{{ i }}{{ j }}"
                                    formControlName="text" required class="w-full p-2 border rounded" placeholder="Texte du choix">
                             <div *ngIf="choix.get('text')?.hasError('required') && choix.get('text')?.touched"
                                  class="text-red-600 text-sm">
@@ -232,12 +265,12 @@
 
 
                     <div *ngIf="question.get('type')?.value === 'QRE'" class="space-y-2">
-                        <p class="text-sm text-gray-600">Bonne réponse : {{question.get('answer')?.value}}</p>
                         <p class="text-sm text-gray-600">Intervalle:</p>
                         <ul class="list-disc text-sm pl-4 text-gray-600">
                             <li>Min : {{question.get('interval.min')?.value}}</li>
                             <li>Max : {{question.get('interval.max')?.value}}</li>
                         </ul>
+                        <p class="text-sm text-gray-600">Bonne réponse : {{question.get('answer')?.value}}</p>
                         <p class="text-sm text-gray-600">Marge de tolérance : {{question.get('margin')?.value}}</p>
                     </div>
                 </div>

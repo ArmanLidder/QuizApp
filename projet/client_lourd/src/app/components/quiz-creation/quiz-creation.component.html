@@ -5,7 +5,7 @@
 
         <div>
             <label for="title" class="block text-sm font-medium">Titre :</label>
-            <input placeholder="Entrez le titre du jeu" type="text" id="title" formControlName="title" class="w-full p-2 border rounded" />
+            <input maxlength="100" placeholder="Entrez le titre du jeu" type="text" id="title" formControlName="title" class="w-full p-2 border rounded" />
             <p *ngIf="quizForm.get('title')?.hasError('required') && quizForm.get('title')?.touched" class="text-red-500 text-sm">Le titre est requis</p>
         </div>
 
@@ -18,7 +18,7 @@
 
         <div>
             <label for="description" class="block text-sm font-medium">Description :</label>
-            <input placeholder="Entrez la description du jeu" type="text" id="description" formControlName="description" class="w-full p-2 border rounded" />
+            <input maxlength="250" placeholder="Entrez la description du jeu" type="text" id="description" formControlName="description" class="w-full p-2 border rounded" />
             <p *ngIf="quizForm.get('description')?.hasError('required') && quizForm.get('description')?.touched" class="text-red-500 text-sm">La description est requise</p>
         </div>
 
@@ -28,13 +28,14 @@
             <span class="popuptext" [innerHTML]="formErrors.join('<br>')"></span>
         </div>
 
-        <div class="flex justify-end space-x-4 mt-20">
+        <div class="flex flex-wrap justify-end space-x-4 mt-20">
             <button type="submit" class="!bg-green-500 text-white px-4 py-2 rounded hover:!bg-green-600">
-                Sauvegarder le quiz
+                {{ mode === pageModel.CREATION ? 'Créer' : 'Modifier' }}
             </button>
             <button type="button" class="!bg-red-500 text-white px-4 py-2 rounded hover:!bg-red-600" routerLink="/game-admin-page">
                 Annuler
             </button>
         </div>
+
     </form>
 </div>

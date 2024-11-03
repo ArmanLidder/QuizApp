@@ -23,7 +23,6 @@ export class QuestionListComponent {
         private choiceService: ChoiceService,
     ) {}
     showPopupIfConditionMet(condition: boolean) {
-        console.log("setting")
         if (condition) {
             this.isPopUpVisible = true;
             setTimeout(() => {
@@ -36,7 +35,6 @@ export class QuestionListComponent {
     addQuestion(index: number) {
         this.questionErrors = this.questionService.addQuestion(index, this.questionsArray)
         if (index >= 0 ) {
-            console.log(index);
             this.showPopupIfConditionMet(this.questionErrors.length !== 0);
         }
     }
@@ -80,8 +78,8 @@ export class QuestionListComponent {
 
     calculateMarginLimit(answer: number | null): string {
         if (answer === null || answer === undefined) return '';
-        const limit = 0.25 * answer; // 25% of the answer
-        return limit.toFixed(2); // Format with two decimal places
+        const limit = 0.25 * answer;
+        return Math.floor(Math.abs(limit)).toString() ;
     }
 
     calculateAnswerInterval(answer: number | null, margin: number | null, min: number | null, max: number | null): string {
