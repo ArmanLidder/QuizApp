@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:polyquiz/services/StoreService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
+import '../../models/user.dart';
+
 class ThemeStoreList extends StatelessWidget {
   final List<Map<String,  dynamic>> themes;
   final String userId;
@@ -66,7 +68,7 @@ class ThemeItem extends StatelessWidget {
         ),
         SizedBox(height: 8),
         // Buy button with cost
-        BuyButton(cost: cost, onBuy: onBuy),
+        BuyButton(cost: cost, onBuy: onBuy, itemId: itemId,),
         SizedBox(height: 20),
       ],
     );
@@ -137,7 +139,7 @@ class ImageItem extends StatelessWidget {
         ),
         SizedBox(height: 8),
         // Buy button with cost
-        BuyButton(cost: cost, onBuy: onBuy),
+        BuyButton(cost: cost, onBuy: onBuy, itemId: itemId),
         SizedBox(height: 20),
       ],
     );
@@ -147,10 +149,11 @@ class ImageItem extends StatelessWidget {
 class BuyButton extends StatefulWidget {
   final num cost;
   final Future<void> Function() onBuy; // Purchase callback
-
+  final String itemId;
   BuyButton({
     required this.cost,
     required this.onBuy,
+    required this.itemId,
   });
 
   @override
@@ -171,9 +174,9 @@ class _BuyButtonState extends State<BuyButton> {
 
   Future<void> _updateButtonStatus() async {
     await loggedInUserService.reloadUser();
-    num availableFunds = loggedInUserService.getUser()?.currency ?? 0;
-    bool ownsItem = false; // TODO: check db
-
+    User? user = loggedInUserService.getUser();
+    num availableFunds = user?.currency ?? 0;
+    bool ownsItem = await storeService.isOwned(user?.uid ?? "noIdInButtonWidget", widget.itemId);
     setState(() {
       alreadyOwns = ownsItem;
       canAfford = availableFunds >= widget.cost;

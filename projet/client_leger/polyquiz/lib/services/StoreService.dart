@@ -1,4 +1,6 @@
 
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
@@ -14,7 +16,7 @@ class StoreService extends GetxController {
   final _purchaseTrigger = 0.obs;
   int get purchaseTrigger => _purchaseTrigger.value;
 
-  void createStoreProfile(String userId) async {
+  void _createStoreProfile(String userId) async {
     try {
       await _firestore.collection('storeProfiles').doc(userId).set({
         'ownedItems': <String>[], // Empty list of owned items
@@ -30,7 +32,7 @@ class StoreService extends GetxController {
           userId).get();
 
       if (!doc.exists) {
-        this.createStoreProfile(userId);
+        this._createStoreProfile(userId);
       }
     } catch (e) {
       print("Error checking or creating store profile: $e");
@@ -49,7 +51,30 @@ class StoreService extends GetxController {
       print("Error adding item to owned items: $e");
     }
   }
+  Future<bool> isOwned(String userId, String itemId) async  {
+    try {
+      // Reference to the user's document
+      DocumentReference userDocRef = _firestore.collection('storeProfiles').doc(userId);
+      // Fetch the user's document
+      DocumentSnapshot userDoc = await userDocRef.get();
 
+      // Check if the document exists
+      if (userDoc.exists) {
+        // Retrieve the ownedItems field
+        Map<String, dynamic> itemData = userDoc.data() as Map<String, dynamic>;
+
+        List<dynamic> ownedItems = itemData['ownedItems'] ?? [];
+        // Check if the itemId exists in the ownedItems
+        return ownedItems.contains(itemId);
+      } else {
+        // If the user document does not exist, return false
+        return false;
+      }
+    } catch (e) {
+      print("Error checking if item is owned: $e");
+      return false; // Return false in case of error
+    }
+  }
   buy(String userId, String itemId) async {
     User? user = await userService.getUserById(userId);
     num availableMoney = user?.currency ?? 0;
