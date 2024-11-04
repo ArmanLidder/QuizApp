@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../models/quiz.dart';
 import 'waiting_room_screen.dart';
 import '../services/waiting_room_service.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/models/user.dart';
 
 class JoinRoomPage extends StatefulWidget {
   const JoinRoomPage({Key? key}) : super(key: key);
@@ -15,6 +18,8 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   final _roomIdController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isJoining = false;
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
+  User? userData;
 
   @override
   void dispose() {
@@ -27,6 +32,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
     if (_formKey.currentState?.validate() ?? false) {
       final username = _usernameController.text.trim();
       final roomId = _roomIdController.text.trim();
+      this.userData = this.loggedInUserService.getUser();
 
       setState(() {
         _isJoining = true;
@@ -45,7 +51,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                 duration: 0, // Provide a sample duration.
                 questions: [], // Provide an empty list of questions.
               ),
-              username: username, // Pass the username to the waiting room.
+              username: this.userData!.uid, // Pass the username to the waiting room.
               isHost: false, // This user is not the host.
             ),
           ),
