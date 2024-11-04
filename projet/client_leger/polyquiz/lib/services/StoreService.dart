@@ -28,7 +28,6 @@ class StoreService extends GetxController {
           userId).get();
 
       if (!doc.exists) {
-        // If the document does not exist, create the store profile
         this.createStoreProfile(userId);
       }
     } catch (e) {
@@ -72,4 +71,36 @@ class StoreService extends GetxController {
       });
      await addToOwned(userId, itemId);
     }
+
+  Future<Map<String, List<Map<String, dynamic>>>> browseStoreItems() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('storeItems').get();
+      List<Map<String, dynamic>> themes = [];
+      List<Map<String, dynamic>> images = [];
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> item = doc.data() as Map<String, dynamic>;
+        String itemType = item['itemType'] ?? '';
+        item['id'] = doc.id;
+
+
+        if (itemType == 'theme') {
+          themes.add(item);
+        } else if (itemType == 'image') {
+          images.add(item);
+        }
+      }
+
+      return {
+        'themes': themes,
+        'images': images,
+      };
+    } catch (e) {
+      print("Error browsing store items: $e");
+      return {
+        'themes': [],
+        'images': [],
+      };
+    }
+  }
 }

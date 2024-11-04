@@ -1,39 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/StoreService.dart';
-import 'package:polyquiz/services/imageStorageService.dart';
-import 'package:polyquiz/widgets/user_widget/FriendListWidget.dart';
-import '../widgets/user_widget/fancyAppBar.dart';
-import '../widgets/user_widget/ProfileCard.dart';
-import '../widgets/user_widget/statisticBlorb.dart';
-import '../widgets/user_widget/starComponent.dart';
-import '../widgets/user_widget/historique.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/widgets/store_widgets/themeWidget.dart';
 
-class Storepage extends StatelessWidget {
+class Storepage extends StatefulWidget {
+  @override
+  _StorepageState createState() => _StorepageState();
+}
+
+class _StorepageState extends State<Storepage> {
   final UserService userService = UserService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
-  User? userData;
   final StoreService storeService = Get.find();
+   late String uid;
+  Map<String, List<Map<String, dynamic>>>? storeItems;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchStoreItems();
+  }
+
+  void _fetchStoreItems() async {
+    var items = await storeService.browseStoreItems();
+    String? id = await loggedInUserService.getUid();
+    print(items); // Print the store browsing info
+    setState(() {
+      storeItems = items; // Update the state with fetched items
+      uid = id!;
+
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    //this.userData = this.loggedInUserService.getUser();
-    void handleButtonPress() {
-      String userId = "ChhstSLYrk6HloBVNM6x";
-      String itemId = "u771NT8PiPk35iWsUvsc";
-      storeService.buy(userId,itemId);
-    }
-
     return MaterialApp(
       home: Scaffold(
-        body: FloatingActionButton(
-        onPressed: handleButtonPress,
-        child: Icon(Icons.add),
-      ),
+        appBar: AppBar(title: Text('Store Page')),
+        body: storeItems == null
+            ? Center(child: CircularProgressIndicator()) // Show loading indicator while fetching
+            : Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  ThemeStoreItem(themes: storeItems!['themes']!,  userId: this.uid)
+
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Text( storeItems!['images']![0].toString()
+                      ), // Display first theme or a message
+                ],
+              ),              SizedBox(height: 20),
+            ],
+          ),
+        ),
       ),
     );
   }
