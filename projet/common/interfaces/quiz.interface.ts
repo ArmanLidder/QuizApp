@@ -8,6 +8,7 @@ export interface Quiz {
     lastModification: string | null;
     questions: QuizQuestion[];
     visible?: boolean;
+    owner?: string; //firebase uid string
 }
 
 export interface QuizQuestion {
