@@ -52,17 +52,23 @@ class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
           : errorMessage.isNotEmpty
               ? Center(child: Text(errorMessage))
               : quizzes.isEmpty
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                          Text("Aucun quiz téléchargé"),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/home');
-                            },
-                            child: Text("Retour a la page d'origine"),
-                          )
-                        ])
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Aucun quiz téléchargé"),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, '/home');
+                                },
+                                child: Text("Retour a la page d'origine"),
+                              )
+                            ]),
+                      ),
+                    )
                   : Column(
                       children: [
                         Expanded(
