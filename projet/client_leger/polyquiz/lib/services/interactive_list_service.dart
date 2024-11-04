@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/player_status.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/score.dart';
+import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'user_service.dart';
 
 class InteractiveListService extends ChangeNotifier {
   static final InteractiveListService _instance =
@@ -18,6 +20,8 @@ class InteractiveListService extends ChangeNotifier {
   List<Player> players = []; //check player type for each service
   bool isFinal = false;
   List<Player> actualStatus = [];
+  User? user;
+  final UserService userService = UserService();
 
   SocketService _socketService = SocketService();
 
@@ -32,20 +36,23 @@ class InteractiveListService extends ChangeNotifier {
     return completer.future;
   }
 
-  void gatherPlayersUsername(RoomSettings roomSettings, Function(int) resolve,
-      List<Player> leftPlayers) {
+  Future<void> gatherPlayersUsername(RoomSettings roomSettings, Function(int) resolve,
+      List<Player> leftPlayers) async {
     _socketService.sendMessageWithAck(
-        SocketEvent.GATHER_PLAYERS_USERNAME, roomSettings.roomId, (players) {
-      resolve(players.length);
+        SocketEvent.GATHER_PLAYERS_USERNAME, roomSettings.roomId, (players) async {
       setUpPlayerList(leftPlayers);
-      for (String username in players) {
-        print('USERNAME IN PLAYERS: ${username}');
-        getPlayerScoreFromServer(
-            UserData(
-                username: username,
-                resetPlayerStatus: roomSettings.resetPlayerStatus),
-            roomSettings.roomId,
-            leftPlayers);
+      for (String userID in players) {
+        user = await userService.getUserById(userID);
+        if (user != null) {
+          String username = user!.username;
+          print('USERNAME IN PLAYERS: ${username}');
+          getPlayerScoreFromServer(
+              UserData(
+                  username: userID,
+                  resetPlayerStatus: roomSettings.resetPlayerStatus),
+              roomSettings.roomId,
+              leftPlayers);
+        }
       }
     });
   }
@@ -68,7 +75,7 @@ class InteractiveListService extends ChangeNotifier {
   }
 
   void setUpPlayerList(List<Player> leftPlayers) {
-    this.actualStatus = this.players;
+    this.actualStatus = List.from(this.players);
     this.players.clear();
     appendLeftPlayersToActivePlayers(leftPlayers);
   }
@@ -77,15 +84,14 @@ class InteractiveListService extends ChangeNotifier {
       UserData userInfo, int roomId, List<Player> leftPlayers) {
     _socketService.sendMessageWithAck(SocketEvent.GET_SCORE, {
       'roomId': roomId,
-      'username': userInfo.username,
+      'username': userInfo.username
     }, (score) {
       this.addPlayer(userInfo, Score.fromJson(score), leftPlayers);
     });
   }
 
   void addPlayer(UserData userInfo, Score score, List<Player> leftPlayers) {
-    var status = initPlayerStatus(
-        userInfo.username, userInfo.resetPlayerStatus, leftPlayers);
+    String status = initPlayerStatus( userInfo.username, userInfo.resetPlayerStatus, leftPlayers);
     bool canChat = canPlayerChat(userInfo.username);
     players.add(Player(
         username: userInfo.username,
@@ -98,7 +104,6 @@ class InteractiveListService extends ChangeNotifier {
 
   bool canPlayerChat(String username) {
     final int playerIndex = this.findPlayer(username, this.actualStatus);
-    print('PLAYER INDEX: ${playerIndex}');
     for (Player player in actualStatus) {
       print('ACTUAL STATUS CONTENT: ${player.username}');
     }
