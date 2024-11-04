@@ -35,6 +35,9 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
       textBtnColor = Color.fromRGBO(0, 0, 0, 0);
       lastQuestionIndex = widget.gameInterfaceManagementService!.gameService.questionNumber;
     }
+    else{
+      lastQuestionIndex = widget.gameInterfaceManagementService!.gameService.questionNumber;
+    }
     return TextButton(
       onPressed: () {
         setState(() {
