@@ -59,15 +59,6 @@ export class QuizValidationService {
 
     validateQuiz(quiz: Quiz): string[] {
         const errors: string[] = [];
-        console.log(quiz.description.trim())
-        if (quiz.description.trim() === '') {
-            errors.push('La description ne doit pas être composée uniquement d\'espaces.');
-        }
-
-        if (quiz.title.trim() === '') {
-            errors.push('Le titre ne doit pas être composé uniquement d\'espaces.');
-        }
-
 
         if (!quiz.title || !quiz.title.trim()) {
             errors.push(TITLE_REQUIRED);
@@ -79,6 +70,14 @@ export class QuizValidationService {
             errors.push(DESCRIPTION_REQUIRED);
         } else if (quiz.description.length > 250) {
             errors.push('La description doit contenir au maximum 250 caractères.');
+        }
+
+        if (quiz.description && quiz.description.trim() === '') {
+            errors.push('La description ne doit pas être composée uniquement d\'espaces.');
+        }
+
+        if (quiz.title && quiz.title.trim() === '') {
+            errors.push('Le titre ne doit pas être composé uniquement d\'espaces.');
         }
 
         if (isNaN(quiz.duration) || quiz.duration < MIN_DURATION || quiz.duration > MAX_DURATION) {
