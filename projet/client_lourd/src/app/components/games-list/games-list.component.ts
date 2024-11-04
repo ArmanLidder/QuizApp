@@ -13,6 +13,7 @@ import {generateRandomId} from 'src/utils/random-id-generator/random-id-generato
 import {QUIZ_TESTING_PAGE, WAITING_ROOM_HOST_PAGE} from '@common/page-url/page-url';
 import {ErrorDialogComponent} from "@app/components/error-dialog/error-dialog.component";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
+import {UniqueQuizNameDialogComponent} from "@app/components/unique-quiz-name-dialog/unique-quiz-name-dialog.component";
 
 @Component({
     selector: 'app-games-list',
@@ -174,6 +175,16 @@ export class GamesListComponent implements OnInit {
     treatResponse(value: boolean) {
         if (!value) {
             this.isQuizUnique = false;
+            const dialogRef = this.dialog.open(UniqueQuizNameDialogComponent, {
+                data: { quizName: this.importedQuiz.title }
+            });
+            dialogRef.afterClosed().subscribe((newName: string | null) => {
+                if (newName) {
+                    this.receiveQuizName(newName);
+                } else {
+                    this.killErrorFeedback(false);
+                }
+            });
         } else {
             this.importedQuiz.id = generateRandomId();
             this.addImportedQuiz();

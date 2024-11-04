@@ -59,6 +59,15 @@ export class QuizValidationService {
 
     validateQuiz(quiz: Quiz): string[] {
         const errors: string[] = [];
+        console.log(quiz.description.trim())
+        if (quiz.description.trim() === '') {
+            errors.push('La description ne doit pas être composée uniquement d\'espaces.');
+        }
+
+        if (quiz.title.trim() === '') {
+            errors.push('Le titre ne doit pas être composé uniquement d\'espaces.');
+        }
+
 
         if (!quiz.title || !quiz.title.trim()) {
             errors.push(TITLE_REQUIRED);

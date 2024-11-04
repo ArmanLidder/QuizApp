@@ -7,6 +7,7 @@
             <label for="title" class="block text-sm font-medium">Titre :</label>
             <input maxlength="100" placeholder="Entrez le titre du jeu" type="text" id="title" formControlName="title" class="w-full p-2 border rounded" />
             <p *ngIf="quizForm.get('title')?.hasError('required') && quizForm.get('title')?.touched" class="text-red-500 text-sm">Le titre est requis</p>
+            <p *ngIf="quizForm.get('title')?.hasError('pattern') && quizForm.get('title')?.touched" class="text-red-500 text-sm">Le titre ne doit pas être composé uniquement d'espaces</p>
         </div>
 
         <div>
@@ -20,6 +21,7 @@
             <label for="description" class="block text-sm font-medium">Description :</label>
             <input maxlength="250" placeholder="Entrez la description du jeu" type="text" id="description" formControlName="description" class="w-full p-2 border rounded" />
             <p *ngIf="quizForm.get('description')?.hasError('required') && quizForm.get('description')?.touched" class="text-red-500 text-sm">La description est requise</p>
+            <p *ngIf="quizForm.get('description')?.hasError('pattern') && quizForm.get('description')?.touched" class="text-red-500 text-sm">La description ne doit pas être composée uniquement d'espaces</p>
         </div>
 
         <app-question-list [questionsArray]="questionsArray" [parentGroup]="quizForm"></app-question-list>

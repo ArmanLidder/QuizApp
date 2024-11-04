@@ -74,6 +74,7 @@ import { ErrorDialogComponent } from './components/error-dialog/error-dialog.com
 import { QreResponseAreaComponent } from './components/qre-response-area/qre-response-area.component';
 import {MatSliderModule} from "@angular/material/slider";
 import {NgxSliderModule} from "@angular-slider/ngx-slider";
+import { UniqueQuizNameDialogComponent } from './components/unique-quiz-name-dialog/unique-quiz-name-dialog.component';
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -128,6 +129,7 @@ import {NgxSliderModule} from "@angular-slider/ngx-slider";
         ActiveGameListComponent,
         ErrorDialogComponent,
         QreResponseAreaComponent,
+        UniqueQuizNameDialogComponent,
     ],
     imports: [
         AppMaterialModule,

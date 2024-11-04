@@ -63,7 +63,10 @@
                            class="text-red-600 text-sm">
                             Le texte est requis
                         </p>
-
+                        <p *ngIf="question.get('text')?.hasError('pattern') && question.get('text')?.touched"
+                           class="text-red-600 text-sm">
+                            Le texte ne doit pas être composé uniquement d'espaces.
+                        </p>
 
                         <label for="points{{ i }}" class="block text-sm font-medium">Le nombre de points de la question
                             :</label>
