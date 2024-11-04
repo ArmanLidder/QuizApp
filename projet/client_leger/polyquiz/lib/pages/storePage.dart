@@ -55,6 +55,7 @@ class _StorepageState extends State<Storepage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              MoneyCounter(),
               Text("Themes: "),
               Row(
                 children: [

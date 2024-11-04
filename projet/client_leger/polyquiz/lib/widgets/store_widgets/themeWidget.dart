@@ -160,8 +160,8 @@ class BuyButton extends StatefulWidget {
 class _BuyButtonState extends State<BuyButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
-  late bool alreadyOwns;
-  late bool canAfford;
+  bool alreadyOwns = false;
+  bool canAfford = false;
 
   @override
   void initState() {
@@ -215,3 +215,19 @@ class _BuyButtonState extends State<BuyButton> {
     });
   }
 }
+
+class MoneyCounter extends StatelessWidget {
+  final LoggedInUserService loggedInUserService = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      return Text(
+        'Argent : ${loggedInUserService.observableCurrency.value} \$',
+        style: TextStyle(fontSize: 20, color: Colors.black),
+      );
+    });
+  }
+}
+
+

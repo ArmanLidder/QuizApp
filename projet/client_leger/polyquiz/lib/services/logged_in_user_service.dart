@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:polyquiz/models/user.dart';
@@ -9,7 +10,7 @@ class LoggedInUserService extends GetxController {
   static LoggedInUserService get instance => Get.find();
   final UserService userService = UserService();
   final ImageStorageService imageStorageService = ImageStorageService();
-
+  late var observableCurrency = 0.obs;
   User? user;
 
   // Method to set user info
@@ -30,6 +31,7 @@ class LoggedInUserService extends GetxController {
     String? uid = await this.getUid();
     User? user = await UserService.instance.getUserById(uid ?? '');
     this.setUser(user);
+    this.observableCurrency.value = (this.user?.currency ?? 0).round();
   }
   User? getUser(){
     return (this.user);
