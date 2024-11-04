@@ -5,6 +5,9 @@ import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/widgets/store_widgets/themeWidget.dart';
 
+import '../models/user.dart';
+import '../widgets/user_widget/fancyAppBar.dart';
+
 class Storepage extends StatefulWidget {
   @override
   _StorepageState createState() => _StorepageState();
@@ -15,6 +18,8 @@ class _StorepageState extends State<Storepage> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final StoreService storeService = Get.find();
    late String uid;
+  User? userData;
+
   Map<String, List<Map<String, dynamic>>>? storeItems;
 
   @override
@@ -37,9 +42,13 @@ class _StorepageState extends State<Storepage> {
 
   @override
   Widget build(BuildContext context) {
+    this.userData = this.loggedInUserService.getUser();
+
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Store Page')),
+        appBar: FancyAppBar(
+          context: context,
+          sourceImgUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
         body: storeItems == null
             ? Center(child: CircularProgressIndicator()) // Show loading indicator while fetching
             : Center(
