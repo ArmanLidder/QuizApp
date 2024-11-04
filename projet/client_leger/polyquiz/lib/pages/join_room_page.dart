@@ -14,7 +14,6 @@ class JoinRoomPage extends StatefulWidget {
 }
 
 class _JoinRoomPageState extends State<JoinRoomPage> {
-  final _usernameController = TextEditingController();
   final _roomIdController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isJoining = false;
@@ -23,14 +22,12 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
     _roomIdController.dispose();
     super.dispose();
   }
 
   Future<void> _joinRoom() async {
     if (_formKey.currentState?.validate() ?? false) {
-      final username = _usernameController.text.trim();
       final roomId = _roomIdController.text.trim();
       this.userData = this.loggedInUserService.getUser();
 
@@ -82,20 +79,6 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextFormField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Enter your username',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a username';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
               TextFormField(
                 controller: _roomIdController,
                 decoration: InputDecoration(
