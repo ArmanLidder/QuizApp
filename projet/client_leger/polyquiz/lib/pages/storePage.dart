@@ -46,19 +46,22 @@ class _StorepageState extends State<Storepage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text("Themes: "),
               Row(
                 children: [
-                  ThemeStoreItem(themes: storeItems!['themes']!,  userId: this.uid)
+                  ThemeStoreList(themes: storeItems!['themes']!,  userId: this.uid)
+                ],
+              ),
+              SizedBox(height: 20),
+              Text("Images: "),
+
+              Row(
+                children: [
+                  ImageStoreList(themes: storeItems!['images']!,  userId: this.uid)
 
                 ],
               ),
               SizedBox(height: 20),
-              Row(
-                children: [
-                  Text( storeItems!['images']![0].toString()
-                      ), // Display first theme or a message
-                ],
-              ),              SizedBox(height: 20),
             ],
           ),
         ),
