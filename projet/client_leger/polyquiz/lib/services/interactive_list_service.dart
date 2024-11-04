@@ -45,6 +45,7 @@ class InteractiveListService extends ChangeNotifier {
         user = await userService.getUserById(userID);
         if (user != null) {
           String username = user!.username;
+          
           print('USERNAME IN PLAYERS: ${username}');
           getPlayerScoreFromServer(
               UserData(
