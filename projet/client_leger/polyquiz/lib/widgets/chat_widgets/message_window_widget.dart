@@ -15,7 +15,8 @@ class MessageWindowWidget extends StatefulWidget {
 }
 
 class _MessageWindowWidgetState extends State<MessageWindowWidget> {
-  final channelService = Get.put(ChannelService());
+  final channelService = ChannelService.instance;
+  final _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
 
   @override
@@ -29,7 +30,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
           ]
         ),
         Expanded(child: Obx(() {
-          return MessageListWidget(messages: getChannel().messages.isEmpty ? [] : getChannel().messages);
+          return MessageListWidget(messages: getChannel().messages.isEmpty ? [] : getChannel().messages, scrollController: _scrollController,);
         })),
         buildInputBox(),
       ]
@@ -66,16 +67,27 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
     }
     await channelService.addMessage(widget.channelId, content);
     _messageController.clear();
+    scrollToBottom();
+  }
+
+  void scrollToBottom() {
+    _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(microseconds: 300),
+        curve: Curves.easeInOut
+    );
   }
 }
 
 class MessageListWidget extends StatelessWidget {
   final List<Message> messages;
-  const MessageListWidget({required this.messages, super.key});
+  final ScrollController scrollController;
+  const MessageListWidget({required this.messages, required this.scrollController, super.key});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+        controller: scrollController,
         itemCount: messages.length,
         itemBuilder: (context, index) {
           return MessageTile(content: messages[index].message, userId: messages[index].userUid);
@@ -87,8 +99,8 @@ class MessageListWidget extends StatelessWidget {
 class MessageTile extends StatelessWidget {
   final imageUrl = "https://i.pinimg.com/originals/87/a2/d6/87a2d6017b9a7cc38274cef92a45cee3.jpg"; // TODO: Remove and add images
   final username = "Elsa";
-  final userService = Get.put(UserService());
-  final loggedInService = Get.put(LoggedInUserService());
+  final userService = UserService.instance;
+  final loggedInService = LoggedInUserService.instance;
 
   final String content;
   final String userId;

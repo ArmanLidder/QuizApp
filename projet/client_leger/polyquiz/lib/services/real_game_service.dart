@@ -30,6 +30,7 @@ class RealGameService extends ChangeNotifier {
   bool locked = false;
   bool validated = false;
   String qrlAnswer = '';
+  int? qreAnswer = null;
   AudioPlayer audio = AudioPlayer();
   bool audioPaused = false;
   bool inTimeTransition = false;
@@ -51,14 +52,23 @@ class RealGameService extends ChangeNotifier {
 
   void sendAnswer() {
     final isMultipleChoiceQuestion = this.question?.type == QuestionType.QCM;
+    final isQREQuestion = this.question?.type == QuestionType.QRE;
     final answers = this.answers.values.toList();
-
-    this._socketService.sendMessage(SocketEvent.SUBMIT_ANSWER, {
+    if (isQREQuestion) {
+      this._socketService.sendMessage(SocketEvent.SUBMIT_ANSWER, {
+      'roomId': this.roomId,
+      'answers': this.qreAnswer,
+      'timer': this.timer,
+      'username': this.username,
+      });
+    } else {
+      this._socketService.sendMessage(SocketEvent.SUBMIT_ANSWER, {
       'roomId': this.roomId,
       'answers': isMultipleChoiceQuestion ? answers : this.qrlAnswer.trim(),
       'timer': this.timer,
       'username': this.username,
-    });
+      });
+    }
 
     this.locked = true;
     this.answers.clear();
@@ -126,6 +136,7 @@ class RealGameService extends ChangeNotifier {
     this.isLast = false;
     this.players = [];
     this.answers.clear();
+    this.qreAnswer = null;
     this.qrlAnswer = '';
     this.questionNumber = 1;
     this.audioPaused = false;

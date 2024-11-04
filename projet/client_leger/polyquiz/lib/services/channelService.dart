@@ -4,7 +4,7 @@ import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class ChannelService extends GetxController {
-  final loggedInService = Get.find();
+  final loggedInService = LoggedInUserService.instance;
   final String collectionName = "canals";
   static ChannelService get instance => Get.find();
   RxList<Canal> channels = <Canal>[].obs;
@@ -16,14 +16,17 @@ class ChannelService extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    channels.bindStream(getChannelStream());
+    channels.bindStream(getFilteredChannelStream());
     permittedChannels.bindStream(getPermittedChannelStream());
     joinableChannels.bindStream(getJoinableChannelStream());
   }
 
-  Stream<List<Canal>> getChannelStream() {
-    return _db.collection(collectionName)
-        .snapshots()
+  Stream<QuerySnapshot<Map<String, dynamic>>> getChannelStream() {
+    return _db.collection(collectionName).snapshots();
+  }
+
+  Stream<List<Canal>> getFilteredChannelStream() {
+    return getChannelStream()
         .map((query) {
        return query.docs.map((doc) => Canal.fromDocument(doc)).toList();
     });
@@ -33,11 +36,34 @@ class ChannelService extends GetxController {
     final isUserPermitted = (Canal channel) => channel.permittedUsers.contains(loggedInService.user?.uid) || channel.name == "general";
     return _db.collection(collectionName)
         .snapshots()
-        .map((query) => query.docs.map((doc) => Canal.fromDocument(doc)).where(isUserPermitted).toList());
+        .map((query) => query.docs.map((doc) => Canal.fromDocument(doc)).where(isUserPermitted).toList()..
+          sort((a, b) {
+            // Order: general first, then channels containing 'room', then channels containing '#', then all others
+            if (a.name == 'general') return -1; // General first
+            if (b.name == 'general') return 1;
+
+            bool aContainsRoom = a.name.contains('room');
+            bool bContainsRoom = b.name.contains('room');
+            if (aContainsRoom && !bContainsRoom) return -1; // a comes before b
+            if (!aContainsRoom && bContainsRoom) return 1; // b comes before a
+
+            bool aContainsHash = a.name.contains('#');
+            bool bContainsHash = b.name.contains('#');
+            if (aContainsHash && !bContainsHash) return -1; // a comes before b
+            if (!aContainsHash && bContainsHash) return 1; // b comes before a
+
+            return 0;
+          }));
   }
 
   Stream<List<Canal>> getJoinableChannelStream() {
-    final isChannelIsJoinable = (Canal channel) => !(channel.name == 'general' || channel.isPrivate || channel.permittedUsers.contains(loggedInService.user?.uid));
+    final isChannelIsJoinable = (Canal channel) => 
+        !(channel.name == 'general' || 
+        channel.isPrivate ||
+        channel.permittedUsers.contains(loggedInService.user?.uid) ||
+        channel.name.contains('room') ||
+        channel.name.contains('#')
+        );
     return _db.collection(collectionName)
         .snapshots()
         .map((query) => query.docs.map((doc) => Canal.fromDocument(doc)).where(isChannelIsJoinable).toList());
@@ -74,7 +100,7 @@ class ChannelService extends GetxController {
   }
 
   Future<bool> createChannel(String channelName, List<String> permittedUsers, bool isPrivate) async {
-    final querySnapshot = await _db.collection(collectionName).where('name', isEqualTo: channelName).limit(1).get();
+    final querySnapshot = await _db.collection(collectionName).where('name', isEqualTo: channelName).where('isPrivate', isEqualTo: false).limit(1).get();
     if (querySnapshot.docs.isNotEmpty) {
       return false;
     }
@@ -88,6 +114,10 @@ class ChannelService extends GetxController {
 
     await _db.collection(collectionName).add(newChannel.toJson());
     return true;
+  }
+
+  List<String> getListOfPermittedChannelIds() {
+    return permittedChannels.map((channel) => channel.id ?? "").toList();
   }
 
   DocumentReference _getChannelRefById(String id) => _db.collection(collectionName).doc(id);

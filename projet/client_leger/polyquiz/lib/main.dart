@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/pages/login-page.dart';
+import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
+import 'package:polyquiz/services/background_notification_service.dart';
+import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
+import 'package:polyquiz/services/notification_service.dart';
 import 'pages/authPage.dart';
 import 'pages/quiz_list_page.dart';
 import 'pages/join_room_page.dart';
@@ -17,16 +21,30 @@ import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/pages/userPage.dart';
 import 'package:polyquiz/pages/storePage.dart';
 import 'package:polyquiz/services/StoreService.dart';
+import 'package:provider/provider.dart';
+import 'package:polyquiz/services/game_config_service.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  Get.put(UserService());
   Get.put(LoggedInUserService());
+  Get.put(ChannelService());
+  Get.put(UserService());
   Get.put(ImageStorageService());
+  Get.put(NotificationService());
+  Get.put(BackgroundNotificationService());
   Get.put(StoreService());
 
-  runApp(const MyApp());
+   runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GameConfigService()),
+      ],
+      child: MyApp(),
+    ),
+  );
+
 }
 
 class MyApp extends StatelessWidget {
@@ -43,10 +61,11 @@ class MyApp extends StatelessWidget {
         '/auth': (context) => AuthPage(),
         '/login': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
+        '/offline': (context) => OfflineQuizListPage(),
         '/join': (context) => JoinRoomPage(),
         '/game': (context) => GamePage(),
         '/user': (context) => Userpage(),
-        '/store' :(context) => Storepage(),
+        '/store': (context) => Storepage(),
         '/waitingRoom': (context) => WaitingRoomScreen(
             quiz: ModalRoute.of(context)!.settings.arguments as Quiz,
             isHost: true),

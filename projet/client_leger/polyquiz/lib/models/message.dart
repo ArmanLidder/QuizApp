@@ -56,8 +56,13 @@ class Canal {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'id': id != null ? id : null,
+  Map<String, dynamic> toJson() => id != null ? {
+    'id': id,
+    'name': name,
+    'isPrivate': isPrivate,
+    'permittedUsers': permittedUsers,
+    'messages': messages.map((message) => message.toJson()).toList()
+  } : {
     'name': name,
     'isPrivate': isPrivate,
     'permittedUsers': permittedUsers,
