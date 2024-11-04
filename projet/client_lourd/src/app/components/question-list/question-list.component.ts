@@ -19,7 +19,7 @@ export class QuestionListComponent {
     questionErrors: string[] = [];
     protected readonly itemMovingDirection = ItemMovingDirection;
     imageUploadError: string | null = null;
-
+    isUploading: boolean = false;
     constructor(
         private questionService: QuestionService,
         private choiceService: ChoiceService,
@@ -37,7 +37,9 @@ export class QuestionListComponent {
             }
             this.imageUploadError = null;
             try {
+                this.isUploading = true;
                 const imageUrl = await this.questionImageService.uploadQuestionImage(file, this.parentGroup.get('id')?.value);
+                this.isUploading = false;
                 (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(imageUrl);
             } catch (error) {
                 this.imageUploadError = 'Une erreur est survenue lors du téléchargement de l\'image.';
@@ -135,5 +137,9 @@ export class QuestionListComponent {
             !marginControl.errors &&
             !minControl.errors &&
             !maxControl.errors;
+    }
+
+    removeImage(index: number) {
+        (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(null);
     }
 }
