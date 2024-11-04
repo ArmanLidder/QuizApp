@@ -31,6 +31,14 @@
         </div>
     </div>
     <h1>{{ gameInterfaceManagementService.gameService.question?.text }}</h1>
+
+    <div *ngIf="gameInterfaceManagementService.gameService.question?.imageUrl" class="question-image-container">
+        <img
+                [src]="gameInterfaceManagementService.gameService.question!.imageUrl"
+                alt="Question Image"
+                class="responsive-image"
+        />
+    </div>
     <br>
     <app-game-answers-list *ngIf='gameInterfaceManagementService.gameService.question?.type === questionType.QCM' id='answer-field'>
     </app-game-answers-list>

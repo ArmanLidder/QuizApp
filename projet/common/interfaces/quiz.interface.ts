@@ -18,6 +18,7 @@ export interface QuizQuestion {
     answer? : number, //Only QRE
     interval? : {max:number, min:number} //Only QRE
     margin?: number //Only QRE
+    imageUrl?: string;
 }
 
 export interface QuizChoice {

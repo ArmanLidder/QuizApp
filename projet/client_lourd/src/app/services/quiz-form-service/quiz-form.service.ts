@@ -61,6 +61,7 @@ export class QuizFormService {
                     this.validationService.divisibleByTen,
                 ],
             ],
+            imageUrl: [question?.imageUrl ?? null],
             choices: this.formBuilder.array(
                 [],
                 question?.type === QuestionType.QCM
@@ -165,7 +166,7 @@ export class QuizFormService {
 
     private extractQuestionFromForm(questionForm: FormArray): QuizQuestion {
         const type = questionForm.get('type')?.value;
-
+        const imageUrl = questionForm.get('imageUrl')?.value
         // Initialize the question object
         const question: QuizQuestion = {
             type: type === 'QCM' ? QuestionType.QCM : type === 'QRE' ? QuestionType.QRE : QuestionType.QRL,
@@ -175,6 +176,7 @@ export class QuizFormService {
             answer: type === 'QRE' ? questionForm.get('answer')?.value : undefined, // Only QRE questions have an answer
             interval: type === 'QRE' ? questionForm.get('interval')?.value : undefined, // Only QRE questions have an interval
             margin: type === 'QRE' ? questionForm.get('margin')?.value : undefined, // Only QRE questions have a margin
+            imageUrl: imageUrl ? imageUrl : undefined
         };
 
         if (type === 'QCM') {

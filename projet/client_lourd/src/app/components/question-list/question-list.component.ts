@@ -1,10 +1,11 @@
 import {Component, Input} from '@angular/core';
 import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
-import { POPUP_TIMEOUT } from '@common/constants/quiz-creation.component.const';
+import {MAX_IMG_SIZE, POPUP_TIMEOUT} from '@common/constants/quiz-creation.component.const';
 import { ChoiceService } from '@app/services/choice-service/choice.service';
 import { QuestionService } from '@app/services/question-service/question.service';
 import { ItemMovingDirection } from 'src/enums/item-moving-direction';
 import { QuestionChoicePosition } from '@app/interfaces/question-choice-position/question-choice-position';
+import {QuestionImageService} from "@app/services/question-image.service/question-image.service";
 
 @Component({
     selector: 'app-question-list',
@@ -17,11 +18,33 @@ export class QuestionListComponent {
     isPopUpVisible: boolean = false;
     questionErrors: string[] = [];
     protected readonly itemMovingDirection = ItemMovingDirection;
+    imageUploadError: string | null = null;
 
     constructor(
         private questionService: QuestionService,
         private choiceService: ChoiceService,
+        private questionImageService: QuestionImageService,
     ) {}
+
+    async onImageSelected(event: Event, index: number) {
+        const input = event.target as HTMLInputElement;
+        (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(null);
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+            if (file.size > MAX_IMG_SIZE) {
+                this.imageUploadError = 'La taille de l\'image ne doit pas dépasser 2 MB.';
+                return;
+            }
+            this.imageUploadError = null;
+            try {
+                const imageUrl = await this.questionImageService.uploadQuestionImage(file, this.parentGroup.get('id')?.value);
+                (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(imageUrl);
+            } catch (error) {
+                this.imageUploadError = 'Une erreur est survenue lors du téléchargement de l\'image.';
+            }
+        }
+    }
+
     showPopupIfConditionMet(condition: boolean) {
         if (condition) {
             this.isPopUpVisible = true;

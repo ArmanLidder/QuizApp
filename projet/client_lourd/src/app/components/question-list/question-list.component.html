@@ -77,6 +77,13 @@
                            class="text-red-600 text-sm">
                             Le nombre de points doit être entre 10 et 100 et être un multiple de 10
                         </p>
+                        <div class="space-y-4">
+                            <label for="imageUpload{{ i }}" class="block text-sm font-medium">Image (optionnel) :</label>
+                            <input type="file" [id]="'imageUpload' + i" accept="image/*" (change)="onImageSelected($event, i)" class="w-full p-2 border rounded">
+                            <p *ngIf="question.get('imageUrl')?.value" class="text-sm text-gray-700">Aperçu de l'image :</p>
+                            <img *ngIf="question.get('imageUrl')?.value" [src]="question.get('imageUrl')?.value" alt="Aperçu de l'image" class="w-full h-auto mt-2 rounded-lg">
+                            <p *ngIf="imageUploadError" class="text-red-600 text-sm">{{ imageUploadError }}</p>
+                        </div>
 
                         <div *ngIf="question.get('type')?.value === 'QCM'" class="space-y-2">
                             <p>Choix :</p>
@@ -248,7 +255,10 @@
                     <p class="truncate text-sm text-gray-600">
                         <span class="font-semibold">Points:</span> {{question.get('points')?.value}}
                     </p>
-
+                    <p *ngIf="question.get('imageUrl')?.value" class="text-sm text-gray-600">
+                        <span class="font-semibold">Image:</span>
+                        <img [src]="question.get('imageUrl')?.value" alt="Question Image" class="w-16 h-16 object-cover mt-2 rounded">
+                    </p>
                     <div *ngIf="question.get('type')?.value === 'QCM'" class="space-y-4">
                         <p class="text-sm font-semibold">Choix :</p>
                         <div class="space-y-2">

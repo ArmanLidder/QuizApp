@@ -126,3 +126,16 @@ h1 {
     font-weight: 400;
     font-size: 16px; /* Use fixed size instead of vw */
 }
+
+.question-image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.responsive-image {
+    max-width: 80%; /* Adjust as necessary */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
