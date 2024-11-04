@@ -11,6 +11,8 @@ class StoreService extends GetxController {
   static StoreService get instance => Get.find();
   final UserService userService = UserService.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final _purchaseTrigger = 0.obs;
+  int get purchaseTrigger => _purchaseTrigger.value;
 
   void createStoreProfile(String userId) async {
     try {
@@ -70,6 +72,7 @@ class StoreService extends GetxController {
         'currency': availableMoney - itemCost,
       });
      await addToOwned(userId, itemId);
+    _purchaseTrigger.value++; // Increment to trigger observers
     }
 
   Future<Map<String, List<Map<String, dynamic>>>> browseStoreItems() async {
@@ -103,4 +106,5 @@ class StoreService extends GetxController {
       };
     }
   }
+
 }
