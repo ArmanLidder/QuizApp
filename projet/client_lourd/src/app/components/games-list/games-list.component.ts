@@ -16,6 +16,7 @@ import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service"
 import {UniqueQuizNameDialogComponent} from "@app/components/unique-quiz-name-dialog/unique-quiz-name-dialog.component";
 import {ConfirmationDialogComponent} from "@app/components/confirmation-dialog/confirmation-dialog.component";
 import { PopUpMessage} from "@common/browser-message/displayable-message/pop-up-message";
+import {AuthService} from "@app/services/auth.service/auth.service";
 
 @Component({
     selector: 'app-games-list',
@@ -32,6 +33,7 @@ export class GamesListComponent implements OnInit {
     errors: string | null = null;
     isErrors: boolean = false;
     isQuizUnique: boolean = true;
+    currentUserUid: string | null = null;
 
     private router = inject(Router);
     private fileReader: FileReader = new FileReader();
@@ -42,28 +44,28 @@ export class GamesListComponent implements OnInit {
         public quizServices: QuizService,
         public quizValidator: QuizValidationService,
         private dialog: MatDialog,
-        private snackbar: SnackbarService
+        private snackbar: SnackbarService,
+        private authService: AuthService,
     ) {
     }
 
     ngOnInit() {
-        this.populateGameList();
-    }
-
-    populateGameList() {
-        if (this.isAdmin) this.getAllQuizzes();
-        else this.getAllVisibleQuizzes();
-    }
-
-    getAllQuizzes() {
-        this.quizServices.basicGetAll().subscribe((res) => {
-            this.quizzes = res;
+        this.authService.user$.subscribe((user) => {
+            this.currentUserUid = user?.uid ?? null;
+            console.log(this.currentUserUid);
+            this.populateGameList();
         });
     }
 
+    populateGameList() {
+        this.getAllVisibleQuizzes();
+    }
+
     getAllVisibleQuizzes() {
-        this.quizServices.basicGetAllVisible().subscribe((res) => {
-            this.quizzes = res;
+        this.quizServices.basicGetAll().subscribe((res) => {
+            this.quizzes = res.filter(
+                (quiz) => quiz.visible || quiz.owner === this.currentUserUid
+            );
         });
     }
 
@@ -122,6 +124,7 @@ export class GamesListComponent implements OnInit {
         try {
             this.importedQuiz = JSON.parse(event.target?.result as string);
             this.importedQuiz.lastModification = getCurrentDateService();
+            this.importedQuiz.owner = this.currentUserUid as string;
             this.resolveAsyncFileRead();
         } catch (error:any) {
             this.snackbar.show(`Erreur: ${error.message}`)

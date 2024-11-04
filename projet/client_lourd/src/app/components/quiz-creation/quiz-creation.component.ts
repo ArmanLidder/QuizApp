@@ -1,38 +1,44 @@
-import {Component, Injector} from '@angular/core';
+import {Component, Injector, OnInit} from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertDialogComponent } from '@app/components/alert-dialog/alert-dialog.component';
 import { POPUP_TIMEOUT } from '@common/constants/quiz-creation.component.const';
 import { QuizFormService } from '@app/services/quiz-form-service/quiz-form.service';
 import { QuizValidationService } from '@app/services/quiz-validation.service/quiz-validation.service';
 import { QuizService } from '@app/services/quiz.service/quiz.service';
-import { ErrorDictionary } from '@common/browser-message/error-message/error-message';
 import { Quiz } from '@common/interfaces/quiz.interface';
 import { PageMode } from 'src/enums/page-mode.enum';
 import { generateRandomId } from 'src/utils/random-id-generator/random-id-generator';
 import { GAME_ADMIN_PAGE } from '@common/page-url/page-url';
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
+import {UsersService} from "@app/services/users.service/users.service";
+import {User} from "@common/interfaces/user-data.interface";
+import {firstValueFrom, Observable} from "rxjs";
+import {ErrorDialogComponent} from "@app/components/error-dialog/error-dialog.component";
+
 
 @Component({
     selector: 'app-quiz-creation',
     templateUrl: './quiz-creation.component.html',
     styleUrls: ['./quiz-creation.component.scss'],
 })
-export class QuizCreationComponent {
+export class QuizCreationComponent implements OnInit{
     quizForm: FormGroup;
     quiz: Quiz;
     mode: PageMode;
     isPopupVisibleDuration: boolean;
     isPopupVisibleForm: boolean;
     formErrors: string[];
+    owner : Observable<User|null >;
     protected readonly pageModel = PageMode;
+    currentUid: string | undefined;
     private quizFormService: QuizFormService;
     private quizValidationService: QuizValidationService;
     private quizService: QuizService;
     private route: ActivatedRoute;
     private navigateRoute: Router;
     private snackBar: SnackbarService;
+    private usersService: UsersService;
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -43,24 +49,36 @@ export class QuizCreationComponent {
         this.route = injector.get<ActivatedRoute>(ActivatedRoute);
         this.navigateRoute = injector.get<Router>(Router);
         this.snackBar = injector.get<SnackbarService>(SnackbarService)
+        this.usersService = injector.get<UsersService>(UsersService)
+    }
 
+    async ngOnInit() {
+        const currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
+        this.currentUid = currentUser?.uid;
         this.isPopupVisibleDuration = false;
         this.isPopupVisibleForm = false;
         this.formErrors = [];
-        this.quizForm = this.quizFormService.fillForm();
         const id = this.route.snapshot.paramMap.get('id');
+
         if (id) {
             this.mode = PageMode.MODIFICATION;
-            this.quizService.basicGetById(id).subscribe((quiz: Quiz) => {
-                this.quiz = quiz;
-                this.quizForm = this.quizFormService.fillForm(quiz);
-            });
+            this.quiz = await firstValueFrom(this.quizService.basicGetById(id));
+            this.quizForm = await this.quizFormService.fillForm(this.quiz);
         } else {
+            this.quizForm = await this.quizFormService.fillForm();
             this.mode = PageMode.CREATION;
-            this.quizForm = this.quizFormService.fillForm();
         }
+
         this.isPopupVisibleForm = false;
+
+        if (this.quizForm) {
+            const ownerId = this.quizForm.get('owner')?.value;
+            if (ownerId) {
+                this.owner = this.usersService.getUser(ownerId);
+            }
+        }
     }
+
 
     get questionsArray() {
         return this.quizForm.get('questions') as FormArray;
@@ -80,11 +98,19 @@ export class QuizCreationComponent {
         const quiz = this.quizFormService.extractQuizFromForm(this.quizForm, this.questionsArray);
         if (this.quizForm?.valid) {
             const title = this.quizForm.get('title')?.value;
-            this.quizService.checkTitleUniqueness(title).subscribe((response) => {
-                if (response.body?.isUnique || this.mode === PageMode.MODIFICATION) {
-                    this.addOrUpdateQuiz(quiz);
+            const isOwner = this.currentUid === this.quizForm.get('owner')?.value;
+            this.quizService.basicGetById(this.quiz.id).subscribe((latestQuiz: Quiz) => {
+                if (!isOwner && !latestQuiz.visible) {
+                    this.openErrorDialog('La visibilité de ce quiz a été modifiée à privée par le propriétaire pendant l\'édition.');
+                    this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
                 } else {
-                    this.openQuizExistsDialog();
+                    this.quizService.checkTitleUniqueness(title).subscribe((response) => {
+                        if (response.body?.isUnique || this.mode === PageMode.MODIFICATION) {
+                            this.addOrUpdateQuiz(quiz);
+                        } else {
+                            this.openErrorDialog('Le titre existe déjà');
+                        }
+                    });
                 }
             });
         } else {
@@ -93,7 +119,9 @@ export class QuizCreationComponent {
         }
     }
 
+
     private addOrUpdateQuiz(quiz: Quiz) {
+
         const navigateToAdminCallBack = () => {
             this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
         };
@@ -114,11 +142,10 @@ export class QuizCreationComponent {
 
 
 
-    private openQuizExistsDialog() {
-        this.dialog.open(AlertDialogComponent, {
+    private openErrorDialog(message:string) {
+        this.dialog.open(ErrorDialogComponent, {
             data: {
-                title: 'Le titre existe déjà',
-                content: ErrorDictionary.QUIZ_ALREADY_EXIST,
+                errorMessage: message,
             },
         });
     }

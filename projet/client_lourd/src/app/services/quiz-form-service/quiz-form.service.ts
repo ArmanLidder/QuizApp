@@ -14,26 +14,44 @@ import { QuizValidationService } from '@app/services/quiz-validation.service/qui
 import { QuestionType } from '@common/enums/question-type.enum';
 import { Quiz, QuizChoice, QuizQuestion } from '@common/interfaces/quiz.interface';
 import { getCurrentDateService } from 'src/utils/current-date-format/current-date-format';
+import {AuthService} from "@app/services/auth.service/auth.service";
+import {firstValueFrom} from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class QuizFormService {
     quiz: Quiz;
-
+    userId: string | null = null;
     constructor(
         private formBuilder: FormBuilder,
         private validationService: QuizValidationService,
-    ) {}
+        private authService: AuthService,
+    ) {
+        firstValueFrom(this.authService.user$).then(user => {
+            this.userId = user?.uid ?? null;
+        }).catch(() => {
+            this.userId = null;
+        });
+    }
 
-    fillForm(quiz?: Quiz) {
+    async fillForm(quiz?: Quiz) {
+        try {
+            const user = await firstValueFrom(this.authService.user$);
+            this.userId = user?.uid ?? null;
+        } catch (error) {
+            this.userId = null;
+        }
+
         const quizForm: FormGroup = this.formBuilder.group({
-            title: [quiz?.title, [Validators.required, Validators.pattern(/^.*\S.*$/),]],
+            title: [quiz?.title, [Validators.required, Validators.pattern(/^.*\S.*$/)]],
             duration: [quiz?.duration, [Validators.required, Validators.min(MIN_QCM_DURATION), Validators.max(MAX_QCM_DURATION)]],
             description: [quiz?.description, [Validators.required, Validators.pattern(/^.*\S.*$/)]],
             questions: this.formBuilder.array([], [Validators.minLength(MIN_NUMBER_OF_QUESTIONS), Validators.required]),
-            visible: [quiz?.visible],
+            visible: [quiz?.visible ?? true],
+            owner: [quiz?.owner ?? this.userId]
         });
+
         this.fillQuestions(quizForm.get('questions') as FormArray, quiz?.questions);
         return quizForm;
     }
@@ -160,6 +178,7 @@ export class QuizFormService {
             lastModification: now,
             questions,
             visible: quizForm.value.visible,
+            owner:quizForm.value.owner,
         };
         return quiz;
     }
