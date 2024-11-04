@@ -12,6 +12,7 @@ import {getCurrentDateService} from 'src/utils/current-date-format/current-date-
 import {generateRandomId} from 'src/utils/random-id-generator/random-id-generator';
 import {QUIZ_TESTING_PAGE, WAITING_ROOM_HOST_PAGE} from '@common/page-url/page-url';
 import {ErrorDialogComponent} from "@app/components/error-dialog/error-dialog.component";
+import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 
 @Component({
     selector: 'app-games-list',
@@ -38,6 +39,7 @@ export class GamesListComponent implements OnInit {
         public quizServices: QuizService,
         public quizValidator: QuizValidationService,
         private dialog: MatDialog,
+        private snackbar: SnackbarService
     ) {
     }
 
@@ -111,7 +113,8 @@ export class GamesListComponent implements OnInit {
             this.importedQuiz = JSON.parse(event.target?.result as string);
             this.importedQuiz.lastModification = getCurrentDateService();
             this.resolveAsyncFileRead();
-        } catch (error) {
+        } catch (error:any) {
+            this.snackbar.show(`Erreur: ${error.message}`)
             this.rejectAsyncFileRead(error);
         }
     }
