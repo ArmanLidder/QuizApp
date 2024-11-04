@@ -21,6 +21,9 @@ import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/pages/userPage.dart';
 import 'package:polyquiz/pages/storePage.dart';
 import 'package:polyquiz/services/StoreService.dart';
+import 'package:provider/provider.dart';
+import 'package:polyquiz/services/game_config_service.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +36,15 @@ void main() async {
   Get.put(BackgroundNotificationService());
   Get.put(StoreService());
 
-  runApp(const MyApp());
+   runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GameConfigService()),
+      ],
+      child: MyApp(),
+    ),
+  );
+
 }
 
 class MyApp extends StatelessWidget {
