@@ -1,7 +1,31 @@
 <div class="p-6 mx-auto bg-white rounded-lg shadow-lg justify-center">
     <h2 class="text-2xl font-bold text-center mb-6 text-blue-600">{{ mode === pageModel.CREATION ? 'Création' : 'Modification' }} du jeu</h2>
 
-    <form [formGroup]="quizForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <form *ngIf="quizForm" [formGroup]="quizForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <div class="flex justify-between items-center">
+            <!-- Left Section: Visibility Checkbox -->
+            <div class="flex items-center space-x-3" *ngIf="currentUid === quizForm.get('owner')?.value">
+                <label for="visible" class="block text-sm font-medium">Visibilité :</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input
+                            type="checkbox"
+                            id="visible"
+                            formControlName="visible"
+                            class="sr-only peer"
+                    />
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer-checked:bg-blue-600 transition-all duration-300"></div>
+                    <div class="absolute top-0 left-0 h-6 w-6 bg-white border border-gray-300 rounded-full transform peer-checked:translate-x-full peer-checked:border-blue-600 transition-transform duration-300"></div>
+                </label>
+                <span class="text-sm text-gray-600">{{ quizForm.get('visible')?.value ? 'Public' : 'Privé' }}</span>
+            </div>
+
+            <!-- Right Section: Owner -->
+            <div class="ml-auto flex items-center space-x-3" *ngIf="owner | async as owner">
+                <span class="text-sm font-medium text-gray-700">Créateur :</span>
+                <app-avatar-with-level [user]="owner" [hideLevel]="true"></app-avatar-with-level>
+                <h3 class="text-sm font-medium text-gray-900">{{ owner.username }}</h3>
+            </div>
+        </div>
 
         <div>
             <label for="title" class="block text-sm font-medium">Titre :</label>
