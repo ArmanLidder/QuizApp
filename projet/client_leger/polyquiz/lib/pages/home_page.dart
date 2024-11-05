@@ -52,6 +52,12 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/roomList');
+                },
+                child: Text('Rejoindre une partie')),
+            const SizedBox(height: 20),
+            ElevatedButton(
+                onPressed: () {
                   Navigator.pushReplacementNamed(context, '/offline');
                 },
                 child: Text('Jouer hors-ligne')),
