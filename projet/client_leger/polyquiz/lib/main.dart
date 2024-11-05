@@ -23,6 +23,21 @@ import 'package:polyquiz/pages/storePage.dart';
 import 'package:polyquiz/services/StoreService.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
+import 'package:polyquiz/services/game_list_item.dart';
+import 'package:polyquiz/pages/active_game_list.dart';
+import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/pages/active_game_list.dart';
+import 'package:polyquiz/services/quiz_service.dart';
+import 'package:polyquiz/services/room_validation_service.dart';
+import 'package:polyquiz/services/snack_bar_service.dart';
+
+
+final socketService = SocketService();
+final userService = UserService();
+final quizService = QuizService();
+final snackbarService = SnackbarService();
+// final roomValidationService = RoomValidationService(socketService: socketService);
 
 
 void main() async {
@@ -40,6 +55,13 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => GameConfigService()),
+        ChangeNotifierProvider(create: (_) => GameListService(socketService: socketService)),
+        ChangeNotifierProvider(create: (_) => RoomValidationService(socketService: socketService)),
+        Provider(create: (_) => socketService),
+        Provider(create: (_) => userService),
+        Provider(create: (_) => quizService),
+        Provider(create: (_) => snackbarService),
+        // Provider(create: (_) => roomValidationService),
       ],
       child: MyApp(),
     ),
@@ -63,6 +85,7 @@ class MyApp extends StatelessWidget {
         '/quizz': (context) => QuizListPage(),
         '/offline': (context) => OfflineQuizListPage(),
         '/join': (context) => JoinRoomPage(),
+        '/roomList': (context) => ActiveGameListComponent(),
         '/game': (context) => GamePage(),
         '/user': (context) => Userpage(),
         '/store': (context) => Storepage(),
