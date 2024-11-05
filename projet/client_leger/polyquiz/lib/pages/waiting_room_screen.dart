@@ -14,13 +14,15 @@ class WaitingRoomScreen extends StatefulWidget {
   final bool isHost;
   final String? username;
   final GameConfigService? gameConfigService;
+  final bool? isFromActiveList;
 
   const WaitingRoomScreen(
       {Key? key,
       required this.quiz,
       required this.isHost,
       this.username,
-      this.gameConfigService})
+      this.gameConfigService,
+      this.isFromActiveList})
       : super(key: key);
 
   @override
@@ -65,16 +67,18 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       } else {
         roomId = widget.quiz.id;
         username = widget.username ?? 'nothing';
+        waitingRoomService.roomId = int.parse(roomId);
         realGameService.username = username;
         waitingRoomService.gatherPlayers();
         realGameService.roomId = int.parse(roomId);
+
         print('Joining room $roomId as $username');
       }
       if (username == 'nothing') {
         print('isHost : username is nothing');
       } else {
         waitingRoomService.connectToSocket(roomId,
-            isHost: widget.isHost, username: username);
+            isHost: widget.isHost, username: username, isFromActiveList: widget.isFromActiveList);
       }
       waitingRoomService.configureBaseSocketFeatures();
       setState(() {});
