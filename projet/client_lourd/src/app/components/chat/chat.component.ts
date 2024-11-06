@@ -82,6 +82,8 @@ export class ChatComponent implements OnInit {
     popOut() {
         this.state = State.outside;
         this.popWindow.popOut();
+        const input = this.popWindow["popoutWindow"].document.getElementById('input_message') as HTMLElement;
+        input?.focus();
     }
 
     // Methods for UI
@@ -159,7 +161,6 @@ export class ChatComponent implements OnInit {
                     this.toggleIsChat();
                     this.appRef.tick();
                     this.canalSubscription.unsubscribe();
-                    console.log('returnToMenu');
                 }
             });
         this.focusOnForm('input_message');
@@ -288,7 +289,9 @@ export class ChatComponent implements OnInit {
 
     private focusOnForm(id: string) {
         setTimeout(() => {
-            const input = document.getElementById(id) as HTMLElement;
+            let input;
+            if (this.popWindow.isPoppedOut) input = this.popWindow["popoutWindow"].document.getElementById(id) as HTMLElement;
+            else input = document.getElementById(id) as HTMLElement;
             input?.focus();
         }, 400);
     }
