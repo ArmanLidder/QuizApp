@@ -301,12 +301,16 @@ export class GameCreationService {
             if (user.prestige === 0 && prestige === -10) prestige = 0;
             const newStats = this.calculateNewStats(user.stats, score, timeDifferenceInSeconds, type);
             const achievements = this.checkAchievements(newStats, prestige, user, gameType);
+            user.achievements.forEach((value) => {
+               if (!achievements.includes(value)) achievements.push(value)
+                achievements.sort((a, b) => a - b)
+            });
             await docRef.update({
                 gameHistory: this.fs.firebase.firestore.FieldValue.arrayUnion(history),
                 level: this.fs.firebase.firestore.FieldValue.increment(score.points),
                 prestige: this.fs.firebase.firestore.FieldValue.increment(prestige),
                 stats: newStats,
-                achievements: this.fs.firebase.firestore.FieldValue.arrayUnion(...achievements),
+                achievements: achievements,
                 currency: this.fs.firebase.firestore.FieldValue.increment(money)
             });
         } catch (error) {
@@ -475,11 +479,11 @@ export class GameCreationService {
 
     // Two game types equipe or classic
     private checkAchievements(newStats: UserStats, prestige: number, user: User, gameType: string) {
-        const achievements: number[] = [1000]; // 1000 is a based number that allows to return an array of 1 with is usable in arrayUnion
-        if (newStats.gamesWon === 1) achievements.push(1);
+        const achievements: number[] = []; // 1000 is a based number that allows to return an array of 1 with is usable in arrayUnion
+        if (newStats.gamesWon >= 1) achievements.push(1);
         if (newStats.gamesWon > user.stats.gamesWon && gameType === 'equipe') achievements.push(2);
-        if (newStats.gamesWon === 5) achievements.push(3);
-        if (newStats.gamesWon === 10) achievements.push(4);
+        if (newStats.gamesWon >= 5) achievements.push(3);
+        if (newStats.gamesWon >= 10) achievements.push(4);
         if ((user.prestige + prestige) === 50) achievements.push(5);
         if ((user.prestige + prestige) === 100) achievements.push(6);
         if ((user.prestige + prestige) === 150) achievements.push(7);
