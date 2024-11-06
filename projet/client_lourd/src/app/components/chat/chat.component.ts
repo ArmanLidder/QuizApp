@@ -93,6 +93,8 @@ export class ChatComponent implements OnInit {
     toggleChatState() {
         if (this.state === State.closed) {
             this.state = State.opened;
+            if (this.isChatFocused) this.focusOnForm('input_message');
+            if (this.isCreateCanal) this.focusOnForm('input_canal')
         } else if (this.state === State.opened) {
             this.state = State.closed;
         }
