@@ -60,11 +60,8 @@ export class GameCreationService {
             if (!isLocked) {
                 const roomCode = data.roomId;
                 const userId = socket.handshake.auth.userId;
-                console.log(`userId joining game: ${userId}`);
                 // roomManager.addUser(roomCode, data.username, socket.id);
                 roomManager.addUser(roomCode, userId, socket.id);
-                console.log(`TEAMS status member join the room for the first time`);
-                this.debug_teams('JOINING GAME',roomCode, roomManager);
                 const players = roomManager.getUsernamesArray(roomCode);
                 socket.join(String(roomCode));
                 await this.addUserToRoomCanal(roomCode, userId);
