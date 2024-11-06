@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {ApplicationRef, Component, ElementRef, inject, OnInit, ViewChild, HostListener} from '@angular/core';
 import {CanalService} from "@app/services/canal.service/canal.service";
 import {Message, Canal} from "@common/interfaces/message.interface";
 import {
@@ -64,6 +64,14 @@ export class ChatComponent implements OnInit {
 
     constructor() {
         this.setUp();
+    }
+
+    @HostListener('click', ['$event'])
+    @HostListener('keydown', ['$event'])
+    @HostListener('keypress', ['$event'])
+    @HostListener('keyup', ['$event'])
+    async handleEvents(event: Event) {
+        if (this.state === State.opened) event.stopImmediatePropagation();
     }
 
     async ngOnInit() {
