@@ -13,7 +13,7 @@ import {SocketClientService} from "@app/services/socket-client.service/socket-cl
   styleUrls: ['./avatar.component.scss']
 })
 export class AvatarComponent {
-  @Input() isChat: boolean;
+  @Input() isChat: boolean = false;
   @Input() uid: string;
 
   currentUser$: Observable<User | undefined>;

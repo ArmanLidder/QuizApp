@@ -1,11 +1,19 @@
-<p *ngIf="!isChat">{{ (currentUser$ | async)?.username }}</p>
 <div class="avatar-container">
-    <img [src]="(currentUser$ | async)?.avatar" alt="User Avatar" class="avatar-item" (click)="toggleMenu()" />
-    <div *ngIf="menuEnabled && !isChat" class="dropdown-menu">
-        <ul>
-            <li (click)="goToProfile()">Voir Profile</li>
-            <li (click)="logout()">Déconnexion</li>
-        </ul>
-    </div>
+    <img
+            [src]="(currentUser$ | async)?.avatar"
+            alt="User Avatar"
+            class="avatar-item"
+            [matMenuTriggerFor]="menu"
+    />
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="goToProfile()">
+            <mat-icon class="text-gray-500" aria-hidden="true">account_circle</mat-icon>
+            <span>Voir Profil</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+            <mat-icon class="text-red-500" aria-hidden="true">logout</mat-icon>
+            <span>Déconnexion</span>
+        </button>
+    </mat-menu>
 </div>
 <p *ngIf="isChat">{{ (currentUser$ | async)?.username }}</p>

@@ -43,15 +43,22 @@
                 </div>
 
                 <div *ngIf="!isAdmin" class="button-container flex justify-end space-x-4">
-                    <button (click)="playGame()" class="px-4 py-2 border border-gray-500 rounded text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition duration-150 ease-in-out" [class.disabled-button]="!selectedQuiz" [disabled]="!selectedQuiz">
+                    <button
+                            (click)="playGame()"
+                            class="px-4 py-2 border border-blue-500 rounded text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition duration-150 ease-in-out"
+                            [class.disabled-button]="!selectedQuiz"
+                            [disabled]="!selectedQuiz">
                         Jouer
                     </button>
                     <!-- Uncomment if you want the test button -->
                     <!-- <button (click)="testGame()" class="px-4 py-2 border border-gray-500 rounded text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition duration-150 ease-in-out" [class.disabled-button]="!selectedQuiz" [disabled]="!selectedQuiz">Tester</button> -->
-                    <button routerLink="/home" class="px-4 py-2 border border-red-500 rounded text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400 transition duration-150 ease-in-out">
+                    <button
+                            routerLink="/home"
+                            class="px-4 py-2 border border-red-500 rounded text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400 transition duration-150 ease-in-out">
                         Annuler
                     </button>
                 </div>
+
             </td>
         </tr>
         </tfoot>
