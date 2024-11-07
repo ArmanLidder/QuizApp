@@ -97,10 +97,6 @@ export class GameCreationService {
             let error = '';
             if (roomManager.isNameUsed(data.roomId, data.username)) error = ErrorDictionary.NAME_ALREADY_USED;
             else if (roomManager.isNameBanned(data.roomId, data.username)) error = ErrorDictionary.BAN_MESSAGE;
-            console.log(`
-            Validation des username: ${data.username} in room ${data.roomId}
-            Erreur: ${error}
-            `)
             callback({isValid: error.length === 0, error});
         });
     }
@@ -160,7 +156,6 @@ export class GameCreationService {
 
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
-            console.log('Host left');
             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             await this.deleteRoomCanal(roomId, roomManager);
             roomManager.deleteRoom(roomId);
@@ -180,11 +175,28 @@ export class GameCreationService {
         socket.on(SocketEvent.SAVE_FINAL_GAME_STATS, async (roomId: number) => {
             const game = roomManager.getGameByRoomId(roomId);
             const gameType = roomManager.getRoomById(roomId).gameType;
+            const roomData = roomManager.getRoomById(roomId);
+            const onlyOnePlayer = roomData.players.size === 2; // including host
             const { highestScorers,nonExtremes, lowestScorers} = gameType === 'classic' ? this.getExtremeScoresClassicGame(game.players): this.getExtremeScoresTeamGame(this.calculateTeamsFinalScore(roomId, roomManager, game.players))
-            for (let winner of highestScorers) await this.dispatchUpdateStats(winner, game, gameType, 'winner', roomId, roomManager);
-            for (let loser of lowestScorers) await this.dispatchUpdateStats(loser, game, gameType, 'loser', roomId, roomManager);
-            for (let loser of nonExtremes) await this.dispatchUpdateStats(loser, game, gameType, 'none', roomId, roomManager);
+            const winnerMoney = this.calculateMoney(highestScorers, roomData.players.size - 1 , roomData.total_price, onlyOnePlayer, "winner", gameType, roomId, roomManager);
+            const loserMoney = this.calculateMoney(highestScorers, roomData.players.size - 1, roomData.total_price, onlyOnePlayer, "loser", gameType, roomId, roomManager);
+            for (let winner of highestScorers) await this.dispatchUpdateStats(winner, game, gameType, 'winner', roomId, roomManager, winnerMoney);
+            for (let loser of lowestScorers) await this.dispatchUpdateStats(loser, game, gameType, 'loser', roomId, roomManager, loserMoney);
+            for (let loser of nonExtremes) await this.dispatchUpdateStats(loser, game, gameType, 'none', roomId, roomManager, loserMoney);
         });
+    }
+
+    // Money is first divided in two lot if more than 1 player: winner 2/3 of lot and loser 1/3 of lot
+    // Than winner lot is divided amongst number of active winner the same applies for losers
+    private calculateMoney(winners: string[] | number[], players_qty: number, amount: number, isOnlyOnePlayer: boolean, type: string, gameType: string, roomId: number, roomManager: RoomManagingService ) {
+        let teamSize = 0;
+        if (isOnlyOnePlayer || amount === 0) return amount;
+        if (gameType !== "classic") for (let team of winners) teamSize += roomManager.getRoomById(roomId).teams.get(Number(team)).members.length
+        const length = teamSize !== 0 ? teamSize: winners.length
+        const player_qty = type === "winner" ? length : (players_qty - length)
+        const fraction = player_qty > 0 ? player_qty : 1;
+        const multiplier = type === "winner" ? (2/3) : (1/3);
+        return Math.floor(((amount * multiplier) / fraction));
     }
 
     private handleGetGameType(roomManager: RoomManagingService, socket: io.Socket) {
@@ -263,14 +275,14 @@ export class GameCreationService {
         }
     }
 
-    private async dispatchUpdateStats(userIdOrTeamId: string | number, game: Game, gameType: string, type: string, roomId:number, roomManager: RoomManagingService) {
+    private async dispatchUpdateStats(userIdOrTeamId: string | number, game: Game, gameType: string, type: string, roomId:number, roomManager: RoomManagingService, amount: number) {
         if (gameType === "classic") {
-            await this.updateStats(userIdOrTeamId.toString(), game, gameType, type);
+            await this.updateStats(userIdOrTeamId.toString(), game, gameType, type, amount);
         } else {
             const teams = roomManager.getRoomById(roomId).teams;
             if (teams) {
                 const members = teams.get(Number(userIdOrTeamId)).members
-                if (members) for (const userId of members) await this.updateStats(userId, game, gameType, type);
+                if (members) for (const userId of members) await this.updateStats(userId, game, gameType, type, amount);
             }
         }
     }
@@ -278,10 +290,10 @@ export class GameCreationService {
     // Method that updates player stats online type is either winner, loser
     // Update money has to be done here also but some logic has to be made in the class game when joining
     // with a price
-    private async updateStats(userId: string, game: Game, gameType: string, type: string) {
+    private async updateStats(userId: string, game: Game, gameType: string, type: string, amount: number) {
         const score = game.players.get(userId);
         const finalResult = type === 'winner' ? 'win': 'loss';
-        const money = type === 'winner' ? 10 : 1;
+        const money = amount === 0 ? (type === 'winner' ? 10 : 1) : amount;
         let prestige = type === 'winner' ? 10 : type === 'loser' ? -10 : 0;
         const history = {
             result: finalResult,
