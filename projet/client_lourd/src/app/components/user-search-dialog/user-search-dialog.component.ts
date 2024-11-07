@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UsersService } from '@app/services/users.service/users.service';
-import { Observable, combineLatest } from 'rxjs';
+import {Observable, combineLatest, of, switchMap} from 'rxjs';
 import { map, startWith, debounceTime, distinctUntilChanged,} from 'rxjs/operators';
 import { User } from '@app/interfaces/user/user-data.interface';
 import { FormControl } from '@angular/forms';
@@ -20,16 +20,14 @@ export class UserSearchDialogComponent implements OnInit {
     private snackbar = inject(SnackbarService);
 
     searchControl = new FormControl('');
-    filteredUsers$: Observable<User[]>;
+    filteredUsers$: any;
     currentUser$: Observable<User | null>;
+    hasPendingRequest$: Observable<boolean>;
 
     ngOnInit() {
         this.currentUser$ = this.usersService.currentUserProfile$;
-
-        // Fetch all users initially
         const allUsers$ = this.usersService.getAllUsers();
 
-        // Combine search input and current user data
         this.filteredUsers$ = combineLatest([
             this.searchControl.valueChanges.pipe(
                 startWith(''),
@@ -39,22 +37,28 @@ export class UserSearchDialogComponent implements OnInit {
             this.currentUser$,
             allUsers$,
         ]).pipe(
-            map(([searchTerm, currentUser, allUsers]) => {
-                if (!allUsers) return [];
+            switchMap(([searchTerm, currentUser, allUsers]) => {
+                if (!allUsers || !currentUser) return of([]);
 
-                // Filter out the current user and their friends
                 const filteredUsers = allUsers.filter(
                     (user) =>
-                        user.uid !== currentUser?.uid &&
-                        !currentUser?.friends.includes(user.uid)
+                        user.uid !== currentUser.uid &&
+                        !currentUser.friends.includes(user.uid)
                 );
 
-                // If there's no search term, return all filtered users
-                if (!searchTerm) return filteredUsers;
+                const searchedUsers = !searchTerm
+                    ? filteredUsers
+                    : filteredUsers.filter((user) =>
+                        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
 
-                // Otherwise, filter based on the search term
-                return filteredUsers.filter((user) =>
-                    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+                // Check pending status for each user using FriendService's hasPendingRequest function
+                return combineLatest(
+                    searchedUsers.map((user) =>
+                        this.friendService
+                            .hasPendingRequest(of(user))
+                            .pipe(map((hasPending) => ({ user, hasPending })))
+                    )
                 );
             })
         );

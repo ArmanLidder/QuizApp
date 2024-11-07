@@ -1,9 +1,15 @@
 <div class="avatar-container">
-    <img
+    <img    *ngIf="showMenu"
             [src]="(currentUser$ | async)?.avatar"
             alt="User Avatar"
             class="avatar-item"
             [matMenuTriggerFor]="menu"
+    />
+    <img    *ngIf="!showMenu"
+            [src]="(currentUser$ | async)?.avatar"
+            alt="User Avatar"
+            class="avatar-item"
+            (click)="openProfileDialog()"
     />
     <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="goToProfile()">

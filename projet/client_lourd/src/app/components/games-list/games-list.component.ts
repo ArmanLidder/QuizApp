@@ -52,7 +52,6 @@ export class GamesListComponent implements OnInit {
     ngOnInit() {
         this.authService.user$.subscribe((user) => {
             this.currentUserUid = user?.uid ?? null;
-            console.log(this.currentUserUid);
             this.populateGameList();
         });
     }
