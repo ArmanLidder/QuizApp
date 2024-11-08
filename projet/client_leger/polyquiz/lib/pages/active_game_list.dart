@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/game_widgets/active_game_info_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_list_item.dart';
 import 'package:polyquiz/services/quiz_service.dart';
@@ -27,10 +28,12 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   WaitingRoomService waitingRoomService = WaitingRoomService();
   final UserService userService = UserService();
   bool _isJoining = false;
+  late final GameListService gameListService;
 
   @override
   void initState() {
     super.initState();
+    gameListService = Provider.of<GameListService>(context, listen: false);
     _initializeFuture = _initialize();
   }
 
@@ -241,28 +244,35 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                   return Center(child: Text('No active games.'));
                 } else {
                   final games = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: games.length,
-                    itemBuilder: (context, index) {
-                      final game = games[index];
-                      return GestureDetector(
-                        onTap: () {
-                          _joinRoom(game);
-                        },
-                        child: ActiveGameInfoWidget(
-                          quizTitle: _getQuizName(game.quizId),
-                          minRank: _minimumPrestige(game.prestige),
-                          allowedPlayers: game.friendsOnly
-                              ? 'Amis seulement'
-                              : 'Amis et autres',
-                          playerNum: game.numberOfPlayers.toString(),
-                          gameMode: game.gameType == 'classic'
-                              ? 'Classique'
-                              : 'Équipe',
-                          price: game.price.toString(),
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: games.length,
+                          itemBuilder: (context, index) {
+                            final game = games[index];
+                            return GestureDetector(
+                              onTap: () {
+                                _joinRoom(game);
+                              },
+                              child: ActiveGameInfoWidget(
+                                quizTitle: _getQuizName(game.quizId),
+                                minRank: _minimumPrestige(game.prestige),
+                                allowedPlayers: game.friendsOnly
+                                    ? 'Amis seulement'
+                                    : 'Amis et autres',
+                                playerNum: game.numberOfPlayers.toString(),
+                                gameMode: game.gameType == 'classic'
+                                    ? 'Classique'
+                                    : 'Équipe',
+                                price: game.price.toString(),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                      CancelBtn()
+                    ],
                   );
                 }
               },
@@ -279,8 +289,6 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
 
   @override
   void dispose() {
-    final gameListService =
-        Provider.of<GameListService>(context, listen: false);
     gameListService.cleanup();
     super.dispose();
   }
