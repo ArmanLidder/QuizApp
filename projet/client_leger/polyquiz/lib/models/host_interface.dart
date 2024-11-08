@@ -1,4 +1,4 @@
-import './quiz_interface.dart';
+import 'package:polyquiz/models/quiz.dart';
 
 class InitialQuestionData {
   final QuizQuestion question;

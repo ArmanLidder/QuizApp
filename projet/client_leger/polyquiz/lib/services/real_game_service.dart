@@ -26,6 +26,7 @@ class RealGameService extends ChangeNotifier {
   int questionNumber = 1;
   int timer = 0;
   QuizQuestion? question;
+  late QuizQuestion oldQuestion;
   bool isLast = false;
   bool locked = false;
   bool validated = false;
@@ -56,17 +57,17 @@ class RealGameService extends ChangeNotifier {
     final answers = this.answers.values.toList();
     if (isQREQuestion) {
       this._socketService.sendMessage(SocketEvent.SUBMIT_ANSWER, {
-      'roomId': this.roomId,
-      'answers': this.qreAnswer,
-      'timer': this.timer,
-      'username': this.username,
+        'roomId': this.roomId,
+        'answers': this.qreAnswer,
+        'timer': this.timer,
+        'username': this.username,
       });
     } else {
       this._socketService.sendMessage(SocketEvent.SUBMIT_ANSWER, {
-      'roomId': this.roomId,
-      'answers': isMultipleChoiceQuestion ? answers : this.qrlAnswer.trim(),
-      'timer': this.timer,
-      'username': this.username,
+        'roomId': this.roomId,
+        'answers': isMultipleChoiceQuestion ? answers : this.qrlAnswer.trim(),
+        'timer': this.timer,
+        'username': this.username,
       });
     }
 
@@ -87,7 +88,7 @@ class RealGameService extends ChangeNotifier {
 
       this.question = questionData.question;
       print('QUESTION ATTRIBUTE: ${this.question}');
-      if(!isNotified){
+      if (!isNotified) {
         notifyListeners();
         isNotified = true;
       }
@@ -98,12 +99,13 @@ class RealGameService extends ChangeNotifier {
     });
 
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) {
+      this.oldQuestion = this.question!;
       NextQuestionData nextQuestionData = NextQuestionData(
           question: QuizQuestion.fromJson(data['question']),
           index: data['index'],
           isLast: data['isLast']);
 
-      if(!isNotified){
+      if (!isNotified) {
         notifyListeners();
         isNotified = true;
       }

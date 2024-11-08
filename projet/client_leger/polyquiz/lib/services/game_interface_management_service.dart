@@ -22,6 +22,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   bool isBonus = false;
   bool isGameOver = false;
+  bool _qcmEnabled = true;
   int playerScore = 0;
   List<Player> players = [];
   bool inPanicMode = false;
@@ -53,6 +54,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.gameStats = [];
     this.timerText = 'Temps restant ';
     this.inPanicMode = false;
+    this._qcmEnabled = true;
   }
 
   void configureBaseSocketFeatures() {
@@ -216,6 +218,15 @@ class GameInterfaceManagementService extends ChangeNotifier {
       print("I am Here 444444");
       print(this.gameService.lastQrlScore);
     }
+  }
+
+  void changeQcmEnabled(bool value) {
+    this._qcmEnabled = value;
+    notifyListeners();
+  }
+
+  bool getQcmEnabled() {
+    return this._qcmEnabled;
   }
 }
 
