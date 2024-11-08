@@ -6,6 +6,7 @@
                 (click)="openFriendsDialog()"
                 matTooltip="Amis"
                 [matBadge]="(pendingRequests$ | async)?.length"
+                [matBadgeHidden]="!(pendingRequests$ | async)?.length"
                 matBadgeOverlap="false"
                 matBadgeColor="primary"
                 disableRipple>
