@@ -160,10 +160,7 @@ class _MyWidgetState extends State<GamePage> {
                                               QuestionType.QCM &&
                                           !noticeReceived,
                                       child: Container(
-                                          height: 500,
-                                          child: PlayerQcm(
-                                              gameInterfaceManagementService:
-                                                  _gameInterfaceManagementService))),
+                                          height: 500, child: PlayerQcm())),
                                   Visibility(
                                       visible: _gameInterfaceManagementService
                                                   .gameService.question?.type ==

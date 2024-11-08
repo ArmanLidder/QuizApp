@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/services/game_service.dart';
+import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/quiz_file_service.dart';
 
 class OfflineQuizListPage extends StatefulWidget {
@@ -11,6 +13,9 @@ class OfflineQuizListPage extends StatefulWidget {
 
 class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
   final QuizFileService _quizFileService = QuizFileService();
+  final GameService _gameService = GameService();
+  final GlobalNavigationService _globalNavigationService =
+      GlobalNavigationService();
   List<Quiz> quizzes = [];
   bool isLoading = true;
   String errorMessage = "";
@@ -97,7 +102,14 @@ class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
                                         icon: Icon(Icons.delete_forever))
                                   ],
                                 ),
-                                onTap: () {},
+                                onTap: () {
+                                  _gameService.isOfflineMode = true;
+                                  _gameService.offlineGameService.quiz = quiz;
+                                  _gameService.offlineGameService.question =
+                                      quiz.questions[0];
+                                  _globalNavigationService
+                                      .navigateTo('/offlinegame');
+                                },
                               );
                             },
                           ),

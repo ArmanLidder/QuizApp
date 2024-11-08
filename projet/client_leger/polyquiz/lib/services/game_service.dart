@@ -49,6 +49,12 @@ class GameService extends ChangeNotifier {
         : this.realGameService.question;
   }
 
+  QuizQuestion get oldQuestion {
+    return this.isOfflineMode
+        ? this.offlineGameService.oldQuestion
+        : this.realGameService.oldQuestion;
+  }
+
   int get questionNumber {
     return this.isOfflineMode
         ? this.offlineGameService.currQuestionIndex + 1
@@ -104,6 +110,15 @@ class GameService extends ChangeNotifier {
     }
   }
 
+  void selectChoiceOffline(int index) {
+    if (this.answers.containsKey(index)) {
+      this.answers.remove(index);
+    } else {
+      String? textChoice = this.question?.choices?[index].text;
+      this.answers[index] = textChoice;
+    }
+  }
+
   void sendAnswer() {
     if (!this.isOfflineMode) {
       print('I AM HERE HERE HERE 80000');
@@ -118,6 +133,7 @@ class GameService extends ChangeNotifier {
       this.offlineGameService.answers = this.answers;
       this.offlineGameService.qrlAnswer = this.qrlAnswer;
       this.qrlAnswer = '';
+      print('ANSWERS: ${this.answers}');
       this.offlineGameService.sendAnswer();
     }
     this.lastQrlScore = null;
