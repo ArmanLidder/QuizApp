@@ -59,11 +59,16 @@ export class QuizCreationComponent implements OnInit{
         this.isPopupVisibleForm = false;
         this.formErrors = [];
         const id = this.route.snapshot.paramMap.get('id');
+        const isImport = this.route.snapshot.queryParamMap.has('import');
 
         if (id) {
             this.mode = PageMode.MODIFICATION;
             this.quiz = await firstValueFrom(this.quizService.basicGetById(id));
             this.quizForm = await this.quizFormService.fillForm(this.quiz);
+        } else if (isImport) {
+            this.mode = PageMode.CREATION;
+            this.quizForm = await this.quizFormService.fillForm(this.quizFormService.quiz);
+            this.markFormGroupTouched(this.quizForm);
         } else {
             this.quizForm = await this.quizFormService.fillForm();
             this.mode = PageMode.CREATION;
@@ -79,6 +84,15 @@ export class QuizCreationComponent implements OnInit{
         }
     }
 
+    private markFormGroupTouched(formGroup: FormGroup) {
+        (<any>Object).values(formGroup.controls).forEach((control: FormGroup<any>) => {
+            if (control.controls) { // control is a FormGroup
+                this.markFormGroupTouched(control);
+            } else { // control is a FormControl
+                control.markAsTouched();
+            }
+        });
+    }
 
     get questionsArray() {
         return this.quizForm.get('questions') as FormArray;

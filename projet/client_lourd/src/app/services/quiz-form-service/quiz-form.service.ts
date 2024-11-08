@@ -53,6 +53,7 @@ export class QuizFormService {
         });
 
         this.fillQuestions(quizForm.get('questions') as FormArray, quiz?.questions);
+        console.log(quizForm.value)
         return quizForm;
     }
 
