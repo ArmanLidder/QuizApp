@@ -15,7 +15,7 @@
             </tr>
             <tr *ngFor="let quiz of quizzes" [class.selected]="!isAdmin && quiz === selectedQuiz" (click)="selectQuiz(quiz)">
                 <td  [class.hover] = "!isAdmin">
-                    <app-game-item [quiz]="quiz" class="game-item" [isAdmin]="isAdmin" (removeQuiz)="removeQuiz($event)"></app-game-item>
+                    <app-game-item [quiz]="quiz" class="game-item" [isAdmin]="isAdmin" (removeQuiz)="removeQuiz($event)" (refresh)="refresh($event)"></app-game-item>
                     <app-quiz-info *ngIf="quiz === selectedQuiz && !isAdmin" [selectedQuiz]="quiz"></app-quiz-info>
                 </td>
 <!--                <td *ngIf="isAdmin">-->

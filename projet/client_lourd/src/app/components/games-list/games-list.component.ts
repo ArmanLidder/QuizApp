@@ -14,8 +14,6 @@ import {QUIZ_TESTING_PAGE, WAITING_ROOM_HOST_PAGE} from '@common/page-url/page-u
 import {ErrorDialogComponent} from "@app/components/error-dialog/error-dialog.component";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {UniqueQuizNameDialogComponent} from "@app/components/unique-quiz-name-dialog/unique-quiz-name-dialog.component";
-import {ConfirmationDialogComponent} from "@app/components/confirmation-dialog/confirmation-dialog.component";
-import { PopUpMessage} from "@common/browser-message/displayable-message/pop-up-message";
 import {AuthService} from "@app/services/auth.service/auth.service";
 
 @Component({
@@ -56,6 +54,10 @@ export class GamesListComponent implements OnInit {
         });
     }
 
+    refresh(event: any) {
+        this.populateGameList();
+    }
+
     populateGameList() {
         this.getAllVisibleQuizzes();
     }
@@ -85,15 +87,8 @@ export class GamesListComponent implements OnInit {
     }
 
     removeQuiz(id: string) {
-        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            data: {message: PopUpMessage.DELETE_QUIZ_MESSAGE},
-        });
-        dialogRef.afterClosed().subscribe(async (result) => {
-            if (result) {
-                const index = this.quizzes.findIndex((quiz) => quiz.id === id);
-                this.quizzes.splice(index, 1);
-            }
-        });
+        const index = this.quizzes.findIndex((quiz) => quiz.id === id);
+        this.quizzes.splice(index, 1);
     }
 
     selectQuiz(quiz: Quiz): void {
