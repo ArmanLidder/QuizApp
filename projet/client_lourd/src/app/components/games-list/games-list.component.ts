@@ -119,6 +119,8 @@ export class GamesListComponent implements OnInit {
             this.importedQuiz = JSON.parse(event.target?.result as string);
             this.importedQuiz.lastModification = getCurrentDateService();
             this.importedQuiz.owner = this.currentUserUid as string;
+            this.importedQuiz.title = this.importedQuiz.title.trim();
+            this.importedQuiz.description = this.importedQuiz.description.trim();
             this.resolveAsyncFileRead();
         } catch (error:any) {
             this.snackbar.show(`Erreur: ${error.message}`)
