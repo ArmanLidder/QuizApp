@@ -207,27 +207,31 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                   Visibility(
                                     visible: !noticeReceived,
                                     child: TextButton(
-                                      onPressed: () {
-                                        gameInterfaceManagementService
-                                            .gameService
-                                            .sendAnswer();
-                                        if (!gameInterfaceManagementService
-                                            .gameService.offlineGameService
-                                            .next()) {
-                                          this.currentTime = 3;
-                                          this.isTimerTransition = true;
-                                          this.isFinalTransition = true;
-                                          this
-                                              .gameInterfaceManagementService
-                                              .changeQcmEnabled(false);
-                                        } else {
-                                          this.currentTime = 3;
-                                          this.isTimerTransition = true;
-                                          this
-                                              .gameInterfaceManagementService
-                                              .changeQcmEnabled(false);
-                                        }
-                                      },
+                                      onPressed: this.isFinalTransition ||
+                                              this.isTimerTransition
+                                          ? () {}
+                                          : () {
+                                              gameInterfaceManagementService
+                                                  .gameService
+                                                  .sendAnswer();
+                                              if (!gameInterfaceManagementService
+                                                  .gameService
+                                                  .offlineGameService
+                                                  .next()) {
+                                                this.currentTime = 3;
+                                                this.isTimerTransition = true;
+                                                this.isFinalTransition = true;
+                                                this
+                                                    .gameInterfaceManagementService
+                                                    .changeQcmEnabled(false);
+                                              } else {
+                                                this.currentTime = 3;
+                                                this.isTimerTransition = true;
+                                                this
+                                                    .gameInterfaceManagementService
+                                                    .changeQcmEnabled(false);
+                                              }
+                                            },
                                       child: Text(
                                         'Confirmer',
                                         style: TextStyle(
