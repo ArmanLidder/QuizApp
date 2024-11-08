@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/widgets/game_widgets/active_game_info_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_list_item.dart';
 import 'package:polyquiz/services/quiz_service.dart';
@@ -12,12 +13,12 @@ import '../services/waiting_room_service.dart';
 import 'waiting_room_screen.dart';
 import '../models/quiz.dart';
 
-
 class ActiveGameListComponent extends StatefulWidget {
   ActiveGameListComponent({Key? key}) : super(key: key);
 
   @override
-  _ActiveGameListComponentState createState() => _ActiveGameListComponentState();
+  _ActiveGameListComponentState createState() =>
+      _ActiveGameListComponentState();
 }
 
 class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
@@ -34,13 +35,15 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   }
 
   Future<void> _initialize() async {
-    final gameListService = Provider.of<GameListService>(context, listen: false);
+    final gameListService =
+        Provider.of<GameListService>(context, listen: false);
     await gameListService.initialize();
     _prefetchQuizNames();
   }
 
   void _prefetchQuizNames() {
-    final gameListService = Provider.of<GameListService>(context, listen: false);
+    final gameListService =
+        Provider.of<GameListService>(context, listen: false);
     final quizService = Provider.of<QuizService>(context, listen: false);
 
     gameListService.games$.listen((games) {
@@ -59,52 +62,53 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   }
 
   Future<void> _joinWaitingRoom(String roomID, String username) async {
+    setState(() {
+      _isJoining = true;
+    });
 
+    try {
+      // Navigate to the WaitingRoomScreen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WaitingRoomScreen(
+            quiz: Quiz(
+              id: roomID, // Pass the room ID to the waiting room.
+              title: 'Nothing', // Provide a sample title.
+              description: 'Nothing', // Provide a sample description.
+              duration: 0, // Provide a sample duration.
+              questions: [], // Provide an empty list of questions.
+            ),
+            username: username, // Pass the username to the waiting room.
+            isHost: false, // This user is not the host.
+          ),
+        ),
+      );
+    } catch (e) {
       setState(() {
-        _isJoining = true;
+        _isJoining = false;
       });
 
-      try {
-        // Navigate to the WaitingRoomScreen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WaitingRoomScreen(
-              quiz: Quiz(
-                id: roomID, // Pass the room ID to the waiting room.
-                title: 'Nothing', // Provide a sample title.
-                description: 'Nothing', // Provide a sample description.
-                duration: 0, // Provide a sample duration.
-                questions: [], // Provide an empty list of questions.
-              ),
-              username: username, // Pass the username to the waiting room.
-              isHost: false, // This user is not the host.
-            ),
-          ),
-        );
-      } catch (e) {
-        setState(() {
-          _isJoining = false;
-        });
-
-        // Display an error message if joining fails.
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to join room: $e')),
-        );
-      }
+      // Display an error message if joining fails.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to join room: $e')),
+      );
+    }
   }
 
   String _minimumPrestige(int prestige) {
     if (prestige >= 200) return '🏅'; // Platinum medal
     if (prestige >= 150) return '🥇'; // Gold medal
     if (prestige >= 100) return '🥈'; // Silver medal
-    if (prestige >= 50) return '🥉';  // Bronze medal
-    return '🚫';  // Default icon
+    if (prestige >= 50) return '🥉'; // Bronze medal
+    return '🚫'; // Default icon
   }
 
   Future<void> _joinRoom(GameListItem game) async {
-    final roomValidationService = Provider.of<RoomValidationService>(context, listen: false);
-    final snackbarService = Provider.of<SnackbarService>(context, listen: false);
+    final roomValidationService =
+        Provider.of<RoomValidationService>(context, listen: false);
+    final snackbarService =
+        Provider.of<SnackbarService>(context, listen: false);
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
     if (game.friendsOnly && !isHostFriend) {
@@ -112,7 +116,8 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     } else {
       final isPrestigeValid = await _validatePrestige(game.prestige);
       if (!isPrestigeValid) {
-        snackbarService.show("Vous n'avez pas le prestige minimum pour rejoindre cette partie.");
+        snackbarService.show(
+            "Vous n'avez pas le prestige minimum pour rejoindre cette partie.");
       } else {
         await roomValidationService.verifyUsername();
         if (!roomValidationService.isUsernameValid) {
@@ -122,20 +127,23 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
             snackbarService.show("La partie est actuellement verouillez.");
           }
           // _joinWaitingRoom(game.room.toString(), roomValidationService.userData!.username);
-          final isValid = !roomValidationService.isLocked && roomValidationService.isUsernameValid;
+          final isValid = !roomValidationService.isLocked &&
+              roomValidationService.isUsernameValid;
           if (true) {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => WaitingRoomScreen(
                   quiz: Quiz(
-                    id: roomValidationService.roomId!, // Pass the room ID to the waiting room.
+                    id: roomValidationService
+                        .roomId!, // Pass the room ID to the waiting room.
                     title: 'Nothing', // Provide a sample title.
                     description: 'Nothing', // Provide a sample description.
                     duration: 0, // Provide a sample duration.
                     questions: [], // Provide an empty list of questions.
                   ),
-                  username: roomValidationService.userData!.uid, // Pass the username to the waiting room.
+                  username: roomValidationService
+                      .userData!.uid, // Pass the username to the waiting room.
                   isHost: false, // This user is not the host.
                   isFromActiveList: true,
                 ),
@@ -148,21 +156,24 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   }
 
   Future<bool> _validateFriendship(GameListItem game) async {
-    final roomValidationService = Provider.of<RoomValidationService>(context, listen: false);
+    final roomValidationService =
+        Provider.of<RoomValidationService>(context, listen: false);
     final currentUserId = roomValidationService.userData!.username;
     final hostProfile = await this.userService.getUserById(game.hostUserId);
     return hostProfile?.friends.contains(currentUserId) ?? false;
   }
 
   Future<bool> _validatePrestige(int prestige) async {
-    final roomValidationService = Provider.of<RoomValidationService>(context, listen: false);
+    final roomValidationService =
+        Provider.of<RoomValidationService>(context, listen: false);
 
     final currentUserPrestige = roomValidationService.userData!.prestige;
     return currentUserPrestige >= prestige;
   }
 
   void _sendAllDataToWaitingRoom() {
-    final roomValidationService = Provider.of<RoomValidationService>(context, listen: false);
+    final roomValidationService =
+        Provider.of<RoomValidationService>(context, listen: false);
 
     if (roomValidationService.roomId != null) {
       roomValidationService.isActive = false;
@@ -173,13 +184,15 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
           MaterialPageRoute(
             builder: (context) => WaitingRoomScreen(
               quiz: Quiz(
-                id: roomValidationService.roomId!, // Pass the room ID to the waiting room.
+                id: roomValidationService
+                    .roomId!, // Pass the room ID to the waiting room.
                 title: 'Nothing', // Provide a sample title.
                 description: 'Nothing', // Provide a sample description.
                 duration: 0, // Provide a sample duration.
                 questions: [], // Provide an empty list of questions.
               ),
-              username: roomValidationService.username!, // Pass the username to the waiting room.
+              username: roomValidationService
+                  .username!, // Pass the username to the waiting room.
               isHost: false, // This user is not the host.
             ),
           ),
@@ -198,7 +211,14 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Active Games'),
+        title: Text(
+          'Liste des Jeux Publics',
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              color: Color.fromRGBO(255, 255, 255, 1)),
+        ),
+        backgroundColor: Color.fromRGBO(53, 121, 246, 1),
       ),
       body: FutureBuilder<void>(
         future: _initializeFuture,
@@ -225,12 +245,22 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                     itemCount: games.length,
                     itemBuilder: (context, index) {
                       final game = games[index];
-                      return ListTile(
-                        title: Text(_getQuizName(game.quizId)),
-                        subtitle: Text('Prestige: ${_minimumPrestige(game.prestige)}'),
-                        onTap: () => {
-                          _joinRoom(game),
-                          },
+                      return GestureDetector(
+                        onTap: () {
+                          _joinRoom(game);
+                        },
+                        child: ActiveGameInfoWidget(
+                          quizTitle: _getQuizName(game.quizId),
+                          minRank: _minimumPrestige(game.prestige),
+                          allowedPlayers: game.friendsOnly
+                              ? 'Amis seulement'
+                              : 'Amis et autres',
+                          playerNum: game.numberOfPlayers.toString(),
+                          gameMode: game.gameType == 'classic'
+                              ? 'Classique'
+                              : 'Équipe',
+                          price: game.price.toString(),
+                        ),
                       );
                     },
                   );
@@ -249,7 +279,8 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
 
   @override
   void dispose() {
-    final gameListService = Provider.of<GameListService>(context, listen: false);
+    final gameListService =
+        Provider.of<GameListService>(context, listen: false);
     gameListService.cleanup();
     super.dispose();
   }
