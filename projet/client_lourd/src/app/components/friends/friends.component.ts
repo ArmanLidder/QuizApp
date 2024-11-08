@@ -7,6 +7,7 @@ import { ConfirmationDialogComponent } from "@app/components/confirmation-dialog
 import { MatDialog } from "@angular/material/dialog";
 import { PopUpMessage } from "@common/browser-message/displayable-message/pop-up-message";
 import { SnackbarService } from "@app/services/snackbar.service/snack-bar.service";
+import {UserSearchDialogComponent} from "@app/components/user-search-dialog/user-search-dialog.component";
 
 @Component({
     selector: 'app-friends',
@@ -54,6 +55,13 @@ export class FriendsComponent {
 
         dialogRef.afterClosed().subscribe(async (result) => {
             if (result) await this.friendService.removeFriend(uid);
+        });
+    }
+
+    openUserSearch() {
+        this.dialog.open(UserSearchDialogComponent, {
+            width:'30%',
+            minWidth:'30%'
         });
     }
 }

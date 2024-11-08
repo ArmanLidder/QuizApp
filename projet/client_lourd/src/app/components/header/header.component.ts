@@ -29,8 +29,8 @@ export class HeaderComponent implements OnInit{
 
   openFriendsDialog(): void {
     this.dialog.open(FriendsComponent, {
-      width: '25%',
-      height: '35%',
+      width: '35%',
+      height: '375px',
     });
   }
 }

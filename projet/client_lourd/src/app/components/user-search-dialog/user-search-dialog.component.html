@@ -12,16 +12,15 @@
             <div class="flex-grow">
                 <h3 class="text-base font-medium text-gray-900">{{ userData.user.username }}</h3>
             </div>
-            <div class="items-center">
+            <div class="flex items-center space-x-2 mt-4">
                 <ng-container *ngIf="!userData.hasPending; else pendingRequestIcon">
-                    <button (click)="sendFriendRequest(userData.user)" class="mt-4 mr-6 items-center text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex">
-                        <mat-icon class="mr-2" matTooltip="Envoyer une requête d'ami"
-                                  matTooltipClass="custom-tooltip">person_add</mat-icon>
+                    <button (click)="sendFriendRequest(userData.user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex items-center">
+                        <mat-icon matTooltip="Envoyer une requête d'ami" matTooltipClass="custom-tooltip">person_add</mat-icon>
                     </button>
                 </ng-container>
                 <ng-template #pendingRequestIcon>
                     <mat-icon
-                            class="mr-2 items-center text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex"
+                            class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex items-center"
                             matTooltip="Demande déjà envoyée"
                             matTooltipClass="custom-tooltip"
                     >hourglass_empty</mat-icon>
