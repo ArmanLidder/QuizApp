@@ -60,8 +60,12 @@ export class RoomCodePromptComponent implements OnInit {
             this.handleError();
         } else {
             const isPrestigeValid = await this.validatePrestige(game.prestige);
+            const enoughMoney = await this.validateMoney(game.price);
             if (!isPrestigeValid) {
                 this.error = "Vous n'avez pas le prestige minimum pour rejoindre cette partie.";
+                this.handleError();
+            } else if (!enoughMoney) {
+                this.error = "Vous n'avez pas assez d'argent pour rejoindre cette partie.";
                 this.handleError();
             } else {
                 this.error = await this.roomValidationService.verifyRoomId();
@@ -124,5 +128,12 @@ export class RoomCodePromptComponent implements OnInit {
     private async validatePrestige(prestige: number) {
         const currentUserPrestige = (await firstValueFrom(this.roomValidationService.user$) as User)?.prestige;
         return currentUserPrestige >= prestige;
+    }
+
+    private async validateMoney(money: number) {
+        const currentUserMoney = (await firstValueFrom(this.roomValidationService.user$) as User)?.currency;
+        const isValid = currentUserMoney >= money;
+        if (isValid) await this.userService.updateUser({currency: (currentUserMoney - money)});
+        return isValid;
     }
 }

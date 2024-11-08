@@ -54,6 +54,7 @@ export class RoomManagingService {
             friendsOnly: config.friendsOnly,
             teams: new Map<TeamId, Team>(),
             prestige: config.prestige,
+            total_price: 0,
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -66,8 +67,10 @@ export class RoomManagingService {
 
     addUser(roomId: number, username: string, socketId: string) {
         this.getRoomById(roomId).players.set(username, socketId);
-        // new code
+        const game_price = this.getRoomById(roomId).price
         if (this.getRoomById(roomId).gameType !== 'classic' && HOST_USERNAME !== username) this.addNewUserInTeam(roomId, username)
+        if (HOST_USERNAME !== username && game_price > 0) this.getRoomById(roomId).total_price += game_price
+        console.log( this.getRoomById(roomId).total_price)
     }
 
     getSocketIdByUsername(roomId: number, username: string): string {
