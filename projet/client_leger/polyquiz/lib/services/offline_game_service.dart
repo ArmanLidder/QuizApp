@@ -33,7 +33,6 @@ class OfflineGameService extends ChangeNotifier {
   final QuizService quizService = QuizService();
 
   void init() {
-    print(this.quiz.questions);
     this.question = quiz.questions[currQuestionIndex];
     timeService.deleteAllTimers();
   }

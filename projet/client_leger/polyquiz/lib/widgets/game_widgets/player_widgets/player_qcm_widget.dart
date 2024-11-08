@@ -16,7 +16,7 @@ class _PlayerQcmWidgetState extends State<PlayerQcm> {
       GameInterfaceManagementService();
 
   QuizQuestion? getQuestion() {
-    if (gameInterfaceManagementService.qcmEnabled) {
+    if (gameInterfaceManagementService.getQcmEnabled()) {
       return gameInterfaceManagementService.gameService.question;
     } else
       return gameInterfaceManagementService.gameService.oldQuestion;

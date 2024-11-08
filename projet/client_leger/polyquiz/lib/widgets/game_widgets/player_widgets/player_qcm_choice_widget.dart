@@ -31,7 +31,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   Color textBtnColor = Color.fromRGBO(0, 0, 0, 0);
   @override
   Widget build(BuildContext context) {
-    if (gameInterfaceManagementService.qcmEnabled) {
+    if (gameInterfaceManagementService.getQcmEnabled()) {
       if (lastQuestionIndex !=
               gameInterfaceManagementService.gameService.questionNumber &&
           textBtnColor != Color.fromRGBO(0, 0, 0, 0)) {
@@ -49,7 +49,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     }
     return TextButton(
       onPressed: () {
-        gameInterfaceManagementService.qcmEnabled
+        gameInterfaceManagementService.getQcmEnabled()
             ? setState(() {
                 textBtnColor = changeColor(textBtnColor);
                 if (gameInterfaceManagementService.gameService.isOfflineMode) {
