@@ -111,15 +111,14 @@ export class QuizCreationComponent implements OnInit{
                     }
                 });
             }
-             else {
-                this.quizService.checkTitleUniqueness(title).subscribe((response) => {
-                    if (response.body?.isUnique || this.mode === PageMode.MODIFICATION) {
-                        this.addOrUpdateQuiz(quiz);
-                    } else {
-                        this.openErrorDialog('Le titre existe déjà');
-                    }
-                });
-            }
+            this.quizService.checkTitleUniqueness(title).subscribe((response) => {
+                if (response.body?.isUnique || this.mode === PageMode.MODIFICATION) {
+                    this.addOrUpdateQuiz(quiz);
+                } else {
+                    this.openErrorDialog('Le titre existe déjà');
+                }
+            });
+
         } else {
             this.formErrors = this.quizValidationService.validateQuiz(quiz);
             this.showPopupIfFormConditionMet(true);
