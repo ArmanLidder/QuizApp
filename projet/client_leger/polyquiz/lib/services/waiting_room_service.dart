@@ -45,7 +45,9 @@ class WaitingRoomService extends ChangeNotifier {
   Future<void> connectToSocket(String roomId,
       {required bool isHost, String? username, bool? isFromActiveList}) async {
     this.userData = this.loggedInUserService.getUser();
-    this.roomId = int.parse(roomId);
+    if(!isHost){
+      this.roomId = int.parse(roomId);
+    }
     if (!_socketService.isSocketAlive()) {
       print("Socket is not connected. Attempting to connect...");
       _socketService.connect(this.userData?.uid);
