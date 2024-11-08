@@ -1,16 +1,40 @@
-<div class="avatar-container">
-    <img    *ngIf="showMenu"
-            [src]="(currentUser$ | async)?.avatar"
-            alt="User Avatar"
-            class="avatar-item"
-            [matMenuTriggerFor]="menu"
+<div class="relative inline-block">
+    <!-- Avatar Image -->
+    <img *ngIf="showMenu"
+         [src]="(currentUser$ | async)?.avatar"
+         alt="User Avatar"
+         [ngClass]="{
+           'w-14 h-14': size === 'small',
+           'w-20 h-20': size === 'medium',
+           'w-28 h-28': size === 'large'
+         }"
+         class="rounded-full border-2 border-white shadow cursor-pointer"
+         [matMenuTriggerFor]="menu"
     />
-    <img    *ngIf="!showMenu"
-            [src]="(currentUser$ | async)?.avatar"
-            alt="User Avatar"
-            class="avatar-item"
-            (click)="openProfileDialog()"
+    <img *ngIf="!showMenu"
+         [src]="(currentUser$ | async)?.avatar"
+         alt="User Avatar"
+         [ngClass]="{
+           'w-14 h-14': size === 'small',
+           'w-20 h-20': size === 'medium',
+           'w-28 h-28': size === 'large'
+         }"
+         class="rounded-full border border-gray-300 shadow cursor-pointer"
+         (click)="openProfileDialog()"
     />
+
+    <!-- Level Badge positioned on bottom-right of the avatar image -->
+    <div *ngIf="!hideLevel"
+         [ngClass]="{
+           'w-6 h-6 text-xs': size === 'small',
+           'w-8 h-8 text-base': size === 'medium',
+           'w-10 h-10 text-lg': size === 'large'
+         }"
+         class="absolute bottom-0 right-0 bg-yellow-400 text-blue-800 rounded-full border border-white flex items-center justify-center font-bold">
+        {{ (currentUser$ | async)?.level || 0 }}
+    </div>
+
+    <!-- Dropdown Menu for Profile Actions -->
     <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="goToProfile()">
             <mat-icon class="text-gray-500" aria-hidden="true">account_circle</mat-icon>
@@ -22,4 +46,7 @@
         </button>
     </mat-menu>
 </div>
+
+<!-- Display Username if `isChat` is true -->
 <p *ngIf="isChat">{{ (currentUser$ | async)?.username }}</p>
+

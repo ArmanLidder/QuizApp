@@ -8,7 +8,7 @@
 
     <div class="mt-4 space-y-2 max-h-80 overflow-y-auto">
         <div *ngFor="let userData of filteredUsers$ | async" class="bg-gray-100 rounded-lg p-3 flex items-center space-x-3 shadow-sm">
-            <app-avatar-with-level [user]="userData.user"></app-avatar-with-level>
+            <app-avatar [size]="'small'" [uid]="userData.user.uid"></app-avatar>
             <div class="flex-grow">
                 <h3 class="text-base font-medium text-gray-900">{{ userData.user.username }}</h3>
             </div>

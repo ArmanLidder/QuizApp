@@ -1,7 +1,7 @@
 <div class="w-full p-4 bg-white rounded-lg relative">
     <ng-container *ngIf="viewedUser$ | async as user" class="w-full">
         <!-- Add Friend, Pending, or Already Friends Icon -->
-        <div class="absolute top-2 right-2">
+        <div *ngIf="!hideFriendButtons" class="absolute top-2 right-2">
             <!-- Display if already friends -->
             <ng-container *ngIf="isFriend$ | async; else addOrPendingIcons">
                 <span class="text-black font-semibold">
@@ -13,7 +13,7 @@
             <ng-template #addOrPendingIcons>
                 <ng-container *ngIf="!(hasPendingRequest$ | async); else pendingRequestIcon">
                     <button (click)="sendFriendRequest(user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out">
-                        <mat-icon matTooltip="Envoyer une requête d'ami" matTooltipClass="custom-tooltip">person_add</mat-icon>
+                        <mat-icon matTooltip="Envoyer une requête d'ami">person_add</mat-icon>
                     </button>
                 </ng-container>
                 <ng-template #pendingRequestIcon>
@@ -25,10 +25,7 @@
         <!-- Header with Avatar and Basic Info -->
         <div class="flex items-start space-x-4">
             <div class="relative flex-shrink-0">
-                <div class="absolute -top-1 -left-1 z-10 bg-yellow-400 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center border-2 border-white font-bold text-sm">
-                    {{ user.level }}
-                </div>
-                <img [src]="user.avatar" alt="Avatar de {{ user.username }}" class="w-20 h-20 rounded-full border-2 border-gray-200"/>
+                <app-avatar [showMenu]="false" [uid]="user.uid"></app-avatar>
             </div>
 
             <div class="flex-1">

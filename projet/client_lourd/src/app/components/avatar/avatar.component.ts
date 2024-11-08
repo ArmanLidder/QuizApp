@@ -17,6 +17,9 @@ export class AvatarComponent {
   @Input() isChat: boolean = false;
   @Input() uid: string;
   @Input() showMenu: boolean = false;
+  @Input() size: 'small' | 'medium' | 'large' = 'medium';
+  @Input() hideLevel: boolean = false;
+
   currentUser$: Observable<User | undefined>;
 
   isMenuOpen: boolean = false;

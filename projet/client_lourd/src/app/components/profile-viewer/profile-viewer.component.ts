@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UsersService } from '@app/services/users.service/users.service';
-import { Observable} from 'rxjs';
+import {combineLatest, firstValueFrom, Observable} from 'rxjs';
 import { User } from '@app/interfaces/user/user-data.interface';
 import {FriendService} from "@app/services/friend.service/friend.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-profile-viewer',
@@ -16,6 +17,9 @@ export class ProfileViewerComponent implements OnInit {
   userAchievements: number[] | undefined;
   hasPendingRequest$: Observable<boolean>;
   isFriend$: Observable<boolean>;
+
+  hideFriendButtons: boolean = false;
+
   allAchievements: string[] = [
     "Gagner une partie en ligne",
     "Gagner une partie en équipe",
@@ -42,6 +46,10 @@ export class ProfileViewerComponent implements OnInit {
         this.userAchievements = viewedUser.achievements.map((achievement) => Number(achievement));
       }
     });
+
+    this.hideFriendButtons = await firstValueFrom(combineLatest([this.viewedUser$, this.usersService.currentUserProfile$]).pipe(
+        map(([viewedUser, currentUser]) => viewedUser.uid === currentUser?.uid)
+    ));
 
     this.hasPendingRequest$ = this.friendService.hasPendingRequest(this.viewedUser$);
     this.isFriend$ = this.friendService.isFriend(this.viewedUser$);
