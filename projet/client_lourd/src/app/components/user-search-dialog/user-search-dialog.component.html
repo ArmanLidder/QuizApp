@@ -14,7 +14,7 @@
             </div>
             <div class="items-center">
                 <ng-container *ngIf="!userData.hasPending; else pendingRequestIcon">
-                    <button (click)="sendFriendRequest(userData.user)" class="items-center text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex">
+                    <button (click)="sendFriendRequest(userData.user)" class="mt-4 mr-6 items-center text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex">
                         <mat-icon class="mr-2" matTooltip="Envoyer une requête d'ami"
                                   matTooltipClass="custom-tooltip">person_add</mat-icon>
                     </button>

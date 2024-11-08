@@ -77,6 +77,7 @@ import {NgxSliderModule} from "@angular-slider/ngx-slider";
 import { UniqueQuizNameDialogComponent } from './components/unique-quiz-name-dialog/unique-quiz-name-dialog.component';
 import {MatMenuModule} from "@angular/material/menu";
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
+import {MatBadgeModule} from "@angular/material/badge";
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -166,6 +167,7 @@ import { ProfileViewerComponent } from './components/profile-viewer/profile-view
         MatSliderModule,
         NgxSliderModule,
         MatMenuModule,
+        MatBadgeModule,
     ],
     providers: [
         CanalService,

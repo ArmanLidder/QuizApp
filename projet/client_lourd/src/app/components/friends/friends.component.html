@@ -7,7 +7,7 @@
                     <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
                         <li *ngFor="let friend of friends" class="p-4 flex items-center justify-between">
                             <div class="flex items-center space-x-4">
-                                <app-avatar-with-level [user]="friend"></app-avatar-with-level>
+                                <app-avatar [size]="'small'" [uid]="friend.uid"></app-avatar>
                                 <span class="font-medium text-gray-700">{{ friend.username }}</span>
                             </div>
                             <button class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out"
@@ -27,14 +27,17 @@
     </mat-tab>
 
     <!-- Pending Requests Tab -->
-    <mat-tab label="Demandes Reçues">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <span [matBadge]="(pendingRequests$ | async)?.length" [matBadgeSize]="'small'" [matBadgeHidden]="!(pendingRequests$ | async)?.length" matBadgeOverlap="false" matBadgeColor="primary">Demandes Reçues</span>
+        </ng-template>
         <div class="p-4 h-60 flex flex-col">
             <div *ngIf="(pendingRequests$ | async) as requests; else noRequests" class="flex-grow overflow-y-auto">
                 <ng-container *ngIf="requests.length > 0; else noRequests">
                     <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
                         <li *ngFor="let request of requests" class="p-4 flex items-center justify-between">
                             <div class="flex items-center space-x-4">
-                                <app-avatar-with-level [user]="request"></app-avatar-with-level>
+                                <app-avatar [size]="'small'" [uid]="request.uid"></app-avatar>
                                 <span class="font-medium text-gray-700">{{ request.username }}</span>
                             </div>
                             <div class="flex space-x-2">
