@@ -5,6 +5,6 @@
         </a>
     </div>
     <div class="absolute top-0 right-0 flex items-center justify-center h-full p-4">
-        <app-avatar *ngIf="currentUser$ | async" [showMenu]="true"></app-avatar>
+        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="true" [isChat]="true"></app-avatar>
     </div>
 </header>

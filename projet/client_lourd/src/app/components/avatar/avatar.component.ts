@@ -15,10 +15,12 @@ import {ProfileViewerComponent} from "@app/components/profile-viewer/profile-vie
 })
 export class AvatarComponent {
   @Input() isChat: boolean = false;
-  @Input() uid: string;
+  @Input() showMoney: boolean = false;
   @Input() showMenu: boolean = false;
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() hideLevel: boolean = false;
+
+  @Input() uid: string; //imporant to pass in
 
   currentUser$: Observable<User | undefined>;
 
@@ -36,7 +38,7 @@ export class AvatarComponent {
   ngOnInit(): void {
     if (this.uid) {
       this.loadUserProfile(this.uid);
-    } else if (!this.isChat) {
+    } else {
       this.currentUser$ = this.usersService.currentUserProfile$ as Observable<User>;
     }
   }
