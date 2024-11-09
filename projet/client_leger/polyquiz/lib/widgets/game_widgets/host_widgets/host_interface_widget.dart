@@ -92,20 +92,18 @@ class _HostInterfaceState extends State<HostInterface> {
                           visible: true, // a changer plus tard
                           child: TextButton(
                             onPressed: () {
-                              hostInterfaceManagementService.saveStats();
-                              if (isLastButton) {
-                                isResultPage = true;
-                              }
-                              if (gameService.realGameService.isLast) {
-                                gameService.realGameService.isNotified = false;
-                                hostInterfaceManagementService
-                                    .handleLastQuestion();
-                                isLastButton = true;
-                              } else {
-                                gameService.realGameService.isNotified = false;
-                                hostInterfaceManagementService
-                                    .requestNextQuestion();
-                              }
+                                hostInterfaceManagementService.saveStats();
+                                if (isLastButton) {
+                                  isResultPage = true;
+                                }
+                                if (gameService.realGameService.isLast) {
+                                  gameService.realGameService.isNotified = false;
+                                  hostInterfaceManagementService.handleLastQuestion();
+                                  isLastButton = true;
+                                } else {
+                                  gameService.realGameService.isNotified = false;
+                                  hostInterfaceManagementService.requestNextQuestion();
+                                }
                             },
                             child: Text(
                               isLastButton
