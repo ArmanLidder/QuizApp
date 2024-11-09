@@ -195,9 +195,7 @@ class _MyWidgetState extends State<GamePage> {
                                                   .gameService.question?.type ==
                                               QuestionType.QRL &&
                                           !noticeReceived,
-                                      child: PlayerQrl(
-                                          gameInterfaceManagementService:
-                                              _gameInterfaceManagementService)),
+                                      child: PlayerQrl()),
                                   Visibility(
                                     visible: noticeReceived,
                                     child: FutureBuilder(
