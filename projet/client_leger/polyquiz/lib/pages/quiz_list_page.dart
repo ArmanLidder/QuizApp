@@ -108,24 +108,26 @@ class _QuizListPageState extends State<QuizListPage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return Dialog(
-                                    child: GameConfigWidget(),
+                                    child: GameConfigWidget(
+                                      quiz: quiz,
+                                    ),
                                   );
                                 },
                               );
 
                               // Pass the quiz and gameConfig as arguments
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => WaitingRoomScreen(
-                                    quiz: quiz,
-                                    username:
-                                        'nothing', // Pass the username to the waiting room.
-                                    isHost: true, // This user is not the host.
-                                    gameConfigService: gameConfigService,
-                                  ),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => WaitingRoomScreen(
+                              //       quiz: quiz,
+                              //       username:
+                              //           'nothing', // Pass the username to the waiting room.
+                              //       isHost: true, // This user is not the host.
+                              //       gameConfigService: gameConfigService,
+                              //     ),
+                              //   ),
+                              // );
                             },
                           );
                         },

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/pages/waiting_room_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/user_service.dart';
@@ -7,6 +9,11 @@ import 'package:polyquiz/models/game_info_interface.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class GameConfigWidget extends StatefulWidget {
+  final Quiz quiz;
+  const GameConfigWidget({
+    Key? key,
+    required this.quiz,
+  }) : super(key: key);
   @override
   _GameConfigWidgetState createState() => _GameConfigWidgetState();
 }
@@ -63,7 +70,9 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                 });
               },
               validator: (value) {
-                if (value == null || double.tryParse(value) == null || double.parse(value) < 0) {
+                if (value == null ||
+                    double.tryParse(value) == null ||
+                    double.parse(value) < 0) {
                   return 'Le prix doit être un entier supérieur ou égal à 0.';
                 }
                 return null;
@@ -110,6 +119,18 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       gameConfigService.setUser(this.userData!);
                       Navigator.of(context).pop(); // Close the dialog
                     }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WaitingRoomScreen(
+                          quiz: widget.quiz,
+                          username:
+                              'nothing', // Pass the username to the waiting room.
+                          isHost: true, // This user is not the host.
+                          gameConfigService: gameConfigService,
+                        ),
+                      ),
+                    );
                   },
                   child: Text('Créer partie'),
                 ),

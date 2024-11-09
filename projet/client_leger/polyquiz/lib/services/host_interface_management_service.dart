@@ -100,9 +100,11 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.timerText = 'Prochaine question dans: ';
       this.gameService.realGameService.timer = timeValue;
       if (this.gameService.realGameService.timer == 0) {
+        print('TIMER GOT TO 0');
         this.gameService.realGameService.inTimeTransition = false;
         this.resetInterface();
-        this._socketService.sendMessage(SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
+        this._socketService.sendMessage(
+            SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
         this.timerText = 'Temps restant: ';
       }
     });
