@@ -25,6 +25,7 @@ class GameService extends ChangeNotifier {
   int? lastQrlScore;
   int qreAnswer = 0;
   bool gotNotified = false;
+  bool isQuitBtn = false;
 
   final OfflineGameService offlineGameService = OfflineGameService();
   final RealGameService realGameService = RealGameService();
@@ -149,13 +150,19 @@ class GameService extends ChangeNotifier {
 
   void reset() {
     this.isOfflineMode = false;
+    this.isInputFocused = false;
     this.qrlAnswer = '';
+    this.isHostEvaluating = false;
     this.isActive = false;
     this.hasInteracted = false;
     this.audio.pause();
     this.audio.seek(Duration.zero);
     this.realGameService.destroy();
     this.offlineGameService.reset();
+    this.gotNotified = false;
+    this.isQuitBtn = false;
+    this.lastQrlScore = null;
+    this.qreAnswer = 0;
   }
 
   void configureBaseSockets() {
