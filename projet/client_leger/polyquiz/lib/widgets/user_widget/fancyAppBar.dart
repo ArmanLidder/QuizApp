@@ -26,9 +26,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
   }
 
   Future<void> _imageChangeButton() async {
-    // Call the method to update the profile picture
     await loggedInUserService.updateProfilePicture();
-    // Update the state with the new image URL
     setState(() {
       imageUrl = loggedInUserService.getUser()!.avatar; // Update accordingly
     });
@@ -47,7 +45,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
       child: AppBar(
         title: Center(
           child: Text(
-            "          OnlyQuizz",
+            "          PolyQuiz",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -66,10 +64,10 @@ class _FancyAppBarState extends State<FancyAppBar> {
             padding: const EdgeInsets.only(right: 16.0),
             child: Row(
               children: [
-                IconButton(
-                  icon: Icon(Icons.create_outlined),
-                  onPressed: _imageChangeButton, // Call the async function
-                ),
+                //IconButton(
+                //  icon: Icon(Icons.create_outlined),
+                //  onPressed: _imageChangeButton, // Call the async function
+                //),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
