@@ -59,7 +59,7 @@ class _MyWidgetState extends State<GamePage> {
     // Only dispose if we're actually leaving the game
     print('GamePage dispose');
     if (_gameInterfaceManagementService.isGameOver) {
-       print('GamePage dispose');
+      print('GamePage dispose');
       final String socketMessage =
           this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
       if (this._socketService.isSocketAlive()) {
@@ -171,9 +171,7 @@ class _MyWidgetState extends State<GamePage> {
                                                   .gameService.question?.type ==
                                               QuestionType.QRL &&
                                           !noticeReceived,
-                                      child: PlayerQrl(
-                                          gameInterfaceManagementService:
-                                              _gameInterfaceManagementService)),
+                                      child: PlayerQrl()),
                                   Visibility(
                                     visible: noticeReceived,
                                     child: FutureBuilder(
