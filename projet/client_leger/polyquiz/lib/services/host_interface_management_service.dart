@@ -30,6 +30,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
   List<QuestionStatistics> gameStats = [];
   bool isPaused = false;
   bool isPanicMode = false;
+  bool isAlreadyInit = false;
+  bool isAlreadyCalled = false;
 
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
@@ -71,7 +73,6 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.gameService.realGameService.validated = false;
     this.gameService.realGameService.locked = false;
     this._socketService.sendMessage(SocketEvent.START_TRANSITION, this.roomId);
-    notifyListeners();
   }
 
   void handleLastQuestion() {
@@ -93,6 +94,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.handleRefreshActivityStats();
     this.handleHostPanicMode();
     this.handleHostTimerPause();
+    isAlreadyInit = true;
   }
 
   void handleTimeTransition() {
@@ -102,7 +104,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
       if (this.gameService.realGameService.timer == 0) {
         this.gameService.realGameService.inTimeTransition = false;
         this.resetInterface();
+        print('I AM HERE 1');
         this._socketService.sendMessage(SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
+        print('I AM HERE 2');
         this.timerText = 'Temps restant: ';
       }
     });
@@ -118,8 +122,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
       if (this.gameService.question?.type == QuestionType.QCM) {
         print('CALLED 1');
-        this._interactiveListService.getPlayersList(roomId,
-            leftPlayers: leftPlayers, resetPlayerStatus: false);
+        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
       } else {
         this.sendQrlAnswer();
         this.isHostEvaluating = true;
@@ -158,10 +161,12 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void handleGetInitialQuestion() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION,
         (data) async {
+      // if (isAlreadyCalled) 
+      //   return;
       print('CALLED 3');
-      final numberOfPlayers = await _interactiveListService
-          .getPlayersList(roomId, leftPlayers: leftPlayers);
+      final numberOfPlayers = await _interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
+      // isAlreadyCalled = true;
     });
   }
 
