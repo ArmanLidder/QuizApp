@@ -40,10 +40,12 @@ class _MyWidgetState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
-    print('GamePage initState');
-    if (_socketService.isSocketAlive()) {
+    this.isHost = this._gameService.realGameService.username == 'host';
+    if (_socketService.isSocketAlive() && !_interactiveListService.isAlreadyInit) {
+      print('GamePage initState');
       _interactiveListService.configureBaseSocketFeatures();
-      this.isHost = this._gameService.realGameService.username == 'host';
+    }
+    if (_socketService.isSocketAlive()) {
       if (!isHost) {
         print('I am Here');
         this._gameInterfaceManagementService.gameService.isOfflineMode = false;
