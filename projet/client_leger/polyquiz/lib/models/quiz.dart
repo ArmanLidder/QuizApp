@@ -48,17 +48,46 @@ class Quiz {
   }
 }
 
+class Interval {
+  final num max;
+  final num min;
+
+  Interval({required this.min, required this.max});
+
+  factory Interval.fromJson(Map<String, dynamic> data) {
+    return Interval(
+        min: data['min'] as num,
+        max: data['max'] as num,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'max': max,
+      'min': min,
+    };
+  }
+}
+
 class QuizQuestion {
   final QuestionType type;
   final String text;
   final int points;
   final List<QuizChoice>? choices;
+  final num? answer;
+  final Interval? interval;
+  final num? margin;
+  final String? imageUrl;
 
   QuizQuestion({
     required this.type,
     required this.text,
     required this.points,
     this.choices,
+    this.answer,
+    this.interval,
+    this.margin,
+    this.imageUrl,
   });
 
   factory QuizQuestion.fromJson(Map<String, dynamic> json) {
