@@ -141,5 +141,8 @@ class RealGameService extends ChangeNotifier {
     this.questionNumber = 1;
     this.audioPaused = false;
     this.inTimeTransition = false;
+    this.isNotified = false;
+    this._socketService.clearAllListeners();
+    this.audio.stop();
   }
 }
