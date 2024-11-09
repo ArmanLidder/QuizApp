@@ -165,7 +165,7 @@ class InteractiveListService extends ChangeNotifier {
     this.isFinal = false;
     this.actualStatus = [];
     this.players = [];
-    
+    this.isAlreadyInit = false;
   }
 }
 
