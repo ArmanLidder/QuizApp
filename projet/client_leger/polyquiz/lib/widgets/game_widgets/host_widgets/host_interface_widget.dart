@@ -17,7 +17,10 @@ class HostInterface extends StatefulWidget {
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
 
-  HostInterface({Key? key, this.interactiveListService, this.gameInterfaceManagementService})
+  HostInterface(
+      {Key? key,
+      this.interactiveListService,
+      this.gameInterfaceManagementService})
       : super(key: key);
 
   @override
@@ -37,8 +40,10 @@ class _HostInterfaceState extends State<HostInterface> {
   void initState() {
     super.initState();
     print('isSocketAlive: ${_socketService.isSocketAlive()}');
-    print('isAlreadyInit host interface: ${hostInterfaceManagementService.isAlreadyInit}');
-    if (_socketService.isSocketAlive() && !hostInterfaceManagementService.isAlreadyInit) {
+    print(
+        'isAlreadyInit host interface: ${hostInterfaceManagementService.isAlreadyInit}');
+    if (_socketService.isSocketAlive() &&
+        !hostInterfaceManagementService.isAlreadyInit) {
       hostInterfaceManagementService.configureBaseSocketFeatures(context);
       gameService.init(gameService.realGameService.roomId.toString());
     }
@@ -67,10 +72,10 @@ class _HostInterfaceState extends State<HostInterface> {
     return Container(
       child: AnimatedBuilder(
         animation: Listenable.merge([
-                        gameService.realGameService,
-                        gameService,
-                        hostInterfaceManagementService
-                      ]),
+          gameService.realGameService,
+          gameService,
+          hostInterfaceManagementService
+        ]),
         builder: (context, snapshot) {
           if (gameService.question == null) {
             return Center(
@@ -84,7 +89,8 @@ class _HostInterfaceState extends State<HostInterface> {
               gameService: gameService,
               hostInterfaceManagementService: hostInterfaceManagementService,
               interactiveListService: widget.interactiveListService,
-              gameInterfaceManagementService: widget.gameInterfaceManagementService,
+              gameInterfaceManagementService:
+                  widget.gameInterfaceManagementService,
             );
           } else {
             return Column(
@@ -93,13 +99,16 @@ class _HostInterfaceState extends State<HostInterface> {
                   isLastButton: gameService.realGameService.isLast,
                   onNextQuestion: _handleNextQuestion,
                   gameService: gameService,
-                  hostInterfaceManagementService: hostInterfaceManagementService,
+                  hostInterfaceManagementService:
+                      hostInterfaceManagementService,
                   interactiveListService: widget.interactiveListService,
-                  gameInterfaceManagementService: widget.gameInterfaceManagementService,
+                  gameInterfaceManagementService:
+                      widget.gameInterfaceManagementService,
                 ),
                 HostMiddleSection(
                   gameService: gameService,
-                  hostInterfaceManagementService: hostInterfaceManagementService,
+                  hostInterfaceManagementService:
+                      hostInterfaceManagementService,
                 ),
                 PlayersDataTable(),
               ],
@@ -130,50 +139,69 @@ class HostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return Column(
       children: [
-        TimerWidget(
-          isHost: true,
-          timeTxt: hostInterfaceManagementService.timerText,
-          time: gameService.realGameService.timer,
-          hostInterfaceManagementService: hostInterfaceManagementService,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            TimerWidget(
+              isHost: true,
+              timeTxt: hostInterfaceManagementService.timerText,
+              time: gameService.realGameService.timer,
+              hostInterfaceManagementService: hostInterfaceManagementService,
+            ),
+            QuestionInfoWidget(
+              questionNum: gameService.questionNumber,
+              questionPts: gameService.question!.points,
+              questionText: gameService.question!.text,
+            ),
+          ],
         ),
-        QuestionInfoWidget(
-          questionNum: gameService.questionNumber,
-          questionPts: gameService.question!.points,
-          questionText: gameService.question!.text,
-        ),
-        TextButton(
-          onPressed: onNextQuestion,
-          // () 
-          // {
-            // hostInterfaceManagementService.saveStats();
-            // if (gameService.realGameService.isLast) {
-            //   isResultPage = true;
-            // }
-            // if (gameService.realGameService.isLast) {
-            //   print('isLast');
-            //   gameService.realGameService.isNotified = false;
-            //   hostInterfaceManagementService.handleLastQuestion();
-            //   isLastButton = true;
-            // } 
-            // else {
-            //   gameService.realGameService.isNotified = false;
-            //   hostInterfaceManagementService.requestNextQuestion();
-            // }
-            
-          // },
-          child: Text(
-            gameService.realGameService.isLast ? 'Dernière question' : 'Prochaine question',
-            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
-          ),
-          style: TextButton.styleFrom(
-            textStyle: TextStyle(fontWeight: FontWeight.normal),
-            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-          ),
-        ),
-        QuitBtn(isHost: true, roomId: gameService.realGameService.roomId, gameService: gameService, interactiveListService: interactiveListService, gameInterfaceManagementService: gameInterfaceManagementService,hostInterfaceManagementService: hostInterfaceManagementService),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: onNextQuestion,
+              // ()
+              // {
+              // hostInterfaceManagementService.saveStats();
+              // if (gameService.realGameService.isLast) {
+              //   isResultPage = true;
+              // }
+              // if (gameService.realGameService.isLast) {
+              //   print('isLast');
+              //   gameService.realGameService.isNotified = false;
+              //   hostInterfaceManagementService.handleLastQuestion();
+              //   isLastButton = true;
+              // }
+              // else {
+              //   gameService.realGameService.isNotified = false;
+              //   hostInterfaceManagementService.requestNextQuestion();
+              // }
+
+              // },
+              child: Text(
+                gameService.realGameService.isLast
+                    ? 'Dernière question'
+                    : 'Prochaine question',
+                style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
+              ),
+              style: TextButton.styleFrom(
+                textStyle: TextStyle(fontWeight: FontWeight.normal),
+                backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+              ),
+            ),
+            SizedBox(width: 50),
+            QuitBtn(
+                isHost: true,
+                roomId: gameService.realGameService.roomId,
+                gameService: gameService,
+                interactiveListService: interactiveListService,
+                gameInterfaceManagementService: gameInterfaceManagementService,
+                hostInterfaceManagementService: hostInterfaceManagementService),
+          ],
+        )
       ],
     );
   }
