@@ -33,6 +33,7 @@ class InteractiveListService extends ChangeNotifier {
         RoomSettings(resetPlayerStatus: resetPlayerStatus, roomId: roomId),
         completer.complete,
         leftPlayers);
+  
     return completer.future;
   }
 
@@ -40,10 +41,9 @@ class InteractiveListService extends ChangeNotifier {
       List<Player> leftPlayers) async {
     _socketService.sendMessageWithAck(
         SocketEvent.GATHER_PLAYERS_USERNAME, roomSettings.roomId, (players) async {
+      resolve(players.length);
       setUpPlayerList(leftPlayers);
-      print('this is the actual status now : ${this.actualStatus}');
       for (String userID in players) {
-          print('this is the actual status now again just to make sure: ${this.actualStatus}');
           getPlayerScoreFromServer(
               UserData(
                   username: userID,
@@ -72,10 +72,6 @@ class InteractiveListService extends ChangeNotifier {
   }
 
   void setUpPlayerList(List<Player> leftPlayers) {
-    print('Setting up player list');
-    print(this.actualStatus);
-    print(this.players);
-    
     this.actualStatus = this.players.map((player) => Player(
       username: player.username,
       score: player.score,
@@ -83,20 +79,16 @@ class InteractiveListService extends ChangeNotifier {
       status: player.status,
       canChat: player.canChat
     )).toList();
-    print(this.actualStatus);
     this.players.clear();
-    print(this.actualStatus);
     appendLeftPlayersToActivePlayers(leftPlayers);
   }
 
   void getPlayerScoreFromServer(
       UserData userInfo, int roomId, List<Player> leftPlayers, List<Player> actualStatus) {
-      print('this is after getPlayerScoreFromServer : ${this.actualStatus}');
     _socketService.sendMessageWithAck(SocketEvent.GET_SCORE, {
       'roomId': roomId,
       'username': userInfo.username
     }, (score) {
-      print('this is after getPlayerScoreFromServer : ${this.actualStatus}');
       this.addPlayer(userInfo, Score.fromJson(score), leftPlayers, actualStatus);
     });
   }
@@ -110,14 +102,11 @@ class InteractiveListService extends ChangeNotifier {
         bonus: score.bonusCount,
         status: status,
         canChat: canChat));
-    notifyListeners();
+    // notifyListeners();
   }
 
   bool canPlayerChat(String username, List<Player> actualStatus) {
     final int playerIndex = this.findPlayer(username, actualStatus);
-    for (Player player in actualStatus) {
-      print('ACTUAL STATUS CONTENT: ${player.username}');
-    }
     return this.actualStatus.length == 0 ||
             playerIndex ==
                 -1 // bug potentiel du actualstatus qui n'a pas tous les joueurs au bon moment
@@ -166,8 +155,6 @@ class InteractiveListService extends ChangeNotifier {
   }
 
   String getActualStatus(String username, List<Player> actualStatus) {
-    print('Just here!');
-    print(actualStatus);
     final playerIndex = this.findPlayer(username, actualStatus);
     return actualStatus[playerIndex].status;
   }
