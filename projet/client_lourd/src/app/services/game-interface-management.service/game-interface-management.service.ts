@@ -1,16 +1,18 @@
-import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { MAX_PERCENTAGE } from '@common/constants/game-interface.component.const';
-import { TransportStatsFormat } from '@common/constants/host-interface.component.const';
-import { QuestionStatistics } from '@common/constants/statistic-zone.component.const';
-import { GameService } from '@app/services/game.service/game.service';
-import { InteractiveListSocketService } from '@app/services/interactive-list-socket.service/interactive-list-socket.service';
-import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
-import { TimerMessage } from '@common/browser-message/displayable-message/timer-message';
-import { QuestionType } from '@common/enums/question-type.enum';
-import { Score } from '@common/interfaces/score.interface';
-import { HOST_USERNAME } from '@common/names/host-username';
-import { SocketEvent } from '@common/socket-event-name/socket-event-name';
+import {inject, Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {MAX_PERCENTAGE} from '@common/constants/game-interface.component.const';
+import {TransportStatsFormat} from '@common/constants/host-interface.component.const';
+import {QuestionStatistics} from '@common/constants/statistic-zone.component.const';
+import {GameService} from '@app/services/game.service/game.service';
+import {
+    InteractiveListSocketService
+} from '@app/services/interactive-list-socket.service/interactive-list-socket.service';
+import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
+import {TimerMessage} from '@common/browser-message/displayable-message/timer-message';
+import {QuestionType} from '@common/enums/question-type.enum';
+import {Score} from '@common/interfaces/score.interface';
+import {HOST_USERNAME} from '@common/names/host-username';
+import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 
 type Player = [string, number];
 
@@ -31,7 +33,8 @@ export class GameInterfaceManagementService {
         public gameService: GameService,
         private socketService: SocketClientService,
         private interactiveListService: InteractiveListSocketService,
-    ) {}
+    ) {
+    }
 
     setup(pathId: string) {
         if (this.gameService.isTestMode) {

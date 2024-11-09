@@ -54,6 +54,8 @@ export namespace SocketEvent {
     export const JOIN_TEAM = "join_team";
 
     export const GET_GAME_TYPE = "get_game_type";
+
+    export const NEW_OBSERVER_GAME = "new_observer";
 }
 
 

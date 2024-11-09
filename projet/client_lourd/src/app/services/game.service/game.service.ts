@@ -1,16 +1,17 @@
-import { Injectable } from '@angular/core';
-import { QCM_PANIC_MODE_ENABLED, QLR_PANIC_MODE_ENABLED } from '@common/constants/host-interface.component.const';
-import { GameRealService } from '@app/services/game-real.service/game-real.service';
-import { GameTestService } from '@app/services/game-test.service/game-test.service';
-import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
-import { SocketEvent } from '@common/socket-event-name/socket-event-name';
-import { HOST_USERNAME } from '@common/names/host-username';
+import {Injectable} from '@angular/core';
+import {QCM_PANIC_MODE_ENABLED, QLR_PANIC_MODE_ENABLED} from '@common/constants/host-interface.component.const';
+import {GameRealService} from '@app/services/game-real.service/game-real.service';
+import {GameTestService} from '@app/services/game-test.service/game-test.service';
+import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
+import {SocketEvent} from '@common/socket-event-name/socket-event-name';
+import {HOST_USERNAME} from '@common/names/host-username';
 
 
 @Injectable({
     providedIn: 'root',
 })
 export class GameService {
+    observerMode: boolean = false;
     isTestMode: boolean = false;
     isInputFocused: boolean = false;
     answers: Map<number, string | null> = new Map();
@@ -25,7 +26,8 @@ export class GameService {
         public gameTestService: GameTestService,
         public gameRealService: GameRealService,
         private socketService: SocketClientService,
-    ) {}
+    ) {
+    }
 
     get timer() {
         return this.isTestMode ? this.gameTestService.timer?.time : this.gameRealService.timer;
@@ -68,11 +70,13 @@ export class GameService {
         this.answers.clear();
     }
 
-    init(pathId: string) {
+    init(pathId: string, isObserver?: boolean) {
+        if (isObserver) this.observerMode = true;
         if (!this.isTestMode) {
             this.configureBaseSockets();
             this.gameRealService.roomId = Number(pathId);
-            this.gameRealService.init();
+            this.gameRealService.init(isObserver);
+            console.log("init game service as isObserver == true");
         } else {
             this.gameTestService.quizId = pathId;
             this.gameTestService.init();
@@ -118,7 +122,8 @@ export class GameService {
         }
     }
 
-    private reset() {
+    reset() {
+        this.observerMode = false;
         this.isTestMode = false;
         this.qrlAnswer = ''
         this.isActive = false;
@@ -139,7 +144,7 @@ export class GameService {
         this.gameRealService.timer = timeValue;
         if (this.timer === 0 && !this.gameRealService.locked) {
             this.gameRealService.locked = true;
-            if (this.username !== HOST_USERNAME) this.sendAnswer();
+            if (this.username !== HOST_USERNAME && !this.observerMode) this.sendAnswer();
         }
     }
 }

@@ -1,15 +1,33 @@
-import { Component, HostListener } from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import { SocketClientService } from "@app/services/socket-client.service/socket-client.service";
+import {GameListService} from "@app/services/game-list.service/game-list.service";
+import {
+    HostInterfaceManagementService
+} from "@app/services/host-interface-management.service/host-interface-management.service";
+import {GameService} from "@app/services/game.service/game.service";
+import {GameConfigService} from "@app/services/game-config.service/game-config.service";
+import {ObservationService} from "@app/services/observation.service/observation.service";
+import {
+    GameInterfaceManagementService
+} from "@app/services/game-interface-management.service/game-interface-management.service";
 
 @Component({
     selector: 'app-main-page',
     templateUrl: './main-page.component.html',
     styleUrls: ['./main-page.component.scss'],
 })
-export class MainPageComponent {
+export class MainPageComponent implements OnInit {
     readonly title: string = 'OnlyQuiz';
 
-    constructor(private socketService: SocketClientService) {
+    constructor(
+        private socketService: SocketClientService,
+        private activeGameListService: GameListService,
+        private hostInterfaceService: HostInterfaceManagementService,
+        private gameService: GameService,
+        private gameInterfaceService: GameInterfaceManagementService,
+        private gameConfigService: GameConfigService,
+        private observationServices: ObservationService
+    ) {
         window.onload = () => {
             localStorage.removeItem('token');
             this.socketService.disconnect();
@@ -22,4 +40,17 @@ export class MainPageComponent {
         this.socketService.disconnect();
     }
 
+    ngOnInit() {
+        console.log("Delete all services")
+        this.resetAllServices();
+    }
+
+    private resetAllServices() {
+        this.gameService.reset();
+        this.gameInterfaceService.reset();
+        this.hostInterfaceService.reset();
+        this.observationServices.reset();
+        this.gameConfigService.reset();
+        this.activeGameListService.cleanup();
+    }
 }

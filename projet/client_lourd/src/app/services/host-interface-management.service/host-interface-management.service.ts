@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
     ACTIVE,
     ACTIVE_STATUS,
@@ -9,22 +9,25 @@ import {
     TransportStatsFormat,
     VALUE,
 } from '@common/constants/host-interface.component.const';
-import { Player } from '@common/constants/player-list.component.const';
-import { QuestionStatistics } from '@common/constants/statistic-zone.component.const';
-import { GameService } from '@app/services/game.service/game.service';
-import { InteractiveListSocketService } from '@app/services/interactive-list-socket.service/interactive-list-socket.service';
-import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
-import { TimerMessage } from '@common/browser-message/displayable-message/timer-message';
-import { QuestionType } from '@common/enums/question-type.enum';
-import { InitialQuestionData, NextQuestionData } from '@common/interfaces/host.interface';
-import { QuizChoice, QuizQuestion } from '@common/interfaces/quiz.interface';
-import { HOST_USERNAME } from '@common/names/host-username';
-import { SocketEvent } from '@common/socket-event-name/socket-event-name';
+import {Player} from '@common/constants/player-list.component.const';
+import {QuestionStatistics} from '@common/constants/statistic-zone.component.const';
+import {GameService} from '@app/services/game.service/game.service';
+import {
+    InteractiveListSocketService
+} from '@app/services/interactive-list-socket.service/interactive-list-socket.service';
+import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
+import {TimerMessage} from '@common/browser-message/displayable-message/timer-message';
+import {QuestionType} from '@common/enums/question-type.enum';
+import {InitialQuestionData, NextQuestionData} from '@common/interfaces/host.interface';
+import {QuizChoice, QuizQuestion} from '@common/interfaces/quiz.interface';
+import {HOST_USERNAME} from '@common/names/host-username';
+import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 
 @Injectable({
     providedIn: 'root',
 })
 export class HostInterfaceManagementService {
+    observerMode: boolean = false;
     timerText: string = TimerMessage.TIME_LEFT;
     isGameOver: boolean = false;
     histogramDataChangingResponses = new Map<string, number>();
@@ -40,7 +43,8 @@ export class HostInterfaceManagementService {
         public gameService: GameService,
         private readonly socketService: SocketClientService,
         private interactiveListService: InteractiveListSocketService,
-    ) {}
+    ) {
+    }
 
     private get roomId() {
         return this.gameService.gameRealService.roomId;
@@ -80,19 +84,21 @@ export class HostInterfaceManagementService {
     }
 
     configureBaseSocketFeatures() {
-        this.reset();
-        this.handleTimeTransition();
-        this.handleEndQuestion();
-        this.handleFinalTimeTransition();
-        this.handleRefreshChoicesStats();
-        this.handleGetInitialQuestion();
-        this.handleGetNextQuestion();
-        this.handleRemovedPlayer();
-        this.handleEndQuestionAfterRemoval();
-        this.handleEvaluationOver();
-        this.handleRefreshActivityStats();
-        this.handleHostPanicMode();
-        this.handleHostTimerPause();
+        if (!this.observerMode) {
+            this.reset();
+            this.handleTimeTransition();
+            this.handleEndQuestion();
+            this.handleFinalTimeTransition();
+            this.handleRefreshChoicesStats();
+            this.handleGetInitialQuestion();
+            this.handleGetNextQuestion();
+            this.handleRemovedPlayer();
+            this.handleEndQuestionAfterRemoval();
+            this.handleEvaluationOver();
+            this.handleRefreshActivityStats();
+            this.handleHostPanicMode();
+            this.handleHostTimerPause();
+        }
     }
 
     private handleTimeTransition() {
@@ -249,7 +255,10 @@ export class HostInterfaceManagementService {
 
     private sendGameStats() {
         const gameStats = this.stringifyStats();
-        this.socketService.send(SocketEvent.GAME_STATUS_DISTRIBUTION, { roomId: this.gameService.gameRealService.roomId, stats: gameStats });
+        this.socketService.send(SocketEvent.GAME_STATUS_DISTRIBUTION, {
+            roomId: this.gameService.gameRealService.roomId,
+            stats: gameStats
+        });
     }
 
     private stringifyStats() {
@@ -267,7 +276,8 @@ export class HostInterfaceManagementService {
         return data;
     }
 
-    private reset() {
+     reset() {
+        this.observerMode = false;
         this.timerText = TimerMessage.TIME_LEFT;
         this.isGameOver = false;
         this.histogramDataChangingResponses = new Map<string, number>();

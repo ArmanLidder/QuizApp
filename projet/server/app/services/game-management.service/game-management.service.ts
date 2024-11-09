@@ -77,6 +77,12 @@ export class GameManagementService {
             const question = game.currentQuizQuestion;
             const index = game.currIndex + 1;
             const username = roomManager.getUsernameBySocketId(roomId, socket.id);
+            console.log(`
+            GET QUESTION
+            Questions length ${game.quiz.questions.length}
+            Current question index ${game.currIndex}
+            Id = ${socket.handshake.auth.userId}
+            `);
             socket.emit(SocketEvent.GET_INITIAL_QUESTION, {
                 question,
                 username,
@@ -95,6 +101,7 @@ export class GameManagementService {
     private handleSubmitAnswer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.SUBMIT_ANSWER, (data: PlayerAnswerData) => {
             const game = roomManager.getGameByRoomId(data.roomId);
+            console.log(`BUGGING signal ${socket.handshake.auth.userId}`)
             roomManager.getGameByRoomId(data.roomId).storePlayerAnswer(data.username, data.timer, data.answers);
             if (data.timer !== 0) {
                 const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
@@ -173,7 +180,18 @@ export class GameManagementService {
             const game = roomManager.getGameByRoomId(roomId);
             roomManager.clearRoomTimer(roomId);
             const lastIndex = game.quiz.questions.length - 1;
+            console.log(`
+            NEXT QUESTION
+            Questions length ${game.quiz.questions.length}
+            Current question index ${game.currIndex}
+            Id = ${socket.handshake.auth.userId}
+            `);
             game.next();
+            console.log(`
+            Questions length ${game.quiz.questions.length}
+            After next question index ${game.currIndex}
+            Id = ${socket.handshake.auth.userId}
+            `)
             let index = game.currIndex;
             const isLast = index === lastIndex;
             const nextQuestionNumber = ++index;

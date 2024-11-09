@@ -20,9 +20,7 @@ export class SocketClientService {
 
     connect() {
         this.fetchUserID().then(() => {
-            console.log('Connection du socket client')
             const serverUrlWithoutApi = environment.serverUrl.replace('/api', '');
-            console.log(`UserId: ${this.userID}`)
             this.socket = io(serverUrlWithoutApi, {
                 transports: ['websocket'],
                 upgrade: false,

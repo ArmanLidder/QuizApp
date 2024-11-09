@@ -22,7 +22,8 @@ export class GameListService {
   }
 
   cleanup(): void {
-    this.socketService.socket.off(SocketEvent.UPDATE_GAME_LIST);
+    if(this.socketService.isSocketAlive()) this.socketService.socket.off(SocketEvent.UPDATE_GAME_LIST);
+    this.gamesSubject.next([]);
   }
 
   fetchGameList(): void {
@@ -31,8 +32,15 @@ export class GameListService {
 
   private configureBaseSocket(): void {
     this.socketService.on(SocketEvent.UPDATE_GAME_LIST, (games: GameListItem[]) => {
-      console.log('Received Update GameList:', games);
-      this.gamesSubject.next(games);
+      const currentGames = this.gamesSubject.getValue();
+      const updatedGames = currentGames.filter(game => games.some(updatedGame => updatedGame.room !== game.room));
+      games.forEach(updatedGame => {
+        const existingGameIndex = updatedGames.findIndex(game => game.room === updatedGame.room);
+        if (existingGameIndex === -1) {
+          updatedGames.push(updatedGame);  // Add the new game
+        }
+      });
+      this.gamesSubject.next(updatedGames);
     });
   }
 }

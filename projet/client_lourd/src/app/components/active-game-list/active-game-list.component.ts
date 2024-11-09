@@ -8,6 +8,13 @@ import {RoomValidationService} from "@app/services/room-validation.service/room-
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {User} from "@common/interfaces/user-data.interface";
 import {UsersService} from "@app/services/users.service/users.service";
+import {Router} from "@angular/router";
+import {GameService} from "@app/services/game.service/game.service";
+import {ObservationService} from "@app/services/observation.service/observation.service";
+import {HOST_USERNAME} from "@common/names/host-username";
+import {
+    HostInterfaceManagementService
+} from "@app/services/host-interface-management.service/host-interface-management.service";
 
 @Component({
     selector: 'app-active-game-list',
@@ -23,16 +30,19 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
 
     constructor(
         private gameListService: GameListService,
+        private gameService: GameService,
         private quizService: QuizService,
         private roomValidationService: RoomValidationService,
         private snackbarService: SnackbarService,
         private userService: UsersService,
-    ) {
-        this.games$ = this.gameListService.games$;
-    }
+        private router: Router,
+        private observationService: ObservationService,
+        private hostInterfaceManagementService: HostInterfaceManagementService,
+
+    ) {}
 
     async ngOnInit() {
-        console.log('On init');
+        this.games$ = this.gameListService.games$;
         await this.gameListService.initialize();
         this.prefetchQuizNames();
     }
@@ -78,11 +88,11 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        console.log('On destroy')
         this.gameListService.cleanup();
     }
 
     async joinRoom(game: GameListItem) {
+        this.hostInterfaceManagementService.observerMode = false;
         this.roomValidationService.roomId = game.room as unknown as string;
         const isHostFriend = await this.validateFriendship(game);
         if (game.friendsOnly && !isHostFriend)  {
@@ -103,6 +113,15 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
                 if (isValid) this.sendAllDataToWaitingRoom();
             }
         }
+    }
+
+    observeGame(game: GameListItem) {
+        this.gameService.init(String(game.room), true);
+        this.gameService.gameRealService.username = HOST_USERNAME;
+        console.log(`On active game list ${this.gameService.gameRealService.username}`)
+        this.hostInterfaceManagementService.observerMode = true;
+        this.observationService.observeGame(game.room);
+        setTimeout(() => {this.router.navigate([`game/${game.room}`]);}, 500);
     }
 
     private sendAllDataToWaitingRoom() {
@@ -126,7 +145,6 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
     private async validateMoney(money: number) {
         const currentUserMoney = (await firstValueFrom(this.roomValidationService.user$) as User)?.currency;
         const isValid = currentUserMoney >= money;
-        console.log(currentUserMoney, money, isValid)
         if (isValid) await this.userService.updateUser({currency: (currentUserMoney - money)});
         return isValid;
     }

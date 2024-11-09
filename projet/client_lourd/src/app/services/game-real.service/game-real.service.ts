@@ -7,11 +7,13 @@ import { InitialQuestionData, NextQuestionData } from '@common/interfaces/host.i
 import { QuizQuestion } from '@common/interfaces/quiz.interface';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { Player } from '@app/services/game-test.service/game-test.service.const';
+import {HOST_USERNAME} from "@common/names/host-username";
 
 @Injectable({
     providedIn: 'root',
 })
 export class GameRealService implements GameServiceInterface {
+    observerMode: boolean = false;
     username: string = '';
     roomId: number = 0;
     players: Player[] = [];
@@ -36,7 +38,12 @@ export class GameRealService implements GameServiceInterface {
         this.audio.volume = DEFAULT_VOLUME;
     }
 
-    init() {
+    init(isObserver?: boolean) {
+        if (isObserver) {
+            this.observerMode = true;
+            this.username = HOST_USERNAME;
+            console.log("game real service init with isObserver as true");
+        }
         this.configureBaseSockets();
         this.socketService.send(SocketEvent.GET_QUESTION, this.roomId);
     }
@@ -85,6 +92,7 @@ export class GameRealService implements GameServiceInterface {
     }
 
     private reset() {
+        this.observerMode = false;
         this.username = '';
         this.roomId = 0;
         this.timer = 0;

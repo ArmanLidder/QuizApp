@@ -85,7 +85,6 @@ export class AuthService {
             case 'auth/requires-recent-login':
                 return "Veuillez vous reconnecter avant d'effectuer cette opération.";
             default:
-                console.log(errorCode);
                 return "Une erreur inconnue s'est produite.";
         }
     }

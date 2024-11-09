@@ -39,6 +39,7 @@ export class GameCreationService {
         this.handleJoinTeam(roomManager, socket, sio);
         this.handleCreateTeam(roomManager, socket, sio);
         this.handleGetGameType(roomManager, socket);
+        this.handleNewObserver(roomManager, socket, sio);
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
@@ -69,6 +70,12 @@ export class GameCreationService {
                 this.sendUpdateGameList(roomManager, sio)
             }
             callback(isLocked);
+        });
+    }
+
+    private handleNewObserver(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.NEW_OBSERVER_GAME, (roomId: number) => {
+            socket.join(String(roomId))
         });
     }
 
