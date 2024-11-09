@@ -95,6 +95,28 @@ class _MyWidgetState extends State<GamePage> {
     super.dispose();
   }
 
+  Widget getPlayerQuestion() {
+    Widget? questionWidget;
+    switch (_gameInterfaceManagementService.gameService.question?.type) {
+      case QuestionType.QCM:
+        questionWidget = Container(
+          height: 500,
+          child: PlayerQcm()
+        );
+        break;
+      case QuestionType.QRL:
+        questionWidget = PlayerQrl();
+        break;
+      default:
+        questionWidget = Text("Unimplemented Question Type");
+        break;
+    }
+    return Visibility(
+        visible: !noticeReceived,
+        child: questionWidget
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isHost) {
@@ -183,6 +205,7 @@ class _MyWidgetState extends State<GamePage> {
                                       )
                                     ],
                                   ),
+                                  getPlayerQuestion(),
                                   Visibility(
                                       visible: _gameInterfaceManagementService
                                                   .gameService.question?.type ==
