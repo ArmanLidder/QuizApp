@@ -39,8 +39,8 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   Quiz.QuizQuestion? get question {
-    // return gameInterfaceManagementService.gameService.question;
-    return defaultQuestion;
+    return gameInterfaceManagementService.gameService.question;
+    // return defaultQuestion;
   }
 
   num get max {
