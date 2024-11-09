@@ -7,6 +7,7 @@ import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_interface_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qre_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qrl_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_notice.dart';
@@ -106,6 +107,9 @@ class _MyWidgetState extends State<GamePage> {
         break;
       case QuestionType.QRL:
         questionWidget = PlayerQrl();
+        break;
+      case QuestionType.QRE:
+        questionWidget = PlayerQreWidget();
         break;
       default:
         questionWidget = Text("Unimplemented Question Type");
