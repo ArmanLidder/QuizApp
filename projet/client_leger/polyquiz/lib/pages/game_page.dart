@@ -66,6 +66,28 @@ class _MyWidgetState extends State<GamePage> {
     super.dispose();
   }
 
+  Widget getPlayerQuestion() {
+    Widget? questionWidget;
+    switch (_gameInterfaceManagementService.gameService.question?.type) {
+      case QuestionType.QCM:
+        questionWidget = Container(
+          height: 500,
+          child: PlayerQcm()
+        );
+        break;
+      case QuestionType.QRL:
+        questionWidget = PlayerQrl(gameInterfaceManagementService: _gameInterfaceManagementService,);
+        break;
+      default:
+        questionWidget = Text("Unimplemented Question Type");
+        break;
+    }
+    return Visibility(
+        visible: !noticeReceived,
+        child: questionWidget
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isHost) {
@@ -154,21 +176,7 @@ class _MyWidgetState extends State<GamePage> {
                                       )
                                     ],
                                   ),
-                                  Visibility(
-                                      visible: _gameInterfaceManagementService
-                                                  .gameService.question?.type ==
-                                              QuestionType.QCM &&
-                                          !noticeReceived,
-                                      child: Container(
-                                          height: 500, child: PlayerQcm())),
-                                  Visibility(
-                                      visible: _gameInterfaceManagementService
-                                                  .gameService.question?.type ==
-                                              QuestionType.QRL &&
-                                          !noticeReceived,
-                                      child: PlayerQrl(
-                                          gameInterfaceManagementService:
-                                              _gameInterfaceManagementService)),
+                                  getPlayerQuestion(),
                                   Visibility(
                                     visible: noticeReceived,
                                     child: FutureBuilder(
