@@ -206,6 +206,22 @@ class _MyWidgetState extends State<GamePage> {
                                     ],
                                   ),
                                   getPlayerQuestion(),
+                                  // Visibility(
+                                  //     visible: _gameInterfaceManagementService
+                                  //         .gameService.question?.type ==
+                                  //         QuestionType.QCM &&
+                                  //         !noticeReceived,
+                                  //     child: Container(
+                                  //         height: 500,
+                                  //         child: PlayerQcm())),
+                                  // Visibility(
+                                  //     visible: _gameInterfaceManagementService
+                                  //         .gameService.question?.type ==
+                                  //         QuestionType.QRL &&
+                                  //         !noticeReceived,
+                                  //     child: PlayerQrl(
+                                  //         gameInterfaceManagementService:
+                                  //         _gameInterfaceManagementService)),
                                   Visibility(
                                       visible: _gameInterfaceManagementService
                                                   .gameService.question?.type ==
