@@ -14,6 +14,8 @@ class _HistogramWidgetState extends State<Histogram> {
       HostInterfaceManagementService();
 
   Color getColor(int index) {
+    print('ENTRIES IN GET COLOR');
+    print(_hostInterfaceManagementService.histogramDataValue.entries);
     if (_hostInterfaceManagementService.histogramDataValue.entries
         .toList()[index]
         .value) {

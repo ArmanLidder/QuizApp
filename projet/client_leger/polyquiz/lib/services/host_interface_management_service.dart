@@ -102,11 +102,11 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.timerText = 'Prochaine question dans: ';
       this.gameService.realGameService.timer = timeValue;
       if (this.gameService.realGameService.timer == 0) {
+        print('TIMER GOT TO 0');
         this.gameService.realGameService.inTimeTransition = false;
         this.resetInterface();
-        print('I AM HERE 1');
-        this._socketService.sendMessage(SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
-        print('I AM HERE 2');
+        this._socketService.sendMessage(
+            SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
         this.timerText = 'Temps restant: ';
       }
     });
@@ -251,6 +251,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
   }
 
   void initGraph(QuizQuestion question, int numberOfPlayers) {
+    print('question in init graph');
+    print(question);
     this.isHostEvaluating = false;
     if (question.type == QuestionType.QCM && question.choices != null) {
       print('INIT GRAPH GOT INTO THE IF');
