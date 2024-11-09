@@ -31,6 +31,7 @@ class _MyWidgetState extends State<GamePage> {
   int questionPts = 50;
   String questionTxt = "Question par defaut ?";
   String message = "Attendez pendant que l'hôte corrige les réponses...";
+  bool isQuitBtn  = false;
   GameService _gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
@@ -41,9 +42,10 @@ class _MyWidgetState extends State<GamePage> {
   void initState() {
     super.initState();
     this.isHost = this._gameService.realGameService.username == 'host';
+    print('isAlreadyInit interactive service: ${_interactiveListService.isAlreadyInit}');
     if (_socketService.isSocketAlive() && !_interactiveListService.isAlreadyInit) {
-      print('GamePage initState');
-      _interactiveListService.configureBaseSocketFeatures();
+      _socketService.clearAllListeners();
+      _cleanupSocketListeners();
     }
     if (_socketService.isSocketAlive()) {
       if (!isHost) {
@@ -56,19 +58,39 @@ class _MyWidgetState extends State<GamePage> {
     }
   }
 
+  Future<void> _cleanupSocketListeners() async {
+    while (_socketService.getListenerCount() != 0) {
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    print('GamePage initState');
+    _interactiveListService.configureBaseSocketFeatures();
+  }
+
   @override
   void dispose() {
     // Only dispose if we're actually leaving the game
-    print('GamePage dispose');
-    if (_gameInterfaceManagementService.isGameOver) {
+    if (_gameService.isQuitBtn) {
        print('GamePage dispose');
-      final String socketMessage =
-          this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
-      if (this._socketService.isSocketAlive()) {
-        this._socketService.sendMessage(
-            socketMessage, this._gameService.realGameService.roomId);
-      }
-      this._gameService.destroy();
+      // final String socketMessage =
+      //     this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
+      // if (this._socketService.isSocketAlive()) {
+      //   this._socketService.sendMessage(
+      //       socketMessage, this._gameService.realGameService.roomId);
+      // }
+      // _gameService.destroy();
+      // _gameInterfaceManagementService.reset();
+      // _interactiveListService.reset();
+      // Reset local state
+      isHost = false;
+      isQcm = false;
+      noticeReceived = false;
+      isGrading = true;
+      time = 10;
+      questionNum = 1;
+      questionPts = 50;
+      questionTxt = "Question par defaut ?";
+      message = "Attendez pendant que l'hôte corrige les réponses...";
+      isQuitBtn = false;
     }
     super.dispose();
   }
@@ -83,7 +105,7 @@ class _MyWidgetState extends State<GamePage> {
           backgroundColor: Color.fromRGBO(53, 121, 246, 1),
         ),
         body: ListView(
-            children: [Visibility(visible: isHost, child: HostInterface())]),
+            children: [Visibility(visible: isHost, child: HostInterface(interactiveListService: _interactiveListService, gameInterfaceManagementService: _gameInterfaceManagementService))]),
       );
     } else {
       return Container(
