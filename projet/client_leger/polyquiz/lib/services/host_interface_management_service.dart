@@ -158,6 +158,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
         (data) async {
       final numberOfPlayers = await _interactiveListService
           .getPlayersList(roomId, leftPlayers: leftPlayers);
+      print('Handle inital question called');
+      print(
+          'QUESTION FOR INIT GRAPHE ${QuizQuestion.fromJson(data['question'])}');
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
     });
   }
@@ -240,6 +243,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
   }
 
   void initGraph(QuizQuestion question, int numberOfPlayers) {
+    print('question in init graph');
+    print(question);
     this.isHostEvaluating = false;
     if (question.type == QuestionType.QCM && question.choices != null) {
       print('INIT GRAPH GOT INTO THE IF');
