@@ -13,6 +13,7 @@ class PlayerQreWidget extends StatefulWidget {
 
 class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
+  bool isValidated = false;
   int currentValue = 0;
 
   @override
@@ -52,14 +53,23 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: <Widget>[
-          getMinMaxCard(),
-          getSlider(),
-          getToleranceWidget(),
-          getIntervalWidget()
-        ],
+    return Center(
+      child: Card(
+        elevation: 5.0,
+        margin: EdgeInsets.all(20),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              getMinMaxCard(),
+              getSlider(),
+              getToleranceWidget(),
+              getIntervalWidget(),
+              getButtons()
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -100,7 +110,48 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     );
   }
 
+  Widget getButtons() {
+    final validTextStyle = TextButton.styleFrom(
+      backgroundColor: isValidated ? Colors.grey : Colors.blueAccent,
+      foregroundColor: Colors.white,
+    );
+    final quitTextStyle = TextButton.styleFrom(
+      backgroundColor: Colors.red,
+      foregroundColor: Colors.white
+    );
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        TextButton(
+            onPressed: !isValidated ? onValidate : null,
+            child: Text("Valider"),
+            style: validTextStyle,
+        ),
+        SizedBox(width: 10,),
+        TextButton(
+            onPressed: onQuit,
+            child: Text("Quitter"),
+            style: quitTextStyle,
+        )
+      ],
+    );
+  }
+
+  void onValidate() {
+    setState(() {
+      isValidated = true;
+    });
+  }
+
+  void onQuit() {
+    // TODO: to change later
+    setState(() {
+      isValidated = false;
+    });
+  }
+
   void changeSliderValue(double value) {
+    if (isValidated) return;
     setState(() {
       currentValue = value.round();
     });
