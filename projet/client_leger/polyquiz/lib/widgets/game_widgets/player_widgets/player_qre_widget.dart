@@ -141,6 +141,8 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     setState(() {
       isValidated = true;
     });
+    gameInterfaceManagementService.gameService.qreAnswer = currentValue;
+    gameInterfaceManagementService.gameService.sendAnswer();
   }
 
   void onQuit() {
