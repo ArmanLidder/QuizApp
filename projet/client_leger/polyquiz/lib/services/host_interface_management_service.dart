@@ -30,6 +30,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
   List<QuestionStatistics> gameStats = [];
   bool isPaused = false;
   bool isPanicMode = false;
+  bool isAlreadyInit = false;
+  bool isAlreadyCalled = false;
 
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
@@ -71,7 +73,6 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.gameService.realGameService.validated = false;
     this.gameService.realGameService.locked = false;
     this._socketService.sendMessage(SocketEvent.START_TRANSITION, this.roomId);
-    notifyListeners();
   }
 
   void handleLastQuestion() {
@@ -93,6 +94,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.handleRefreshActivityStats();
     this.handleHostPanicMode();
     this.handleHostTimerPause();
+    isAlreadyInit = true;
   }
 
   void handleTimeTransition() {
@@ -120,8 +122,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
       if (this.gameService.question?.type == QuestionType.QCM) {
         print('CALLED 1');
-        this._interactiveListService.getPlayersList(roomId,
-            leftPlayers: leftPlayers, resetPlayerStatus: false);
+        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
       } else {
         this.sendQrlAnswer();
         this.isHostEvaluating = true;
@@ -160,13 +161,12 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void handleGetInitialQuestion() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION,
         (data) async {
+      // if (isAlreadyCalled) 
+      //   return;
       print('CALLED 3');
-      final numberOfPlayers = await _interactiveListService
-          .getPlayersList(roomId, leftPlayers: leftPlayers);
-      print('Handle inital question called');
-      print(
-          'QUESTION FOR INIT GRAPHE ${QuizQuestion.fromJson(data['question'])}');
+      final numberOfPlayers = await _interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
+      // isAlreadyCalled = true;
     });
   }
 

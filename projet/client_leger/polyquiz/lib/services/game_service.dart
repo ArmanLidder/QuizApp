@@ -24,6 +24,7 @@ class GameService extends ChangeNotifier {
   bool hasInteracted = false;
   int? lastQrlScore;
   int qreAnswer = 0;
+  bool gotNotified = false;
 
   final OfflineGameService offlineGameService = OfflineGameService();
   final RealGameService realGameService = RealGameService();
@@ -121,12 +122,10 @@ class GameService extends ChangeNotifier {
 
   void sendAnswer() {
     if (!this.isOfflineMode) {
-      print('I AM HERE HERE HERE 80000');
       this.realGameService.answers = this.answers;
       this.realGameService.qreAnswer = this.qreAnswer;
       this.realGameService.qrlAnswer = this.qrlAnswer;
       this.realGameService.sendAnswer();
-      print('I AM JUST HERE HERE 90000');
       this.isActive = false;
       this.hasInteracted = false;
     } else {
@@ -169,6 +168,7 @@ class GameService extends ChangeNotifier {
   void handleTimeEvent(timeValue) {
     this.realGameService.timer = timeValue;
     if (this.timer == 0 && !this.realGameService.locked) {
+
       this.realGameService.locked = true;
       if (this.username != 'host') sendAnswer();
     }

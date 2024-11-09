@@ -19,6 +19,7 @@ class InteractiveListService extends ChangeNotifier {
 
   List<Player> players = []; //check player type for each service
   bool isFinal = false;
+  bool isAlreadyInit = false;
   List<Player> actualStatus = [];
   User? user;
   final UserService userService = UserService();
@@ -65,6 +66,7 @@ class InteractiveListService extends ChangeNotifier {
     reset();
     handleUpdateInteraction();
     handleSubmitAnswer();
+    isAlreadyInit = true;
   }
 
   bool isPlayerGone(String username, List<Player> remainingPlayers) {
