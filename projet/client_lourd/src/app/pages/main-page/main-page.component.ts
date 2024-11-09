@@ -10,6 +10,7 @@ import {ObservationService} from "@app/services/observation.service/observation.
 import {
     GameInterfaceManagementService
 } from "@app/services/game-interface-management.service/game-interface-management.service";
+import {UsersService} from "@app/services/users.service/users.service";
 
 @Component({
     selector: 'app-main-page',
@@ -17,7 +18,8 @@ import {
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent implements OnInit {
-    readonly title: string = 'OnlyQuiz';
+    readonly title: string = 'Polyquiz';
+    username: string;
 
     constructor(
         private socketService: SocketClientService,
@@ -26,8 +28,12 @@ export class MainPageComponent implements OnInit {
         private gameService: GameService,
         private gameInterfaceService: GameInterfaceManagementService,
         private gameConfigService: GameConfigService,
-        private observationServices: ObservationService
+        private observationServices: ObservationService,
+        public usersService: UsersService, 
     ) {
+        this.usersService.currentUserProfile$.subscribe((user)=>{
+            this.username = user?.username!;
+        })
         window.onload = () => {
             localStorage.removeItem('token');
             this.socketService.disconnect();

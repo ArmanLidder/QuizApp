@@ -1,15 +1,15 @@
 import {Component, Injector, OnInit} from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { POPUP_TIMEOUT } from '@common/constants/quiz-creation.component.const';
-import { QuizFormService } from '@app/services/quiz-form-service/quiz-form.service';
-import { QuizValidationService } from '@app/services/quiz-validation.service/quiz-validation.service';
-import { QuizService } from '@app/services/quiz.service/quiz.service';
-import { Quiz } from '@common/interfaces/quiz.interface';
-import { PageMode } from 'src/enums/page-mode.enum';
-import { generateRandomId } from 'src/utils/random-id-generator/random-id-generator';
-import { GAME_ADMIN_PAGE } from '@common/page-url/page-url';
+import {FormArray, FormGroup} from '@angular/forms';
+import {MatDialog} from '@angular/material/dialog';
+import {ActivatedRoute, Router} from '@angular/router';
+import {POPUP_TIMEOUT} from '@common/constants/quiz-creation.component.const';
+import {QuizFormService} from '@app/services/quiz-form-service/quiz-form.service';
+import {QuizValidationService} from '@app/services/quiz-validation.service/quiz-validation.service';
+import {QuizService} from '@app/services/quiz.service/quiz.service';
+import {Quiz} from '@common/interfaces/quiz.interface';
+import {PageMode} from 'src/enums/page-mode.enum';
+import {generateRandomId} from 'src/utils/random-id-generator/random-id-generator';
+import {GAME_ADMIN_PAGE} from '@common/page-url/page-url';
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {UsersService} from "@app/services/users.service/users.service";
 import {User} from "@common/interfaces/user-data.interface";
@@ -59,11 +59,16 @@ export class QuizCreationComponent implements OnInit{
         this.isPopupVisibleForm = false;
         this.formErrors = [];
         const id = this.route.snapshot.paramMap.get('id');
+        const isImport = this.route.snapshot.queryParamMap.has('import');
 
         if (id) {
             this.mode = PageMode.MODIFICATION;
             this.quiz = await firstValueFrom(this.quizService.basicGetById(id));
             this.quizForm = await this.quizFormService.fillForm(this.quiz);
+        } else if (isImport) {
+            this.mode = PageMode.CREATION;
+            this.quizForm = await this.quizFormService.fillForm(this.quizFormService.quiz);
+            this.markFormGroupTouched(this.quizForm);
         } else {
             this.quizForm = await this.quizFormService.fillForm();
             this.mode = PageMode.CREATION;
@@ -79,6 +84,15 @@ export class QuizCreationComponent implements OnInit{
         }
     }
 
+    private markFormGroupTouched(formGroup: FormGroup) {
+        (<any>Object).values(formGroup.controls).forEach((control: FormGroup<any>) => {
+            if (control.controls) { // control is a FormGroup
+                this.markFormGroupTouched(control);
+            } else { // control is a FormControl
+                control.markAsTouched();
+            }
+        });
+    }
 
     get questionsArray() {
         return this.quizForm.get('questions') as FormArray;
@@ -99,20 +113,26 @@ export class QuizCreationComponent implements OnInit{
         if (this.quizForm?.valid) {
             const title = this.quizForm.get('title')?.value;
             const isOwner = this.currentUid === this.quizForm.get('owner')?.value;
-            this.quizService.basicGetById(this.quiz.id).subscribe((latestQuiz: Quiz) => {
-                if (!isOwner && !latestQuiz.visible) {
-                    this.openErrorDialog('La visibilité de ce quiz a été modifiée à privée par le propriétaire pendant l\'édition.');
-                    this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
+            if (this.mode === PageMode.MODIFICATION && !isOwner) {
+                this.quizService.basicGetById(this.quiz.id).subscribe((latestQuiz: Quiz) => {
+                    if (latestQuiz === null) {
+                        this.openErrorDialog('Ce quiz a été supprimé par un autre utilisateur.');
+                        this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
+                    }
+                    if (!isOwner && !latestQuiz.visible) {
+                        this.openErrorDialog('La visibilité de ce quiz a été modifiée à privée par le propriétaire pendant l\'édition.');
+                        this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
+                    }
+                });
+            }
+            this.quizService.checkTitleUniqueness(title).subscribe((response) => {
+                if (response.body?.isUnique || this.mode === PageMode.MODIFICATION) {
+                    this.addOrUpdateQuiz(quiz);
                 } else {
-                    this.quizService.checkTitleUniqueness(title).subscribe((response) => {
-                        if (response.body?.isUnique || this.mode === PageMode.MODIFICATION) {
-                            this.addOrUpdateQuiz(quiz);
-                        } else {
-                            this.openErrorDialog('Le titre existe déjà');
-                        }
-                    });
+                    this.openErrorDialog('Le titre existe déjà');
                 }
             });
+
         } else {
             this.formErrors = this.quizValidationService.validateQuiz(quiz);
             this.showPopupIfFormConditionMet(true);

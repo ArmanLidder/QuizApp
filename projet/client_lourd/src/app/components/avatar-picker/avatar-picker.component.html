@@ -9,7 +9,7 @@
         </div>
         <div *ngIf="customAvatarUrl" class="avatar-item">
             <img [src]="customAvatarUrl"
-                 alt="Custom Avatar" class="w-24 h-24 rounded-full "
+                 alt="Custom Avatar" class="w-24 h-24 rounded-full"
                  [class.ring-4]="customAvatarSelected"
                  [class.ring-blue-500]="customAvatarSelected"
                  (click)="selectCustomAvatar()"/>
@@ -25,8 +25,7 @@
                 <mat-icon class="mr-2">upload</mat-icon>
                 Choisir une image
             </label>
-            <input id="custom-avatar" type="file" accept="image/*" (change)="onCustomAvatarUploaded($event)" class="hidden"/>
+            <input id="custom-avatar" type="file" accept="image/jpeg,image/png,image/jpg" (change)="onCustomAvatarUploaded($event)" class="hidden"/>
         </div>
     </div>
-
 </div>

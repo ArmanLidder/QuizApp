@@ -8,6 +8,7 @@ import {
 
 import {UsersService} from "@app/services/users.service/users.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
+import {firstValueFrom} from "rxjs";
 
 
 @Injectable({
@@ -50,6 +51,7 @@ export class AuthService {
         } catch (error: any) {
             if (error.message === 'Cet utilisateur est déjà connecté.')  throw error;
             const errorMessage = this.mapFirebaseAuthError(error.code);
+            await this.auth.signOut();
             throw new Error(errorMessage);
         }
     }
@@ -58,6 +60,10 @@ export class AuthService {
 
 
     async logout(): Promise<void> {
+        const currentUser = await firstValueFrom(this.user$); // Resolves the observable to the current user data once
+        if (!currentUser) {
+            throw new Error("Cet utilisateur n'est pas connecté");
+        }
         await this.usersService.addLogEvent('logout');
         await this.auth.signOut();
     }

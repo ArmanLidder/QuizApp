@@ -12,7 +12,7 @@ export class SnackbarService {
       duration: 5000, // default duration
       verticalPosition: 'bottom',
       horizontalPosition: 'center',
-      panelClass: 'my-snack-bar',
+      // panelClass: ['my-snack-bar'],
       ...config, // additional config if you need
     });
   }

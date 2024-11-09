@@ -4,7 +4,7 @@ export namespace ErrorDictionary {
     export const ISSUES = 'les problèmes suivants';
     export const ISSUE = 'le problème suivant';
     export const FILE_CONTAINS = 'Le fichier que vous tenter d\'importer contient '
-    export const SOLUTION = '\n\n Veuillez corriger cela avant de réessayer. ';
+    export const SOLUTION = '\n\n Veuillez corriger cela. ';
     export const QUIZ_DELETED = 'Ce quiz a été supprimé, veuillez choisir un autre.';
     export const QUIZ_INVISIBLE = 'Ce quiz est maintenant caché, veuillez choisir un autre.';
     export const QUIZ_ALREADY_EXIST = 'Un quiz ayant le même titre existe déjà';

@@ -1,11 +1,12 @@
 import {Component, Input} from '@angular/core';
 import { Router } from '@angular/router';
 import {UsersService} from "@app/services/users.service/users.service";
-import { environment } from "../../../environments/environment";
 import { Observable } from 'rxjs';
 import { User } from "@app/interfaces/user/user-data.interface";
 import {AuthService} from "@app/services/auth.service/auth.service";
 import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
+import {MatDialog} from "@angular/material/dialog";
+import {ProfileViewerComponent} from "@app/components/profile-viewer/profile-viewer.component";
 
 @Component({
   selector: 'app-avatar',
@@ -13,8 +14,13 @@ import {SocketClientService} from "@app/services/socket-client.service/socket-cl
   styleUrls: ['./avatar.component.scss']
 })
 export class AvatarComponent {
-  @Input() isChat: boolean;
-  @Input() uid: string;
+  @Input() isChat: boolean = false;
+  @Input() showMoney: boolean = false;
+  @Input() showMenu: boolean = false;
+  @Input() size: 'small' | 'medium' | 'large' = 'medium';
+  @Input() hideLevel: boolean = false;
+
+  @Input() uid: string; //imporant to pass in
 
   currentUser$: Observable<User | undefined>;
 
@@ -26,13 +32,25 @@ export class AvatarComponent {
       private authService: AuthService,
       private usersService: UsersService,
       private socketService: SocketClientService,
+      private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
     if (this.uid) {
       this.loadUserProfile(this.uid);
-    } else if (!this.isChat) {
+    } else {
       this.currentUser$ = this.usersService.currentUserProfile$ as Observable<User>;
+    }
+  }
+
+  openProfileDialog(): void {
+    if (this.uid) {
+      this.dialog.open(ProfileViewerComponent, {
+        data: { uid: this.uid },
+        height: 'auto', // Let the height adjust based on content
+        width: '80%',   // Adjust width to ensure it takes up more space
+        maxWidth: '600px' // Optional: set a max width for better control
+      });
     }
   }
 
@@ -41,25 +59,13 @@ export class AvatarComponent {
   }
 
 
-  toggleMenu() {
-    if (!this.isChat) {
-      this.menuEnabled = !this.menuEnabled;
-    }
-  }
-
   goToProfile() {
-    this.toggleMenu();
     this.router.navigate([`/profile`]);
   }
 
   async logout() {
-    this.toggleMenu();
     await this.authService.logout();
     if (this.socketService.isSocketAlive()) this.socketService.disconnect();
     await this.router.navigate(['/login']);
-    console.log("navigation done")
   }
-
-
-  protected readonly environment = environment;
 }

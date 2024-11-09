@@ -67,19 +67,8 @@
                     </div>
                 </div>
 
-                <!-- Friends Section with Sticky Tabs -->
-                <div class="border-b">
-                    <div class="flex justify-between items-center p-8 pb-0">
-                        <h2 class="text-2xl font-semibold">Amis</h2>
-                        <button (click)="openUserSearch()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center">
-                            <mat-icon class="mr-2">person_add</mat-icon>
-                            Ajouter
-                        </button>
-                    </div>
-                    <div class="min-h-40">
-                        <app-friends ></app-friends>
-                    </div>
-                </div>
+                <app-friends></app-friends>
+
 
                 <!-- Achievements Section -->
                 <div class="p-8 border-b">
@@ -97,7 +86,7 @@
                 <mat-accordion class="mt-8 space-y-4">
                     <!-- Connection History Panel -->
                     <mat-expansion-panel>
-                        <mat-expansion-panel-header class="p-4 bg-white hover:bg-gray-300">
+                        <mat-expansion-panel-header class="p-4 ">
                             <mat-panel-title class="p-4 text-lg font-bold text-gray-700">
                                 Historique des Connexions
                             </mat-panel-title>
@@ -114,7 +103,7 @@
 
                     <!-- Game History Panel -->
                     <mat-expansion-panel>
-                        <mat-expansion-panel-header class="p-4 bg-white hover:bg-gray-300">
+                        <mat-expansion-panel-header class="p-4">
                             <mat-panel-title class="p-4 text-lg font-bold text-gray-700">
                                 Historique des Parties
                             </mat-panel-title>

@@ -193,7 +193,7 @@
                             <label for="margin{{ i }}" class="block text-sm font-medium">Marge de tolérance :</label>
                             <input type="number" id="margin{{ i }}" formControlName="margin"
                                    class="w-full p-2 border rounded" placeholder="Entrez la marge de tolérance">
-                            <p *ngIf="question.get('margin')?.hasError('marginTooLarge') && question.get('margin')?.dirty" class="text-red-600 text-sm">
+                            <p *ngIf="question.get('margin')?.hasError('marginTooLarge') && question.get('margin')?.touched" class="text-red-600 text-sm">
                                 La marge de tolérance doit être au maximum 25 % de l'intervalle
                                 ({{ calculateMarginLimit(question.get('interval.min')?.value, question.get('interval.max')?.value) }}).
                             </p>

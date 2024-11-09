@@ -7,6 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UsersService } from '@app/services/users.service/users.service';
 import { firstValueFrom } from 'rxjs';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
+import {ConfirmationDialogComponent} from "@app/components/confirmation-dialog/confirmation-dialog.component";
+import {PopUpMessage} from "@common/browser-message/displayable-message/pop-up-message";
 
 @Component({
     selector: 'app-game-item',
@@ -18,7 +20,7 @@ export class GameItemComponent {
     @Input() quiz: Quiz;
     @Input() isAdmin: boolean;
     @Output() removeQuiz: EventEmitter<string> = new EventEmitter<string>();
-
+    @Output() refresh: EventEmitter<void> = new EventEmitter<void>();
     currentUid: string | undefined;
 
     constructor(
@@ -37,8 +39,14 @@ export class GameItemComponent {
 
     private checkOwnershipAndVisibility(callback: () => void): void {
         this.quizService.basicGetById(this.quiz.id).subscribe((latestQuiz: Quiz) => {
+            if(!latestQuiz) {
+                this.openErrorDialog('Ce jeu n\'existe plus');
+                this.refresh.emit();
+                return;
+            }
             if (!latestQuiz.visible && this.currentUid !== latestQuiz.owner) {
                 this.openErrorDialog('Ce jeu a été défini comme privé par le créateur et ne peut pas être modifié/exporté/supprimé');
+                return;
             } else {
                 callback();
             }
@@ -46,10 +54,17 @@ export class GameItemComponent {
     }
 
     deleteGame(): void {
-        this.checkOwnershipAndVisibility(() => {
-            this.quizService.basicDelete(this.quiz.id).subscribe(() => {
-                this.removeQuiz.emit(this.quiz.id);
-            });
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            data: {message: PopUpMessage.DELETE_QUIZ_MESSAGE},
+        });
+        dialogRef.afterClosed().subscribe(async (result) => {
+            if (result) {
+                this.checkOwnershipAndVisibility(() => {
+                    this.quizService.basicDelete(this.quiz.id).subscribe(() => {
+                        this.removeQuiz.emit(this.quiz.id);
+                    });
+                });
+            }
         });
     }
 
