@@ -142,9 +142,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
         print('CALLED 2');
-        this
-            ._interactiveListService
-            .getPlayersList(this.roomId, leftPlayers: leftPlayers);
+        this._interactiveListService.getPlayersList(this.roomId, leftPlayers: leftPlayers);
+        this._socketService.sendMessage(SocketEvent.SAVE_FINAL_GAME_STATS, this.gameService.realGameService.roomId);
       }
     });
   }
@@ -321,9 +320,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.gameStats.clear();
     this.isPaused = false;
     this.isPanicMode = false;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      notifyListeners();
-    });
+    this.isAlreadyInit = false;
+    this.isAlreadyCalled = false;
+    notifyListeners();
   }
 
   Map<String, ResponseData> transformIntoResponsesQrl(
