@@ -71,6 +71,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.gameService.realGameService.validated = false;
     this.gameService.realGameService.locked = false;
     this._socketService.sendMessage(SocketEvent.START_TRANSITION, this.roomId);
+    notifyListeners();
   }
 
   void handleLastQuestion() {
@@ -101,8 +102,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
       if (this.gameService.realGameService.timer == 0) {
         this.gameService.realGameService.inTimeTransition = false;
         this.resetInterface();
-        this._socketService.sendMessage(
-            SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
+        this._socketService.sendMessage(SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
         this.timerText = 'Temps restant: ';
       }
     });
@@ -117,6 +117,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.resetInterface();
 
       if (this.gameService.question?.type == QuestionType.QCM) {
+        print('CALLED 1');
         this._interactiveListService.getPlayersList(roomId,
             leftPlayers: leftPlayers, resetPlayerStatus: false);
       } else {
@@ -137,6 +138,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
+        print('CALLED 2');
         this
             ._interactiveListService
             .getPlayersList(this.roomId, leftPlayers: leftPlayers);
@@ -156,6 +158,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void handleGetInitialQuestion() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION,
         (data) async {
+      print('CALLED 3');
       final numberOfPlayers = await _interactiveListService
           .getPlayersList(roomId, leftPlayers: leftPlayers);
       print('Handle inital question called');
@@ -167,6 +170,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleGetNextQuestion() {
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) async {
+      print('CALLED 4');
       final numberOfPlayers = await this
           ._interactiveListService
           .getPlayersList(roomId, leftPlayers: leftPlayers);
@@ -182,6 +186,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
           .indexWhere((player) => player.username == username);
       if (playerIndex != -1) {
         this.leftPlayers.add(this._interactiveListService.players[playerIndex]);
+        print('CALLED 5');
         this._interactiveListService.getPlayersList(roomId,
             leftPlayers: leftPlayers, resetPlayerStatus: false);
       }
@@ -219,6 +224,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleEvaluationOver() {
     this._socketService.onMessage(SocketEvent.EVALUATION_OVER, (_) {
+      print('CALLED 6');
       _interactiveListService.getPlayersList(roomId,
           leftPlayers: leftPlayers, resetPlayerStatus: false);
     });

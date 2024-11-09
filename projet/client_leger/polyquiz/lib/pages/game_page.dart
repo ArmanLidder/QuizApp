@@ -40,6 +40,7 @@ class _MyWidgetState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
+    print('GamePage initState');
     if (_socketService.isSocketAlive()) {
       _interactiveListService.configureBaseSocketFeatures();
       this.isHost = this._gameService.realGameService.username == 'host';
@@ -55,14 +56,18 @@ class _MyWidgetState extends State<GamePage> {
 
   @override
   void dispose() {
-    final String socketMessage =
-        this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
-    if (this._socketService.isSocketAlive()) {
-      this
-          ._socketService
-          .sendMessage(socketMessage, this._gameService.realGameService.roomId);
+    // Only dispose if we're actually leaving the game
+    print('GamePage dispose');
+    if (_gameInterfaceManagementService.isGameOver) {
+       print('GamePage dispose');
+      final String socketMessage =
+          this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
+      if (this._socketService.isSocketAlive()) {
+        this._socketService.sendMessage(
+            socketMessage, this._gameService.realGameService.roomId);
+      }
+      this._gameService.destroy();
     }
-    this._gameService.destroy();
     super.dispose();
   }
 

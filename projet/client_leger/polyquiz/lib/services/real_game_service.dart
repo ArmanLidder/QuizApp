@@ -78,7 +78,6 @@ class RealGameService extends ChangeNotifier {
 
   void configureBaseSocket() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION, (data) {
-      print('DATA RECEIVED: ${data}');
       InitialQuestionData questionData = InitialQuestionData(
         question: QuizQuestion.fromJson(data['question']),
         username: data['username'],
@@ -87,7 +86,6 @@ class RealGameService extends ChangeNotifier {
       );
 
       this.question = questionData.question;
-      print('QUESTION ATTRIBUTE: ${this.question}');
       if (!isNotified) {
         notifyListeners();
         isNotified = true;
