@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart' as Quiz;
 import 'package:polyquiz/services/game_interface_management_service.dart';
+import 'dart:math' as math;
 
 class PlayerQreWidget extends StatefulWidget {
   const PlayerQreWidget({super.key});
@@ -54,9 +55,22 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     return Container(
       child: Column(
         children: <Widget>[
+          getMinMaxCard(),
           getSlider(),
+          getToleranceWidget(),
+          getIntervalWidget()
         ],
       ),
+    );
+  }
+
+  Widget getMinMaxCard() {
+    return Row(
+      children: [
+        Text(this.min.toString()),
+        Spacer(),
+        Text(this.max.toString())
+      ],
     );
   }
 
@@ -68,6 +82,21 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
       divisions: (this.max - this.min).toInt(),
       label: currentValue.toString(),
       onChanged: changeSliderValue,
+    );
+  }
+
+  Widget getToleranceWidget() {
+    return Center(
+      child: Text("Tolérance: ±${this.question?.margin ?? 0}"),
+    );
+  }
+
+  Widget getIntervalWidget() {
+    final margin = this.question?.margin ?? 0;
+    final maxValue = math.min(this.max, currentValue + margin);
+    final minValue = math.max(this.min, currentValue - margin);
+    return Center(
+      child: Text("Votre intervalle de réponse est: $minValue à $maxValue"),
     );
   }
 
