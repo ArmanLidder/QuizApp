@@ -62,6 +62,22 @@ class _FancyAppBarState extends State<FancyAppBar> {
     actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
+      child: PopupMenuButton<int>(
+        onSelected: (value) {
+          // Handle the popup menu selection here
+        },
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 1,
+            child: Text("Profile"),
+            onTap: () {}, // Placeholder onPressed for "Profile"
+          ),
+          PopupMenuItem(
+            value: 2,
+            child: Text("Log Out"),
+            onTap: () {}, // Placeholder onPressed for "Log Out"
+          ),
+        ],
             child: Row(
               children: [
                 //IconButton(
@@ -88,7 +104,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
                 ),
               ],
             ),
-          ),
+          ),)
         ],
       ),
     );
