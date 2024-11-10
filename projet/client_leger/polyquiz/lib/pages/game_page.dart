@@ -115,7 +115,7 @@ class _MyWidgetState extends State<GamePage> {
         break;
     }
     return Visibility(
-        visible: !noticeReceived,
+        visible: !this._gameService.realGameService.isHostEvaluating,
         child: questionWidget
     );
   }
@@ -223,33 +223,6 @@ class _MyWidgetState extends State<GamePage> {
                                   //             QuestionType.QRL &&
                                   //         !noticeReceived,
                                   //     child: PlayerQrl()),
-                                  Visibility(
-                                    visible: noticeReceived,
-                                    child: FutureBuilder(
-                                      future: _gameInterfaceManagementService
-                                                      .gameService
-                                                      .lastQrlScore !=
-                                                  null &&
-                                              _gameInterfaceManagementService
-                                                      .gameService
-                                                      .isHostEvaluating ==
-                                                  false
-                                          ? Future.delayed(Duration(seconds: 4),
-                                              () {
-                                              setState(() {
-                                                noticeReceived = false;
-                                              });
-                                            })
-                                          : Future.value(null),
-                                      builder: (context, snapshot) {
-                                        return PlayerNotice(
-                                          message: message,
-                                          gameInterfaceManagementService:
-                                              _gameInterfaceManagementService,
-                                        );
-                                      },
-                                    ),
-                                  ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -315,7 +288,7 @@ class _MyWidgetState extends State<GamePage> {
   }
 
   Widget getButtons() {
-    final isValidateButtonActive = !noticeReceived && this._gameService.realGameService.isValidateActive;
+    final isValidateButtonActive = !this._gameService.realGameService.isHostEvaluating && this._gameService.realGameService.isValidateActive;
     final validateButtonStyle = TextButton.styleFrom(
         textStyle: TextStyle(
             fontWeight:
@@ -350,8 +323,7 @@ class _MyWidgetState extends State<GamePage> {
 
   void onValidate() {
     if (_gameInterfaceManagementService.gameService.question?.type == QuestionType.QRL) {
-      _gameInterfaceManagementService.gameService.isHostEvaluating = true;
-      this.noticeReceived = true;
+      _gameInterfaceManagementService.gameService.realGameService.isHostEvaluating = true;
     }
     _gameService.realGameService.isValidateActive = false;
     _gameInterfaceManagementService.gameService.sendAnswer();

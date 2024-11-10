@@ -46,15 +46,6 @@ class RealGameService extends ChangeNotifier {
     this._isValidateButtonActive = newValue;
     notifyListeners();
   }
-  bool _isValidateButtonActive = true;
-
-
-  bool get isValidateActive => this._isValidateButtonActive;
-
-  void set isValidateActive(bool newValue) {
-    this._isValidateButtonActive = newValue;
-    notifyListeners();
-  }
 
   init() {
     this.configureBaseSocket();
