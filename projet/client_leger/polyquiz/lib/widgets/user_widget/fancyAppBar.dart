@@ -70,12 +70,12 @@ class _FancyAppBarState extends State<FancyAppBar> {
           PopupMenuItem(
             value: 1,
             child: Text("Profile"),
-            onTap: () {}, // Placeholder onPressed for "Profile"
+            onTap: () {Navigator.pushReplacementNamed(context, '/user');}, // Placeholder onPressed for "Profile"
           ),
           PopupMenuItem(
             value: 2,
             child: Text("Log Out"),
-            onTap: () {}, // Placeholder onPressed for "Log Out"
+            onTap: () {Navigator.pushReplacementNamed(context, '/auth');}, // Placeholder onPressed for "Log Out"
           ),
         ],
             child: Row(
