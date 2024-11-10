@@ -22,9 +22,9 @@ class GamePage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<GamePage> {
+
   late bool isHost;
   bool isQcm = false; // Il faudra remplacer par un enum par la suite
-  bool noticeReceived = false;
   bool isGrading = true;
   int time = 10;
   int questionNum = 1;
@@ -83,7 +83,6 @@ class _MyWidgetState extends State<GamePage> {
       // Reset local state
       isHost = false;
       isQcm = false;
-      noticeReceived = false;
       isGrading = true;
       time = 10;
       questionNum = 1;
@@ -97,6 +96,7 @@ class _MyWidgetState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     if (isHost) {
       return Scaffold(
         appBar: AppBar(
@@ -187,47 +187,27 @@ class _MyWidgetState extends State<GamePage> {
                                       visible: _gameInterfaceManagementService
                                                   .gameService.question?.type ==
                                               QuestionType.QCM &&
-                                          !noticeReceived,
+                                             !_gameInterfaceManagementService.gameService.realGameService.isHostEvaluating,
                                       child: Container(
                                           height: 500, child: PlayerQcm())),
                                   Visibility(
                                       visible: _gameInterfaceManagementService
                                                   .gameService.question?.type ==
                                               QuestionType.QRL &&
-                                          !noticeReceived,
+                                              !_gameInterfaceManagementService.gameService.realGameService.isHostEvaluating,
                                       child: PlayerQrl()),
-                                  Visibility(
-                                    visible: noticeReceived,
-                                    child: FutureBuilder(
-                                      future: _gameInterfaceManagementService
-                                                      .gameService
-                                                      .lastQrlScore !=
-                                                  null &&
-                                              _gameInterfaceManagementService
-                                                      .gameService
-                                                      .isHostEvaluating ==
-                                                  false
-                                          ? Future.delayed(Duration(seconds: 4),
-                                              () {
-                                              setState(() {
-                                                noticeReceived = false;
-                                              });
-                                            })
-                                          : Future.value(null),
-                                      builder: (context, snapshot) {
-                                        return PlayerNotice(
-                                          message: message,
-                                          gameInterfaceManagementService:
-                                              _gameInterfaceManagementService,
-                                        );
-                                      },
+                                    Visibility(
+                                    visible: _gameInterfaceManagementService.gameService.realGameService.isHostEvaluating,
+                                    child: PlayerNotice(
+                                      message: message,
+                                      gameInterfaceManagementService: _gameInterfaceManagementService,
                                     ),
-                                  ),
+                                    ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Visibility(
-                                        visible: !noticeReceived,
+                                        visible: !_gameInterfaceManagementService.gameService.realGameService.isHostEvaluating,
                                         child: TextButton(
                                           onPressed: () {
                                             if (_gameInterfaceManagementService
@@ -237,8 +217,8 @@ class _MyWidgetState extends State<GamePage> {
                                                 QuestionType.QRL) {
                                               _gameInterfaceManagementService
                                                   .gameService
+                                                  .realGameService
                                                   .isHostEvaluating = true;
-                                              this.noticeReceived = true;
                                             }
                                             _gameInterfaceManagementService
                                                 .gameService
@@ -271,7 +251,10 @@ class _MyWidgetState extends State<GamePage> {
                                           roomId: this
                                               ._gameService
                                               .realGameService
-                                              .roomId),
+                                              .roomId,
+                                              gameService: _gameService,
+                                              interactiveListService: _interactiveListService,
+                                              gameInterfaceManagementService: _gameInterfaceManagementService),
                                       ChatPopup()
                                     ],
                                   )
