@@ -13,7 +13,7 @@ class PlayerQreWidget extends StatefulWidget {
 
 class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
-  bool isValidated = false;
+  bool get isValidated => gameInterfaceManagementService.gameService.realGameService.isValidateActive;
   int currentValue = 0;
 
   @override
@@ -54,20 +54,23 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Card(
-        elevation: 5.0,
-        margin: EdgeInsets.all(20),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              getMinMaxCard(),
-              getSlider(),
-              getToleranceWidget(),
-              getIntervalWidget(),
-              getButtons()
-            ],
+      child: AnimatedBuilder(
+        animation: gameInterfaceManagementService.gameService.realGameService,
+        builder: (BuildContext context, Widget? snapshot) => Card(
+          elevation: 5.0,
+          margin: EdgeInsets.all(20),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                getMinMaxCard(),
+                getSlider(),
+                getToleranceWidget(),
+                getIntervalWidget(),
+                // getButtons()
+              ],
+            ),
           ),
         ),
       ),
@@ -138,22 +141,20 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   void onValidate() {
-    setState(() {
-      isValidated = true;
-    });
+    // setState(() {
+    //   isValidated = true;
+    // });
     gameInterfaceManagementService.gameService.qreAnswer = currentValue;
     gameInterfaceManagementService.gameService.sendAnswer();
   }
 
   void onQuit() {
     // TODO: to change later
-    setState(() {
-      isValidated = false;
-    });
   }
 
   void changeSliderValue(double value) {
     if (isValidated) return;
+    gameInterfaceManagementService.gameService.qreAnswer = currentValue;
     setState(() {
       currentValue = value.round();
     });
