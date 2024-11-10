@@ -94,7 +94,6 @@ class Historique extends StatelessWidget {
           Column(
             children: _generateEventRows(gameEvents()),
           ),
-
         ],
       );
     }
