@@ -241,7 +241,16 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                   print('Error: ${snapshot.error}');
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No active games.'));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Aucune partie en cours'),
+                        SizedBox(height: 100),
+                        CancelBtn()
+                      ],
+                    ),
+                  );
                 } else {
                   final games = snapshot.data!;
                   return Column(

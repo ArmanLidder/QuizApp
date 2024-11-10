@@ -73,7 +73,6 @@ class _HomePageState extends State<HomePage> {
                   Navigator.pushReplacementNamed(context, '/store');
                 },
                 child: Text("store")),
-
             ChatPopup(),
           ],
         ),
