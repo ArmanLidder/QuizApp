@@ -57,7 +57,6 @@ class _HomePageState extends State<HomePage> {
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
-
               ),
               child: Text('Créer une partie'),
             ),
