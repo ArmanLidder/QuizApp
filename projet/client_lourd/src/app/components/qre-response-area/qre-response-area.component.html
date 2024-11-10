@@ -1,10 +1,16 @@
 <div class="p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
 
-    <div class="mb-6">
+    <div *ngIf="!gameService.lockedStatus" class="mb-6">
         <ngx-slider
                 [(value)]="selectedValue"
                 [options]="options"
                 (userChangeEnd)="onSliderChange()">>
+        </ngx-slider>
+    </div>
+    <div *ngIf="gameService.lockedStatus" class="mb-6">
+        <ngx-slider
+                [(value)]="selectedValue"
+                [options]="optionsDisabled">
         </ngx-slider>
     </div>
 

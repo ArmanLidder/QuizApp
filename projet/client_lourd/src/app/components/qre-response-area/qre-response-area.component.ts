@@ -13,6 +13,7 @@ export class QreResponseAreaComponent implements OnInit {
   margin: number;
   selectedValue: number;
   options: Options;
+  optionsDisabled: Options;
   responseInterval: string;
 
   constructor(public gameService: GameService) {
@@ -28,11 +29,11 @@ export class QreResponseAreaComponent implements OnInit {
       floor: this.min,
       ceil: this.max,
       step: 1,
-      showTicks: this.max - this.min <= 100,
       translate: (value: number): string => {
         return value.toString();
       }
     };
+    this.optionsDisabled = { ...this.options, disabled: true };
     this.gameService.selectQREAnswer(this.selectedValue);
   }
 

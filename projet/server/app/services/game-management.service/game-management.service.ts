@@ -85,8 +85,8 @@ export class GameManagementService {
                 index,
                 numberOfQuestions: game.quiz.questions.length
             });
-            const isChoiceQuestion = game.currentQuizQuestion.type === QuestionType.QCM;
-            const duration = isChoiceQuestion ? roomManager.getGameByRoomId(roomId).duration : QRL_DURATION;
+            const isChoiceOrQREQuestion = game.currentQuizQuestion.type === QuestionType.QCM || game.currentQuizQuestion.type === QuestionType.QRE;
+            const duration = isChoiceOrQREQuestion ? roomManager.getGameByRoomId(roomId).duration : QRL_DURATION;
             if (roomManager.getUsernameBySocketId(roomId, socket.id) === HOST_USERNAME) {
                 roomManager.clearRoomTimer(roomId);
                 this.timerService.startTimer({roomId, time: duration});

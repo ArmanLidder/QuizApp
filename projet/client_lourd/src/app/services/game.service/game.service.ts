@@ -94,6 +94,7 @@ export class GameService {
 
     selectQREAnswer(selectedAnswer: number) {
         if (!this.lockedStatus) {
+            this.qreAnswer = selectedAnswer;
             this.gameRealService.sendQRESelection(selectedAnswer);
         }
     }
@@ -137,6 +138,7 @@ export class GameService {
 
     private configureBaseSockets() {
         this.socketService.on(SocketEvent.TIME, (timeValue: number) => {
+            console.log(timeValue);
             this.handleTimeEvent(timeValue);
         });
     }
