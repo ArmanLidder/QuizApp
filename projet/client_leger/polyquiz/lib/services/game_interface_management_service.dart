@@ -29,6 +29,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
   List<dynamic> gameStats = []; // Type a revoir
   String timerText = 'Temps restant ';
   bool isNotified = false;
+  bool isResultPage = false;
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
@@ -77,6 +78,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.gameService.realGameService.validated = false;
     this.isBonus = false;
     this.timerText = 'Temps restant ';
+    this.isResultPage = false;
   }
 
   void handleEndQuestion() {
@@ -126,6 +128,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this
             ._interactiveListService
             .getPlayersList(this.gameService.realGameService.roomId);
+        this.isResultPage = true;
       }
       notifyListeners();
     });
