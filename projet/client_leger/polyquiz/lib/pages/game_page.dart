@@ -243,61 +243,62 @@ class _MyWidgetState extends State<GamePage> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Visibility(
-                                        visible:
-                                            !_gameInterfaceManagementService
-                                                .gameService
-                                                .realGameService
-                                                .isHostEvaluating,
-                                        child: TextButton(
-                                          onPressed: () {
-                                            if (_gameInterfaceManagementService
-                                                    .gameService
-                                                    .question
-                                                    ?.type ==
-                                                QuestionType.QRL) {
-                                              _gameInterfaceManagementService
-                                                  .gameService
-                                                  .realGameService
-                                                  .isHostEvaluating = true;
-                                            }
-                                            _gameInterfaceManagementService
-                                                .gameService
-                                                .sendAnswer();
-                                          },
-                                          child: Text(
-                                            'Confirmer',
-                                            style: TextStyle(
-                                                color: Color.fromRGBO(
-                                                    255, 255, 255, 1),
-                                                fontSize: 20),
-                                          ),
-                                          style: TextButton.styleFrom(
-                                              textStyle: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                              splashFactory:
-                                                  NoSplash.splashFactory,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.0)),
-                                              backgroundColor: Color.fromRGBO(
-                                                  53, 121, 246, 1)),
-                                        ),
-                                      ),
-                                      SizedBox(width: 100.0),
-                                      QuitBtn(
-                                          isHost: false,
-                                          roomId: this
-                                              ._gameService
-                                              .realGameService
-                                              .roomId,
-                                          gameService: _gameService,
-                                          interactiveListService:
-                                              _interactiveListService,
-                                          gameInterfaceManagementService:
-                                              _gameInterfaceManagementService),
+                                      // Visibility(
+                                      //   visible:
+                                      //       !_gameInterfaceManagementService
+                                      //           .gameService
+                                      //           .realGameService
+                                      //           .isHostEvaluating,
+                                      //   child: TextButton(
+                                      //     onPressed: () {
+                                      //       if (_gameInterfaceManagementService
+                                      //               .gameService
+                                      //               .question
+                                      //               ?.type ==
+                                      //           QuestionType.QRL) {
+                                      //         _gameInterfaceManagementService
+                                      //             .gameService
+                                      //             .realGameService
+                                      //             .isHostEvaluating = true;
+                                      //       }
+                                      //       _gameInterfaceManagementService
+                                      //           .gameService
+                                      //           .sendAnswer();
+                                      //     },
+                                      //     child: Text(
+                                      //       'Confirmer',
+                                      //       style: TextStyle(
+                                      //           color: Color.fromRGBO(
+                                      //               255, 255, 255, 1),
+                                      //           fontSize: 20),
+                                      //     ),
+                                      //     style: TextButton.styleFrom(
+                                      //         textStyle: TextStyle(
+                                      //             fontWeight:
+                                      //                 FontWeight.normal),
+                                      //         splashFactory:
+                                      //             NoSplash.splashFactory,
+                                      //         shape: RoundedRectangleBorder(
+                                      //             borderRadius:
+                                      //                 BorderRadius.circular(
+                                      //                     20.0)),
+                                      //         backgroundColor: Color.fromRGBO(
+                                      //             53, 121, 246, 1)),
+                                      //   ),
+                                      // ),
+                                      // SizedBox(width: 100.0),
+                                      // QuitBtn(
+                                      //     isHost: false,
+                                      //     roomId: this
+                                      //         ._gameService
+                                      //         .realGameService
+                                      //         .roomId,
+                                      //     gameService: _gameService,
+                                      //     interactiveListService:
+                                      //         _interactiveListService,
+                                      //     gameInterfaceManagementService:
+                                      //         _gameInterfaceManagementService),
+                                      getButtons(),
                                       ChatPopup()
                                     ],
                                   )
@@ -362,12 +363,12 @@ class _MyWidgetState extends State<GamePage> {
   }
 
   void onValidate() {
+    _gameService.realGameService.isValidateActive = false;
     if (_gameInterfaceManagementService.gameService.question?.type ==
         QuestionType.QRL) {
       _gameInterfaceManagementService
           .gameService.realGameService.isHostEvaluating = true;
     }
-    _gameService.realGameService.isValidateActive = false;
     _gameInterfaceManagementService.gameService.sendAnswer();
   }
 }
