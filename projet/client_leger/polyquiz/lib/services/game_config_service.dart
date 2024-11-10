@@ -11,7 +11,7 @@ class GameConfigService with ChangeNotifier {
   int price = 0;
   bool friendsOnly = false;
   bool private = false;
-  double prestige = 0.0;
+  int prestige = 0;
 
   GameConfigService([User? user]) {
     if (user != null) {
@@ -38,7 +38,7 @@ class GameConfigService with ChangeNotifier {
     notifyListeners();
   }
 
-  void setPrestige(double prestige) {
+  void setPrestige(int prestige) {
     this.prestige = prestige;
     notifyListeners();
   }

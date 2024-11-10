@@ -19,7 +19,7 @@ class GameConfig {
   final String? onGoing;
   final int? price;
   final bool? friendsOnly;
-  final double? prestige;
+  final int? prestige;
 
   GameConfig({
     this.hostUserId,

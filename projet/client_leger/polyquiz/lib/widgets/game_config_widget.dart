@@ -25,7 +25,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
   int _price = 0;
   bool _friendsOnly = false;
   bool _private = false;
-  double _prestige = 0.0;
+  int _prestige = 0;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   User? userData;
 
@@ -98,6 +98,28 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                 });
               },
             ),
+            DropdownButtonFormField<int>(
+              value: _prestige,
+              decoration: InputDecoration(labelText: 'Prestige minimum'),
+              items: [
+                DropdownMenuItem(value: 0, child: Text('Aucun')),
+                DropdownMenuItem(value: 50, child: Text('🥉Bronze')),
+                DropdownMenuItem(value: 100, child: Text('🥈Argent')),
+                DropdownMenuItem(value: 150, child: Text('🥇Or')),
+                DropdownMenuItem(value: 200, child: Text('🏅Platine')),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _prestige = value!;
+                });
+              },
+              validator: (value) {
+                if (value == null) {
+                  return 'Le prestige minimum est requis. Veuillez faire une sélection.';
+                }
+                return null;
+              },
+            ),
             SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -112,6 +134,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                   onPressed: () {
                     this.userData = this.loggedInUserService.getUser();
                     if (_formKey.currentState!.validate()) {
+                      print('got into validate if');
                       gameConfigService.setGameType(_gameType);
                       gameConfigService.setPrice(_price);
                       gameConfigService.setFriendsOnly(_friendsOnly);
@@ -119,19 +142,20 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       gameConfigService.setPrestige(_prestige);
                       gameConfigService.setUser(this.userData!);
                       Navigator.of(context).pop(); // Close the dialog
-                    }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WaitingRoomScreen(
-                          quiz: widget.quiz,
-                          username:
-                              'nothing', // Pass the username to the waiting room.
-                          isHost: true, // This user is not the host.
-                          gameConfigService: gameConfigService,
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WaitingRoomScreen(
+                            quiz: widget.quiz,
+                            username:
+                                'nothing', // Pass the username to the waiting room.
+                            isHost: true, // This user is not the host.
+                            gameConfigService: gameConfigService,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    }
                   },
                   child: Text('Créer partie'),
                 ),
