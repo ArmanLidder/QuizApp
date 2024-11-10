@@ -41,52 +41,62 @@ class Historique extends StatelessWidget {
 
   Historique({required this.gameHistory, required this.loginHistory});
 
-  List<EvenementRow> _generateEventRows() {
-    // Map each GameHistory to an Event with eventType "Game"
-    List<Event> gameEvents = gameHistory.map((game) {
-      String result = resultTypeToString[game.result]!;
+    List<Event> gameEvents(){
+      return gameHistory.map((game) {
+        String result = resultTypeToString[game.result]!;
 
-      return Event(eventType: result, timestamp: game.timestamp);
-    }).toList();
+        return Event(eventType: result, timestamp: game.timestamp);
+      }).toList();
+    }
+    List<Event> loginEvents(){
+        return loginHistory.map((login) {
+        String eventType = loginEventTypeToString[login.eventType]!;
+        return Event(eventType: eventType, timestamp: login.timestamp);
+      }).toList();}
 
-    // Map each LoginHistory to an Event with eventType "Login"
-    List<Event> loginEvents = loginHistory.map((login) {
-      String eventType = loginEventTypeToString[login.eventType]!;
-      return Event(eventType: eventType, timestamp: login.timestamp);
-    }).toList();
+    List<EvenementRow> _generateEventRows(List<Event> allEvents) {
+      // Sort events by timestamp
+      allEvents.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-    // Merge both lists of events
-    List<Event> allEvents = [...gameEvents, ...loginEvents];
+      return allEvents.map((event) {
+        String date = "${event.timestamp}".split(' ')[0];
+        String? label = eventMessage[event.eventType] ?? "nullEventMessage" ;
+        Color color = event.eventType == 'Login' ? Colors.blue : Colors.green;
 
-    // Sort events by timestamp
-    allEvents.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        return EvenementRow(date: date, label: label, color: color);
+      }).toList();
+    }
 
-    return allEvents.map((event) {
-      String date = "${event.timestamp}".split(' ')[0];
-      String? label = eventMessage[event.eventType] ?? "nullEventMessage" ;
-      Color color = event.eventType == 'Login' ? Colors.blue : Colors.green;
-
-      return EvenementRow(date: date, label: label, color: color);
-    }).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Historique",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+    @override
+    Widget build(BuildContext context) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Historique des connections",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
           ),
-        ),
-        SizedBox(height: 16),
-        Column(
-          children: _generateEventRows(),
-        ),
-      ],
-    );
+          SizedBox(height: 16),
+          Column(
+            children: _generateEventRows(loginEvents()),
+          ),
+          Text(
+            "Historique des parties",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          SizedBox(height: 16),
+          Column(
+            children: _generateEventRows(gameEvents()),
+          ),
+
+        ],
+      );
+    }
   }
-}
+
