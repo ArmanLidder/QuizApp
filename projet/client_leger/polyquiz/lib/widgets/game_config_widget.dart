@@ -23,7 +23,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
   String _gameType = 'classic';
   double _price = 0.0;
   bool _friendsOnly = false;
-  bool _private = true;
+  bool _private = false;
   double _prestige = 0.0;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   User? userData;
