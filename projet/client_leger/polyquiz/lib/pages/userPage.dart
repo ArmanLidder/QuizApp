@@ -32,10 +32,6 @@ class Userpage extends StatelessWidget {
           child: Column(
             children: [
               ProfileCard(
-                username: this.userData?.username ?? "",
-                email: this.userData?.email ?? "",
-                prestige: (this.userData?.prestige ?? 0).toString(),
-                argent: (this.userData?.currency ?? 0).toString(),
               ),
               StatitisticsBlorb(
                 nPlayedGames: userData?.stats.gamesPlayed ?? 0,
