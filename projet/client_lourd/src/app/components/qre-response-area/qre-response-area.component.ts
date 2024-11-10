@@ -54,4 +54,19 @@ export class QreResponseAreaComponent implements OnInit {
       this.gameService.sendAnswer();
     }
   }
+
+  decrementValue() {
+    if (this.selectedValue != this.min) {
+      this.selectedValue -= 1;
+      this.onSliderChange();
+    }
+  }
+
+  incrementValue() {
+    if (this.selectedValue != this.max) {
+      this.selectedValue += 1;
+      this.onSliderChange();
+    }
+
+  }
 }

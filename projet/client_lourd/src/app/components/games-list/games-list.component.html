@@ -32,7 +32,7 @@
                     <div class="flex space-x-4">
                         <ng-container *ngIf="isAdmin; else nonAdminButtons">
                             <button routerLink="/quiz-creation"
-                                    class="px-4 py-2 border border-blue-500 rounded bg-blue-500 text-white hover:bg-blue-600 transition">
+                                    class="px-4 py-2 border border-blue-500 rounded bg-blue-600 text-white hover:bg-blue-700 transition">
                                 <i class="fas fa-plus mr-2"></i> Ajouter
                             </button>
                             <input type="file" class="file-selector hidden" #fileInput accept="application/json" (change)="selectFile($event)" />
@@ -45,7 +45,7 @@
                             <button [matTooltip]="!selectedQuiz ? 'Veuillez sélectionner un quiz':''" (click)="playGame()"
                                     class="px-4 py-2 border rounded transition"
                                     [ngClass]="{
-          'border-blue-500 bg-blue-500 text-white hover:bg-blue-600': selectedQuiz,
+          'border-blue-500 bg-blue-600 text-white hover:bg-blue-700': selectedQuiz,
           'border-gray-300 bg-gray-300 text-gray-500 cursor-not-allowed': !selectedQuiz
         }"
                                     [disabled]="!selectedQuiz">

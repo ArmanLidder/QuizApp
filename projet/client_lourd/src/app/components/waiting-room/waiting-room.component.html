@@ -18,7 +18,7 @@
                 <li class="player-item" *ngFor="let player of waitingRoomManagementService.players">
                     <app-avatar class="player-name" [isChat]="true" [uid]="player"></app-avatar>
                     <div class='icon-container'><i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost'
-                                                   title='bannir'></i></div>
+                                                   matTooltip='bannir'></i></div>
                 </li>
             </ul>
         </ng-container>

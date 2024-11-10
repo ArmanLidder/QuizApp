@@ -1,23 +1,40 @@
-<div class="p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
+<div class="p-6 bg-white rounded-lg shadow-md w-full max-w-2xl mx-auto h-fit">
 
-    <div *ngIf="!gameService.lockedStatus" class="mb-6">
-        <ngx-slider
-                [(value)]="selectedValue"
-                [options]="options"
-                (userChangeEnd)="onSliderChange()">>
-        </ngx-slider>
-    </div>
-    <div *ngIf="gameService.lockedStatus" class="mb-6">
-        <ngx-slider
-                [(value)]="selectedValue"
-                [options]="optionsDisabled">
-        </ngx-slider>
+    <div class="flex items-center space-x-2">
+        <button
+                class="w-10 h-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-300"
+                (click)="decrementValue()"
+        >
+            -
+        </button>
+        <ng-container *ngIf="!gameService.lockedStatus; else lockedSlider">
+            <ngx-slider
+                    [(value)]="selectedValue"
+                    [options]="options"
+                    (userChangeEnd)="onSliderChange()"
+            ></ngx-slider>
+        </ng-container>
+
+        <ng-template #lockedSlider>
+            <ngx-slider
+                    [(value)]="selectedValue"
+                    [options]="optionsDisabled"
+                    (userChangeEnd)="onSliderChange()"
+            ></ngx-slider>
+        </ng-template>
+
+        <button
+                class="w-10 h-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-300"
+                (click)="incrementValue()"
+        >
+            +
+        </button>
     </div>
 
     <div class="flex justify-between text-xs mb-4 text-gray-500">
         <span class="mx-auto font-bold">Tolérance: ±{{ margin.toLocaleString() }}</span>
     </div>
-    <div class="mt-4 text-sm text-gray-700">
+    <div class="mt-4 text-sm text-gray-700 text-center">
         <p>Votre intervalle de réponse est: <strong>{{ responseInterval }}</strong></p>
         <p *ngIf="gameService.validatedStatus">La bonne réponse était: {{gameService.question?.answer}}</p>
         <div class='btn-container'>

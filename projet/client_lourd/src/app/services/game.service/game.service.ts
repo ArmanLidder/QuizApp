@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
-import { QCM_PANIC_MODE_ENABLED, QLR_PANIC_MODE_ENABLED } from '@common/constants/host-interface.component.const';
-import { GameRealService } from '@app/services/game-real.service/game-real.service';
-import { GameTestService } from '@app/services/game-test.service/game-test.service';
-import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
-import { SocketEvent } from '@common/socket-event-name/socket-event-name';
-import { HOST_USERNAME } from '@common/names/host-username';
+import {Injectable} from '@angular/core';
+import {QCM_PANIC_MODE_ENABLED, QLR_PANIC_MODE_ENABLED} from '@common/constants/host-interface.component.const';
+import {GameRealService} from '@app/services/game-real.service/game-real.service';
+import {GameTestService} from '@app/services/game-test.service/game-test.service';
+import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
+import {SocketEvent} from '@common/socket-event-name/socket-event-name';
+import {HOST_USERNAME} from '@common/names/host-username';
+import {QuestionType} from "@common/enums/question-type.enum";
 
 
 @Injectable({
@@ -94,6 +95,7 @@ export class GameService {
 
     selectQREAnswer(selectedAnswer: number) {
         if (!this.lockedStatus) {
+            console.log(`sending ${selectedAnswer}`)
             this.qreAnswer = selectedAnswer;
             this.gameRealService.sendQRESelection(selectedAnswer);
         }
@@ -138,7 +140,6 @@ export class GameService {
 
     private configureBaseSockets() {
         this.socketService.on(SocketEvent.TIME, (timeValue: number) => {
-            console.log(timeValue);
             this.handleTimeEvent(timeValue);
         });
     }
@@ -146,6 +147,7 @@ export class GameService {
     private handleTimeEvent(timeValue: number) {
         this.gameRealService.timer = timeValue;
         if (this.timer === 0 && !this.gameRealService.locked) {
+            if (this.question?.type === QuestionType.QRE && this.username !== HOST_USERNAME) this.selectQREAnswer(this.qreAnswer);
             this.gameRealService.locked = true;
             if (this.username !== HOST_USERNAME) this.sendAnswer();
         }
