@@ -74,8 +74,12 @@ export class GameCreationService {
     }
 
     private handleNewObserver(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.NEW_OBSERVER_GAME, (roomId: number) => {
+        socket.on(SocketEvent.NEW_OBSERVER_GAME, async (roomId: number) => {
+            const hostId = roomManager.getSocketIdByUsername(roomId, HOST_USERNAME);
+            const observerId = socket.handshake.auth.userId;
+            await this.addUserToRoomCanal(roomId, observerId);
             socket.join(String(roomId))
+            socket.join(String(hostId));
         });
     }
 
