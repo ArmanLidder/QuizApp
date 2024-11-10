@@ -34,11 +34,13 @@ class _ProfileCardState extends State<ProfileCard> {
 
     return Align(
       alignment: Alignment.topCenter,
-      child: FractionallySizedBox(
-        widthFactor: 0.8,
         child: Container(
           padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12.0),  // Round top-left corner
+              topRight: Radius.circular(12.0), // Round top-right corner
+            ),
             gradient: LinearGradient(
               colors: [Colors.blue, Colors.purple],
               begin: Alignment.centerLeft,
@@ -164,7 +166,6 @@ class _ProfileCardState extends State<ProfileCard> {
             ),
           ),
         ),
-      ),
     );
   }
 }
