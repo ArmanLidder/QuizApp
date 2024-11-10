@@ -292,7 +292,10 @@ class _MyWidgetState extends State<GamePage> {
     String? imageUrl = this._gameService.realGameService.question?.imageUrl;
     if (imageUrl == null) return null;
     return Center(
-      child: Image.network(imageUrl)
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+        child: Image.network(imageUrl),
+      )
     );
   }
 
