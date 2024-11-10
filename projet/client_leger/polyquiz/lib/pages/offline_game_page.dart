@@ -183,6 +183,7 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                               null &&
                                           gameInterfaceManagementService
                                                   .gameService
+                                                  .realGameService
                                                   .isHostEvaluating ==
                                               false
                                       ? Future.delayed(Duration(seconds: 4),
