@@ -96,11 +96,36 @@ class _FancyAppBarState extends State<FancyAppBar> {
                       ),
                     ),
                     SizedBox(height: 4), // Space between the text and the image
-                    CircleAvatar(
-                      radius: 17.5,
-                      backgroundImage: NetworkImage(imageUrl), // Use the updated variable
-                    ),
-                  ],
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 17.5,
+                          backgroundImage: NetworkImage(imageUrl),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                loggedInUserService.getUser()!.level.toString(),
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),                  ],
                 ),
               ],
             ),
