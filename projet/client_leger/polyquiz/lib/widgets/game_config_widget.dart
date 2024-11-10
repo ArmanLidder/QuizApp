@@ -34,17 +34,27 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
     final gameConfigService = Provider.of<GameConfigService>(context);
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(30),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Configurer la partie', style: TextStyle(fontSize: 24)),
-            SizedBox(height: 16),
+            Text('Configurer la partie',
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(53, 121, 246, 1))),
+            Divider(color: Color.fromRGBO(227, 242, 253, 1)),
+            SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: _gameType,
-              decoration: InputDecoration(labelText: 'Type de partie'),
+              decoration: InputDecoration(
+                  labelText: 'Type de partie',
+                  labelStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(69, 90, 100, 1)),
+                  border: OutlineInputBorder()),
               items: [
                 DropdownMenuItem(value: 'classic', child: Text('Classique')),
                 DropdownMenuItem(value: 'equipe', child: Text('Équipe')),
@@ -63,7 +73,8 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
             ),
             SizedBox(height: 16),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Prix'),
+              decoration: InputDecoration(
+                  labelText: 'Prix', border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
@@ -80,27 +91,52 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
               },
             ),
             SizedBox(height: 16),
-            CheckboxListTile(
-              title: Text('Amis Seulement'),
-              value: _friendsOnly,
-              onChanged: (value) {
-                setState(() {
-                  _friendsOnly = value!;
-                });
-              },
+            Row(
+              children: [
+                Flexible(
+                  child: Container(
+                    color: Color.fromRGBO(240, 240, 240, 1),
+                    child: CheckboxListTile(
+                      title: Text('Amis Seulement'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Color.fromRGBO(53, 121, 246, 1),
+                      value: _friendsOnly,
+                      onChanged: (value) {
+                        setState(() {
+                          _friendsOnly = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20),
+                Flexible(
+                  child: Container(
+                    color: Color.fromRGBO(240, 240, 240, 1),
+                    child: CheckboxListTile(
+                      title: Text('Partie privée'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Color.fromRGBO(53, 121, 246, 1),
+                      value: _private,
+                      onChanged: (value) {
+                        setState(() {
+                          _private = value!;
+                        });
+                      },
+                    ),
+                  ),
+                )
+              ],
             ),
-            CheckboxListTile(
-              title: Text('Partie privée'),
-              value: _private,
-              onChanged: (value) {
-                setState(() {
-                  _private = value!;
-                });
-              },
-            ),
+            SizedBox(height: 20),
             DropdownButtonFormField<int>(
               value: _prestige,
-              decoration: InputDecoration(labelText: 'Prestige minimum'),
+              decoration: InputDecoration(
+                  labelText: 'Prestige minimum',
+                  labelStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(69, 90, 100, 1)),
+                  border: OutlineInputBorder()),
               items: [
                 DropdownMenuItem(value: 0, child: Text('Aucun')),
                 DropdownMenuItem(value: 50, child: Text('🥉Bronze')),
@@ -120,17 +156,29 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                 return null;
               },
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 40),
+            Divider(color: Color.fromRGBO(227, 242, 253, 1)),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
+                  style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      backgroundColor: Color.fromRGBO(246, 53, 53, 1)),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Annuler'),
+                  child: Text('Annuler',
+                      style:
+                          TextStyle(color: Color.fromRGBO(255, 255, 255, 1))),
                 ),
-                ElevatedButton(
+                SizedBox(width: 40),
+                TextButton(
+                  style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
                   onPressed: () {
                     this.userData = this.loggedInUserService.getUser();
                     if (_formKey.currentState!.validate()) {
@@ -157,7 +205,10 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       );
                     }
                   },
-                  child: Text('Créer partie'),
+                  child: Text(
+                    'Créer partie',
+                    style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+                  ),
                 ),
               ],
             ),
