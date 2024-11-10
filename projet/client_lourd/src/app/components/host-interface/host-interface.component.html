@@ -7,7 +7,7 @@
         <div class="circle">
             <span>{{hostInterfaceManagerService.timerText}}</span>
             <span>{{gameService.timer}}</span>
-            <div class="button-container">
+            <div *ngIf="!hostInterfaceManagerService.observerMode" class="button-container">
                 <mat-icon [matTooltip]="hostInterfaceManagerService.isPaused ? 'Play' : 'Pause'" (click)='hostInterfaceManagerService.sendPauseTimer()'>{{ hostInterfaceManagerService.isPaused ? 'play_circle_outline' : 'pause_circle_outline' }}</mat-icon>
                 <mat-icon [matTooltip]="gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode ? 'Vous ne pouvez  pas encore activer le mode panique' : 'Activez mode panique !'" (click)='hostInterfaceManagerService.startPanicMode()' [ngClass]="{'disable': gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode}"> whatshot </mat-icon>
             </div>
@@ -22,7 +22,7 @@
     </div>
     <div class='btn-container'>
         <button class='enter'
-                [disabled]='isDisabled() || hostInterfaceManagerService.timerText === timerMessage.RESULT_AVAILABLE_IN'
+                [disabled]='isDisabled() || hostInterfaceManagerService.timerText === timerMessage.RESULT_AVAILABLE_IN || hostInterfaceManagerService.observerMode'
                 (click)='handleHostCommand()'>
                 {{updateHostCommand()}}
         </button>

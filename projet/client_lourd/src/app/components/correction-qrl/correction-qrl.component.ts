@@ -1,6 +1,9 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { QuestionStatistics } from '@common/constants/statistic-zone.component.const';
 import { QrlEvaluationService } from '@app/services/qrl-evaluation.service/qrl-evaluation.service';
+import {
+    HostInterfaceManagementService
+} from "@app/services/host-interface-management.service/host-interface-management.service";
 
 @Component({
     selector: 'app-correction-qrl',
@@ -12,7 +15,10 @@ export class CorrectionQRLComponent implements OnChanges, OnInit, OnDestroy {
     @Input() qrlAnswers = new Map<string, { answers: string; time: number }>();
     @Input() isHostEvaluating: boolean = false;
 
-    constructor(public qrlEvaluationService: QrlEvaluationService) {}
+    constructor(
+        public qrlEvaluationService: QrlEvaluationService,
+        public hostInterfaceManagerService: HostInterfaceManagementService
+    ) {}
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.qrlAnswers) {

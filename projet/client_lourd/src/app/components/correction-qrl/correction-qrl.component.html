@@ -1,7 +1,6 @@
-<div *ngIf='isHostEvaluating'>
+<div *ngIf='isHostEvaluating && !hostInterfaceManagerService.observerMode'>
     <div *ngIf="!qrlEvaluationService.isCorrectionFinished" class="correction-qrl-container">
         <h3>Correction de la question:</h3>
-        <p> Joueur : {{ qrlEvaluationService.currentUsername }} </p>
         <p> Réponse : {{ qrlEvaluationService.currentAnswer }} </p>
         <select [(ngModel)]="qrlEvaluationService.inputPoint">
             <option *ngFor="let score of qrlEvaluationService.scores" [value]="score">{{ score }}</option>
@@ -21,7 +20,7 @@
                 </thead>
                 <tbody>
                 <tr *ngFor="let score of qrlEvaluationService.points; let i = index">
-                    <td> {{qrlEvaluationService.usernames[i]}} </td>
+                    <td><app-avatar [size]="'medium'" [uid]="qrlEvaluationService.usernames[i]" [isChat]="true"></app-avatar></td>
                     <td> {{score}} </td>
                 </tr>
                 </tbody>
@@ -29,4 +28,5 @@
         </div>
     </div>
 </div>
+<div class="correction-qrl-container" *ngIf='isHostEvaluating && hostInterfaceManagerService.observerMode'> L'hôte évalue actuellement les réponses ...</div>
 
