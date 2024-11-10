@@ -36,6 +36,7 @@ class RealGameService extends ChangeNotifier {
   bool audioPaused = false;
   bool inTimeTransition = false;
   bool isNotified = false;
+  bool isHostEvaluating = false;
 
   init() {
     this.configureBaseSocket();
@@ -108,6 +109,7 @@ class RealGameService extends ChangeNotifier {
         isNotified = true;
       }
 
+      this.isHostEvaluating = false;
       this.question = nextQuestionData.question;
       this.questionNumber = nextQuestionData.index;
       this.isLast = nextQuestionData.isLast;
@@ -134,6 +136,7 @@ class RealGameService extends ChangeNotifier {
     this.locked = false;
     this.validated = false;
     this.isLast = false;
+    this.isHostEvaluating = false;
     this.players = [];
     this.answers.clear();
     this.qreAnswer = null;
