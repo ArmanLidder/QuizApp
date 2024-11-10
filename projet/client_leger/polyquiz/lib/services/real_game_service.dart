@@ -38,6 +38,7 @@ class RealGameService extends ChangeNotifier {
   bool isNotified = false;
   bool isHostEvaluating = false;
   bool _isValidateButtonActive = true;
+  bool isSentAnswer = false;
 
 
   bool get isValidateActive => this._isValidateButtonActive;
@@ -120,6 +121,7 @@ class RealGameService extends ChangeNotifier {
       }
 
       this.isHostEvaluating = false;
+      this.isSentAnswer = false;
       this.question = nextQuestionData.question;
       this.questionNumber = nextQuestionData.index;
       this.isLast = nextQuestionData.isLast;
@@ -148,6 +150,7 @@ class RealGameService extends ChangeNotifier {
     this.validated = false;
     this.isLast = false;
     this.isHostEvaluating = false;
+    this.isSentAnswer = false;
     this.players = [];
     this.answers.clear();
     this.qreAnswer = null;
