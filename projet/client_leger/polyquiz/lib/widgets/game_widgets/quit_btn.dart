@@ -44,6 +44,15 @@ class QuitBtn extends StatelessWidget {
         } else {
           this._socketService.sendMessage(SocketEvent.PLAYER_LEFT, roomId);
           print('PLAYER LEFT');
+          if (gameService != null) {
+            gameService!.destroy();
+          }
+          if (gameInterfaceManagementService != null) { 
+            gameInterfaceManagementService!.reset();
+          }
+          if (interactiveListService != null){
+            interactiveListService!.reset();
+          }
         }
         _globalNavigationService.navigateTo('/home');
       },
