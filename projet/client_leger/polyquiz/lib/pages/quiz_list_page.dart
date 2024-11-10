@@ -56,9 +56,6 @@ class _QuizListPageState extends State<QuizListPage> {
   bool _areAllQuestionsQCM(Quiz quiz) {
     bool result =
         !quiz.questions.any((question) => question.type != QuestionType.QCM);
-
-    print(quiz.title);
-    print(result);
     return result;
   }
 

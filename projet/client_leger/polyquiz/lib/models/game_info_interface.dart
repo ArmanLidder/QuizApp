@@ -17,7 +17,7 @@ class GameConfig {
   final String? gameType;
   final bool? private;
   final String? onGoing;
-  final double? price;
+  final int? price;
   final bool? friendsOnly;
   final double? prestige;
 

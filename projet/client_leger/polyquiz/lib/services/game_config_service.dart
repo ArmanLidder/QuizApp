@@ -8,7 +8,7 @@ class GameConfigService with ChangeNotifier {
   User? _currentUser;
   String? hostId;
   String gameType = '';
-  double price = 0.0;
+  int price = 0;
   bool friendsOnly = false;
   bool private = false;
   double prestige = 0.0;
@@ -33,7 +33,7 @@ class GameConfigService with ChangeNotifier {
     notifyListeners();
   }
 
-  void setPrice(double price) {
+  void setPrice(int price) {
     this.price = price;
     notifyListeners();
   }
@@ -67,7 +67,7 @@ class GameConfigService with ChangeNotifier {
 
   void reset() {
     gameType = '';
-    price = 0.0;
+    price = 0;
     friendsOnly = false;
     private = false;
     notifyListeners();

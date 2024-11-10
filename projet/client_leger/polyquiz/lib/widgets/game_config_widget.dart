@@ -20,8 +20,9 @@ class GameConfigWidget extends StatefulWidget {
 
 class _GameConfigWidgetState extends State<GameConfigWidget> {
   final _formKey = GlobalKey<FormState>();
+
   String _gameType = 'classic';
-  double _price = 0.0;
+  int _price = 0;
   bool _friendsOnly = false;
   bool _private = false;
   double _prestige = 0.0;
@@ -66,13 +67,13 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  _price = double.tryParse(value) ?? 0.0;
+                  _price = int.tryParse(value) ?? 0;
                 });
               },
               validator: (value) {
                 if (value == null ||
-                    double.tryParse(value) == null ||
-                    double.parse(value) < 0) {
+                    int.tryParse(value) == null ||
+                    int.parse(value) < 0) {
                   return 'Le prix doit être un entier supérieur ou égal à 0.';
                 }
                 return null;
