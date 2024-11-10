@@ -3,7 +3,9 @@ import 'package:polyquiz/constants/player_status.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 
 class PlayersDataTable extends StatefulWidget {
-  const PlayersDataTable({super.key});
+  final bool isHost;
+  
+  const PlayersDataTable({super.key, required this.isHost});
 
   @override
   State<PlayersDataTable> createState() => _PlayersDataTableState();
@@ -73,10 +75,11 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
         label: Expanded(child: Center(child: Text('Points'))),
       ),
       DataColumn(label: Expanded(child: Center(child: Text('Bonus')))),
-      DataColumn(
-        onSort: (columnIndex, isAscending) => onSort(columnIndex, isAscending),
-        label: Expanded(child: Center(child: Text('Chat'))),
-      ),
+      if (widget.isHost)
+        DataColumn(
+          onSort: (columnIndex, isAscending) => onSort(columnIndex, isAscending),
+          label: Expanded(child: Center(child: Text('Chat'))),
+        ),
     ];
     return Container(
       width: 650.0,
@@ -100,15 +103,16 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                       DataCell(Center(child: Text(player.username))),
                       DataCell(Center(child: Text(player.score.toString()))),
                       DataCell(Center(child: Text(player.bonus.toString()))),
-                      DataCell(Center(
+                        if (widget.isHost)
+                        DataCell(Center(
                           child: Switch(
-                              value: player.canChat,
-                              activeTrackColor: Color.fromRGBO(53, 121, 246, 1),
-                              onChanged: (value) {
-                                setState(() {
-                                  player.canChat = value;
-                                });
-                              })))
+                            value: player.canChat,
+                            activeTrackColor: Color.fromRGBO(53, 121, 246, 1),
+                            onChanged: (value) {
+                              setState(() {
+                              player.canChat = value;
+                              });
+                            })))
                     ]);
               }).toList(),
             );
