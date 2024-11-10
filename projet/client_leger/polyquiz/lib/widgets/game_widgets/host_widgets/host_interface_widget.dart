@@ -110,7 +110,7 @@ class _HostInterfaceState extends State<HostInterface> {
                   hostInterfaceManagementService:
                       hostInterfaceManagementService,
                 ),
-                PlayersDataTable(),
+                PlayersDataTable(isHost: true,),
               ],
             );
           }
@@ -257,9 +257,10 @@ class ResultPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Game Over! Here are the results.',
+          'Le jeux est terminé! voici les résultats.',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+        PlayersDataTable(isHost: true,),
         QuitBtn(
           isHost: true,
           roomId: gameService.realGameService.roomId,
