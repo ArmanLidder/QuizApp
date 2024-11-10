@@ -71,7 +71,6 @@ class StarCardGrid extends StatelessWidget {
         .floor();
 
     List<Widget> rows = [];
-
     for (int i = 0; i < labels.length; i += cardsPerRow) {
       List<Widget> starCards = [];
       for (int j = 0; j < cardsPerRow; j++) {

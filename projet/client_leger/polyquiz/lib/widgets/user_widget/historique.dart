@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
 
 class Event {
   final String eventType;
-  final DateTime timestamp;
+  final String timestamp;
 
   Event({required this.eventType, required this.timestamp});
 }
@@ -43,12 +44,15 @@ class Historique extends StatelessWidget {
   List<EvenementRow> _generateEventRows() {
     // Map each GameHistory to an Event with eventType "Game"
     List<Event> gameEvents = gameHistory.map((game) {
-      return Event(eventType: 'Game', timestamp: game.timestamp.toDate());
+      String result = resultTypeToString[game.result]!;
+
+      return Event(eventType: result, timestamp: game.timestamp);
     }).toList();
 
     // Map each LoginHistory to an Event with eventType "Login"
     List<Event> loginEvents = loginHistory.map((login) {
-      return Event(eventType: 'Login', timestamp: login.timestamp.toDate());
+      String eventType = loginEventTypeToString[login.eventType]!;
+      return Event(eventType: eventType, timestamp: login.timestamp);
     }).toList();
 
     // Merge both lists of events
@@ -57,10 +61,9 @@ class Historique extends StatelessWidget {
     // Sort events by timestamp
     allEvents.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-    // Generate EvenementRow widgets for each event
     return allEvents.map((event) {
-      String date = "${event.timestamp.toLocal()}".split(' ')[0];
-      String label = event.eventType;
+      String date = "${event.timestamp}".split(' ')[0];
+      String? label = eventMessage[event.eventType] ?? "nullEventMessage" ;
       Color color = event.eventType == 'Login' ? Colors.blue : Colors.green;
 
       return EvenementRow(date: date, label: label, color: color);
