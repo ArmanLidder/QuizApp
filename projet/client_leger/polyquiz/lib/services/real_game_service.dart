@@ -104,6 +104,7 @@ class RealGameService extends ChangeNotifier {
       if (questionData.numberOfQuestions == 1) {
         this.isLast = true;
       }
+      this.isValidateActive = true;
     });
 
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) {
