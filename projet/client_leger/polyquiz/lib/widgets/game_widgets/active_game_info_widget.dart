@@ -32,31 +32,43 @@ class _ActiveGameInfoWidgetState extends State<ActiveGameInfoWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                widget.quizTitle,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              Expanded(
+                child: Text(
+                  widget.quizTitle,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
               ),
-              Text("Prestige minimum: ${widget.minRank}",
-                  style: TextStyle(fontSize: 16)),
-              Text(widget.allowedPlayers, style: TextStyle(fontSize: 16)),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                    text: widget.playerNum,
-                    style: TextStyle(
-                        fontSize: 16, color: Color.fromRGBO(0, 0, 0, 1))),
-                WidgetSpan(child: Icon(Icons.people_outline))
-              ])),
-              Text("Mode de jeu: ${widget.gameMode}",
-                  style: TextStyle(fontSize: 16)),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                    text: widget.price,
-                    style: TextStyle(
-                        fontSize: 16, color: Color.fromRGBO(0, 0, 0, 1))),
-                WidgetSpan(child: Icon(Icons.monetization_on_outlined))
-              ])),
+              Expanded(
+                child: Text("Prestige minimum: ${widget.minRank}",
+                    style: TextStyle(fontSize: 16)),
+              ),
+              Expanded(
+                  child: Text(widget.allowedPlayers,
+                      style: TextStyle(fontSize: 16))),
+              Expanded(
+                child: RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                      text: widget.playerNum,
+                      style: TextStyle(
+                          fontSize: 16, color: Color.fromRGBO(0, 0, 0, 1))),
+                  WidgetSpan(child: Icon(Icons.people_outline))
+                ])),
+              ),
+              Expanded(
+                child: Text("Mode de jeu: ${widget.gameMode}",
+                    style: TextStyle(fontSize: 16)),
+              ),
+              Expanded(
+                child: RichText(
+                    text: TextSpan(children: [
+                  TextSpan(
+                      text: widget.price,
+                      style: TextStyle(
+                          fontSize: 16, color: Color.fromRGBO(0, 0, 0, 1))),
+                  WidgetSpan(child: Icon(Icons.monetization_on_outlined))
+                ])),
+              ),
             ],
           ),
           Divider()

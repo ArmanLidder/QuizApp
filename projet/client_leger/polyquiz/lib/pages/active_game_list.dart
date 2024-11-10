@@ -214,6 +214,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           'Liste des Jeux Publics',
           style: TextStyle(
