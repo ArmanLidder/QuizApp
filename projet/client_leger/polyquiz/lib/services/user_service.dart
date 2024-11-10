@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/user.dart';
-import 'package:uuid/uuid.dart';
 
 class UserService extends GetxController {
   final String collectionName = 'users';
@@ -17,10 +16,12 @@ class UserService extends GetxController {
     final user = User.fromJson(doc.data()!);
     return user;
   }
-  Future<String> getUserNameById(String id) async{
+
+  Future<String> getUserNameById(String id) async {
     User? user = await this.getUserById(id);
     return user?.username ?? "";
   }
+
   Future<User?> getUserByEmail(String email) async {
     try {
       final querySnapshot = await _db
@@ -39,6 +40,7 @@ class UserService extends GetxController {
       return null; // Handle the error appropriately
     }
   }
+
   Future<void> createUser(String email, String username) async {
     try {
       DocumentReference docRef = _db.collection(collectionName).doc();
@@ -47,7 +49,8 @@ class UserService extends GetxController {
         'email': email,
         'username': username,
         'uid': docRef.id,
-        'avatar': 'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58',
+        'avatar':
+            'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58',
         'friends': [],
         'currency': 0,
         'achievements': [],
@@ -70,12 +73,12 @@ class UserService extends GetxController {
         },
       });
 
-
       print('User created');
     } catch (e) {
       print('Failed to create user: $e');
     }
   }
+
   Future<void> updateUserAvatar({
     required String id,
     required String newAvatarUrl,

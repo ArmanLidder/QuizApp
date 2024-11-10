@@ -6,7 +6,6 @@ import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
-import 'package:polyquiz/services/host_interface_management_service.dart';
 
 class QuitBtn extends StatelessWidget {
   final bool isHost;
@@ -19,7 +18,14 @@ class QuitBtn extends StatelessWidget {
       GlobalNavigationService();
   final SocketService _socketService = SocketService();
 
-  QuitBtn({Key? key, required this.isHost, required this.roomId, this.gameService, this.interactiveListService, this.gameInterfaceManagementService, this.hostInterfaceManagementService})
+  QuitBtn(
+      {Key? key,
+      required this.isHost,
+      required this.roomId,
+      this.gameService,
+      this.interactiveListService,
+      this.gameInterfaceManagementService,
+      this.hostInterfaceManagementService})
       : super(key: key);
 
   @override
@@ -32,10 +38,10 @@ class QuitBtn extends StatelessWidget {
           if (gameService != null) {
             gameService!.destroy();
           }
-          if (gameInterfaceManagementService != null) { 
+          if (gameInterfaceManagementService != null) {
             gameInterfaceManagementService!.reset();
           }
-          if (interactiveListService != null){
+          if (interactiveListService != null) {
             interactiveListService!.reset();
           }
           if (hostInterfaceManagementService != null) {
@@ -47,10 +53,10 @@ class QuitBtn extends StatelessWidget {
           if (gameService != null) {
             gameService!.destroy();
           }
-          if (gameInterfaceManagementService != null) { 
+          if (gameInterfaceManagementService != null) {
             gameInterfaceManagementService!.reset();
           }
-          if (interactiveListService != null){
+          if (interactiveListService != null) {
             interactiveListService!.reset();
           }
         }

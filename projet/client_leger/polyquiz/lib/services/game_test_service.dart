@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/quiz_service.dart';
 import 'package:polyquiz/models/timer.dart';
 import 'package:polyquiz/models/player.dart';
-import 'package:polyquiz/constants/constants.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/time_service.dart';
 

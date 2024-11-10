@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/game_config_service.dart';
@@ -8,7 +7,6 @@ import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
 import 'package:polyquiz/constants/socket-event.dart';
-import 'package:polyquiz/services/game_config_service.dart';
 
 class WaitingRoomScreen extends StatefulWidget {
   final Quiz quiz;

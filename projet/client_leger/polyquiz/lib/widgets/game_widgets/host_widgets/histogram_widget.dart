@@ -56,7 +56,6 @@ class _HistogramWidgetState extends State<Histogram> {
                     } else {
                       return Text('');
                     }
-                    ;
                   },
                 ),
               ),

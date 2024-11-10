@@ -1,7 +1,5 @@
-import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:polyquiz/constants/constants.dart';
-import 'package:get/get.dart';
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();

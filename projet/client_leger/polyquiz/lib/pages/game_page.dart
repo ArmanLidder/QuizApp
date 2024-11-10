@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
@@ -23,7 +22,6 @@ class GamePage extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<GamePage> {
-
   late bool isHost;
   bool isQcm = false; // Il faudra remplacer par un enum par la suite
   bool isGrading = true;
@@ -32,7 +30,7 @@ class _MyWidgetState extends State<GamePage> {
   int questionPts = 50;
   String questionTxt = "Question par defaut ?";
   String message = "Attendez pendant que l'hôte corrige les réponses...";
-  bool isQuitBtn  = false;
+  bool isQuitBtn = false;
   GameService _gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
@@ -43,8 +41,10 @@ class _MyWidgetState extends State<GamePage> {
   void initState() {
     super.initState();
     this.isHost = this._gameService.realGameService.username == 'host';
-    print('isAlreadyInit interactive service: ${_interactiveListService.isAlreadyInit}');
-    if (_socketService.isSocketAlive() && !_interactiveListService.isAlreadyInit) {
+    print(
+        'isAlreadyInit interactive service: ${_interactiveListService.isAlreadyInit}');
+    if (_socketService.isSocketAlive() &&
+        !_interactiveListService.isAlreadyInit) {
       _socketService.clearAllListeners();
       _cleanupSocketListeners();
     }
@@ -71,7 +71,7 @@ class _MyWidgetState extends State<GamePage> {
   void dispose() {
     // Only dispose if we're actually leaving the game
     if (_gameService.isQuitBtn) {
-       print('GamePage dispose');
+      print('GamePage dispose');
       // final String socketMessage =
       //     this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
       // if (this._socketService.isSocketAlive()) {
@@ -99,10 +99,7 @@ class _MyWidgetState extends State<GamePage> {
     Widget? questionWidget;
     switch (_gameInterfaceManagementService.gameService.question?.type) {
       case QuestionType.QCM:
-        questionWidget = Container(
-          height: 500,
-          child: PlayerQcm()
-        );
+        questionWidget = Container(height: 500, child: PlayerQcm());
         break;
       case QuestionType.QRL:
         questionWidget = PlayerQrl();
@@ -116,13 +113,11 @@ class _MyWidgetState extends State<GamePage> {
     }
     return Visibility(
         visible: !this._gameService.realGameService.isHostEvaluating,
-        child: questionWidget
-    );
+        child: questionWidget);
   }
 
   @override
   Widget build(BuildContext context) {
-    
     if (isHost) {
       return Scaffold(
         appBar: AppBar(
@@ -130,8 +125,14 @@ class _MyWidgetState extends State<GamePage> {
           centerTitle: true,
           backgroundColor: Color.fromRGBO(53, 121, 246, 1),
         ),
-        body: ListView(
-            children: [Visibility(visible: isHost, child: HostInterface(interactiveListService: _interactiveListService, gameInterfaceManagementService: _gameInterfaceManagementService))]),
+        body: ListView(children: [
+          Visibility(
+              visible: isHost,
+              child: HostInterface(
+                  interactiveListService: _interactiveListService,
+                  gameInterfaceManagementService:
+                      _gameInterfaceManagementService))
+        ]),
       );
     } else {
       return Container(
@@ -213,27 +214,41 @@ class _MyWidgetState extends State<GamePage> {
                                       visible: _gameInterfaceManagementService
                                                   .gameService.question?.type ==
                                               QuestionType.QCM &&
-                                             !_gameInterfaceManagementService.gameService.realGameService.isHostEvaluating,
+                                          !_gameInterfaceManagementService
+                                              .gameService
+                                              .realGameService
+                                              .isHostEvaluating,
                                       child: Container(
                                           height: 500, child: PlayerQcm())),
                                   Visibility(
                                       visible: _gameInterfaceManagementService
                                                   .gameService.question?.type ==
                                               QuestionType.QRL &&
-                                              !_gameInterfaceManagementService.gameService.realGameService.isHostEvaluating,
+                                          !_gameInterfaceManagementService
+                                              .gameService
+                                              .realGameService
+                                              .isHostEvaluating,
                                       child: PlayerQrl()),
-                                    Visibility(
-                                    visible: _gameInterfaceManagementService.gameService.realGameService.isHostEvaluating,
+                                  Visibility(
+                                    visible: _gameInterfaceManagementService
+                                        .gameService
+                                        .realGameService
+                                        .isHostEvaluating,
                                     child: PlayerNotice(
                                       message: message,
-                                      gameInterfaceManagementService: _gameInterfaceManagementService,
+                                      gameInterfaceManagementService:
+                                          _gameInterfaceManagementService,
                                     ),
-                                    ),
+                                  ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Visibility(
-                                        visible: !_gameInterfaceManagementService.gameService.realGameService.isHostEvaluating,
+                                        visible:
+                                            !_gameInterfaceManagementService
+                                                .gameService
+                                                .realGameService
+                                                .isHostEvaluating,
                                         child: TextButton(
                                           onPressed: () {
                                             if (_gameInterfaceManagementService
@@ -278,9 +293,11 @@ class _MyWidgetState extends State<GamePage> {
                                               ._gameService
                                               .realGameService
                                               .roomId,
-                                              gameService: _gameService,
-                                              interactiveListService: _interactiveListService,
-                                              gameInterfaceManagementService: _gameInterfaceManagementService),
+                                          gameService: _gameService,
+                                          interactiveListService:
+                                              _interactiveListService,
+                                          gameInterfaceManagementService:
+                                              _gameInterfaceManagementService),
                                       ChatPopup()
                                     ],
                                   )
@@ -299,24 +316,21 @@ class _MyWidgetState extends State<GamePage> {
     String? imageUrl = this._gameService.realGameService.question?.imageUrl;
     if (imageUrl == null) return null;
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-        child: Image.network(imageUrl),
-      )
-    );
+        child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+      child: Image.network(imageUrl),
+    ));
   }
 
   Widget getButtons() {
-    final isValidateButtonActive = !this._gameService.realGameService.isHostEvaluating && this._gameService.realGameService.isValidateActive;
+    final isValidateButtonActive =
+        !this._gameService.realGameService.isHostEvaluating &&
+            this._gameService.realGameService.isValidateActive;
     final validateButtonStyle = TextButton.styleFrom(
-        textStyle: TextStyle(
-            fontWeight:
-            FontWeight.normal),
-        splashFactory: NoSplash.splashFactory,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0)
-        ),
-        backgroundColor: isValidateButtonActive ? Colors.blueAccent : Colors.grey,
+      textStyle: TextStyle(fontWeight: FontWeight.normal),
+      splashFactory: NoSplash.splashFactory,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      backgroundColor: isValidateButtonActive ? Colors.blueAccent : Colors.grey,
     );
     return Row(
       children: <Widget>[
@@ -331,8 +345,7 @@ class _MyWidgetState extends State<GamePage> {
                   color: Colors.white,
                   fontSize: 20,
                 ),
-              )
-          ),
+              )),
         ),
         SizedBox(width: 100.0),
         QuitBtn(isHost: false, roomId: this._gameService.realGameService.roomId)
@@ -341,8 +354,10 @@ class _MyWidgetState extends State<GamePage> {
   }
 
   void onValidate() {
-    if (_gameInterfaceManagementService.gameService.question?.type == QuestionType.QRL) {
-      _gameInterfaceManagementService.gameService.realGameService.isHostEvaluating = true;
+    if (_gameInterfaceManagementService.gameService.question?.type ==
+        QuestionType.QRL) {
+      _gameInterfaceManagementService
+          .gameService.realGameService.isHostEvaluating = true;
     }
     _gameService.realGameService.isValidateActive = false;
     _gameInterfaceManagementService.gameService.sendAnswer();

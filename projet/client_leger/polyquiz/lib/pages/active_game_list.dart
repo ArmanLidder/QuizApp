@@ -9,8 +9,6 @@ import 'package:polyquiz/services/snack_bar_service.dart';
 import 'package:polyquiz/services/waiting_room_service.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/game_list_item.dart';
-import 'package:polyquiz/models/user.dart';
-import '../services/waiting_room_service.dart';
 import 'waiting_room_screen.dart';
 import '../models/quiz.dart';
 

@@ -3,9 +3,7 @@ import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
-import 'package:polyquiz/models/game_info_interface.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class GameConfigWidget extends StatefulWidget {
