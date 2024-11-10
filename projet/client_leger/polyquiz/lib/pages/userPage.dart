@@ -40,50 +40,35 @@ class Userpage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0), // Adjust the radius as needed
                 ),
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      ProfileCard(
-                      ),
-                      StatitisticsBlorb(
-                        nPlayedGames: userData?.stats.gamesPlayed ?? 0,
-                        nWonGames: userData?.stats.gamesWon ?? 0,
-                        avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
-                        avgGameTime: userData?.stats.avgGameTime ?? 0,
-                      ),
-                      Text(
-                    "Accomplissements",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                    )),
-                      StarCardGrid(
-                          labels:
-                          List.generate(8, (index) => "Defi numero ${index + 1}"),
-                          achievementsList: achievements),
-                      Text(
-                          "Amis",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          )),
+                  child: Column(children: [
+                    ProfileCard(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          StatitisticsBlorb(
+                            nPlayedGames: userData?.stats.gamesPlayed ?? 0,
+                            nWonGames: userData?.stats.gamesWon ?? 0,
+                            avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
+                            avgGameTime: userData?.stats.avgGameTime ?? 0,
+                          ),
 
-                      FriendListDisplay(friends: userData?.friends ?? [],
-                          pendingRequests: userData?.friendRequests ?? []),
+                          FriendListDisplay(friends: userData?.friends ?? [],
+                              pendingRequests: userData?.friendRequests ?? []),
 
-                      Historique(
-                        gameHistory: userData?.gameHistory ?? [],
-                        loginHistory: userData?.loginHistory ?? [],
-                      ),
+                          StarCardGrid(
+                              achievementsList: achievements),
 
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/home');
-                        },
-                        child: Text("Retours a la page d'origine"),
+                          Historique(
+                            gameHistory: userData?.gameHistory ?? [],
+                            loginHistory: userData?.loginHistory ?? [],
+                          ),
+
+                        ],
+
                       ),
-                    ],
-                  ),
-                ),
+                    )
+                  ],),)
               ),
             )
           )

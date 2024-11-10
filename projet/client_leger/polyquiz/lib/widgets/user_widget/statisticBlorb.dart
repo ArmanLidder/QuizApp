@@ -15,9 +15,7 @@ class StatitisticsBlorb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
+    return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -49,8 +47,7 @@ class StatitisticsBlorb extends StatelessWidget {
                 ],
             ),)
           ],
-        ),
-    );
+        );
   }
 }
 

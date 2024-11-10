@@ -30,47 +30,86 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 400,
-      child: Container(
-        margin: EdgeInsets.all(16),
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensure space between text and button
           children: [
-            TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(text: 'Friends'),
-                Tab(text: 'Pending'),
-              ],
-              indicatorColor: Colors.blue,
-              labelColor: Colors.blue,
-              unselectedLabelColor: Colors.black,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Amis",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
             ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildFriendsList(),
-                  _buildPendingRequestsList(),
-                ],
+            ElevatedButton.icon(
+              onPressed: () {
+                // Add your onPressed functionality here
+                print("Ajouter button pressed"); //TODO: addpopup
+              },
+              icon: Icon(Icons.person_add, color: Colors.white), // Person + icon
+              label: Text(
+                "Ajouter",
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor : Colors.blue, // Button color
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Button padding
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                ),
               ),
             ),
           ],
         ),
-      ),
+          SizedBox(
+          height: 400,
+          child: Container(
+            margin: EdgeInsets.all(16),
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                TabBar(
+                  controller: _tabController,
+                  tabs: [
+                    Tab(text: 'Friends'),
+                    Tab(text: 'Pending'),
+                  ],
+                  indicatorColor: Colors.blue,
+                  labelColor: Colors.blue,
+                  unselectedLabelColor: Colors.black,
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildFriendsList(),
+                      _buildPendingRequestsList(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+
+
     );
   }
 
