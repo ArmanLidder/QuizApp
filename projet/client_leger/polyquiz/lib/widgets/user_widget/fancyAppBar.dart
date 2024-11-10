@@ -25,12 +25,6 @@ class _FancyAppBarState extends State<FancyAppBar> {
     imageUrl = widget.sourceImgUrl; // Initialize with the source image URL
   }
 
-  Future<void> _imageChangeButton() async {
-    await loggedInUserService.updateProfilePicture();
-    setState(() {
-      imageUrl = loggedInUserService.getUser()!.avatar; // Update accordingly
-    });
-  }
 
   @override
   Widget build(BuildContext barContext) {

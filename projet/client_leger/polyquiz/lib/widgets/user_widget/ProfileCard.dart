@@ -1,98 +1,114 @@
 import 'package:flutter/material.dart';
-
 import '../../services/imageStorageService.dart';
 import '../../services/logged_in_user_service.dart';
 
-class ProfileCard extends StatelessWidget {
+class ProfileCard extends StatefulWidget {
+  @override
+  _ProfileCardState createState() => _ProfileCardState();
+}
+
+class _ProfileCardState extends State<ProfileCard> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
 
+  late String imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    imageUrl = loggedInUserService.getUser()?.avatar ?? ''; // Initialize with the source image URL
+  }
+
+  Future<void> _imageChangeButton() async {
+    await loggedInUserService.updateProfilePicture();
+    setState(() {
+      imageUrl = loggedInUserService.getUser()!.avatar; // Update the image URL
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final String? username = this.loggedInUserService.user?.username;
-    final num? prestige = this.loggedInUserService.user?.prestige;
-    final num? argent = this.loggedInUserService.user?.currency;
+    final String? username = loggedInUserService.user?.username;
+    final num? prestige = loggedInUserService.user?.prestige;
+    final num? argent = loggedInUserService.user?.currency;
 
     return Align(
       alignment: Alignment.topCenter,
       child: FractionallySizedBox(
-          widthFactor: 0.8,
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue, Colors.purple],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              //borderRadius: BorderRadius.circular(12.0),
+        widthFactor: 0.8,
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue, Colors.purple],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
             ),
-            child: Center(
-                child: Column(
+          ),
+          child: Center(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(child: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2), // White outline
-                      ),
-                      child: CircleAvatar(
-                        radius: 75,
-                        backgroundImage: NetworkImage(this.loggedInUserService.user!.avatar),
-                      ),),
-                    Positioned(
-                      bottom: 106,
-                      right: 106,
-                      child: Container(
-                        width: 40,
-                        height: 40,
+                Center(
+                  child: Stack(
+                    children: [
+                      Container(
                         decoration: BoxDecoration(
-                          color: Colors.yellow,
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 2),
                         ),
-                        child: Center(
-                          child: Text(
-                            this.loggedInUserService.getUser()!.level.toString(),
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                        child: CircleAvatar(
+                          radius: 75,
+                          backgroundImage: NetworkImage(imageUrl),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 106,
+                        right: 106,
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Center(
+                            child: Text(
+                              loggedInUserService.getUser()!.level.toString(),
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child:GestureDetector(
-                        onTap: () {
-                          // Add your onPressed functionality here
-                          print("Edit icon tapped"); // Placeholder action
-                        },
-                        child: Container(
-                          width: 40, // Adjust the size as needed
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Icon(
-                              Icons.edit, // Pen icon
-                              color: Colors.blue,
-                              size: 20, // Adjust the icon size as needed
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: _imageChangeButton,
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.blue,
+                                size: 20,
+                              ),
                             ),
                           ),
                         ),
-                    ),
-                      )
-                  ],
-                )
+                      ),
+                    ],
+                  ),
                 ),
                 Center(
                   child: Text(
@@ -106,13 +122,14 @@ class ProfileCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8.0),
                 Center(
-                    child: Text(
-                  this.loggedInUserService.getUser()!.email,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14.0,
+                  child: Text(
+                    loggedInUserService.getUser()!.email,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14.0,
+                    ),
                   ),
-                )),
+                ),
                 SizedBox(height: 16.0),
                 Center(
                   child: Wrap(
@@ -142,10 +159,12 @@ class ProfileCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
-            )),
-          )),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
