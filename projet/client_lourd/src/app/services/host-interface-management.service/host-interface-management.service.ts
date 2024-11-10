@@ -10,7 +10,12 @@ import {
     VALUE,
 } from '@common/constants/host-interface.component.const';
 import { Player } from '@common/constants/player-list.component.const';
-import { QuestionStatistics } from '@common/constants/statistic-zone.component.const';
+import {
+    EXACT_ANSWER,
+    INCORRECT_ANSWER,
+    QuestionStatistics,
+    WITHIN_MARGIN
+} from '@common/constants/statistic-zone.component.const';
 import { GameService } from '@app/services/game.service/game.service';
 import { InteractiveListSocketService } from '@app/services/interactive-list-socket.service/interactive-list-socket.service';
 import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
@@ -63,7 +68,7 @@ export class HostInterfaceManagementService {
         const question = this.gameService.gameRealService.question;
         if (question !== null) {
             const savedStats: QuestionStatistics = [this.histogramDataValue, this.histogramDataChangingResponses, question];
-            if (question.type !== QuestionType.QRL && question.type !== QuestionType.QRE) this.gameStats.push(savedStats);
+            if (question.type !== QuestionType.QRL) this.gameStats.push(savedStats);
         }
     }
 
@@ -93,6 +98,7 @@ export class HostInterfaceManagementService {
         this.handleRefreshActivityStats();
         this.handleHostPanicMode();
         this.handleHostTimerPause();
+        this.handleRefreshQREStats();
     }
 
     private handleTimeTransition() {
@@ -141,6 +147,18 @@ export class HostInterfaceManagementService {
     private handleRefreshChoicesStats() {
         this.socketService.on(SocketEvent.REFRESH_CHOICES_STATS, (choicesStatsValue: number[]) => {
             this.histogramDataChangingResponses = this.createChoicesStatsMap(choicesStatsValue);
+        });
+    }
+
+    private handleRefreshQREStats() {
+        this.socketService.on(SocketEvent.REFRESH_QRE_STATS, (qreStatsValue: number[]) => {
+            const qreStatsMap = new Map([
+                [WITHIN_MARGIN, qreStatsValue[0]],
+                [EXACT_ANSWER, qreStatsValue[1]],
+                [INCORRECT_ANSWER, qreStatsValue[2]]
+            ]);
+            console.log(qreStatsMap);
+            this.histogramDataChangingResponses = qreStatsMap;
         });
     }
 
@@ -222,6 +240,10 @@ export class HostInterfaceManagementService {
             question.choices?.forEach((choice: QuizChoice) => {
                 this.histogramDataValue.set(choice.text, choice.isCorrect as boolean);
             });
+        } else if (this.gameService.question?.type === QuestionType.QRE) {
+            this.histogramDataValue.set(WITHIN_MARGIN, true);
+            this.histogramDataValue.set(EXACT_ANSWER, true);
+            this.histogramDataValue.set(INCORRECT_ANSWER, false);
         } else {
             this.histogramDataChangingResponses = new Map([
                 [ACTIVE, 0],

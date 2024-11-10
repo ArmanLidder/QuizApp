@@ -7,11 +7,15 @@ import {format} from 'date-fns-tz';
 import {GameInfo} from '@common/interfaces/game-info.interface';
 import {HistoryService} from '@app/services/history.service/history.service';
 import {QuestionType} from "@common/enums/question-type.enum";
+import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
 
 type Username = string;
 type Players = Map<Username, Score>;
 type PlayerAnswers = Map<Username, Answers>;
 type ChoiceStats = Map<string, number>;
+
+type QRECategory = 'Dans l\'intervalle' | 'Exact' | 'Incorrect';
+type QREStats = Map<QRECategory, number>;
 
 export class Game {
     currIndex: number = 0;
@@ -20,7 +24,17 @@ export class Game {
     playersAnswers: PlayerAnswers = new Map();
     currentQuizQuestion: QuizQuestion;
     question: string;
+
     choicesStats: ChoiceStats = new Map();
+    qreStats: QREStats = new Map([
+        [WITHIN_MARGIN, 0],
+        [EXACT_ANSWER, 0],
+        [INCORRECT_ANSWER, 0]
+    ]);
+
+    //Map where key is userID, value is a pair (qreCategory,answerValue) basically we are always storing a player's most recent value
+    playerQREAnswer: Map<string, [QRECategory, number]> = new Map();
+
     activityStatusStats: [number, number] = [0, 0];
     correctChoices: string[] = [];
     duration: number;
@@ -47,6 +61,7 @@ export class Game {
     next() {
         this.playersAnswers.clear();
         this.choicesStats.clear();
+        this.qreStats.clear();
         this.currIndex++;
         this.setValues();
     }
@@ -152,6 +167,23 @@ export class Game {
         const answer = this.currentQuizQuestion.choices[index].text;
         const oldValue = this.choicesStats.get(answer);
         this.choicesStats.set(answer, isSelected ? oldValue + 1 : oldValue - 1);
+    }
+
+    updateQREStats(selectedAnswer: number, user: string) {
+        const previousAnswer = this.playerQREAnswer.get(user);
+        if (previousAnswer) {
+            this.qreStats.set(previousAnswer[0],this.qreStats.get(previousAnswer[0])-1) //previousAnswer[0] is one of the three categories exact,within,incorrect
+        }
+        if (this.currentQuizQuestion.answer === selectedAnswer) {
+            this.qreStats.set(EXACT_ANSWER, (this.qreStats.get(EXACT_ANSWER) || 0)+1);
+            this.playerQREAnswer.set(user,[EXACT_ANSWER, selectedAnswer]);
+        } else if (this.validateQREAnswer(selectedAnswer.toString())){
+            this.qreStats.set(WITHIN_MARGIN, (this.qreStats.get(WITHIN_MARGIN) || 0)+1);
+            this.playerQREAnswer.set(user,[WITHIN_MARGIN, selectedAnswer]);
+        } else {
+            this.qreStats.set(INCORRECT_ANSWER, (this.qreStats.get(INCORRECT_ANSWER) || 0)+1);
+            this.playerQREAnswer.set(user,[INCORRECT_ANSWER, selectedAnswer]);
+        }
     }
 
     updatePlayerScores(playerCorrections: Map<string, number>) {

@@ -92,6 +92,12 @@ export class GameService {
         }
     }
 
+    selectQREAnswer(selectedAnswer: number) {
+        if (!this.lockedStatus) {
+            this.gameRealService.sendQRESelection(selectedAnswer);
+        }
+    }
+
     sendAnswer() {
         if (!this.isTestMode) {
             this.gameRealService.answers = this.answers;

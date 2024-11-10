@@ -55,6 +55,7 @@ export class GamesListComponent implements OnInit {
     }
 
     refresh(event: any = {}) {
+        this.selectedQuiz = null;
         this.populateGameList();
         this.snackbar.show( 'Les quiz ont été actualisés.')
     }

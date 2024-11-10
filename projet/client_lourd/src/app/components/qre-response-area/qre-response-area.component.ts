@@ -33,7 +33,7 @@ export class QreResponseAreaComponent implements OnInit {
         return value.toString();
       }
     };
-
+    this.gameService.selectQREAnswer(this.selectedValue);
   }
 
   calculateResponseInterval() {
@@ -44,7 +44,7 @@ export class QreResponseAreaComponent implements OnInit {
 
   onSliderChange() {
     this.calculateResponseInterval();
-
+    this.gameService.selectQREAnswer(this.selectedValue);
   }
 
   validate() {
