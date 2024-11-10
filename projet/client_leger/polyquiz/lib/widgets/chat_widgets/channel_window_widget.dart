@@ -66,22 +66,37 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
     super.initState();
   }
 
+  ButtonStyle get channelModificationStyle {
+    return TextButton.styleFrom(
+      backgroundColor: Colors.blueAccent,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0))
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       Row(children: <Widget>[
         Expanded(
-            child: ElevatedButton(
+            child: TextButton(
                 onPressed: () {
                   widget.changePage(Page.create);
                 },
-                child: Text("Créer un canal"))),
+                child: Text("Ajouter un Canal"),
+              style: channelModificationStyle,
+            )
+        ),
+        SizedBox(width: 10,),
         Expanded(
-            child: ElevatedButton(
+            child: TextButton(
                 onPressed: () {
                   widget.changePage(Page.join);
                 },
-                child: Text("Joindre un canal")))
+                child: Text("Joindre un Canal"),
+                style: channelModificationStyle,
+            )
+        )
       ]),
       Expanded(child: Obx(() {
         return channelService.channels.isEmpty
@@ -124,31 +139,81 @@ class ChannelSelectionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-        title: TextButton(
-            onPressed: () => buttonCallback(id),
-            child: Container(child: Text(name)),
-            style: TextButton.styleFrom(
-                alignment: Alignment.centerLeft,
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
-        trailing: name == 'general'
-            ? null
-            : SizedBox(
-                width: 100,
-                child: Row(children: <Widget>[
-                  IconButton(
-                      onPressed: () {
-                        leaveChannelCallback();
-                      },
-                      icon: Icon(Icons.logout)),
-                  IconButton(
-                      onPressed: () {
-                        deleteChannelPopup(context);
-                      },
-                      icon: Icon(Icons.delete))
-                ]),
-              ));
+    bool shouldHaveLeaveAndDeleteButton = name != 'general';
+
+    Widget leaveAndDeleteButtons =  SizedBox(
+      width: 100,
+      child: Row(children: <Widget>[
+        IconButton(
+            onPressed: () {
+              leaveChannelCallback();
+            },
+            icon: Icon(Icons.logout, size: 20)),
+        IconButton(
+            onPressed: () {
+              deleteChannelPopup(context);
+            },
+            icon: Icon(Icons.delete, color: Colors.red, size: 20)
+        )
+      ]),
+    );
+
+    return Padding(
+      padding: EdgeInsets.all(5.0),
+      child: TextButton(
+          onPressed: () => buttonCallback(id),
+          style: TextButton.styleFrom(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            minimumSize: Size(double.infinity, 50),
+            backgroundColor: Colors.grey[200],
+            foregroundColor: Colors.black,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0))
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(name),
+              ),
+              if (shouldHaveLeaveAndDeleteButton) leaveAndDeleteButtons,
+            ],
+          )
+      )
+    );
+    // return Padding(
+    //   padding: const EdgeInsets.all(8.0),
+    //   child: ListTile(
+    //       tileColor: Colors.grey[200],
+    //       title: TextButton(
+    //           onPressed: () => buttonCallback(id),
+    //           child: Container(child: Text(name)),
+    //           style: TextButton.styleFrom(
+    //               alignment: Alignment.centerLeft,
+    //
+    //               shape:
+    //                   RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
+    //       trailing: name == 'general'
+    //           ? null
+    //           : SizedBox(
+    //               width: 100,
+    //               child: Row(children: <Widget>[
+    //                 IconButton(
+    //                     onPressed: () {
+    //                       leaveChannelCallback();
+    //                     },
+    //                     icon: Icon(Icons.logout)),
+    //                 IconButton(
+    //                     onPressed: () {
+    //                       deleteChannelPopup(context);
+    //                     },
+    //                     icon: Icon(Icons.delete)
+    //                 )
+    //               ]),
+    //             )
+    //   ),
+    // );
   }
 
   void deleteChannelPopup(BuildContext context) {
@@ -234,11 +299,24 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
               channelService.joinChannel(id);
               widget.returnCallback();
             },
-            child: Container(child: Text(name)),
+            child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(name)
+            ),
+            // style: TextButton.styleFrom(
+            //     alignment: Alignment.centerLeft,
+            //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)
+            // )
             style: TextButton.styleFrom(
-                alignment: Alignment.centerLeft,
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.zero))));
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              minimumSize: Size(double.infinity, 50),
+              backgroundColor: Colors.grey[200],
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
+            )
+        )
+    );
   }
 }
 
