@@ -12,7 +12,7 @@ import {
   ACTIVE,
   ACTIVE_STATUS,
   INACTIVE, INACTIVE_STATUS,
-  PLAYER_NOT_FOUND_INDEX,
+  PLAYER_NOT_FOUND_INDEX, TransportStatsFormat,
 } from "@common/constants/host-interface.component.const";
 import {QuizChoice, QuizQuestion} from "@common/interfaces/quiz.interface";
 import {GameService} from "@app/services/game.service/game.service";
@@ -48,6 +48,7 @@ export class ObservationService {
     this.handleRefreshActivityStats();
     this.handleHostPanicMode();
     this.handleHostTimerPause();
+    this.handleGameStatusDistribution();
   }
 
   private handleTimeTransition() {
@@ -186,6 +187,24 @@ export class ObservationService {
     const choices = this.gameService.question?.choices;
     choices?.forEach((choice: QuizChoice, index: number) => choicesStats.set(choice.text, choicesStatsValue[index]));
     return choicesStats;
+  }
+
+  private handleGameStatusDistribution() {
+    this.socketService.on(SocketEvent.GAME_STATUS_DISTRIBUTION, (gameStats: string) => {
+      this.unpackStats(this.parseGameStats(gameStats));
+    });
+  }
+
+  private parseGameStats(stringifyStats: string) {
+    return JSON.parse(stringifyStats);
+  }
+
+  private unpackStats(stats: TransportStatsFormat) {
+    stats.forEach((stat) => {
+      const values = new Map<string, boolean>(stat[0]);
+      const responses = new Map<string, number>(stat[1]);
+      this.hostInterfaceManagementService.gameStats.push([values, responses, stat[2]]);
+    });
   }
 
    reset() {
