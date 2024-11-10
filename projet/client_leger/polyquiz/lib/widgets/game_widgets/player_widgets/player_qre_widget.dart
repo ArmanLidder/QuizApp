@@ -13,7 +13,7 @@ class PlayerQreWidget extends StatefulWidget {
 
 class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
-  bool get isValidated => gameInterfaceManagementService.gameService.realGameService.isValidateActive;
+  bool get isValidated => !gameInterfaceManagementService.gameService.realGameService.isValidateActive;
   int currentValue = 0;
 
   @override
