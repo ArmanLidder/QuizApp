@@ -78,12 +78,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
             onTap: () {Navigator.pushReplacementNamed(widget.context, '/auth');}, // Placeholder onPressed for "Log Out"
           ),
         ],
-            child: Row(
-              children: [
-                //IconButton(
-                //  icon: Icon(Icons.create_outlined),
-                //  onPressed: _imageChangeButton, // Call the async function
-                //),
+            child:
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -95,41 +90,45 @@ class _FancyAppBarState extends State<FancyAppBar> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4), // Space between the text and the image
-                    Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 17.5,
-                          backgroundImage: NetworkImage(imageUrl),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              color: Colors.yellow,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                loggedInUserService.getUser()!.level.toString(),
-                                style: TextStyle(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                    SizedBox(
+                      height: 36,
+                      width: 40,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(imageUrl),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              width: 17.5,
+                              height: 17.5,
+                              decoration: BoxDecoration(
+                                color: Colors.yellow,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  loggedInUserService.getUser()!.level.toString(),
+                                  style: TextStyle(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),                  ],
+                        ],
+                      ),
+
+                    )// Space between the text and the image
+                  ],
                 ),
-              ],
             ),
-          ),)
+          )
         ],
       ),
     );
