@@ -92,6 +92,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this.gameService.realGameService.validated = true;
       }
       this.gameService.realGameService.isNotified = false;
+      this.gameService.realGameService.isValidateActive = false;
       notifyListeners();
     });
   }
