@@ -33,8 +33,12 @@ class TimeService {
     _timers.clear();
   }
 
-  ClientTimer getTimer(int index) {
-    return _timers[index];
+  ClientTimer? getTimer(int index) {
+    try {
+      return _timers[index];
+    } catch (e) {
+      return null;
+    }
   }
 
   int getInitialValue(int index) {

@@ -26,6 +26,7 @@ class RealGameService extends ChangeNotifier {
   int questionNumber = 1;
   int timer = 0;
   QuizQuestion? question;
+  late QuizQuestion oldQuestion;
   bool isLast = false;
   bool locked = false;
   bool validated = false;
@@ -35,6 +36,17 @@ class RealGameService extends ChangeNotifier {
   bool audioPaused = false;
   bool inTimeTransition = false;
   bool isNotified = false;
+  bool isHostEvaluating = false;
+  bool _isValidateButtonActive = true;
+  bool isSentAnswer = false;
+
+
+  bool get isValidateActive => this._isValidateButtonActive;
+
+  void set isValidateActive(bool newValue) {
+    this._isValidateButtonActive = newValue;
+    notifyListeners();
+  }
 
   init() {
     this.configureBaseSocket();
@@ -56,17 +68,17 @@ class RealGameService extends ChangeNotifier {
     final answers = this.answers.values.toList();
     if (isQREQuestion) {
       this._socketService.sendMessage(SocketEvent.SUBMIT_ANSWER, {
-      'roomId': this.roomId,
-      'answers': this.qreAnswer,
-      'timer': this.timer,
-      'username': this.username,
+        'roomId': this.roomId,
+        'answers': this.qreAnswer,
+        'timer': this.timer,
+        'username': this.username,
       });
     } else {
       this._socketService.sendMessage(SocketEvent.SUBMIT_ANSWER, {
-      'roomId': this.roomId,
-      'answers': isMultipleChoiceQuestion ? answers : this.qrlAnswer.trim(),
-      'timer': this.timer,
-      'username': this.username,
+        'roomId': this.roomId,
+        'answers': isMultipleChoiceQuestion ? answers : this.qrlAnswer.trim(),
+        'timer': this.timer,
+        'username': this.username,
       });
     }
 
@@ -77,7 +89,6 @@ class RealGameService extends ChangeNotifier {
 
   void configureBaseSocket() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION, (data) {
-      print('DATA RECEIVED: ${data}');
       InitialQuestionData questionData = InitialQuestionData(
         question: QuizQuestion.fromJson(data['question']),
         username: data['username'],
@@ -86,8 +97,7 @@ class RealGameService extends ChangeNotifier {
       );
 
       this.question = questionData.question;
-      print('QUESTION ATTRIBUTE: ${this.question}');
-      if(!isNotified){
+      if (!isNotified) {
         notifyListeners();
         isNotified = true;
       }
@@ -95,24 +105,29 @@ class RealGameService extends ChangeNotifier {
       if (questionData.numberOfQuestions == 1) {
         this.isLast = true;
       }
+      this.isValidateActive = true;
     });
 
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) {
+      this.oldQuestion = this.question!;
       NextQuestionData nextQuestionData = NextQuestionData(
           question: QuizQuestion.fromJson(data['question']),
           index: data['index'],
           isLast: data['isLast']);
 
-      if(!isNotified){
+      if (!isNotified) {
         notifyListeners();
         isNotified = true;
       }
 
+      this.isHostEvaluating = false;
+      this.isSentAnswer = false;
       this.question = nextQuestionData.question;
       this.questionNumber = nextQuestionData.index;
       this.isLast = nextQuestionData.isLast;
       this.validated = false;
       this.locked = false;
+      this.isValidateActive = true;
     });
   }
 
@@ -134,6 +149,8 @@ class RealGameService extends ChangeNotifier {
     this.locked = false;
     this.validated = false;
     this.isLast = false;
+    this.isHostEvaluating = false;
+    this.isSentAnswer = false;
     this.players = [];
     this.answers.clear();
     this.qreAnswer = null;
@@ -141,5 +158,8 @@ class RealGameService extends ChangeNotifier {
     this.questionNumber = 1;
     this.audioPaused = false;
     this.inTimeTransition = false;
+    this.isNotified = false;
+    this._socketService.clearAllListeners();
+    this.audio.stop();
   }
 }

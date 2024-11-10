@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/pages/waiting_room_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
-import 'package:polyquiz/models/game_info_interface.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class GameConfigWidget extends StatefulWidget {
+  final Quiz quiz;
+  const GameConfigWidget({
+    Key? key,
+    required this.quiz,
+  }) : super(key: key);
   @override
   _GameConfigWidgetState createState() => _GameConfigWidgetState();
 }
 
 class _GameConfigWidgetState extends State<GameConfigWidget> {
   final _formKey = GlobalKey<FormState>();
+
   String _gameType = 'classic';
-  double _price = 0.0;
+  int _price = 0;
   bool _friendsOnly = false;
-  bool _private = true;
-  double _prestige = 0.0;
+  bool _private = false;
+  int _prestige = 0;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   User? userData;
 
@@ -26,17 +32,27 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
     final gameConfigService = Provider.of<GameConfigService>(context);
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(30),
       child: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Configurer la partie', style: TextStyle(fontSize: 24)),
-            SizedBox(height: 16),
+            Text('Configurer la partie',
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(53, 121, 246, 1))),
+            Divider(color: Color.fromRGBO(227, 242, 253, 1)),
+            SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: _gameType,
-              decoration: InputDecoration(labelText: 'Type de partie'),
+              decoration: InputDecoration(
+                  labelText: 'Type de partie',
+                  labelStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(69, 90, 100, 1)),
+                  border: OutlineInputBorder()),
               items: [
                 DropdownMenuItem(value: 'classic', child: Text('Classique')),
                 DropdownMenuItem(value: 'equipe', child: Text('Équipe')),
@@ -55,53 +71,116 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
             ),
             SizedBox(height: 16),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Prix'),
+              decoration: InputDecoration(
+                  labelText: 'Prix', border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
-                  _price = double.tryParse(value) ?? 0.0;
+                  _price = int.tryParse(value) ?? 0;
                 });
               },
               validator: (value) {
-                if (value == null || double.tryParse(value) == null || double.parse(value) < 0) {
+                if (value == null ||
+                    int.tryParse(value) == null ||
+                    int.parse(value) < 0) {
                   return 'Le prix doit être un entier supérieur ou égal à 0.';
                 }
                 return null;
               },
             ),
             SizedBox(height: 16),
-            CheckboxListTile(
-              title: Text('Amis Seulement'),
-              value: _friendsOnly,
+            Row(
+              children: [
+                Flexible(
+                  child: Container(
+                    color: Color.fromRGBO(240, 240, 240, 1),
+                    child: CheckboxListTile(
+                      title: Text('Amis Seulement'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Color.fromRGBO(53, 121, 246, 1),
+                      value: _friendsOnly,
+                      onChanged: (value) {
+                        setState(() {
+                          _friendsOnly = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20),
+                Flexible(
+                  child: Container(
+                    color: Color.fromRGBO(240, 240, 240, 1),
+                    child: CheckboxListTile(
+                      title: Text('Partie privée'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Color.fromRGBO(53, 121, 246, 1),
+                      value: _private,
+                      onChanged: (value) {
+                        setState(() {
+                          _private = value!;
+                        });
+                      },
+                    ),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: 20),
+            DropdownButtonFormField<int>(
+              value: _prestige,
+              decoration: InputDecoration(
+                  labelText: 'Prestige minimum',
+                  labelStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(69, 90, 100, 1)),
+                  border: OutlineInputBorder()),
+              items: [
+                DropdownMenuItem(value: 0, child: Text('Aucun')),
+                DropdownMenuItem(value: 50, child: Text('🥉Bronze')),
+                DropdownMenuItem(value: 100, child: Text('🥈Argent')),
+                DropdownMenuItem(value: 150, child: Text('🥇Or')),
+                DropdownMenuItem(value: 200, child: Text('🏅Platine')),
+              ],
               onChanged: (value) {
                 setState(() {
-                  _friendsOnly = value!;
+                  _prestige = value!;
                 });
               },
-            ),
-            CheckboxListTile(
-              title: Text('Partie privée'),
-              value: _private,
-              onChanged: (value) {
-                setState(() {
-                  _private = value!;
-                });
+              validator: (value) {
+                if (value == null) {
+                  return 'Le prestige minimum est requis. Veuillez faire une sélection.';
+                }
+                return null;
               },
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 40),
+            Divider(color: Color.fromRGBO(227, 242, 253, 1)),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
+                  style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      backgroundColor: Color.fromRGBO(246, 53, 53, 1)),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Annuler'),
+                  child: Text('Annuler',
+                      style:
+                          TextStyle(color: Color.fromRGBO(255, 255, 255, 1))),
                 ),
-                ElevatedButton(
+                SizedBox(width: 40),
+                TextButton(
+                  style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
                   onPressed: () {
                     this.userData = this.loggedInUserService.getUser();
                     if (_formKey.currentState!.validate()) {
+                      print('got into validate if');
                       gameConfigService.setGameType(_gameType);
                       gameConfigService.setPrice(_price);
                       gameConfigService.setFriendsOnly(_friendsOnly);
@@ -109,9 +188,25 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       gameConfigService.setPrestige(_prestige);
                       gameConfigService.setUser(this.userData!);
                       Navigator.of(context).pop(); // Close the dialog
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WaitingRoomScreen(
+                            quiz: widget.quiz,
+                            username:
+                                'nothing', // Pass the username to the waiting room.
+                            isHost: true, // This user is not the host.
+                            gameConfigService: gameConfigService,
+                          ),
+                        ),
+                      );
                     }
                   },
-                  child: Text('Créer partie'),
+                  child: Text(
+                    'Créer partie',
+                    style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+                  ),
                 ),
               ],
             ),

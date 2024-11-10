@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:ui';
-
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
@@ -19,39 +16,45 @@ class LoggedInUserService extends GetxController {
   }
 
   Future<void> setUserByEmail(String email) async {
-    
-    User? fetchedUser = await this.userService.getUserByEmail(email); // Fetch user by email
+    User? fetchedUser =
+        await this.userService.getUserByEmail(email); // Fetch user by email
     if (fetchedUser != null) {
       setUser(fetchedUser); // Set the fetched user
     } else {
       print('User not found with email: $email');
     }
   }
-  Future<void> reloadUser() async{
+
+  Future<void> reloadUser() async {
     String? uid = await this.getUid();
     User? user = await UserService.instance.getUserById(uid ?? '');
     this.setUser(user);
     this.observableCurrency.value = (this.user?.currency ?? 0).round();
   }
-  User? getUser(){
+
+  User? getUser() {
     return (this.user);
   }
-  String? getUid(){
-    if (this.user == null){
+
+  String? getUid() {
+    if (this.user == null) {
       return "noUser";
     }
     return (this.user?.uid);
   }
-String forceToString(String? string){
-  if (string == null){
-    return "emptyString";
-  }
-  return string;
-}
 
-  Future<void> updateProfilePicture() async{
+  String forceToString(String? string) {
+    if (string == null) {
+      return "emptyString";
+    }
+    return string;
+  }
+
+  Future<void> updateProfilePicture() async {
     String? newImagelLink = await this.imageStorageService.pickAndUploadImage();
-    await this.userService.updateUserAvatar(id: this.forceToString(this.getUid()), newAvatarUrl: this.forceToString(newImagelLink));
+    await this.userService.updateUserAvatar(
+        id: this.forceToString(this.getUid()),
+        newAvatarUrl: this.forceToString(newImagelLink));
     await this.reloadUser();
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/pages/login-page.dart';
+import 'package:polyquiz/pages/offline_game_page.dart';
 import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
 import 'package:polyquiz/services/background_notification_service.dart';
@@ -23,7 +24,20 @@ import 'package:polyquiz/pages/storePage.dart';
 import 'package:polyquiz/services/StoreService.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
+import 'package:polyquiz/services/game_list_item.dart';
+import 'package:polyquiz/pages/active_game_list.dart';
+import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/pages/active_game_list.dart';
+import 'package:polyquiz/services/quiz_service.dart';
+import 'package:polyquiz/services/room_validation_service.dart';
+import 'package:polyquiz/services/snack_bar_service.dart';
 
+final socketService = SocketService();
+final userService = UserService();
+final quizService = QuizService();
+final snackbarService = SnackbarService();
+// final roomValidationService = RoomValidationService(socketService: socketService);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,15 +50,23 @@ void main() async {
   Get.put(BackgroundNotificationService());
   Get.put(StoreService());
 
-   runApp(
+  runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => GameConfigService()),
+        ChangeNotifierProvider(
+            create: (_) => GameListService(socketService: socketService)),
+        ChangeNotifierProvider(
+            create: (_) => RoomValidationService(socketService: socketService)),
+        Provider(create: (_) => socketService),
+        Provider(create: (_) => userService),
+        Provider(create: (_) => quizService),
+        Provider(create: (_) => snackbarService),
+        // Provider(create: (_) => roomValidationService),
       ],
       child: MyApp(),
     ),
   );
-
 }
 
 class MyApp extends StatelessWidget {
@@ -62,7 +84,9 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
         '/offline': (context) => OfflineQuizListPage(),
+        '/offlinegame': (context) => OfflineGamePage(),
         '/join': (context) => JoinRoomPage(),
+        '/roomList': (context) => ActiveGameListComponent(),
         '/game': (context) => GamePage(),
         '/user': (context) => Userpage(),
         '/store': (context) => Storepage(),

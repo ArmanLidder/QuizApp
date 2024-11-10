@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
 
 class HomePage extends StatefulWidget {
@@ -52,6 +51,12 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/roomList');
+                },
+                child: Text('Rejoindre une partie')),
+            const SizedBox(height: 20),
+            ElevatedButton(
+                onPressed: () {
                   Navigator.pushReplacementNamed(context, '/offline');
                 },
                 child: Text('Jouer hors-ligne')),
@@ -67,7 +72,6 @@ class _HomePageState extends State<HomePage> {
                   Navigator.pushReplacementNamed(context, '/store');
                 },
                 child: Text("store")),
-
             ChatPopup(),
           ],
         ),

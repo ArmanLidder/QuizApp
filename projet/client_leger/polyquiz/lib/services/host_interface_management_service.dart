@@ -30,6 +30,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
   List<QuestionStatistics> gameStats = [];
   bool isPaused = false;
   bool isPanicMode = false;
+  bool isAlreadyInit = false;
+  bool isAlreadyCalled = false;
 
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
@@ -92,6 +94,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.handleRefreshActivityStats();
     this.handleHostPanicMode();
     this.handleHostTimerPause();
+    isAlreadyInit = true;
   }
 
   void handleTimeTransition() {
@@ -99,6 +102,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.timerText = 'Prochaine question dans: ';
       this.gameService.realGameService.timer = timeValue;
       if (this.gameService.realGameService.timer == 0) {
+        print('TIMER GOT TO 0');
         this.gameService.realGameService.inTimeTransition = false;
         this.resetInterface();
         this._socketService.sendMessage(
@@ -117,8 +121,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.resetInterface();
 
       if (this.gameService.question?.type == QuestionType.QCM) {
-        this._interactiveListService.getPlayersList(roomId,
-            leftPlayers: leftPlayers, resetPlayerStatus: false);
+        print('CALLED 1');
+        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
       } else {
         this.sendQrlAnswer();
         this.isHostEvaluating = true;
@@ -137,9 +141,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
-        this
-            ._interactiveListService
-            .getPlayersList(this.roomId, leftPlayers: leftPlayers);
+        print('CALLED 2');
+        this._interactiveListService.getPlayersList(this.roomId, leftPlayers: leftPlayers);
+        this._socketService.sendMessage(SocketEvent.SAVE_FINAL_GAME_STATS, this.gameService.realGameService.roomId);
       }
     });
   }
@@ -156,14 +160,18 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void handleGetInitialQuestion() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION,
         (data) async {
-      final numberOfPlayers = await _interactiveListService
-          .getPlayersList(roomId, leftPlayers: leftPlayers);
+      // if (isAlreadyCalled) 
+      //   return;
+      print('CALLED 3');
+      final numberOfPlayers = await _interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
+      // isAlreadyCalled = true;
     });
   }
 
   void handleGetNextQuestion() {
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) async {
+      print('CALLED 4');
       final numberOfPlayers = await this
           ._interactiveListService
           .getPlayersList(roomId, leftPlayers: leftPlayers);
@@ -179,6 +187,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
           .indexWhere((player) => player.username == username);
       if (playerIndex != -1) {
         this.leftPlayers.add(this._interactiveListService.players[playerIndex]);
+        print('CALLED 5');
         this._interactiveListService.getPlayersList(roomId,
             leftPlayers: leftPlayers, resetPlayerStatus: false);
       }
@@ -216,6 +225,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleEvaluationOver() {
     this._socketService.onMessage(SocketEvent.EVALUATION_OVER, (_) {
+      print('CALLED 6');
       _interactiveListService.getPlayersList(roomId,
           leftPlayers: leftPlayers, resetPlayerStatus: false);
     });
@@ -240,6 +250,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
   }
 
   void initGraph(QuizQuestion question, int numberOfPlayers) {
+    print('question in init graph');
+    print(question);
     this.isHostEvaluating = false;
     if (question.type == QuestionType.QCM && question.choices != null) {
       print('INIT GRAPH GOT INTO THE IF');
@@ -308,9 +320,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.gameStats.clear();
     this.isPaused = false;
     this.isPanicMode = false;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      notifyListeners();
-    });
+    this.isAlreadyInit = false;
+    this.isAlreadyCalled = false;
+    notifyListeners();
   }
 
   Map<String, ResponseData> transformIntoResponsesQrl(

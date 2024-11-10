@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class SnackbarService {
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey;
 
-  SnackbarService(this._scaffoldMessengerKey);
+  SnackbarService([GlobalKey<ScaffoldMessengerState>? scaffoldMessengerKey])
+      : _scaffoldMessengerKey = scaffoldMessengerKey ?? GlobalKey<ScaffoldMessengerState>();
 
   void show(String message, {String actionLabel = 'Fermer', VoidCallback? onAction, SnackBarAction? action, SnackBarBehavior behavior = SnackBarBehavior.fixed, Duration duration = const Duration(seconds: 5)}) {
     final snackBar = SnackBar(
