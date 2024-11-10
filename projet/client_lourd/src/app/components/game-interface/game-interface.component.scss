@@ -1,32 +1,21 @@
-/* Root container styles */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    box-sizing: border-box;
-}
+
 
 .grid-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
-    height: 100vh;
-    padding: 10px;
-    box-sizing: border-box;
-    width: 100%;
 }
+
 
 /* Top flex container adjustments */
 #flex-container {
-    display: flex;
     width: 100%;
+    display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    max-height: 20%;
+    justify-content: space-between; /* Align to the left */
+    align-items: center; /* Align items to the top */
     padding: 10px;
-    box-sizing: border-box;
+    position: relative;
 }
 
 /* Timer circle adjustments */
@@ -40,6 +29,16 @@ html, body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+.result-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 40px; /* Add space between histogram and host player list */
+    width: 100%; /* Use full available width */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .circle span:first-child {
@@ -60,6 +59,28 @@ html, body {
     justify-content: center;
     text-align: center;
     flex: 1;
+}
+
+.players-list {
+    flex: 1 1 50%; /* Allow both components to take up equal space */
+    max-width: 600px; /* Set a max width for each component to avoid overgrowth */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.custom-legend {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: start;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
 #question-field > div > h2 {
@@ -119,5 +140,6 @@ h1 {
     padding: 20px;
     box-sizing: border-box;
 }
-
-
+app-player-list {
+    flex: 1;
+}

@@ -1,19 +1,26 @@
 :host {
-  width: 80%;
+  display: flex;
+  flex: 1 1 auto; /* Enables growth and shrinkage within constraints */
+  max-width: 600px; /* Set a reasonable maximum width */
+  max-height: 400px; /* Set a reasonable maximum height */
+  width: 100%;
 }
 
 .chart-container {
   display: flex;
   flex-direction: column;
-  height: 50%;
-  margin-right: 25px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .graph {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   justify-content: center;
   align-items: center;
+  max-width: 100%; /* Constrains growth within container */
+  max-height: 100%; /* Constrains growth within container */
 }
 
 .custom-legend {
@@ -37,5 +44,3 @@
   height: 15px;
   margin-right: 5px;
 }
-
-

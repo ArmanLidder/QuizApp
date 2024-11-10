@@ -2,11 +2,15 @@
 
     <div class="flex items-center space-x-2">
         <button
-                class="w-10 h-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-300"
+                class="w-10 h-10 rounded-full flex items-center justify-center
+                bg-gray-200 text-gray-700 hover:bg-gray-300
+                disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 (click)="decrementValue()"
+                [disabled]="gameService.lockedStatus"
         >
             -
         </button>
+
         <ng-container *ngIf="!gameService.lockedStatus; else lockedSlider">
             <ngx-slider
                     [(value)]="selectedValue"
@@ -24,8 +28,11 @@
         </ng-template>
 
         <button
-                class="w-10 h-10 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center hover:bg-gray-300"
+                class="w-10 h-10 rounded-full flex items-center justify-center
+                bg-gray-200 text-gray-700 hover:bg-gray-300
+                disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 (click)="incrementValue()"
+                [disabled]="gameService.lockedStatus"
         >
             +
         </button>

@@ -34,7 +34,6 @@ export class QreResponseAreaComponent implements OnInit {
       }
     };
     this.optionsDisabled = { ...this.options, disabled: true };
-    this.gameService.selectQREAnswer(this.selectedValue);
   }
 
   calculateResponseInterval() {
@@ -51,6 +50,7 @@ export class QreResponseAreaComponent implements OnInit {
   validate() {
     if (!this.gameService.validatedStatus) {
       this.gameService.qreAnswer = this.selectedValue;
+      this.gameService.selectQREAnswer(this.selectedValue);
       this.gameService.sendAnswer();
     }
   }

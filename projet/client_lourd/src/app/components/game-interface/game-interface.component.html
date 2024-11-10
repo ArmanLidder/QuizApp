@@ -1,3 +1,24 @@
+<div class="grid-container mt-6" *ngIf='gameInterfaceManagementService.isGameOver'>
+    <h2>Le jeu est terminé!</h2>
+    <p>Votre score final : {{ score }}</p>
+    <app-leave-boutton></app-leave-boutton>
+</div>
+<div class="result-container" *ngIf="gameInterfaceManagementService.isGameOver">
+    <app-statistic-zone *ngIf="gameInterfaceManagementService.isGameOver" [gameStats]="gameInterfaceManagementService.gameStats"></app-statistic-zone>
+    <div class="players-list">
+        <div class="custom-legend">
+            <p> Résultats des joueurs: </p>
+        </div>
+        <app-player-list
+                [hidden]='!gameInterfaceManagementService.isGameOver'
+                #playerListChild
+                [roomId]='gameInterfaceManagementService.gameService.gameRealService.roomId'
+                [leftPlayers]='[]'
+                [isHost] = 'false'>
+        </app-player-list>
+    </div>
+
+</div>
 <div *ngIf='!gameInterfaceManagementService.isGameOver' class="grid-container w-full">
     <div id="flex-container">
         <div class="circle">
