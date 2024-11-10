@@ -49,9 +49,16 @@ String forceToString(String? string){
   return string;
 }
 
-  Future<void> updateProfilePicture() async{
+  Future<void> uploadCustomProfilePicture() async{
     String? newImagelLink = await this.imageStorageService.pickAndUploadImage();
     await this.userService.updateUserAvatar(id: this.forceToString(this.getUid()), newAvatarUrl: this.forceToString(newImagelLink));
     await this.reloadUser();
   }
+
+  Future<void> chooseNewProfilePicture(String newImageurl) async{
+    await this.userService.updateUserAvatar(id: this.forceToString(this.getUid()), newAvatarUrl: this.forceToString(newImageurl));
+    await this.reloadUser();
+  }
+
+
 }

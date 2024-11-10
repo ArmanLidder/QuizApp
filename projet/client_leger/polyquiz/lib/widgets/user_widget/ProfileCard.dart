@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/widgets/user_widget/ImageSelectionPopup.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 import '../../services/imageStorageService.dart';
 import '../../services/logged_in_user_service.dart';
@@ -19,9 +20,29 @@ class _ProfileCardState extends State<ProfileCard> {
     super.initState();
     imageUrl = loggedInUserService.getUser()?.avatar ?? ''; // Initialize with the source image URL
   }
+  Future<void>? _showImageSelectionPopup() {
+    List<String> imageUrls = [
+      'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58',
+      'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_2.png?alt=media&token=533dbee5-bf2e-4462-9e52-d15f1ff74209',
+      'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_4.jpg?alt=media&token=1afb0329-38ef-4f38-bb72-b7b38184f892',
+      "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_4.jpg?alt=media&token=1afb0329-38ef-4f38-bb72-b7b38184f892",
+      "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_4.jpg?alt=media&token=1afb0329-38ef-4f38-bb72-b7b38184f892",// Add more URLs as needed
+    ];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ImageSelectionPopup(
+          imageUrls: imageUrls,
+          onPlusButtonPressed: _imageChangeButton,
+        );
+      },
+    );
+    return null;
+  }
 
   Future<void> _imageChangeButton() async {
-    await loggedInUserService.updateProfilePicture();
+    await loggedInUserService.uploadCustomProfilePicture();
     setState(() {
       imageUrl = loggedInUserService.getUser()!.avatar; // Update the image URL
     });
@@ -93,7 +114,7 @@ class _ProfileCardState extends State<ProfileCard> {
                       bottom: 0,
                       right: 0,
                       child: GestureDetector(
-                        onTap: _imageChangeButton,
+                        onTap: _showImageSelectionPopup,
                         child: Container(
                           width: 40,
                           height: 40,
