@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnDestroy} from '@angular/core';
 import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import {MAX_IMG_SIZE, POPUP_TIMEOUT} from '@common/constants/quiz-creation.component.const';
 import { ChoiceService } from '@app/services/choice-service/choice.service';
@@ -6,13 +6,14 @@ import { QuestionService } from '@app/services/question-service/question.service
 import { ItemMovingDirection } from 'src/enums/item-moving-direction';
 import { QuestionChoicePosition } from '@app/interfaces/question-choice-position/question-choice-position';
 import {QuestionImageService} from "@app/services/question-image.service/question-image.service";
+import {NON_EXISTANT_INDEX} from "@common/constants/question.service.const";
 
 @Component({
     selector: 'app-question-list',
     templateUrl: './question-list.component.html',
     styleUrls: ['./question-list.component.scss'],
 })
-export class QuestionListComponent {
+export class QuestionListComponent implements OnDestroy {
     @Input() questionsArray: FormArray | undefined;
     @Input() parentGroup: FormGroup;
     isPopUpVisible: boolean = false;
@@ -25,6 +26,9 @@ export class QuestionListComponent {
         private choiceService: ChoiceService,
         private questionImageService: QuestionImageService,
     ) {}
+    ngOnDestroy() {
+        this.questionService.modifiedQuestionIndex = NON_EXISTANT_INDEX;
+    }
 
     async onImageSelected(event: Event, index: number) {
         const input = event.target as HTMLInputElement;

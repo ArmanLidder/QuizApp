@@ -1,7 +1,6 @@
 import {Component, ElementRef, Input, OnInit, ViewChild, inject} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
-import {AlertDialogComponent} from '@app/components/alert-dialog/alert-dialog.component';
 import {GameConfigDialogComponent} from "@app/components/game-config-dialog/game-config-dialog.component";
 import {QuizValidationService} from '@app/services/quiz-validation.service/quiz-validation.service';
 import {QuizService} from '@app/services/quiz.service/quiz.service';
@@ -55,8 +54,9 @@ export class GamesListComponent implements OnInit {
         });
     }
 
-    refresh(event: any) {
+    refresh(event: any = {}) {
         this.populateGameList();
+        this.snackbar.show( 'Les quiz ont été actualisés.')
     }
 
     populateGameList() {
@@ -81,11 +81,6 @@ export class GamesListComponent implements OnInit {
         this.errors = null;
     }
 
-    // async receiveQuizName(newName: string) {
-    //     this.importedQuiz.title = newName;
-    //     this.checkQuizNameUnique();
-    //     this.isQuizUnique = true;
-    // }
 
     removeQuiz(id: string) {
         const index = this.quizzes.findIndex((quiz) => quiz.id === id);
@@ -177,30 +172,6 @@ export class GamesListComponent implements OnInit {
         return errorMessage;
     }
 
-    // async checkQuizNameUnique() {
-    //     this.quizServices.checkTitleUniqueness(this.importedQuiz.title).subscribe((res) => {
-    //         this.treatResponse(res.body?.isUnique as boolean);
-    //     });
-    // }
-
-    // async treatResponse(value: boolean) {
-    //     if (!value) {
-    //         this.isQuizUnique = false;
-    //         const dialogRef = this.dialog.open(UniqueQuizNameDialogComponent, {
-    //             data: { quizName: this.importedQuiz.title }
-    //         });
-    //         dialogRef.afterClosed().subscribe((newName: string | null) => {
-    //             if (newName) {
-    //                 this.receiveQuizName(newName);
-    //             } else {
-    //                 this.killErrorFeedback(false);
-    //             }
-    //         });
-    //     } else {
-    //         this.addImportedQuiz();
-    //     }
-    // }
-
     async addImportedQuiz() {
         this.importedQuiz.id = generateRandomId();
         await this.router.navigate(['/quiz-creation'], {
@@ -219,11 +190,12 @@ export class GamesListComponent implements OnInit {
             this.selectedQuiz = null;
 
             if (res === null) {
-                this.showError(ErrorDictionary.QUIZ_DELETED);
-            } else if (res.visible) {
+                this.showErrorDialog(ErrorDictionary.QUIZ_DELETED);
+            } else if (!res.visible && res.owner !== this.currentUserUid) {
+                this.showErrorDialog(ErrorDictionary.QUIZ_INVISIBLE);
+            }
+            else if (res.visible) {
                 this.router.navigate([route, res.id]);
-            } else {
-                this.showError(ErrorDictionary.QUIZ_INVISIBLE);
             }
         });
     }
@@ -237,15 +209,6 @@ export class GamesListComponent implements OnInit {
         isConfigured.subscribe((res) => {
             console.log(`Response: ${res}`)
             if (res) this.handleQuizAction(`/${WAITING_ROOM_HOST_PAGE}/`);
-        });
-    }
-
-    private showError(error: string) {
-        this.dialog.open(AlertDialogComponent, {
-            data: {
-                title: ErrorDictionary.ERROR_TITLE_IMPORT,
-                content: error,
-            },
         });
     }
 }
