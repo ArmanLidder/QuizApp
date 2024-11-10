@@ -19,7 +19,6 @@ class GameService extends ChangeNotifier {
   bool isInputFocused = false;
   Map<int, String?> answers = {};
   String qrlAnswer = '';
-  bool isHostEvaluating = false;
   bool isActive = false;
   bool hasInteracted = false;
   int? lastQrlScore;
@@ -152,7 +151,6 @@ class GameService extends ChangeNotifier {
     this.isOfflineMode = false;
     this.isInputFocused = false;
     this.qrlAnswer = '';
-    this.isHostEvaluating = false;
     this.isActive = false;
     this.hasInteracted = false;
     this.audio.pause();
