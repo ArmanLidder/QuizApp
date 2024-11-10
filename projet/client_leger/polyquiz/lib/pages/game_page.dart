@@ -326,12 +326,14 @@ class _MyWidgetState extends State<GamePage> {
     final isValidateButtonActive =
         !this._gameService.realGameService.isHostEvaluating &&
             this._gameService.realGameService.isValidateActive;
+
     final validateButtonStyle = TextButton.styleFrom(
       textStyle: TextStyle(fontWeight: FontWeight.normal),
       splashFactory: NoSplash.splashFactory,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       backgroundColor: isValidateButtonActive ? Colors.blueAccent : Colors.grey,
     );
+
     return Row(
       children: <Widget>[
         AnimatedBuilder(
@@ -348,7 +350,13 @@ class _MyWidgetState extends State<GamePage> {
               )),
         ),
         SizedBox(width: 100.0),
-        QuitBtn(isHost: false, roomId: this._gameService.realGameService.roomId)
+        QuitBtn(
+            isHost: false,
+            roomId: this._gameService.realGameService.roomId,
+            gameService: _gameService,
+            interactiveListService: _interactiveListService,
+            gameInterfaceManagementService: _gameInterfaceManagementService,
+        )
       ],
     );
   }
