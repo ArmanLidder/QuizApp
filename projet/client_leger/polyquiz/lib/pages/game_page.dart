@@ -209,6 +209,7 @@ class _MyWidgetState extends State<GamePage> {
                                       )
                                     ],
                                   ),
+                                  if (getImageWidgetFromQuestion() != null) getImageWidgetFromQuestion()!,
                                   getPlayerQuestion(),
                                   // Visibility(
                                   //     visible: _gameInterfaceManagementService
@@ -285,6 +286,14 @@ class _MyWidgetState extends State<GamePage> {
                 }
               }));
     }
+  }
+
+  Widget? getImageWidgetFromQuestion() {
+    String? imageUrl = this._gameService.realGameService.question?.imageUrl;
+    if (imageUrl == null) return null;
+    return Center(
+      child: Image.network(imageUrl)
+    );
   }
 
   Widget getButtons() {
