@@ -37,6 +37,15 @@ class RealGameService extends ChangeNotifier {
   bool inTimeTransition = false;
   bool isNotified = false;
   bool isHostEvaluating = false;
+  bool _isValidateButtonActive = true;
+
+
+  bool get isValidateActive => this._isValidateButtonActive;
+
+  void set isValidateActive(bool newValue) {
+    this._isValidateButtonActive = newValue;
+    notifyListeners();
+  }
 
   init() {
     this.configureBaseSocket();
@@ -115,6 +124,7 @@ class RealGameService extends ChangeNotifier {
       this.isLast = nextQuestionData.isLast;
       this.validated = false;
       this.locked = false;
+      this.isValidateActive = true;
     });
   }
 
