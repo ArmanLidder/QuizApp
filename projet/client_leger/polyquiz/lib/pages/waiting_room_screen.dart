@@ -178,7 +178,14 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   if (widget.isHost && !waitingRoomService.isTransition)
-                    ElevatedButton(
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            (waitingRoomService.players.length >= 1 &&
+                                    isRoomLocked)
+                                ? Color.fromRGBO(53, 121, 246, 1)
+                                : Color.fromRGBO(200, 200, 200, 1),
+                      ),
                       onPressed:
                           waitingRoomService.players.length >= 1 && isRoomLocked
                               ? () => setState(() {
@@ -186,7 +193,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                     waitingRoomService.sendStartSignals();
                                   })
                               : null,
-                      child: Text('Commencer'),
+                      child: Text('Commencer',
+                          style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1))),
                     ),
                   QuitBtn(
                       isHost: widget.isHost, roomId: waitingRoomService.roomId),
