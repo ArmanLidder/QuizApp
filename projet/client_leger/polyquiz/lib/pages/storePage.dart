@@ -5,6 +5,8 @@ import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/widgets/store_widgets/storeWidgets.dart';
 
+import 'package:polyquiz/widgets/store_widgets/storeWidgets.dart';
+//import 'package:polyquiz/widgets/store_widgets/themeWidget.dart';
 import '../models/user.dart';
 import '../widgets/user_widget/fancyAppBar.dart';
 
@@ -17,7 +19,7 @@ class _StorepageState extends State<Storepage> {
   final UserService userService = UserService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final StoreService storeService = Get.find();
-   late String uid;
+  late String uid;
   User? userData;
 
   Map<String, List<Map<String, dynamic>>>? storeItems;
@@ -35,9 +37,7 @@ class _StorepageState extends State<Storepage> {
     setState(() {
       storeItems = items; // Update the state with fetched items
       uid = id!;
-
     });
-
   }
 
   @override
@@ -47,35 +47,38 @@ class _StorepageState extends State<Storepage> {
     return MaterialApp(
       home: Scaffold(
         appBar: FancyAppBar(
-          context: context,
-          sourceImgUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
+            context: context,
+            sourceImgUrl: this.userData?.avatar ?? "",
+            name: this.userData?.username ?? ""),
         body: storeItems == null
-            ? Center(child: CircularProgressIndicator()) // Show loading indicator while fetching
+            ? Center(
+                child:
+                    CircularProgressIndicator()) // Show loading indicator while fetching
             : Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              MoneyCounter(),
-              Text("Themes: "),
-              Row(
-                children: [
-                  ThemeStoreList(themes: storeItems!['themes']!,  userId: this.uid)
-                ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    MoneyCounter(),
+                    Text("Themes: "),
+                    Row(
+                      children: [
+                        ThemeStoreList(
+                            themes: storeItems!['themes']!, userId: this.uid)
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Text("Images: "),
+                    Row(
+                      children: [
+                        ImageStoreList(
+                            themes: storeItems!['images']!, userId: this.uid)
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
               ),
-              SizedBox(height: 20),
-              Text("Images: "),
-
-              Row(
-                children: [
-                  ImageStoreList(themes: storeItems!['images']!,  userId: this.uid)
-                ],
-              ),
-              SizedBox(height: 20),
-            ],
-          ),
-        ),
       ),
     );
   }
 }
-

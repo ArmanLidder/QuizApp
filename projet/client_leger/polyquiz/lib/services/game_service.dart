@@ -19,11 +19,12 @@ class GameService extends ChangeNotifier {
   bool isInputFocused = false;
   Map<int, String?> answers = {};
   String qrlAnswer = '';
-  bool isHostEvaluating = false;
   bool isActive = false;
   bool hasInteracted = false;
   int? lastQrlScore;
   int qreAnswer = 0;
+  bool gotNotified = false;
+  bool isQuitBtn = false;
 
   final OfflineGameService offlineGameService = OfflineGameService();
   final RealGameService realGameService = RealGameService();
@@ -47,6 +48,12 @@ class GameService extends ChangeNotifier {
     return this.isOfflineMode
         ? this.offlineGameService.question
         : this.realGameService.question;
+  }
+
+  QuizQuestion get oldQuestion {
+    return this.isOfflineMode
+        ? this.offlineGameService.oldQuestion
+        : this.realGameService.oldQuestion;
   }
 
   int get questionNumber {
@@ -104,20 +111,28 @@ class GameService extends ChangeNotifier {
     }
   }
 
+  void selectChoiceOffline(int index) {
+    if (this.answers.containsKey(index)) {
+      this.answers.remove(index);
+    } else {
+      String? textChoice = this.question?.choices?[index].text;
+      this.answers[index] = textChoice;
+    }
+  }
+
   void sendAnswer() {
     if (!this.isOfflineMode) {
-      print('I AM HERE HERE HERE 80000');
       this.realGameService.answers = this.answers;
       this.realGameService.qreAnswer = this.qreAnswer;
       this.realGameService.qrlAnswer = this.qrlAnswer;
       this.realGameService.sendAnswer();
-      print('I AM JUST HERE HERE 90000');
       this.isActive = false;
       this.hasInteracted = false;
     } else {
       this.offlineGameService.answers = this.answers;
       this.offlineGameService.qrlAnswer = this.qrlAnswer;
       this.qrlAnswer = '';
+      print('ANSWERS: ${this.answers}');
       this.offlineGameService.sendAnswer();
     }
     this.lastQrlScore = null;
@@ -134,6 +149,7 @@ class GameService extends ChangeNotifier {
 
   void reset() {
     this.isOfflineMode = false;
+    this.isInputFocused = false;
     this.qrlAnswer = '';
     this.isActive = false;
     this.hasInteracted = false;
@@ -141,6 +157,10 @@ class GameService extends ChangeNotifier {
     this.audio.seek(Duration.zero);
     this.realGameService.destroy();
     this.offlineGameService.reset();
+    this.gotNotified = false;
+    this.isQuitBtn = false;
+    this.lastQrlScore = null;
+    this.qreAnswer = 0;
   }
 
   void configureBaseSockets() {
@@ -153,6 +173,7 @@ class GameService extends ChangeNotifier {
   void handleTimeEvent(timeValue) {
     this.realGameService.timer = timeValue;
     if (this.timer == 0 && !this.realGameService.locked) {
+
       this.realGameService.locked = true;
       if (this.username != 'host') sendAnswer();
     }

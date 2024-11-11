@@ -14,33 +14,31 @@ class PlayerNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: AnimatedBuilder(
-        animation: gameInterfaceManagementService!.gameService,
-        builder: (BuildContext context, Widget? snapshot) {
-          if(gameInterfaceManagementService?.gameService.lastQrlScore != null){
-              return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  'vous avez recu exactement ${gameInterfaceManagementService?.gameService.lastQrlScore} points',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            );
-          }
-          else {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  '${message}',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            );
-          }
-        }
-      )
-    );
+        child: AnimatedBuilder(
+            animation: gameInterfaceManagementService!.gameService,
+            builder: (BuildContext context, Widget? snapshot) {
+              if (gameInterfaceManagementService?.gameService.lastQrlScore !=
+                  null) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      'Vous avez recu ${gameInterfaceManagementService?.gameService.lastQrlScore}% des points',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                );
+              } else {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      '${message}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                );
+              }
+            }));
   }
 }

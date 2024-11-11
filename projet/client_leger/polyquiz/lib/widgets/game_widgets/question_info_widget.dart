@@ -98,7 +98,7 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
                   onPressed: () {
                     _ttsService.speak(_currentQuestionText);
                   },
-                  icon: Icon(Icons.play_arrow_outlined)),
+                  icon: Icon(Icons.replay)),
               IconButton(
                   onPressed: () {
                     _ttsService.stop();

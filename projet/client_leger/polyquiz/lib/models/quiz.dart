@@ -48,17 +48,46 @@ class Quiz {
   }
 }
 
+class Interval {
+  final num max;
+  final num min;
+
+  Interval({required this.min, required this.max});
+
+  factory Interval.fromJson(Map<String, dynamic> data) {
+    return Interval(
+        min: data['min'] as num,
+        max: data['max'] as num,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'max': max,
+      'min': min,
+    };
+  }
+}
+
 class QuizQuestion {
   final QuestionType type;
   final String text;
   final int points;
   final List<QuizChoice>? choices;
+  final num? answer;
+  final Interval? interval;
+  final num? margin;
+  final String? imageUrl;
 
   QuizQuestion({
     required this.type,
     required this.text,
     required this.points,
     this.choices,
+    this.answer,
+    this.interval,
+    this.margin,
+    this.imageUrl,
   });
 
   factory QuizQuestion.fromJson(Map<String, dynamic> json) {
@@ -71,6 +100,14 @@ class QuizQuestion {
               .map((choice) => QuizChoice.fromJson(choice))
               .toList()
           : null,
+      answer: json['answer'] != null
+        ? json['answer'] as num : null,
+      interval: json['interval'] != null
+        ? Interval.fromJson(json['interval']) : null,
+      margin: json['margin'] != null
+        ? json['margin'] as num : null,
+      imageUrl: json['imageUrl'] != null
+        ? json['imageUrl'] as String : null,
     );
   }
 
@@ -80,6 +117,10 @@ class QuizQuestion {
       'text': text,
       'points': points,
       'choices': choices?.map((c) => c.toJson()).toList(),
+      if (answer != null) 'answer': answer,
+      if (interval != null) 'interval': interval!.toJson(),
+      if (margin != null) 'margin': margin,
+      if (imageUrl != null) 'imageUrl': imageUrl,
     };
   }
 }

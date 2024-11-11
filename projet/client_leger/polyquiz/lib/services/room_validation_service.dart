@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/socket_service.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class RoomValidationService with ChangeNotifier {
@@ -62,9 +60,9 @@ class RoomValidationService with ChangeNotifier {
   Future<String> sendUsername() async {
     final completer = Completer<String>();
     final user = await getCurrentUser();
-     final usernameData = {'roomId': int.parse(roomId!), 'username': user.uid};
-      socketService.sendMessageWithAck(SocketEvent.VALIDATE_USERNAME, usernameData,
-        (data) {
+    final usernameData = {'roomId': int.parse(roomId!), 'username': user.uid};
+    socketService.sendMessageWithAck(
+        SocketEvent.VALIDATE_USERNAME, usernameData, (data) {
       if (data != null) {
         completer.complete(handleUsernameValidation(data));
       } else {
@@ -77,8 +75,8 @@ class RoomValidationService with ChangeNotifier {
 
   Future<String> sendRoomId() async {
     final completer = Completer<String>();
-    socketService.sendMessageWithAck(SocketEvent.VALIDATE_ROOM_ID, int.parse(roomId!),
-        (data) {
+    socketService.sendMessageWithAck(
+        SocketEvent.VALIDATE_ROOM_ID, int.parse(roomId!), (data) {
       if (data != null) {
         completer.complete(handleRoomIdValidation(data));
       } else {
@@ -101,9 +99,12 @@ class RoomValidationService with ChangeNotifier {
 
   String handleRoomIdValidation(dynamic data) {
     String error = '';
-    if (!data['isRoom']) error = handleErrors('ROOM_CODE_EXPIRED');
-    else if (data['isLocked']) error = handleErrors('ROOM_LOCKED');
-    else isRoomIdValid = true;
+    if (!data['isRoom'])
+      error = handleErrors('ROOM_CODE_EXPIRED');
+    else if (data['isLocked'])
+      error = handleErrors('ROOM_LOCKED');
+    else
+      isRoomIdValid = true;
     return error;
   }
 

@@ -1,12 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
-class BackgroundNotificationService extends GetxController with WidgetsBindingObserver {
+class BackgroundNotificationService extends GetxController
+    with WidgetsBindingObserver {
   static BackgroundNotificationService get instance => Get.find();
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   AppLifecycleState currentState = AppLifecycleState.resumed;
   int notificationId = 0;
 
@@ -24,24 +24,28 @@ class BackgroundNotificationService extends GetxController with WidgetsBindingOb
   }
 
   Future<void> initializeNotifications() async {
-    flutterLocalNotificationsPlugin.
-      resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-      ?.requestNotificationsPermission();
-    
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
+
     final androidInit = AndroidInitializationSettings("@mipmap/ic_launcher");
     final initalizeSettings = InitializationSettings(android: androidInit);
     await flutterLocalNotificationsPlugin.initialize(
       initalizeSettings,
     );
   }
-  
-  Future<void> showNotification(String title, String body, {bool showIfResumed = false}) async {
+
+  Future<void> showNotification(String title, String body,
+      {bool showIfResumed = false}) async {
     if (!showIfResumed && currentState == AppLifecycleState.resumed) return;
     final AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails("channel_id_0", "messages", importance: Importance.max, priority: Priority.high);
+        AndroidNotificationDetails("channel_id_0", "messages",
+            importance: Importance.max, priority: Priority.high);
     final NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(notificationId++, title, body, notificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        notificationId++, title, body, notificationDetails);
   }
 
   // String collectionName = "user-tokens";

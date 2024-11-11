@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
-import 'package:polyquiz/components/messageWindows.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
   final GlobalNavigationService globalNavigationService =
-  GlobalNavigationService();
+      GlobalNavigationService();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +33,7 @@ class LoginPage extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor:
-              const Color.fromRGBO(53, 121, 246, 1), // Button color
+                  const Color.fromRGBO(53, 121, 246, 1), // Button color
             ),
             child: const Text(
               'Create a room',
@@ -50,7 +49,7 @@ class LoginPage extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor:
-              const Color.fromRGBO(53, 121, 246, 1), // Button color
+                  const Color.fromRGBO(53, 121, 246, 1), // Button color
             ),
             child: const Text(
               'Join a room',

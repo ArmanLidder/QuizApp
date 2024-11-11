@@ -22,12 +22,14 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   bool isBonus = false;
   bool isGameOver = false;
+  bool _qcmEnabled = true;
   int playerScore = 0;
   List<Player> players = [];
   bool inPanicMode = false;
   List<dynamic> gameStats = []; // Type a revoir
   String timerText = 'Temps restant ';
   bool isNotified = false;
+  bool isResultPage = false;
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
@@ -53,6 +55,8 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.gameStats = [];
     this.timerText = 'Temps restant ';
     this.inPanicMode = false;
+    this._qcmEnabled = true;
+    this.isResultPage = false;
   }
 
   void configureBaseSocketFeatures() {
@@ -90,6 +94,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this.gameService.realGameService.validated = true;
       }
       this.gameService.realGameService.isNotified = false;
+      this.gameService.realGameService.isValidateActive = false;
       notifyListeners();
     });
   }
@@ -123,6 +128,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this
             ._interactiveListService
             .getPlayersList(this.gameService.realGameService.roomId);
+        this.isResultPage = true;
       }
       notifyListeners();
     });
@@ -216,6 +222,15 @@ class GameInterfaceManagementService extends ChangeNotifier {
       print("I am Here 444444");
       print(this.gameService.lastQrlScore);
     }
+  }
+
+  void changeQcmEnabled(bool value) {
+    this._qcmEnabled = value;
+    notifyListeners();
+  }
+
+  bool getQcmEnabled() {
+    return this._qcmEnabled;
   }
 }
 

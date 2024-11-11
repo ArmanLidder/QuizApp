@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/quiz.dart';
 import 'waiting_room_screen.dart';
-import '../services/waiting_room_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
 
 class JoinRoomPage extends StatefulWidget {
@@ -51,7 +49,8 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                 duration: 0, // Provide a sample duration.
                 questions: [], // Provide an empty list of questions.
               ),
-              username: this.userData!.uid, // Pass the username to the waiting room.
+              username:
+                  this.userData!.uid, // Pass the username to the waiting room.
               isHost: false, // This user is not the host.
             ),
           ),

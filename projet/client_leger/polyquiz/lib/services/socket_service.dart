@@ -1,13 +1,14 @@
-import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:polyquiz/constants/constants.dart';
-import 'package:get/get.dart';
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
   static final String baseUrl = IP_URL;
   static final String socketUrl = baseUrl + '/';
   IO.Socket? _socket;
+
+  // Add a counter to track the number of active listeners
+  int _listenerCount = 0;
 
   factory SocketService() {
     return _instance;
@@ -16,7 +17,6 @@ class SocketService {
   SocketService._internal();
 
   void connect([String? id]) {
-
     if (_socket == null) {
       print('Connecting to socket server with id: $id');
       _socket = IO.io(socketUrl, <String, dynamic>{
@@ -41,18 +41,21 @@ class SocketService {
   void disconnect() {
     _socket?.disconnect();
     _socket = null;
+    _listenerCount = 0; // Reset listener count on disconnect
   }
 
   void sendMessage(String event, [dynamic data]) {
-    if(data !=event){
-       _socket?.emit(event, data);
+    if (data != event) {
+      _socket?.emit(event, data);
     } else {
-       _socket?.emit(event);
+      _socket?.emit(event);
     }
   }
 
+  // Modified onMessage to increment listener count
   void onMessage(String event, Function(dynamic) callback) {
     _socket?.on(event, callback);
+    _listenerCount++; // Increment the count each time a listener is added
   }
 
   void sendMessageWithAck(String event, dynamic data, Function(dynamic) ack) {
@@ -62,13 +65,22 @@ class SocketService {
   void clearAllListeners() {
     _socket?.clearListeners();
     _socket?.off('*');
+    _listenerCount = 0; // Reset listener count when all listeners are cleared
   }
 
   void clearListener(String event) {
     _socket?.off(event);
+    if (_listenerCount > 0) {
+      _listenerCount--; // Decrement count if a listener is removed
+    }
   }
 
   bool isSocketAlive() {
     return _socket != null && _socket!.connected;
+  }
+
+  // New method to get the current listener count
+  int getListenerCount() {
+    return _listenerCount;
   }
 }

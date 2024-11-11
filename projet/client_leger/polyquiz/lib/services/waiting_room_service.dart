@@ -4,7 +4,6 @@ import 'package:polyquiz/services/global_navigation_service.dart';
 import 'socket_service.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/models/game_info_interface.dart';
 
@@ -43,12 +42,19 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   Future<void> connectToSocket(String roomId,
-      {required bool isHost, String? username}) async {
+      {required bool isHost, String? username, bool? isFromActiveList}) async {
     this.userData = this.loggedInUserService.getUser();
-    print(this.userData?.uid);
+    if (!isHost) {
+      this.roomId = int.parse(roomId);
+    }
     if (!_socketService.isSocketAlive()) {
       print("Socket is not connected. Attempting to connect...");
       _socketService.connect(this.userData?.uid);
+    }
+
+    if (isFromActiveList != null && isFromActiveList) {
+      print("Joining room from active list");
+      sendJoinRoomRequest(roomId, username!);
     }
 
     _socketService.onMessage(SocketEvent.CONNECTION, (_) {
@@ -126,7 +132,6 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   void toggleRoomLock() {
-    print('RoomId sent: ${this.roomId}');
     _socketService.sendMessage(SocketEvent.TOGGLE_ROOM_LOCK, this.roomId);
   }
 

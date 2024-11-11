@@ -1,5 +1,5 @@
 import 'package:polyquiz/enums/question_type.dart';
-import 'quiz_interface.dart';
+import 'package:polyquiz/models/quiz.dart';
 
 typedef QuestionStatistics = List<dynamic>;
 
