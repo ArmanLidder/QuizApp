@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/widgets/user_widget/FriendListWidget.dart';
-import '../widgets/user_widget/fancyAppBar.dart';
+import '../widgets/fancyAppBar.dart';
 import '../widgets/user_widget/ProfileCard.dart';
 import '../widgets/user_widget/statisticBlorb.dart';
 import '../widgets/user_widget/starComponent.dart';
@@ -14,6 +15,7 @@ class Userpage extends StatelessWidget {
   final UserService userService = UserService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
+  final ThemeService themeService = ThemeService.instance;
   User? userData;
 
   @override
@@ -24,8 +26,8 @@ class Userpage extends StatelessWidget {
     List<num> achievements = this.userData?.achievements ?? [];
 
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Color(0xFFF3F4F6),
+      home: Scaffold(        backgroundColor: themeService.mainBackground.value,
+
         appBar: FancyAppBar(
             context: context,
             ),

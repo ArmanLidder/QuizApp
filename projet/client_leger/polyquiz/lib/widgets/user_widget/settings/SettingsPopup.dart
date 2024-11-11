@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 import 'Theme Option.dart';
 
@@ -8,9 +9,18 @@ class SettingsPopup extends StatefulWidget {
 }
 
 class _SettingsPopupState extends State<SettingsPopup> {
-  String _selectedLanguage = 'Français';
-  Color _selectedColor = Colors.blue;
+  late ThemeService themeService;  // Declare the variable
+  late String _selectedLanguage;
+  late String _selectedTheme;
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialize themeService and _selectedTheme in initState
+    themeService = ThemeService.instance;
+    _selectedLanguage = 'Français';
+    _selectedTheme = themeService.themeName.value; // Assuming themeName is a property in your ThemeService
+  }
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -56,32 +66,20 @@ class _SettingsPopupState extends State<SettingsPopup> {
               Row(
                 children: [
                   ThemeColorOption(
-                    onTap: () {
-                      setState(() {
-                        _selectedColor = Colors.grey;
-                      });
-                    }, color: Colors.grey,
-                    label:'normal',
-                    isSelected: _selectedColor == Colors.grey,),
+                    color: Colors.grey,
+                    themeName:'default',
+                  )
+                  ,
                   SizedBox(width: 8),
                   ThemeColorOption(
-                    onTap: () {
-                      setState(() {
-                        _selectedColor = Colors.black;
-                      });
-                    }, color: Colors.black,
-                    label:'dark mode',
-                    isSelected: _selectedColor == Colors.black,),
-
+                     color: Colors.black,
+                    themeName:'dark',
+                  ),
                   SizedBox(width: 8),
                   ThemeColorOption(
-                    onTap: () {
-                      setState(() {
-                        _selectedColor = Colors.purple;
-                      });
-                    }, color: Colors.purple,
-                  label:'disco',
-                  isSelected: _selectedColor == Colors.purple,),
+                    color: Colors.purple,
+                    themeName:'disco',
+                  )
                 ],
               ),
             ],

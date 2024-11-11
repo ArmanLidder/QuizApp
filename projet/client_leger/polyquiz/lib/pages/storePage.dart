@@ -8,7 +8,7 @@ import 'package:polyquiz/widgets/store_widgets/storeWidgets.dart';
 import 'package:polyquiz/widgets/store_widgets/storeWidgets.dart';
 //import 'package:polyquiz/widgets/store_widgets/themeWidget.dart';
 import '../models/user.dart';
-import '../widgets/user_widget/fancyAppBar.dart';
+import '../widgets/fancyAppBar.dart';
 
 class Storepage extends StatefulWidget {
   @override
