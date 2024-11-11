@@ -10,7 +10,6 @@ class ImageSelectionPopup extends StatelessWidget {
   ImageSelectionPopup({
     required this.imageUrls,
     required this.onPlusButtonPressed,
-    //required this.onImageSelected,
   });
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
 
@@ -44,7 +43,10 @@ class ImageSelectionPopup extends StatelessWidget {
 
             // Display each image URL in the grid
             return GestureDetector(
-              onTap: () async => await loggedInUserService.chooseNewProfilePicture(imageUrls[index]), // Select the image
+              onTap: () async {
+                await loggedInUserService.chooseNewProfilePicture(imageUrls[index]);
+                Navigator.of(context).pop(); // Close the popup after selecting the image
+              },
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),

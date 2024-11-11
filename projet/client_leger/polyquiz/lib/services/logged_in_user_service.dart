@@ -8,6 +8,7 @@ class LoggedInUserService extends GetxController {
   final UserService userService = UserService();
   final ImageStorageService imageStorageService = ImageStorageService();
   late var observableCurrency = 0.obs;
+  late var observableAvatar = ''.obs;
   User? user;
 
   // Method to set user info
@@ -17,7 +18,7 @@ class LoggedInUserService extends GetxController {
 
   Future<void> setUserByEmail(String email) async {
     User? fetchedUser =
-        await this.userService.getUserByEmail(email); // Fetch user by email
+    await this.userService.getUserByEmail(email); // Fetch user by email
     if (fetchedUser != null) {
       setUser(fetchedUser); // Set the fetched user
     } else {
@@ -30,6 +31,8 @@ class LoggedInUserService extends GetxController {
     User? user = await UserService.instance.getUserById(uid ?? '');
     this.setUser(user);
     this.observableCurrency.value = (this.user?.currency ?? 0).round();
+    this.observableAvatar.value = (this.user?.avatar ?? "");
+
   }
 
   User? getUser() {
@@ -50,11 +53,18 @@ class LoggedInUserService extends GetxController {
     return string;
   }
 
-  Future<void> updateProfilePicture() async {
+  Future<void> uploadCustomProfilePicture() async {
     String? newImagelLink = await this.imageStorageService.pickAndUploadImage();
     await this.userService.updateUserAvatar(
         id: this.forceToString(this.getUid()),
         newAvatarUrl: this.forceToString(newImagelLink));
+    await this.reloadUser();
+  }
+
+  Future<void> chooseNewProfilePicture(String newProfileUrl) async {
+    await this.userService.updateUserAvatar(
+        id: this.forceToString(this.getUid()),
+        newAvatarUrl: this.forceToString(newProfileUrl));
     await this.reloadUser();
   }
 }
