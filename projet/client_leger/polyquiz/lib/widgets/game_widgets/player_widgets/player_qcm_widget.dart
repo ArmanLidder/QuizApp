@@ -36,13 +36,12 @@ class _PlayerQcmWidgetState extends State<PlayerQcm> {
             animation: gameInterfaceManagementService.gameService,
             builder: (BuildContext context, Widget? snapshot) {
               return GridView.count(
-                padding: EdgeInsets.all(10.0),
+                padding: EdgeInsets.all(50.0),
                 crossAxisCount: 2,
-                childAspectRatio: 2,
-                mainAxisSpacing: 5.0,
-                crossAxisSpacing: 5.0,
+                childAspectRatio: 3,
+                mainAxisSpacing: 40.0,
+                crossAxisSpacing: 40.0,
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
                 children:
                     List.generate(getQuestion()!.choices!.length, (index) {
                   return PlayerQcmChoice(
