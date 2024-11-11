@@ -26,7 +26,7 @@
                                         <button *ngIf="!this.checkCanalType(canal.name)"
                                                 (click)="leaveChat(canal.id!); $event.stopPropagation()">
                                             <i style="color: black; display: flex; align-items: center;"
-                                               class="bi bi-box-arrow-left"></i>
+                                               class="bi bi-box-arrow-right"></i>
                                         </button>
                                         <button *ngIf="!this.checkCanalType(canal.name)"
                                                 (click)="accessDeleteCanal(canal.id!, canal.name!); $event.stopPropagation()">
