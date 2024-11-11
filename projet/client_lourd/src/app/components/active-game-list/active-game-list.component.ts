@@ -120,7 +120,7 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         this.gameService.gameRealService.username = HOST_USERNAME;
         console.log(`On active game list ${this.gameService.gameRealService.username}`)
         this.hostInterfaceManagementService.observerMode = true;
-        this.observationService.observeGame(game.room);
+        this.observationService.observeGame(game);
         setTimeout(() => {this.router.navigate([`game/${game.room}`]);}, 500);
     }
 
