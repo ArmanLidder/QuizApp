@@ -3,7 +3,7 @@
         <h1>Salle d'attente</h1>
         <h2 *ngIf='isHost'>Code : {{ waitingRoomManagementService.roomId }}</h2>
         <div *ngIf='isHost'>
-            <h3> La salle est {{ this.setLockActionMessage() }}</h3>
+            <h3> La salle est {{ setLockActionMessage() }}</h3>
             <label class="switch-btn" matTooltip="Verrouiller la salle">
                 <input type="checkbox" (click)='toggleRoomLocked()'/>
                 <span class="slider round"></span>
@@ -12,19 +12,26 @@
     </div>
 
     <div class="players-list">
-        <ng-container *ngIf="this.waitingRoomManagementService.gameType !== 'equipe'">
+        <ng-container *ngIf="waitingRoomManagementService.gameType !== 'equipe'">
             <h2>Joueurs:</h2>
-            <ul>
-                <li class="player-item" *ngFor="let player of waitingRoomManagementService.players">
-                    <app-avatar class="player-name" [isChat]="true" [uid]="player"></app-avatar>
-                    <div class='icon-container'><i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost'
-                                                   matTooltip='bannir'></i></div>
-                </li>
-            </ul>
+            <ng-container *ngIf="waitingRoomManagementService.players.length > 0; else noPlayers">
+                <ul>
+                    <li class="player-item" *ngFor="let player of waitingRoomManagementService.players">
+                        <app-avatar class="player-name" [isChat]="true" [uid]="player"></app-avatar>
+                        <div class='icon-container'>
+                            <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' matTooltip='bannir'></i>
+                        </div>
+                    </li>
+                </ul>
+            </ng-container>
+            <ng-template #noPlayers>
+                <p class="text-gray-500">Aucun joueur présent</p>
+            </ng-template>
         </ng-container>
+
         <ng-container *ngIf="waitingRoomManagementService.gameType === 'equipe'">
-            <h2>Équipe:</h2>
-            <div class="teams-container">
+            <h2>Équipes:</h2>
+            <div *ngIf="waitingRoomManagementService.teamsForInterface.length > 0; else noTeams" class="teams-container">
                 <div *ngFor="let team of waitingRoomManagementService.teamsForInterface" class="team">
                     <div class="team-header">
                         <span>Équipe {{ team.name }}</span>
@@ -34,15 +41,18 @@
                         </button>
                     </div>
                     <div class="team-players">
-                        <ng-container *ngFor="let player of team.userIds.members">
-                            <div class="team-item">
-                                <app-avatar class="team-avatar" [isChat]="true" [uid]="player"></app-avatar>
-                                <div class='icon-container'><i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' title='bannir'></i></div>
+                        <div *ngFor="let player of team.userIds.members" class="team-item">
+                            <app-avatar class="team-avatar" [isChat]="true" [uid]="player"></app-avatar>
+                            <div class='icon-container'>
+                                <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' matTooltip='bannir'></i>
                             </div>
-                        </ng-container>
+                        </div>
                     </div>
                 </div>
             </div>
+            <ng-template #noTeams>
+                <p class="text-gray-500">Aucun équipe présente</p>
+            </ng-template>
         </ng-container>
     </div>
 
@@ -51,14 +61,15 @@
                 [disabled]="validationBeforeEntry()">
             Commencer
         </button>
-        <button *ngIf="!isHost && this.waitingRoomManagementService.gameType === 'equipe'"
+        <button *ngIf="!isHost && waitingRoomManagementService.gameType === 'equipe'"
                 [disabled]="onlyOneMember()"
                 class="action-btn"
-                (click)="this.waitingRoomManagementService.sendCreateTeam()">Créer Équipe
+                (click)="waitingRoomManagementService.sendCreateTeam()">Créer Équipe
         </button>
         <app-leave-boutton></app-leave-boutton>
     </div>
 </div>
+
 <div *ngIf='waitingRoomManagementService.isTransition' class='transition'>
     <div class='timer'>
         <h2>Quiz commence dans :</h2>
@@ -66,4 +77,3 @@
     </div>
     <app-leave-boutton></app-leave-boutton>
 </div>
-
