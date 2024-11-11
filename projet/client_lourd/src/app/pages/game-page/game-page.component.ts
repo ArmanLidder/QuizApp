@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service/game.service';
 import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
@@ -17,14 +17,13 @@ export class GamePageComponent implements OnDestroy, OnInit {
     private route: Router = inject(Router);
 
     constructor(
-        private gameService: GameService,
+        public gameService: GameService,
         private readonly socketService: SocketClientService,
         private interactiveListService: InteractiveListSocketService,
-        private observationService: ObservationService,
+        public observationService: ObservationService,
     ) {}
 
     ngOnInit() {
-        console.log(this.observationService.isHost)
         if (this.observationService.isHost) this.isHost = this.observationService.isHost;
         else this.isHost = this.gameService.gameRealService.username === HOST_USERNAME;
         if (this.socketService.isSocketAlive()) {
@@ -36,11 +35,13 @@ export class GamePageComponent implements OnDestroy, OnInit {
     }
 
     ngOnDestroy() {
+        console.log("Page destroyed")
         const messageType = this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
-        if (this.socketService.isSocketAlive()) {
+        if (this.socketService.isSocketAlive() && !this.gameService.observerMode) {
             this.socketService.send(messageType, this.gameService.gameRealService.roomId);
         }
         this.gameService.destroy();
         this.gameService.audio.pause();
+        this.observationService.isHost = false;
     }
 }
