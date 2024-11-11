@@ -5,11 +5,14 @@ import 'package:polyquiz/widgets/user_widget/ImageSelectionPopup.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 import '../../services/imageStorageService.dart';
 import '../../services/logged_in_user_service.dart';
+import '../../services/theme_service.dart';
 
 class ProfileCard extends StatelessWidget {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
-final UserPageCustomisationService userPageCustomisationService = UserPageCustomisationService.instance;
+  final ThemeService themeService = ThemeService.instance;
+
+  final UserPageCustomisationService userPageCustomisationService = UserPageCustomisationService.instance;
   @override
   Widget build(BuildContext context) {
     return Obx(() {  // Use Obx to listen to Rx variables
@@ -66,7 +69,7 @@ final UserPageCustomisationService userPageCustomisationService = UserPageCustom
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
+                              border: Border.all(color: themeService.mainBackground.value, width: 2),
                             ),
                             child: CircleAvatar(
                               radius: 75,
@@ -82,7 +85,7 @@ final UserPageCustomisationService userPageCustomisationService = UserPageCustom
                               decoration: BoxDecoration(
                                 color: Colors.yellow,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2),
+                                border: Border.all(color: themeService.mainBackground.value, width: 2),
                               ),
                               child: Center(
                                 child: Text(
@@ -90,7 +93,7 @@ final UserPageCustomisationService userPageCustomisationService = UserPageCustom
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color: themeService.mainBackground.value,
                                   ),
                                 ),
                               ),
@@ -105,13 +108,13 @@ final UserPageCustomisationService userPageCustomisationService = UserPageCustom
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: themeService.mainBackground.value,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
                                   child: Icon(
                                     Icons.edit,
-                                    color: Colors.blue,
+                                    color: themeService.secondaryBackground.value,
                                     size: 20,
                                   ),
                                 ),
@@ -125,7 +128,7 @@ final UserPageCustomisationService userPageCustomisationService = UserPageCustom
                       child: Text(
                         'Profile of $username',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: themeService.mainBackground.value,
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -136,7 +139,7 @@ final UserPageCustomisationService userPageCustomisationService = UserPageCustom
                       child: Text(
                         loggedInUserService.getUser()!.email,
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: themeService.mainBackground.value,
                           fontSize: 14.0,
                         ),
                       ),
@@ -149,23 +152,23 @@ final UserPageCustomisationService userPageCustomisationService = UserPageCustom
                           Chip(
                             label: Text(
                               "prestige: $prestige",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: themeService.mainAccent.value),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: themeService.mainBackground.value.withOpacity(0.5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
-                              side: BorderSide(color: Colors.white),
+                              side: BorderSide(color: themeService.mainBackground.value),
                             ),
                           ),
                           Chip(
                             label: Text(
                               "argent: $argent",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: themeService.mainAccent.value),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: themeService.mainBackground.value.withOpacity(0.5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
-                              side: BorderSide(color: Colors.white),
+                              side: BorderSide(color: themeService.mainBackground.value),
                             ),
                           ),
                         ],
@@ -196,7 +199,7 @@ final UserPageCustomisationService userPageCustomisationService = UserPageCustom
               },
               child: Icon(
                 Icons.settings, // Black line gear icon
-                color: Colors.black,
+                color: themeService.mainAccent.value,
                 size: 32, // Adjust size as needed
               ),
             ),

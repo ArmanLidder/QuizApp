@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
@@ -25,57 +26,59 @@ class Userpage extends StatelessWidget {
     print(this.userData);
     List<num> achievements = this.userData?.achievements ?? [];
 
-    return MaterialApp(
-      home: Scaffold(        backgroundColor: themeService.mixedMain,
+    return Obx(() {
+      return MaterialApp(
+        home: Scaffold(        backgroundColor: themeService.mixedMain,
 
-        appBar: FancyAppBar(
-            context: context,
+            appBar: FancyAppBar(
+              context: context,
             ),
-        body: Center(
-        child: Padding(
-        padding: const EdgeInsets.only(top: 10.0), // Shift down by 10px
-          child:FractionallySizedBox(
-            widthFactor: 0.8,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: themeService.mainBackground.value, // Set the background color here
-                  borderRadius: BorderRadius.circular(12.0), // Adjust the radius as needed
-                ),
-                child: SingleChildScrollView(
-                  child: Column(children: [
-                    ProfileCard(),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          StatitisticsBlorb(
-                            nPlayedGames: userData?.stats.gamesPlayed ?? 0,
-                            nWonGames: userData?.stats.gamesWon ?? 0,
-                            avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
-                            avgGameTime: userData?.stats.avgGameTime ?? 0,
+            body: Center(
+                child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0), // Shift down by 10px
+                    child:FractionallySizedBox(
+                      widthFactor: 0.8,
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: themeService.mainBackground.value, // Set the background color here
+                            borderRadius: BorderRadius.circular(12.0), // Adjust the radius as needed
                           ),
+                          child: SingleChildScrollView(
+                            child: Column(children: [
+                              ProfileCard(),
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    StatitisticsBlorb(
+                                      nPlayedGames: userData?.stats.gamesPlayed ?? 0,
+                                      nWonGames: userData?.stats.gamesWon ?? 0,
+                                      avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
+                                      avgGameTime: userData?.stats.avgGameTime ?? 0,
+                                    ),
 
-                          FriendListDisplay(friends: userData?.friends ?? [],
-                              pendingRequests: userData?.friendRequests ?? []),
+                                    FriendListDisplay(friends: userData?.friends ?? [],
+                                        pendingRequests: userData?.friendRequests ?? []),
 
-                          StarCardGrid(
-                              achievementsList: achievements),
+                                    StarCardGrid(
+                                        achievementsList: achievements),
 
-                          Historique(
-                            gameHistory: userData?.gameHistory ?? [],
-                            loginHistory: userData?.loginHistory ?? [],
-                          ),
+                                    Historique(
+                                      gameHistory: userData?.gameHistory ?? [],
+                                      loginHistory: userData?.loginHistory ?? [],
+                                    ),
 
-                        ],
+                                  ],
 
+                                ),
+                              )
+                            ],),)
                       ),
                     )
-                  ],),)
-              ),
+                )
             )
-          )
         )
-      )
     );
+    });
   }
 }
