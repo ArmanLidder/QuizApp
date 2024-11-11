@@ -78,6 +78,8 @@ import { UniqueQuizNameDialogComponent } from './components/unique-quiz-name-dia
 import {MatMenuModule} from "@angular/material/menu";
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
 import {MatBadgeModule} from "@angular/material/badge";
+import { ObservationSelectorComponent } from './components/observation-selector/observation-selector.component';
+import { ObservationSelectorDialogComponent } from './components/observation-selector-dialog/observation-selector-dialog.component';
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -134,6 +136,8 @@ import {MatBadgeModule} from "@angular/material/badge";
         QreResponseAreaComponent,
         UniqueQuizNameDialogComponent,
         ProfileViewerComponent,
+        ObservationSelectorComponent,
+        ObservationSelectorDialogComponent,
     ],
     imports: [
         AppMaterialModule,
