@@ -68,7 +68,9 @@ class _FancyAppBarState extends State<FancyAppBar> {
           PopupMenuItem(
             value: 2,
             child: Text("Log Out"),
-            onTap: () {Navigator.pushReplacementNamed(widget.context, '/auth');}, // Placeholder onPressed for "Log Out"
+            onTap: () async {
+              await loggedInUserService.logout();
+              Navigator.pushReplacementNamed(widget.context, '/auth');}, // Placeholder onPressed for "Log Out"
           ),
         ],
             child:

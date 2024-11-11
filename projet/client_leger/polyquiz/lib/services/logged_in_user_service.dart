@@ -59,6 +59,27 @@ class LoggedInUserService extends GetxController {
       print('Login failed: user not found with email $email');
     }
   }
+
+  logout() async {
+    String? userId = user?.uid;  // Adjust this to match your user object structure
+
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    if (userSnapshot.exists) {
+      List<dynamic> loginHistory = userSnapshot.get('loginHistory') ?? [];
+      Timestamp timestamp = Timestamp.fromDate(DateTime.now());
+      loginHistory.add({
+        'eventType': 'logout',
+        'timestamp': timestamp,
+      });
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'loginHistory': loginHistory,
+      });
+      await reloadUser();
+      print('Logout event added successfully');
+    } else {
+      print('User not found.');
+    }
+  }
   Future<void> reloadUser() async {
     String? uid = await this.getUid();
     User? user = await UserService.instance.getUserById(uid ?? '');
