@@ -151,7 +151,7 @@ class ChannelSelectionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool shouldHaveLeaveAndDeleteButton = name != 'general';
+    bool shouldHaveLeaveAndDeleteButton = name != 'general' && !name.toLowerCase().contains("room");
 
     Widget leaveAndDeleteButtons =  SizedBox(
       width: 100,
