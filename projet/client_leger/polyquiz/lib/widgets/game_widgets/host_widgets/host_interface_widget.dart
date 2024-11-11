@@ -180,7 +180,7 @@ class HostHeader extends StatelessWidget {
                 // },
                 child: Text(
                   gameService.realGameService.isLast
-                      ? 'Dernière question'
+                      ? 'Résultats'
                       : 'Prochaine question',
                   style: TextStyle(
                       color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
@@ -213,7 +213,7 @@ class HostHeader extends StatelessWidget {
             questionText: gameService.question!.text,
           ),
         ),
-      ),
+      )
     ]);
   }
 }
