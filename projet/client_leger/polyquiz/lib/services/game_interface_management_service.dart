@@ -56,6 +56,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.timerText = 'Temps restant ';
     this.inPanicMode = false;
     this._qcmEnabled = true;
+    this.isResultPage = false;
   }
 
   void configureBaseSocketFeatures() {
@@ -78,7 +79,6 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.gameService.realGameService.validated = false;
     this.isBonus = false;
     this.timerText = 'Temps restant ';
-    this.isResultPage = false;
   }
 
   void handleEndQuestion() {
