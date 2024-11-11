@@ -49,5 +49,12 @@ export interface GameStats {
 
 export interface UsernameValidation {
     isValid: boolean;
-    error: string
+    error: string;
+}
+
+export interface NewObservedPlayer {
+    roomId: number;
+    oldUserId: string;
+    newUserId: string;
+    isHost: boolean
 }

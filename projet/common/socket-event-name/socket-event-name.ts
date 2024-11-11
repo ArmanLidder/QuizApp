@@ -56,6 +56,9 @@ export namespace SocketEvent {
     export const GET_GAME_TYPE = "get_game_type";
 
     export const NEW_OBSERVER_GAME = "new_observer";
+    export const GET_OBSERVER_PLAYER_LIST = "get_observer_player_list";
+    export const SENDING_OBSERVER_PLAYER_LIST = "sending_observer_player_list";
+    export const CHANGE_OBSERVED_PLAYER = "change_observed_player";
 }
 
 

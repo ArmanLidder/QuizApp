@@ -2,7 +2,7 @@ import {RoomManagingService} from '@app/services/room-managing.service/room-mana
 import {TRANSITION_QUESTIONS_DELAY} from '@common/constants/socket-manager.service.const';
 import {TimerService} from '@app/services/timer.service/timer.service';
 import {ErrorDictionary} from '@common/browser-message/error-message/error-message';
-import {JoinTeamData, PlayerUsername} from '@common/interfaces/socket-manager.interface';
+import {JoinTeamData, NewObservedPlayer, PlayerUsername} from '@common/interfaces/socket-manager.interface';
 import {HOST_USERNAME} from '@common/names/host-username';
 import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 import * as io from 'socket.io';
@@ -40,6 +40,8 @@ export class GameCreationService {
         this.handleCreateTeam(roomManager, socket, sio);
         this.handleGetGameType(roomManager, socket);
         this.handleNewObserver(roomManager, socket, sio);
+        this.handleObserverGetPlayerList(roomManager, socket, sio);
+        this.handleChangeObservedPLayer(roomManager, socket);
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
@@ -80,6 +82,15 @@ export class GameCreationService {
             await this.addUserToRoomCanal(roomId, observerId);
             socket.join(String(roomId))
             socket.join(String(hostId));
+        });
+    }
+
+    private handleChangeObservedPLayer(roomManager: RoomManagingService, socket: io.Socket) {
+        socket.on(SocketEvent.CHANGE_OBSERVED_PLAYER, (data: NewObservedPlayer) => {
+           const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
+           const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
+           socket.leave(String(observedPlayerSocketId));
+           socket.join(String(data.newUserId));
         });
     }
 
@@ -140,6 +151,7 @@ export class GameCreationService {
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             this.debug_teams("PLayer Left", roomId, roomManager);
             this.sendUpdateGameList(roomManager, sio);
+            this.sendPlayerListToObserver(roomId, roomManager, sio);
             this.sendTeams(roomId, roomManager, sio);
             if (userInfo) {
                 const game = roomManager.getGameByRoomId(roomId);
@@ -169,6 +181,7 @@ export class GameCreationService {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             await this.deleteRoomCanal(roomId, roomManager);
+            // this.sendPlayerListToObserver(roomId, roomManager, sio);
             roomManager.deleteRoom(roomId);
             this.sendUpdateGameList(roomManager, sio);
             sio.to(String(roomId)).disconnectSockets(true);
@@ -235,6 +248,12 @@ export class GameCreationService {
         });
     }
 
+    private handleObserverGetPlayerList(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.GET_OBSERVER_PLAYER_LIST, (roomId: number) => {
+           this.sendPlayerListToObserver(roomId, roomManager, sio);
+        });
+    }
+
     // Object from entries to send Map (Map is not directly convertable to JSON) on client new Map(Object.entries(teams))
     private sendTeams(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
         const teams = roomManager.getRoomById(roomId)?.teams;
@@ -244,6 +263,17 @@ export class GameCreationService {
 
     private sendUpdateGameList(roomManager: RoomManagingService, sio: io.Server) {
         sio.emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig())
+    }
+
+    private sendPlayerListToObserver(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
+        console.log('ISSUE HERE');
+        try {
+            sio.emit(SocketEvent.SENDING_OBSERVER_PLAYER_LIST, roomManager.getUsernamesArray(roomId))
+        } catch(e) {
+            console.log(e);
+            console.log(roomId)
+        }
+        // sio.emit(SocketEvent.SENDING_OBSERVER_PLAYER_LIST, players)
     }
 
     private generateRoomCanal(roomId: number, userId: string, teamId?: number): Canal {
@@ -526,5 +556,4 @@ export class GameCreationService {
             }
         }
     }
-
 }
