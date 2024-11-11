@@ -41,7 +41,7 @@ class UserService extends GetxController {
     }
   }
 
-  Future<void> createUser(String email, String username) async {
+  Future<void> createUser(String avatarURL, String email, String username) async {
     try {
       DocumentReference docRef = _db.collection(collectionName).doc();
 
@@ -49,8 +49,7 @@ class UserService extends GetxController {
         'email': email,
         'username': username,
         'uid': docRef.id,
-        'avatar':
-            'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58',
+        'avatar': avatarURL,
         'friends': [],
         'currency': 0,
         'achievements': [],

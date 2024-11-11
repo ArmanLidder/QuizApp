@@ -10,7 +10,7 @@ class UserPageCustomisationService extends GetxService {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<List<String>> availableImages(String userId) async {
+  Future<List<String>> defaultAvatars() async {
     List<String> imageUrls = [];
 
     // Get all documents in the `defaultUsers` collection and add `source` fields to the list
@@ -23,9 +23,14 @@ class UserPageCustomisationService extends GetxService {
         }
       }
     }
+    return imageUrls;
+  }
+
+  Future<List<String>> purchasedAvatars(String userId) async {
+    List<String> imageUrls = [];
+
     // Get the user-specific document in `storeAccount`
     DocumentSnapshot storeAccountSnapshot = await _firestore.collection('storeProfiles').doc(userId).get();
-
     if (storeAccountSnapshot.exists) {
       // Retrieve `itemsOwned` list from `storeAccount`
       List<dynamic> itemsOwned = storeAccountSnapshot.get('ownedItems') ?? [];
@@ -41,6 +46,16 @@ class UserPageCustomisationService extends GetxService {
         }
       }
     }
+
+    return imageUrls;
+  }
+
+  Future<List<String>> availableImages(String userId) async {
+    List<String> imageUrls = [];
+
+    // Fetch default avatars and purchased avatars and combine them
+    imageUrls.addAll(await defaultAvatars());
+    imageUrls.addAll(await purchasedAvatars(userId));
 
     return imageUrls;
   }
