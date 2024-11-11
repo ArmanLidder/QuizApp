@@ -26,7 +26,7 @@ class Userpage extends StatelessWidget {
     List<num> achievements = this.userData?.achievements ?? [];
 
     return MaterialApp(
-      home: Scaffold(        backgroundColor: themeService.mainBackground.value,
+      home: Scaffold(        backgroundColor: themeService.mixedMain,
 
         appBar: FancyAppBar(
             context: context,
@@ -38,7 +38,7 @@ class Userpage extends StatelessWidget {
             widthFactor: 0.8,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white, // Set the background color here
+                  color: themeService.mainBackground.value, // Set the background color here
                   borderRadius: BorderRadius.circular(12.0), // Adjust the radius as needed
                 ),
                 child: SingleChildScrollView(

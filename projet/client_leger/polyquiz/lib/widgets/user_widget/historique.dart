@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
 
+import '../../services/theme_service.dart';
+
 class Event {
   final String eventType;
   final String timestamp;
@@ -13,6 +15,7 @@ class EvenementRow extends StatelessWidget {
   final String date;
   final String label;
   final Color color;
+  final ThemeService themeService = ThemeService.instance;
 
   EvenementRow({
     required this.date,
@@ -24,7 +27,7 @@ class EvenementRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(date),
+        Text(date, style: TextStyle(color: themeService.mainAccent.value)),
         Text("   "),
         Text(
           label,
@@ -38,6 +41,7 @@ class EvenementRow extends StatelessWidget {
 class Historique extends StatelessWidget {
   final List<GameHistory> gameHistory;
   final List<LoginHistory> loginHistory;
+  final ThemeService themeService = ThemeService.instance;
 
   Historique({required this.gameHistory, required this.loginHistory});
 
@@ -75,6 +79,7 @@ class Historique extends StatelessWidget {
           Text(
             "Historique des connections",
             style: TextStyle(
+              color: themeService.mainAccent.value,
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
@@ -86,6 +91,7 @@ class Historique extends StatelessWidget {
           Text(
             "Historique des parties",
             style: TextStyle(
+              color: themeService.mainAccent.value,
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),

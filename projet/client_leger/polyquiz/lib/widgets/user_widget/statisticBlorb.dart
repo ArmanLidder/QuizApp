@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 class StatitisticsBlorb extends StatelessWidget {
   final num nPlayedGames;
   final num nWonGames;
   final num avgGoodAnswers;
   final num avgGameTime;
+  final ThemeService themeService = ThemeService.instance;
 
   StatitisticsBlorb({
     required this.nPlayedGames,
@@ -26,6 +28,7 @@ class StatitisticsBlorb extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
+                  color: themeService.mainAccent.value,
                 ),
               )
           ),
@@ -52,6 +55,9 @@ class StatitisticsBlorb extends StatelessWidget {
 }
 
 Widget StatRow(String label, num value, [String postStatString = ""]) {
+  final ThemeService themeService = ThemeService.instance;
+
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start, // Aligns content to the left
     children: [
@@ -59,6 +65,7 @@ Widget StatRow(String label, num value, [String postStatString = ""]) {
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold,
+          color: themeService.mainAccent.value,
         ),
       ),
       SizedBox(height: 4),
@@ -66,6 +73,7 @@ Widget StatRow(String label, num value, [String postStatString = ""]) {
         value.toString() + postStatString,
         style: TextStyle(
           fontSize: 22,
+          color: themeService.mainAccent.value,
           fontWeight: FontWeight.w500,
         ),
       ),

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/user_service.dart';
 
+import '../../services/theme_service.dart';
+
 class FriendListDisplay extends StatefulWidget {
   final UserService userService = UserService.instance;
   final List<String> friends;
   final List<FriendRequest> pendingRequests;
+  final ThemeService themeService = ThemeService.instance;
 
   FriendListDisplay({required this.friends, required this.pendingRequests});
 
@@ -15,6 +18,7 @@ class FriendListDisplay extends StatefulWidget {
 
 class _FriendListDisplayState extends State<FriendListDisplay> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final ThemeService themeService = ThemeService.instance;
 
   @override
   void initState() {
@@ -42,6 +46,8 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
+                  color: themeService.mainAccent.value,
+
                 ),
               ),
             ),
@@ -50,13 +56,14 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
                 // Add your onPressed functionality here
                 print("Ajouter button pressed"); //TODO: addpopup
               },
-              icon: Icon(Icons.person_add, color: Colors.white), // Person + icon
+              icon: Icon(Icons.person_add, color: themeService.secondaryAccent.value), // Person + icon
               label: Text(
                 "Ajouter",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: themeService.secondaryAccent.value),
+
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor : Colors.blue, // Button color
+                backgroundColor : themeService.secondaryBackground.value, // Button color
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Button padding
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0), // Rounded corners
@@ -71,11 +78,11 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
             margin: EdgeInsets.all(16),
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: themeService.mainBackground.value,
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
+                  color: themeService.mixedMain.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 5,
                   offset: Offset(0, 3),
@@ -90,9 +97,9 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
                     Tab(text: 'Friends'),
                     Tab(text: 'Pending'),
                   ],
-                  indicatorColor: Colors.blue,
-                  labelColor: Colors.blue,
-                  unselectedLabelColor: Colors.black,
+                  indicatorColor: themeService.secondaryBackground.value,
+                  labelColor: themeService.secondaryBackground.value,
+                  unselectedLabelColor: themeService.mainAccent.value,
                 ),
                 Expanded(
                   child: TabBarView(

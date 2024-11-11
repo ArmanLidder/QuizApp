@@ -13,7 +13,12 @@ class ThemeService extends GetxService{
   final Rx<Color> mainBackground = Colors.white.obs;
   final Rx<Color> mainAccent = Colors.black.obs;
   final Rx<Color> secondaryBackground = Colors.blue[500]!.obs;
-  final Rx<Color> secondaryAccent = Colors.black.obs;  // Function to update all colors
+  final Rx<Color> secondaryAccent = Colors.black.obs;
+  Color get mixedMain {
+    return Color.lerp(mainBackground.value, mainAccent.value, 0.25)!;
+  }
+
+  // Function to update all colors
   void setColors(List<Color> colors) {
     if (colors.length == 4) {
       mainBackground.value = colors[0];
@@ -25,7 +30,6 @@ class ThemeService extends GetxService{
     }
   }
   void setTheme(String themeName) {
-    print("setting theme: " + themeName);
     this.themeName.value = themeName;
     if (themeColors.containsKey(themeName)) {
       List<Color> colors = themeColors[themeName]!;
