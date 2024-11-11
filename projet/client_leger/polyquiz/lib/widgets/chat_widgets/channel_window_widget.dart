@@ -98,6 +98,18 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
             )
         )
       ]),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 15),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+                "Mes canaux",
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+            )
+        ),
+      ),
       Expanded(child: Obx(() {
         return channelService.channels.isEmpty
             ? Text("empty")
@@ -159,7 +171,7 @@ class ChannelSelectionButton extends StatelessWidget {
     );
 
     return Padding(
-      padding: EdgeInsets.all(5.0),
+      padding: EdgeInsets.symmetric(vertical: 5.0),
       child: TextButton(
           onPressed: () => buttonCallback(id),
           style: TextButton.styleFrom(
@@ -293,29 +305,30 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
   }
 
   Widget buildChannelTile(String name, String id) {
-    return ListTile(
-        title: TextButton(
-            onPressed: () {
-              channelService.joinChannel(id);
-              widget.returnCallback();
-            },
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text(name)
-            ),
-            // style: TextButton.styleFrom(
-            //     alignment: Alignment.centerLeft,
-            //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)
-            // )
-            style: TextButton.styleFrom(
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              minimumSize: Size(double.infinity, 50),
-              backgroundColor: Colors.grey[200],
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
-            )
-        )
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: TextButton(
+              onPressed: () {
+                channelService.joinChannel(id);
+                widget.returnCallback();
+              },
+              child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(name)
+              ),
+              // style: TextButton.styleFrom(
+              //     alignment: Alignment.centerLeft,
+              //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)
+              // )
+              style: TextButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 0),
+                minimumSize: Size(double.infinity, 50),
+                backgroundColor: Colors.grey[200],
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
+              )
+      ),
     );
   }
 }
