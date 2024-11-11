@@ -110,7 +110,9 @@ class _HostInterfaceState extends State<HostInterface> {
                   hostInterfaceManagementService:
                       hostInterfaceManagementService,
                 ),
-                PlayersDataTable(isHost: true,),
+                PlayersDataTable(
+                  isHost: true,
+                ),
               ],
             );
           }
@@ -139,71 +141,80 @@ class HostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TimerWidget(
-              isHost: true,
-              timeTxt: hostInterfaceManagementService.timerText,
-              time: gameService.realGameService.timer,
-              hostInterfaceManagementService: hostInterfaceManagementService,
-            ),
-            QuestionInfoWidget(
-              questionNum: gameService.questionNumber,
-              questionPts: gameService.question!.points,
-              questionText: gameService.question!.text,
-            ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: onNextQuestion,
-              // ()
-              // {
-              // hostInterfaceManagementService.saveStats();
-              // if (gameService.realGameService.isLast) {
-              //   isResultPage = true;
-              // }
-              // if (gameService.realGameService.isLast) {
-              //   print('isLast');
-              //   gameService.realGameService.isNotified = false;
-              //   hostInterfaceManagementService.handleLastQuestion();
-              //   isLastButton = true;
-              // }
-              // else {
-              //   gameService.realGameService.isNotified = false;
-              //   hostInterfaceManagementService.requestNextQuestion();
-              // }
-
-              // },
-              child: Text(
-                gameService.realGameService.isLast
-                    ? 'Dernière question'
-                    : 'Prochaine question',
-                style: TextStyle(
-                    color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
-              ),
-              style: TextButton.styleFrom(
-                textStyle: TextStyle(fontWeight: FontWeight.normal),
-                backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-              ),
-            ),
-            SizedBox(width: 50),
-            QuitBtn(
+    return Stack(children: [
+      Column(
+        children: [
+          Row(
+            children: [
+              TimerWidget(
                 isHost: true,
-                roomId: gameService.realGameService.roomId,
-                gameService: gameService,
-                interactiveListService: interactiveListService,
-                gameInterfaceManagementService: gameInterfaceManagementService,
-                hostInterfaceManagementService: hostInterfaceManagementService),
-          ],
-        )
-      ],
-    );
+                timeTxt: hostInterfaceManagementService.timerText,
+                time: gameService.realGameService.timer,
+                hostInterfaceManagementService: hostInterfaceManagementService,
+              )
+            ],
+          ),
+          SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: onNextQuestion,
+                // ()
+                // {
+                // hostInterfaceManagementService.saveStats();
+                // if (gameService.realGameService.isLast) {
+                //   isResultPage = true;
+                // }
+                // if (gameService.realGameService.isLast) {
+                //   print('isLast');
+                //   gameService.realGameService.isNotified = false;
+                //   hostInterfaceManagementService.handleLastQuestion();
+                //   isLastButton = true;
+                // }
+                // else {
+                //   gameService.realGameService.isNotified = false;
+                //   hostInterfaceManagementService.requestNextQuestion();
+                // }
+
+                // },
+                child: Text(
+                  gameService.realGameService.isLast
+                      ? 'Dernière question'
+                      : 'Prochaine question',
+                  style: TextStyle(
+                      color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
+                ),
+                style: TextButton.styleFrom(
+                  textStyle: TextStyle(fontWeight: FontWeight.normal),
+                  backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                ),
+              ),
+              SizedBox(width: 50),
+              QuitBtn(
+                  isHost: true,
+                  roomId: gameService.realGameService.roomId,
+                  gameService: gameService,
+                  interactiveListService: interactiveListService,
+                  gameInterfaceManagementService:
+                      gameInterfaceManagementService,
+                  hostInterfaceManagementService:
+                      hostInterfaceManagementService),
+            ],
+          )
+        ],
+      ),
+      Positioned.fill(
+        child: Align(
+          alignment: Alignment.center,
+          child: QuestionInfoWidget(
+            questionNum: gameService.questionNumber,
+            questionPts: gameService.question!.points,
+            questionText: gameService.question!.text,
+          ),
+        ),
+      ),
+    ]);
   }
 }
 
@@ -260,7 +271,9 @@ class ResultPage extends StatelessWidget {
           'Le jeux est terminé! voici les résultats.',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        PlayersDataTable(isHost: true,),
+        PlayersDataTable(
+          isHost: true,
+        ),
         QuitBtn(
           isHost: true,
           roomId: gameService.realGameService.roomId,
