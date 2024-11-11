@@ -161,14 +161,15 @@ button {
 }
 
 .action-btn {
-  background-color: #0d6efd;
+  background-color: #007bff;
   color: white;
-  border-color: #0d6efd;
+  border: 4px solid #007bff;
 }
 
 .action-btn:hover:not(:disabled) {
   background-color: white;
-  color: #0d6efd;
+  color: #007bff;
+  transition: 0.3s;
 }
 
 .action-btn:disabled {

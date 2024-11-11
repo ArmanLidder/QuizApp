@@ -25,7 +25,7 @@
         <!-- Header with Avatar and Basic Info -->
         <div class="flex items-start space-x-4">
             <div class="relative flex-shrink-0">
-                <app-avatar [showMenu]="false" [uid]="user.uid"></app-avatar>
+                <app-avatar [showProfileOnClick]="false" [showMenu]="false" [uid]="user.uid"></app-avatar>
             </div>
 
             <div class="flex-1">
@@ -50,7 +50,7 @@
             </div>
             <div class="flex justify-between py-1">
                 <span>Parties Gagnées:</span>
-                <span class="font-medium">{{ user.stats.gamesWon }}s</span>
+                <span class="font-medium">{{ user.stats.gamesWon }}</span>
             </div>
             <div class="flex justify-between py-1">
                 <span>Bonnes réponses par partie:</span>

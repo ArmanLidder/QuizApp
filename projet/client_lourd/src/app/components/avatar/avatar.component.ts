@@ -15,6 +15,7 @@ import {ProfileViewerComponent} from "@app/components/profile-viewer/profile-vie
 })
 export class AvatarComponent {
   @Input() isChat: boolean = false;
+  @Input() showProfileOnClick = true;
   @Input() showMoney: boolean = false;
   @Input() showMenu: boolean = false;
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
@@ -44,7 +45,7 @@ export class AvatarComponent {
   }
 
   openProfileDialog(): void {
-    if (this.uid) {
+    if (this.uid && this.showProfileOnClick) {
       this.dialog.open(ProfileViewerComponent, {
         data: { uid: this.uid },
         height: 'auto', // Let the height adjust based on content

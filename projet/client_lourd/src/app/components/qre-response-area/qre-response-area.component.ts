@@ -13,6 +13,7 @@ export class QreResponseAreaComponent implements OnInit {
   margin: number;
   selectedValue: number;
   options: Options;
+  optionsDisabled: Options;
   responseInterval: string;
 
   constructor(public gameService: GameService) {
@@ -28,12 +29,11 @@ export class QreResponseAreaComponent implements OnInit {
       floor: this.min,
       ceil: this.max,
       step: 1,
-      showTicks: this.max - this.min <= 100,
       translate: (value: number): string => {
         return value.toString();
       }
     };
-
+    this.optionsDisabled = { ...this.options, disabled: true };
   }
 
   calculateResponseInterval() {
@@ -44,13 +44,29 @@ export class QreResponseAreaComponent implements OnInit {
 
   onSliderChange() {
     this.calculateResponseInterval();
-
+    this.gameService.selectQREAnswer(this.selectedValue);
   }
 
   validate() {
     if (!this.gameService.validatedStatus) {
       this.gameService.qreAnswer = this.selectedValue;
+      this.gameService.selectQREAnswer(this.selectedValue);
       this.gameService.sendAnswer();
     }
+  }
+
+  decrementValue() {
+    if (this.selectedValue != this.min) {
+      this.selectedValue -= 1;
+      this.onSliderChange();
+    }
+  }
+
+  incrementValue() {
+    if (this.selectedValue != this.max) {
+      this.selectedValue += 1;
+      this.onSliderChange();
+    }
+
   }
 }

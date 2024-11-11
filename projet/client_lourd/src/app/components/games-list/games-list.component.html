@@ -23,42 +23,40 @@
         <tfoot>
         <tr>
             <td colspan="3">
-                <div *ngIf="isAdmin" class="button-container flex justify-between space-x-4 pt-4">
-                    <!-- Refresh Button on the Far Left -->
-                    <button (click)="populateGameList()"
+                <div class="flex justify-between space-x-4">
+                    <button (click)="refresh()"
                             class="px-4 py-2 border border-gray-500 rounded bg-gray-500 text-white hover:bg-gray-600 transition">
                         <i class="fas fa-sync mr-2"></i> Rafraîchir
                     </button>
 
-                    <!-- Other Buttons on the Far Right -->
                     <div class="flex space-x-4">
-                        <button routerLink="/quiz-creation"
-                                class="px-4 py-2 border border-blue-500 rounded bg-blue-500 text-white hover:bg-blue-600 transition">
-                            <i class="fas fa-plus mr-2"></i> Ajouter
-                        </button>
-                        <input type="file" class="file-selector hidden" #fileInput accept="application/json" (change)="selectFile($event)" />
-                        <button (click)="uploadFile()"
-                                class="px-4 py-2 border border-green-500 rounded bg-green-500 text-white hover:bg-green-600 transition">
-                            <i class="fas fa-file-import mr-2"></i> Importer
-                        </button>
-                    </div>
-                </div>
+                        <ng-container *ngIf="isAdmin; else nonAdminButtons">
+                            <button routerLink="/quiz-creation"
+                                    class="px-4 py-2 border border-blue-500 rounded bg-blue-600 text-white hover:bg-blue-700 transition">
+                                <i class="fas fa-plus mr-2"></i> Ajouter
+                            </button>
+                            <input type="file" class="file-selector hidden" #fileInput accept="application/json" (change)="selectFile($event)" />
+                            <button (click)="uploadFile()"
+                                    class="px-4 py-2 border border-green-500 rounded bg-green-500 text-white hover:bg-green-600 transition">
+                                <i class="fas fa-file-import mr-2"></i> Importer
+                            </button>
+                        </ng-container>
+                        <ng-template #nonAdminButtons>
+                            <button [matTooltip]="!selectedQuiz ? 'Veuillez sélectionner un quiz':''" (click)="playGame()"
+                                    class="px-4 py-2 border rounded transition"
+                                    [ngClass]="{
+          'border-blue-500 bg-blue-600 text-white hover:bg-blue-700': selectedQuiz,
+          'border-gray-300 bg-gray-300 text-gray-500 cursor-not-allowed': !selectedQuiz
+        }"
+                                    [disabled]="!selectedQuiz">
+                                Jouer
+                            </button>
 
-                <div *ngIf="!isAdmin" class="button-container flex justify-end space-x-4 pt-4">
-                    <button (click)="playGame()"
-                            class="px-4 py-2 border border-blue-500 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
-                            [class.disabled-button]="!selectedQuiz"
-                            [disabled]="!selectedQuiz">
-                        Jouer
-                    </button>
-                    <button routerLink="/home"
-                            class="px-4 py-2 border border-red-500 rounded bg-red-500 text-white hover:bg-red-600 transition">
-                        Annuler
-                    </button>
+                        </ng-template>
+                    </div>
                 </div>
             </td>
         </tr>
         </tfoot>
-
     </table>
 </div>

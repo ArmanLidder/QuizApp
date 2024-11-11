@@ -32,6 +32,11 @@ export interface PlayerSelection {
     index: number;
 }
 
+export interface PlayerQRESelection {
+    roomId: number;
+    selectedAnswer: number;
+}
+
 export interface RoomValidationResult {
     isRoom: boolean;
     isLocked: boolean;
