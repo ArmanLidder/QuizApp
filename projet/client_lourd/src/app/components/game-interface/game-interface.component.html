@@ -1,6 +1,7 @@
 <div class="grid-container" *ngIf='gameInterfaceManagementService.isGameOver'>
     <h2>Le jeu est terminé!</h2>
     <p>Votre score final : {{ score }}</p>
+    <app-observation-selector *ngIf="gameInterfaceManagementService.gameService.observerMode"></app-observation-selector>
     <app-leave-boutton></app-leave-boutton>
 </div>
 <div class="result-container">
@@ -25,6 +26,7 @@
                 <h3>Valeur : {{ gameInterfaceManagementService.gameService.question?.points }} points</h3>
             </div>
         </section>
+        <app-observation-selector *ngIf="gameInterfaceManagementService.gameService.observerMode"></app-observation-selector>
         <div class='points'>
             <p>Pointage: {{ score }}</p>
             <p *ngIf = 'bonusStatus'> Vous avez recu des points Bonus! </p>
