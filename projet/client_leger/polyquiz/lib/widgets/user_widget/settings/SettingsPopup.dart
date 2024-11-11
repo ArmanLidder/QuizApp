@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/services/UserPageCustomisationService.dart';
+import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 
 import 'Theme Option.dart';
@@ -26,7 +26,7 @@ class _SettingsPopupState extends State<SettingsPopup> {
   }
   @override
   Widget build(BuildContext context) {
-    print(userPage)
+    //print(userPage)
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
@@ -10,6 +11,7 @@ class LoggedInUserService extends GetxController {
   late var observableCurrency = 0.obs;
   late var observableAvatar = ''.obs;
   User? user;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Method to set user info
   void setUser(User? user) {
@@ -26,7 +28,37 @@ class LoggedInUserService extends GetxController {
       print('User not found with email: $email');
     }
   }
+  Future<void> login(String email) async {
+    // Fetch and set the user by email
+    await setUserByEmail(email);
 
+    // Get the user object (assuming `userService.user` holds the current user)
+    User? currentUser = this.user;
+
+    // Check if the user was successfully set
+    if (currentUser != null) {
+      // Update the `isOnline` status in Firebase
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .update({'isConnected': true});
+
+      // Retrieve current loginHistory, add new event, and update in Firebase
+      DocumentReference userDocRef = _firestore.collection('users').doc(currentUser.uid);
+      DocumentSnapshot userSnapshot = await userDocRef.get();
+
+      List<dynamic> loginHistory = userSnapshot.get('loginHistory') ?? [];
+      Timestamp timestamp = Timestamp.now(); // Get the current timestamp
+      loginHistory.add({
+        'eventType': 'login',
+        'timestamp': timestamp,
+      });
+      await userDocRef.update({'loginHistory': loginHistory});
+      await reloadUser();
+    } else {
+      print('Login failed: user not found with email $email');
+    }
+  }
   Future<void> reloadUser() async {
     String? uid = await this.getUid();
     User? user = await UserService.instance.getUserById(uid ?? '');

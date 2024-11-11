@@ -53,7 +53,7 @@ class UserService extends GetxController {
         'friends': [],
         'currency': 0,
         'achievements': [],
-        'level': 1,
+        'level': 0,
         'prestige': 0,
         'isConnected': true,
         'stats': {

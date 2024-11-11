@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';  // Import GetX
+import 'package:get/get.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/widgets/user_widget/ImageSelectionPopup.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:polyquiz/constants/errorMessageTranslator.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/constants/defaultAvatars.dart';
-
+import 'package:polyquiz/constants/errorMessageTranslator.dart';
 class AuthPage extends StatefulWidget {
   @override
   _AuthPageState createState() => _AuthPageState();
@@ -34,11 +35,16 @@ class _AuthPageState extends State<AuthPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Connexion réussie!')),
       );
-      await loggedInUserService.setUserByEmail(_emailController.text);
+      await loggedInUserService.login(_emailController.text);
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
+      print(e);
+      FirebaseAuthException? error = e as FirebaseAuthException?;
+      String? errorCode = error?.code;
+      String? cleanErrorCode = firebaseAuthErrors[errorCode];
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Connexion échouée: $e')),
+
+        SnackBar(content: Text('Connexion échouée: $cleanErrorCode')),
       );
     }
   }
@@ -62,8 +68,11 @@ class _AuthPageState extends State<AuthPage> {
         _isRegistering = false;
       });
     } catch (e) {
+      FirebaseAuthException? error = e as FirebaseAuthException?;
+      String? errorCode = error?.code;
+      String? cleanErrorCode = firebaseAuthErrors[errorCode];
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Inscription échouée: $e')),
+        SnackBar(content: Text('Inscription échouée: $cleanErrorCode')),
       );
     }
   }

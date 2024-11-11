@@ -6,7 +6,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
 
 class UserPageCustomisationService extends GetxService {
   // Singleton instance
-  static UserPageCustomisationService get instance => Get.find<UserPageCustomisationService>();
+  static UserPageCustomisationService get instance => Get.find();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 

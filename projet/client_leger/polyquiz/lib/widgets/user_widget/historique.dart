@@ -1,9 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
 
 import '../../services/theme_service.dart';
-
+import 'package:intl/intl.dart';
 class Event {
   final String eventType;
   final String timestamp;
@@ -48,14 +50,18 @@ class Historique extends StatelessWidget {
     List<Event> gameEvents(){
       return gameHistory.map((game) {
         String result = resultTypeToString[game.result]!;
+        DateTime dateTime =  game.timestamp.toDate();
 
-        return Event(eventType: result, timestamp: game.timestamp);
+
+        return Event(eventType: result, timestamp: DateFormat('yyyy-MM-dd-hh:mm').format(dateTime));
       }).toList();
     }
     List<Event> loginEvents(){
         return loginHistory.map((login) {
+          print(login.timestamp.toDate());
+          DateTime dateTime =  login.timestamp.toDate();
         String eventType = loginEventTypeToString[login.eventType]!;
-        return Event(eventType: eventType, timestamp: login.timestamp);
+        return Event(eventType: eventType, timestamp: DateFormat('yyyy-MM-dd-hh:mm').format(dateTime));
       }).toList();}
 
     List<EvenementRow> _generateEventRows(List<Event> allEvents) {
