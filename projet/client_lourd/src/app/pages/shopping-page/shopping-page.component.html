@@ -1,2 +1,39 @@
 <app-header></app-header>
-<p>shopping-page works!</p>
+<div class="container mx-auto p-4">
+    <div *ngIf="userCurrency$ | async as userCurrency" class="text-center mb-4 text-2xl font-semibold text-gray-700">
+        Argent : {{ userCurrency }}
+    </div>
+
+    <h2 class="text-xl font-semibold mb-4">Images</h2>
+    <div *ngIf="imageItems$ | async as imageItems" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div *ngFor="let item of imageItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+            <img [src]="item.source" alt="{{ item.name }}" class="w-24 h-24 rounded-full mb-4 object-cover" />
+            <h3 class="text-lg font-medium">{{ item.name }}</h3>
+            <p class="text-gray-500">Coût : {{ item.cost }} crédits</p>
+            <ng-container *ngIf="userCurrency$ | async as userCurrency">
+                <button
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        [disabled]="userCurrency < item.cost" (click)="buyItem(item.id)">
+
+                    Acheter
+                </button>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Section des Thèmes -->
+    <h2 class="text-xl font-semibold mt-8 mb-4">Thèmes</h2>
+    <div *ngIf="themeItems$ | async as themeItems" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div *ngFor="let item of themeItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+            <h3 class="text-lg font-medium">{{ item.name }}</h3>
+            <p class="text-gray-500">Coût : {{ item.cost }} crédits</p>
+            <ng-container *ngIf="userCurrency$ | async as userCurrency">
+                <button
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        [disabled]="userCurrency < item.cost" (click)="buyItem(item.id)">
+                    Acheter
+                </button>
+            </ng-container>
+        </div>
+    </div>
+</div>

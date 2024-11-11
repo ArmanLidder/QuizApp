@@ -17,14 +17,17 @@ export class AvatarPickerComponent {
     constructor(private avatarService: AvatarService) {
     }
 
-    ngOnInit(): void {
-        this.loadDefaultAvatars();
+    async ngOnInit() {
+       await this.loadDefaultAvatars();
     }
 
-    loadDefaultAvatars(): void {
+    async loadDefaultAvatars() {
         this.avatarService.getDefaultAvatarUrls().subscribe((avatars: string[]) => {
             this.defaultAvatars = avatars;
         });
+        const boughtAvatars = await this.avatarService.getBoughtAvatars();
+        console.log(this.defaultAvatars);
+        console.log(boughtAvatars);
     }
 
     // Called when a default avatar is selected
