@@ -27,7 +27,7 @@ export class GamePageComponent implements OnDestroy, OnInit {
         if (this.observationService.isHost) this.isHost = this.observationService.isHost;
         else this.isHost = this.gameService.gameRealService.username === HOST_USERNAME;
         if (this.socketService.isSocketAlive()) {
-            if (this.observationService.isHost) this.observationService.configureBaseSocketFeatures();
+            if (this.observationService.isHost && this.gameService.observerMode) this.observationService.configureBaseSocketFeatures();
             this.interactiveListService.configureBaseSocketFeatures();
         }
         window.onbeforeunload = () => this.ngOnDestroy();
@@ -35,7 +35,6 @@ export class GamePageComponent implements OnDestroy, OnInit {
     }
 
     ngOnDestroy() {
-        console.log("Page destroyed")
         const messageType = this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
         if (this.socketService.isSocketAlive() && !this.gameService.observerMode) {
             this.socketService.send(messageType, this.gameService.gameRealService.roomId);

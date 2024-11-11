@@ -56,6 +56,7 @@ export class ObservationService {
     this.handleHostPanicMode();
     this.handleHostTimerPause();
     this.handleGameStatusDistribution();
+    this.handleGetQREAnswer();
   }
 
   observeOtherPlayer(oldUserId: string, newUserId: string) {
@@ -67,6 +68,12 @@ export class ObservationService {
     }
     this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
     this.isHost = newUserId === this.gameConfigs.hostUserId;
+  }
+
+  private handleGetQREAnswer() {
+    this.socketService.on(SocketEvent.GET_QRE_ANSWER_FOR_OBS, (qreValue: number) => {
+      this.gameService.qreAnswer = qreValue
+    });
   }
 
   private handleTimeTransition() {
@@ -204,6 +211,7 @@ export class ObservationService {
     const choicesStats = new Map();
     const choices = this.gameService.question?.choices;
     choices?.forEach((choice: QuizChoice, index: number) => choicesStats.set(choice.text, choicesStatsValue[index]));
+    console.log(choicesStats);
     return choicesStats;
   }
 

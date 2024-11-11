@@ -103,7 +103,6 @@ export class GameManagementService {
     private handleSubmitAnswer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.SUBMIT_ANSWER, (data: PlayerAnswerData) => {
             const game = roomManager.getGameByRoomId(data.roomId);
-            console.log(`BUGGING signal ${socket.handshake.auth.userId}`)
             roomManager.getGameByRoomId(data.roomId).storePlayerAnswer(data.username, data.timer, data.answers);
             if (data.timer !== 0) {
                 const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
@@ -142,6 +141,7 @@ export class GameManagementService {
             ];
             sio.to(hostSocketId).emit(SocketEvent.REFRESH_QRE_STATS, choicesStatsValues);
             sio.to(hostSocketId).emit(SocketEvent.UPDATE_INTERACTION, username);
+            sio.to(socket.id).emit(SocketEvent.GET_QRE_ANSWER_FOR_OBS, data.selectedAnswer);
         });
     }
 

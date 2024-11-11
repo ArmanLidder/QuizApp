@@ -11,7 +11,7 @@
             -
         </button>
 
-        <ng-container *ngIf="!gameService.lockedStatus; else lockedSlider">
+        <ng-container *ngIf="!gameService.lockedStatus && !gameService.observerMode; else lockedSlider">
             <ngx-slider
                     [(value)]="selectedValue"
                     [options]="options"
@@ -21,7 +21,7 @@
 
         <ng-template #lockedSlider>
             <ngx-slider
-                    [(value)]="selectedValue"
+                    [(value)]="gameService.observerMode ? gameService.qreAnswer : selectedValue"
                     [options]="optionsDisabled"
                     (userChangeEnd)="onSliderChange()"
             ></ngx-slider>
@@ -32,7 +32,7 @@
                 bg-gray-200 text-gray-700 hover:bg-gray-300
                 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 (click)="incrementValue()"
-                [disabled]="gameService.lockedStatus"
+                [disabled]="gameService.lockedStatus || gameService.observerMode"
         >
             +
         </button>

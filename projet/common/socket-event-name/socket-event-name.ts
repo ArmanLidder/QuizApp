@@ -60,6 +60,7 @@ export namespace SocketEvent {
     export const GET_OBSERVER_PLAYER_LIST = "get_observer_player_list";
     export const SENDING_OBSERVER_PLAYER_LIST = "sending_observer_player_list";
     export const CHANGE_OBSERVED_PLAYER = "change_observed_player";
+    export const GET_QRE_ANSWER_FOR_OBS = "get_qre_answer_obs";
 }
 
 

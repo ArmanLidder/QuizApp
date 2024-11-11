@@ -89,8 +89,9 @@ export class GameCreationService {
         socket.on(SocketEvent.CHANGE_OBSERVED_PLAYER, (data: NewObservedPlayer) => {
            const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
            const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
+           const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, data.newUserId);
            socket.leave(String(observedPlayerSocketId));
-           socket.join(String(data.newUserId));
+           socket.join(String(newObservedPlayerSocketId));
         });
     }
 

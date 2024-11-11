@@ -100,7 +100,8 @@ export class GameService {
         if (!this.lockedStatus) {
             console.log(`sending ${selectedAnswer}`)
             this.qreAnswer = selectedAnswer;
-            this.gameRealService.sendQRESelection(selectedAnswer);
+            this.gameRealService.qreAnswer = selectedAnswer;
+            if (!this.observerMode) this.gameRealService.sendQRESelection(selectedAnswer);
         }
     }
 
@@ -133,7 +134,7 @@ export class GameService {
     reset() {
         this.observerMode = false;
         this.isTestMode = false;
-        this.qrlAnswer = ''
+        this.qrlAnswer = '';
         this.isActive = false;
         this.hasInteracted = false;
         this.audio.pause();
