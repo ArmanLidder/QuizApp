@@ -32,20 +32,26 @@ class _AuthPageState extends State<AuthPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
+      await loggedInUserService.login(_emailController.text);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Connexion réussie!')),
       );
-      await loggedInUserService.login(_emailController.text);
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
+      print(e);
+      if (e == "USER ALREADY CONNECTED"){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Connexion échouée: ce compte est deja connecte')),
+        );}
+      else{
       print(e);
       FirebaseAuthException? error = e as FirebaseAuthException?;
       String? errorCode = error?.code;
       String? cleanErrorCode = firebaseAuthErrors[errorCode];
       ScaffoldMessenger.of(context).showSnackBar(
-
         SnackBar(content: Text('Connexion échouée: $cleanErrorCode')),
-      );
+      );}
     }
   }
 

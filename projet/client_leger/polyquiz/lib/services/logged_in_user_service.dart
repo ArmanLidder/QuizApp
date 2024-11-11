@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/animation.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
@@ -31,13 +32,15 @@ class LoggedInUserService extends GetxController {
   Future<void> login(String email) async {
     // Fetch and set the user by email
     await setUserByEmail(email);
-
     // Get the user object (assuming `userService.user` holds the current user)
     User? currentUser = this.user;
 
     // Check if the user was successfully set
     if (currentUser != null) {
       // Update the `isOnline` status in Firebase
+      if (this.user!.isConnected){
+        throw("USER ALREADY CONNECTED");
+      }
       await FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser.uid)
@@ -64,6 +67,12 @@ class LoggedInUserService extends GetxController {
     String? userId = user?.uid;  // Adjust this to match your user object structure
 
     DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .update({'isConnected': false});
+
+
     if (userSnapshot.exists) {
       List<dynamic> loginHistory = userSnapshot.get('loginHistory') ?? [];
       Timestamp timestamp = Timestamp.fromDate(DateTime.now());
