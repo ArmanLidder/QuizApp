@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -89,11 +90,12 @@ class _FancyAppBarState extends State<FancyAppBar> {
                       width: 40,
                       child: Stack(
                         children: [
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundImage: NetworkImage(imageUrl),
-                          ),
-                          Positioned(
+                          Obx(() {
+                            return CircleAvatar(
+                              radius: 20,
+                              backgroundImage: NetworkImage(loggedInUserService.observableAvatar.value),
+                            );
+                          }),                          Positioned(
                             bottom: 0,
                             right: 0,
                             child: Container(
