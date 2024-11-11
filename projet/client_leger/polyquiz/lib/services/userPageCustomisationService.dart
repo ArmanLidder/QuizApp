@@ -59,4 +59,26 @@ class UserPageCustomisationService extends GetxService {
 
     return imageUrls;
   }
+  Future<List<String>> purchasedThemes(String userId) async {
+    List<String> themeNames = [];
+
+    // Get the user-specific document in `storeAccount`
+    DocumentSnapshot storeAccountSnapshot = await _firestore.collection('storeProfiles').doc(userId).get();
+    if (storeAccountSnapshot.exists) {
+      // Retrieve `itemsOwned` list from `storeAccount`
+      List<dynamic> itemsOwned = storeAccountSnapshot.get('ownedItems') ?? [];
+
+      // For each item in `itemsOwned`, get the document in `storeItems` and check `itemType`
+      for (var itemId in itemsOwned) {
+        DocumentSnapshot itemDoc = await _firestore.collection('storeItems').doc(itemId).get();
+        if (itemDoc.exists && itemDoc.get('itemType') == 'theme') {
+          var name = itemDoc.get('name');
+          if (name is String) {
+            themeNames.add(name);
+          }
+        }
+      }
+    }
+    return themeNames;
+  }
 }

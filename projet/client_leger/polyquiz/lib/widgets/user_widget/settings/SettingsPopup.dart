@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/UserPageCustomisationService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 
 import 'Theme Option.dart';
@@ -9,6 +10,7 @@ class SettingsPopup extends StatefulWidget {
 }
 
 class _SettingsPopupState extends State<SettingsPopup> {
+  late UserPageCustomisationService userPageCustomisationService;
   late ThemeService themeService;  // Declare the variable
   late String _selectedLanguage;
   late String _selectedTheme;
@@ -18,11 +20,13 @@ class _SettingsPopupState extends State<SettingsPopup> {
     super.initState();
     // Initialize themeService and _selectedTheme in initState
     themeService = ThemeService.instance;
+    userPageCustomisationService = UserPageCustomisationService.instance;
     _selectedLanguage = 'Français';
     _selectedTheme = themeService.themeName.value; // Assuming themeName is a property in your ThemeService
   }
   @override
   Widget build(BuildContext context) {
+    print(userPage)
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
