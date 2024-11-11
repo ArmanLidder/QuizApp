@@ -20,6 +20,7 @@ class _QuizListPageState extends State<QuizListPage> {
   List<Quiz> quizzes = [];
   bool isLoading = true;
   String errorMessage = '';
+  Quiz? selectedQuiz = null;
 
   @override
   void initState() {
@@ -105,13 +106,15 @@ class _QuizListPageState extends State<QuizListPage> {
                                       color: const Color.fromRGBO(0, 0, 0, 1),
                                       width: 1.0)),
                               child: ListTile(
-                                title: Text(quiz.title,
-                                    style: TextStyle(fontSize: 16)),
-                                subtitle: Row(
+                                tileColor: quiz == selectedQuiz
+                                    ? const Color.fromRGBO(184, 223, 255, 1)
+                                    : Colors.white,
+                                title: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Durée: ${quiz.duration} s'),
+                                    Text(quiz.title,
+                                        style: TextStyle(fontSize: 16)),
                                     if (_areAllQuestionsQCM(quiz))
                                       IconButton(
                                         iconSize: 35.0,
@@ -125,43 +128,80 @@ class _QuizListPageState extends State<QuizListPage> {
                                       )
                                   ],
                                 ),
-                                onTap: () async {
-                                  final gameConfigService =
-                                      Provider.of<GameConfigService>(context,
-                                          listen: false);
-
-                                  // Show the GameConfigWidget as a dialog
-                                  await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Dialog(
-                                        child: GameConfigWidget(
-                                          quiz: quiz,
+                                subtitle: quiz == selectedQuiz
+                                    ? SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(quiz.title),
+                                            Text(
+                                                'Description: ${quiz.description}'),
+                                            Text('Durée: ${quiz.duration} s'),
+                                            Text('Questions:'),
+                                            ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(), // Disable inner scrolling
+                                              itemCount: quiz.questions.length,
+                                              itemBuilder: (context, index) {
+                                                return Center(
+                                                  child: Text(quiz
+                                                      .questions[index].text),
+                                                );
+                                              },
+                                            )
+                                          ],
                                         ),
-                                      );
-                                    },
-                                  );
-
-                                  // Pass the quiz and gameConfig as arguments
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => WaitingRoomScreen(
-                                  //       quiz: quiz,
-                                  //       username:
-                                  //           'nothing', // Pass the username to the waiting room.
-                                  //       isHost: true, // This user is not the host.
-                                  //       gameConfigService: gameConfigService,
-                                  //     ),
-                                  //   ),
-                                  // );
+                                      )
+                                    : SizedBox(),
+                                onTap: () {
+                                  setState(() {
+                                    this.selectedQuiz = quiz;
+                                  });
                                 },
                               ),
                             );
                           },
                         ),
                       ),
-                      CancelBtn(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () async {
+                              if (selectedQuiz != null) {
+                                final gameConfigService =
+                                    Provider.of<GameConfigService>(context,
+                                        listen: false);
+
+                                await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      child: GameConfigWidget(
+                                        quiz: selectedQuiz!,
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                            child: Text('Jouer',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 20)),
+                            style: TextButton.styleFrom(
+                              backgroundColor: selectedQuiz != null
+                                  ? Color.fromRGBO(53, 121, 246, 1)
+                                  : Color.fromRGBO(200, 200, 200, 1),
+                            ),
+                          ),
+                          SizedBox(width: 40),
+                          CancelBtn(),
+                        ],
+                      ),
                     ],
                   ),
                   Positioned(bottom: 20, left: 20, child: ChatPopup())
