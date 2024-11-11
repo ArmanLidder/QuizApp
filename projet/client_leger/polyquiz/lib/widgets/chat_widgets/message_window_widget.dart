@@ -52,7 +52,10 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
             controller: _messageController,
             decoration: InputDecoration(
               hintText: "input a message...",
-              border: InputBorder.none,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey, width: 1)
+              ),
             ),
             onSubmitted: (value) => sendMessage(),
           ),
