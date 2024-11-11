@@ -16,21 +16,28 @@ import {
 } from "@common/constants/host-interface.component.const";
 import {QuizChoice, QuizQuestion} from "@common/interfaces/quiz.interface";
 import {GameService} from "@app/services/game.service/game.service";
+import {GameListItem} from "@common/interfaces/room-interface";
+import {NewObservedPlayer} from "@common/interfaces/socket-manager.interface";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ObservationService {
   isHost: boolean;
+  observedPlayerId: string;
+  gameConfigs: GameListItem;
+  playersList: string[];
 
   constructor(
       private socketService: SocketClientService,
       private gameService: GameService,
       private hostInterfaceManagementService: HostInterfaceManagementService,
-  ) { }
+  ) {}
 
-  observeGame(roomId: number) {
-    this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, roomId);
+  observeGame(game: GameListItem) {
+    this.gameConfigs = game;
+    this.observedPlayerId = this.gameConfigs.hostUserId;
+    this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, game.room);
     this.isHost = true;
   }
 
@@ -49,6 +56,17 @@ export class ObservationService {
     this.handleHostPanicMode();
     this.handleHostTimerPause();
     this.handleGameStatusDistribution();
+  }
+
+  observeOtherPlayer(oldUserId: string, newUserId: string) {
+    const data: NewObservedPlayer = {
+      roomId: this.gameConfigs.room,
+      oldUserId,
+      newUserId,
+      isHost: this.isHost,
+    }
+    this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
+    this.isHost = newUserId === this.gameConfigs.hostUserId;
   }
 
   private handleTimeTransition() {
@@ -218,6 +236,6 @@ export class ObservationService {
     this.hostInterfaceManagementService.gameStats = [];
     this.hostInterfaceManagementService.isPaused = false;
     this.hostInterfaceManagementService.isPanicMode = false;
-    this.isHost = false;
+    this.playersList = [];
   }
 }
