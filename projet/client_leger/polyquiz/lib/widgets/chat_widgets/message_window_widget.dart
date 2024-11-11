@@ -201,7 +201,18 @@ class MessageTile extends StatelessWidget {
             ),
           ),
         ),
-        Flexible(child: FutureBuilder(future: getUsername(), builder: (BuildContext context, AsyncSnapshot<String> snapshot) => Text(snapshot.data ?? username)))
+        Flexible(child: FutureBuilder(
+            future: getUsername(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot)
+              => Container(
+                width: 70,
+                child: Text(
+                  snapshot.data ?? username,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,),
+              )
+        ))
       ],
     );
   }
