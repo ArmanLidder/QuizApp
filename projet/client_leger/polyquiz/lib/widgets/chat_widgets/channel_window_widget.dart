@@ -264,11 +264,11 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
   final channelService = ChannelService.instance;
   String _query = "";
 
-  void searchChannels(String query) {
-    setState(() {
-      _query = query;
-    });
-  }
+  String get query => _query;
+
+  void set query(String value) => setState(() {
+    _query = value;
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -286,22 +286,41 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
             child: Align(
                 alignment: Alignment.center, child: Text("Joindre Canal")))
       ]),
-      // buildSearchBar(),
+      buildSearchBar(),
       Expanded(
         child: Obx(
-          () => ListView.builder(
-              itemCount: channelService.joinableChannels.length,
+          () {
+            final filteredChannels = channelService.joinableChannels.where((channel) =>
+              channel.name.toLowerCase().contains(query.toLowerCase())
+            ).toList();
+            return ListView.builder(
+              itemCount: filteredChannels.length,
               itemBuilder: (context, index) {
-                final channel = channelService.joinableChannels[index];
+                final channel = filteredChannels[index];
                 return buildChannelTile(channel.name, channel.id ?? '');
-              }),
+              });
+            },
         ),
       )
     ]);
   }
 
   Widget buildSearchBar() {
-    return Placeholder();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+      child: TextField(
+        onChanged: (value) {
+          query = value.trim(); // Update query and refresh the list
+        },
+        decoration: InputDecoration(
+          hintText: "Chercher un canal...",
+          prefixIcon: Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildChannelTile(String name, String id) {
