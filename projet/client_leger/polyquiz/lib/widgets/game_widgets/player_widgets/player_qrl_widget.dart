@@ -13,6 +13,7 @@ class PlayerQrl extends StatefulWidget {
 class _PlayerQrlWidgetState extends State<PlayerQrl> {
   int counter = 0;
   var inputText = '';
+  String croppedInputText = '';
   GameInterfaceManagementService _gameInterfaceManagementService =
       GameInterfaceManagementService();
   SocketService _socketService = SocketService();
@@ -77,9 +78,10 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
             maxLength: 200,
             onChanged: (value) {
               setState(() {
+                croppedInputText = value.trim();
                 inputText = (200 - value.characters.length).toString();
                 this._gameInterfaceManagementService!.gameService.qrlAnswer =
-                    inputText;
+                    croppedInputText;
                 this.handleActiveUser();
               });
             },
