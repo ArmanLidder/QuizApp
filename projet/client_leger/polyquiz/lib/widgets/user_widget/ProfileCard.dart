@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';  // Import GetX
+import 'package:polyquiz/services/UserPageCustomisationService.dart';
 import 'package:polyquiz/widgets/user_widget/ImageSelectionPopup.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 import '../../services/imageStorageService.dart';
@@ -8,7 +9,7 @@ import '../../services/logged_in_user_service.dart';
 class ProfileCard extends StatelessWidget {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
-
+final UserPageCustomisationService userPageCustomisationService = UserPageCustomisationService.instance;
   @override
   Widget build(BuildContext context) {
     return Obx(() {  // Use Obx to listen to Rx variables
@@ -20,14 +21,9 @@ class ProfileCard extends StatelessWidget {
         await loggedInUserService.uploadCustomProfilePicture();
       }
 
-      Future<void> _showImageSelectionPopup() {
-        List<String> imageUrls = [
-          'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58',
-          'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_2.png?alt=media&token=533dbee5-bf2e-4462-9e52-d15f1ff74209',
-          'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_4.jpg?alt=media&token=1afb0329-38ef-4f38-bb72-b7b38184f892',
-          "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_4.jpg?alt=media&token=1afb0329-38ef-4f38-bb72-b7b38184f892",
-          "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_4.jpg?alt=media&token=1afb0329-38ef-4f38-bb72-b7b38184f892", // Add more URLs as needed
-        ];
+      Future<void> _showImageSelectionPopup() async {
+        String? uid = loggedInUserService.getUid();
+        List<String> imageUrls = await userPageCustomisationService.availableImages(uid!) as List<String>;
 
         showDialog(
           context: context,

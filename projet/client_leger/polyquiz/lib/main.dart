@@ -5,6 +5,7 @@ import 'package:polyquiz/pages/login-page.dart';
 import 'package:polyquiz/pages/offline_game_page.dart';
 import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
+import 'package:polyquiz/services/UserPageCustomisationService.dart';
 import 'package:polyquiz/services/background_notification_service.dart';
 import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
@@ -50,6 +51,7 @@ void main() async {
   Get.put(BackgroundNotificationService());
   Get.put(StoreService());
 
+  Get.put(UserPageCustomisationService());
   runApp(
     MultiProvider(
       providers: [
@@ -81,7 +83,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => HomePage(),
         '/auth': (context) => AuthPage(),
-        '/login': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
         '/offline': (context) => OfflineQuizListPage(),
         '/offlinegame': (context) => OfflineGamePage(),

@@ -28,7 +28,7 @@ class Userpage extends StatelessWidget {
         backgroundColor: Color(0xFFF3F4F6),
         appBar: FancyAppBar(
             context: context,
-            sourceImgUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
+            ),
         body: Center(
         child: Padding(
         padding: const EdgeInsets.only(top: 10.0), // Shift down by 10px

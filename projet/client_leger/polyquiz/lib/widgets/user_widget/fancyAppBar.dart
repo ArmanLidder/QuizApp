@@ -3,11 +3,9 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final String sourceImgUrl;
-  final String name;
   final BuildContext context;
 
-  FancyAppBar({required this.sourceImgUrl, required this.name, required this.context});
+  FancyAppBar({required this.context});
 
   @override
   _FancyAppBarState createState() => _FancyAppBarState();
@@ -23,7 +21,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
   @override
   void initState() {
     super.initState();
-    imageUrl = widget.sourceImgUrl; // Initialize with the source image URL
+    imageUrl = loggedInUserService.observableAvatar.value; // Initialize with the source image URL
   }
 
 
@@ -78,7 +76,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      widget.name,
+                      loggedInUserService.user!.username,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 10, // Adjust the size as needed

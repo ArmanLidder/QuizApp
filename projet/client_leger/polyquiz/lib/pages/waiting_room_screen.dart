@@ -4,6 +4,7 @@ import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
+import 'package:polyquiz/widgets/user_widget/fancyAppBar.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
 import 'package:polyquiz/constants/socket-event.dart';
@@ -113,7 +114,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Waiting Room')),
+      appBar: FancyAppBar(context: context),
       body: Stack(children: [
         Container(
           margin: EdgeInsets.all(50.0),

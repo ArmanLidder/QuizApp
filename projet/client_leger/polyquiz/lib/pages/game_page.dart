@@ -14,6 +14,7 @@ import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
+import 'package:polyquiz/widgets/user_widget/fancyAppBar.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -121,11 +122,7 @@ class _MyWidgetState extends State<GamePage> {
   Widget build(BuildContext context) {
     if (isHost) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('PolyQuiz'),
-          centerTitle: true,
-          backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-        ),
+        appBar: FancyAppBar(context: context),
         body: ListView(children: [
           Visibility(
               visible: isHost,
@@ -164,11 +161,7 @@ class _MyWidgetState extends State<GamePage> {
                       builder: (BuildContext context, Widget? snapshot) {
                         if(_gameInterfaceManagementService.isResultPage) {
                           return Scaffold(
-                            appBar: AppBar(
-                              title: const Text('PolyQuiz'),
-                              centerTitle: true,
-                              backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                            ),
+                            appBar: FancyAppBar( context: context),
                             body: Material( // This ensures that DataTable has a Material ancestor.
                               child: ListView(
                                 children: [
@@ -184,11 +177,7 @@ class _MyWidgetState extends State<GamePage> {
                         }
                         else{
                           return Scaffold(
-                            appBar: AppBar(
-                              title: const Text('PolyQuiz'),
-                              centerTitle: true,
-                              backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                            ),
+                            appBar: FancyAppBar(context: context),
                             body: ListView(children: [
                               Visibility(
                                 // Vue du joueur commence ici

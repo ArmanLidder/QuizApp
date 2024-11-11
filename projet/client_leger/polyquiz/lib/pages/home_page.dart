@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: FancyAppBar(
         context: context,
-        sourceImgUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
+        ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
