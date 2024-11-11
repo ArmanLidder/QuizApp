@@ -14,11 +14,12 @@ class LoggedInUserService extends GetxController {
   // Method to set user info
   void setUser(User? user) {
     this.user = user;
+    this.observableCurrency.value = (this.user?.currency ?? 0).round();
+    this.observableAvatar.value = (this.user?.avatar ?? "");
   }
 
   Future<void> setUserByEmail(String email) async {
-    User? fetchedUser =
-    await this.userService.getUserByEmail(email); // Fetch user by email
+    User? fetchedUser = await this.userService.getUserByEmail(email); // Fetch user by email
     if (fetchedUser != null) {
       setUser(fetchedUser); // Set the fetched user
     } else {
@@ -30,9 +31,6 @@ class LoggedInUserService extends GetxController {
     String? uid = await this.getUid();
     User? user = await UserService.instance.getUserById(uid ?? '');
     this.setUser(user);
-    this.observableCurrency.value = (this.user?.currency ?? 0).round();
-    this.observableAvatar.value = (this.user?.avatar ?? "");
-
   }
 
   User? getUser() {
