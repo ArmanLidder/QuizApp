@@ -232,9 +232,19 @@ class _MyWidgetState extends State<GamePage> {
                                             padding: EdgeInsets.all(10.0),
                                             decoration: BoxDecoration(
                                                 border: Border.all()),
-                                            child: Text(
-                                              'Pointage: ${_gameInterfaceManagementService.playerScore}',
-                                              style: TextStyle(fontSize: 20),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  'Pointage: ${_gameInterfaceManagementService.playerScore}',
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                                _gameInterfaceManagementService
+                                                        .isBonus
+                                                    ? Text(
+                                                        'Vous avez reçu le bonus!')
+                                                    : SizedBox()
+                                              ],
                                             ),
                                           ),
                                         )

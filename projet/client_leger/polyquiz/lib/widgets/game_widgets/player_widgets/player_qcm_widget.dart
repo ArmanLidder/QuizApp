@@ -37,6 +37,7 @@ class _PlayerQcmWidgetState extends State<PlayerQcm> {
             builder: (BuildContext context, Widget? snapshot) {
               return GridView.count(
                 padding: EdgeInsets.all(50.0),
+                physics: NeverScrollableScrollPhysics(),
                 crossAxisCount: 2,
                 childAspectRatio: 3,
                 mainAxisSpacing: 40.0,
