@@ -55,6 +55,7 @@ class LoggedInUserService extends GetxController {
 
   Future<void> uploadCustomProfilePicture() async {
     String? newImagelLink = await this.imageStorageService.pickAndUploadImage();
+    this.observableAvatar.value = newImagelLink!;
     await this.userService.updateUserAvatar(
         id: this.forceToString(this.getUid()),
         newAvatarUrl: this.forceToString(newImagelLink));
@@ -62,6 +63,7 @@ class LoggedInUserService extends GetxController {
   }
 
   Future<void> chooseNewProfilePicture(String newProfileUrl) async {
+    this.observableAvatar.value = newProfileUrl;
     await this.userService.updateUserAvatar(
         id: this.forceToString(this.getUid()),
         newAvatarUrl: this.forceToString(newProfileUrl));
