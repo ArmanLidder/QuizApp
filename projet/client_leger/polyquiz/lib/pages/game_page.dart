@@ -123,6 +123,7 @@ class _MyWidgetState extends State<GamePage> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('PolyQuiz'),
+          automaticallyImplyLeading: false,
           centerTitle: true,
           backgroundColor: Color.fromRGBO(53, 121, 246, 1),
         ),
@@ -166,6 +167,7 @@ class _MyWidgetState extends State<GamePage> {
                           return Scaffold(
                             appBar: AppBar(
                               title: const Text('PolyQuiz'),
+                              automaticallyImplyLeading: false,
                               centerTitle: true,
                               backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                             ),
@@ -189,6 +191,7 @@ class _MyWidgetState extends State<GamePage> {
                           return Scaffold(
                             appBar: AppBar(
                               title: const Text('PolyQuiz'),
+                              automaticallyImplyLeading: false,
                               centerTitle: true,
                               backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                             ),

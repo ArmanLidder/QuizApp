@@ -65,6 +65,7 @@ class _QuizListPageState extends State<QuizListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Quizzes'),
+        automaticallyImplyLeading: false,
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())

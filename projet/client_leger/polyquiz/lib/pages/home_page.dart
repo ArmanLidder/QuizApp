@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(

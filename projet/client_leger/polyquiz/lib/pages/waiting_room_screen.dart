@@ -113,7 +113,10 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Waiting Room')),
+      appBar: AppBar(
+        title: Text('Waiting Room'),
+        automaticallyImplyLeading: false,
+      ),
       body: Stack(children: [
         Container(
           margin: EdgeInsets.all(50.0),
