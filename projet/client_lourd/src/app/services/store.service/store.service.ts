@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {
-    doc, docData, Firestore, updateDoc, collection, collectionData, arrayUnion,
+    doc, docData, Firestore, updateDoc, collection, collectionData, arrayUnion, setDoc, getDoc,
 } from '@angular/fire/firestore';
 import {StoreItem} from "@common/interfaces/store.interface";
 import {catchError, firstValueFrom, Observable, of, switchMap} from "rxjs";
 import {UsersService} from "@app/services/users.service/users.service";
 import {map} from "rxjs/operators";
+type StoreItemWithOwnership = StoreItem & { isOwned: boolean };
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +21,33 @@ export class StoreService {
             console.error('Error fetching all store items:', error);
             return of([]);
         }));
+    }
+
+    get allStoreItemsWithOwnership(): Observable<StoreItemWithOwnership[]> {
+        return this.usersService.currentUserProfile$.pipe(
+            switchMap((user) => {
+                const uid = user?.uid;
+                if (!uid) return of([]); // Return empty array if no user is found
+
+                const userDocRef = doc(this.firestore, `storeProfiles/${uid}`);
+                return docData(userDocRef).pipe(
+                    switchMap((userProfile: any) => {
+                        const ownedItems = userProfile?.ownedItems || [];
+                        const itemsCollectionRef = collection(this.firestore, `storeItems`);
+                        return collectionData(itemsCollectionRef, { idField: 'id' }).pipe(
+                            map((data) => (data as StoreItem[]).map((item) => ({
+                                ...item,
+                                isOwned: ownedItems.includes(item.id) // Add isOwned flag based on user's owned items
+                            } as StoreItemWithOwnership)))
+                        );
+                    })
+                );
+            }),
+            catchError((error) => {
+                console.error('Error fetching all store items with ownership status:', error);
+                return of([]);
+            })
+        );
     }
 
     get allUnOwnedStoreItems(): Observable<StoreItem[]> {
@@ -51,16 +79,23 @@ export class StoreService {
         const currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
         const uid = currentUser?.uid;
 
+        if (!uid) throw new Error("User ID not found");
+
         const userDocRef = doc(this.firestore, `storeProfiles/${uid}`);
         try {
-            await updateDoc(userDocRef, {
-                ownedItems: arrayUnion(id)
-            });
-            console.log(`Item ${id} added to user ${uid}'s profile`);
+            const userDocSnap = await getDoc(userDocRef);
+            if (!userDocSnap.exists()) {
+                await setDoc(userDocRef, { ownedItems: [id] });
+            } else {
+                await updateDoc(userDocRef, {
+                    ownedItems: arrayUnion(id)
+                });
+            }
         } catch (error) {
             throw new Error('Erreur de achat');
         }
     }
+
 
     async buyItem(id: string) {
         const currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
@@ -68,9 +103,10 @@ export class StoreService {
             const storeItem: StoreItem | null = await firstValueFrom(this.getStoreItemById(id));
             if (!storeItem) throw new Error("Item n'existe pas.")
             if ((currentUser?.currency || 0) < storeItem.cost) throw new Error("Vous n'avez pas assez d'argent.")
-            await this.usersService.updateUser({currency: (currentUser?.currency || 0) - storeItem.cost});
             await this.addItemToUserProfile(id)
+            await this.usersService.updateUser({currency: (currentUser?.currency || 0) - storeItem.cost});
         } catch (error: any) {
+            console.log(error.message);
             throw new Error("Erreur d'achat")
         }
     }

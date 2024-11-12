@@ -1,39 +1,60 @@
 <app-header></app-header>
 <div class="container mx-auto p-4">
-    <div *ngIf="userCurrency$ | async as userCurrency" class="text-center mb-4 text-2xl font-semibold text-gray-700">
-        Argent : {{ userCurrency }}
-    </div>
-
-    <h2 class="text-xl font-semibold mb-4">Images</h2>
-    <div *ngIf="imageItems$ | async as imageItems" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div *ngFor="let item of imageItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
-            <img [src]="item.source" alt="{{ item.name }}" class="w-24 h-24 rounded-full mb-4 object-cover" />
-            <h3 class="text-lg font-medium">{{ item.name }}</h3>
-            <p class="text-gray-500">Coût : {{ item.cost }} crédits</p>
-            <ng-container *ngIf="userCurrency$ | async as userCurrency">
-                <button
-                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                        [disabled]="userCurrency < item.cost" (click)="buyItem(item.id)">
-
-                    Acheter
-                </button>
-            </ng-container>
-        </div>
+    <!-- Display user's currency, defaulting to 0 if null -->
+    <div class="text-center mb-4 text-2xl font-semibold text-gray-700">
+        Argent : {{ (userCurrency$ | async) || 0 }} $
     </div>
 
     <!-- Section des Thèmes -->
-    <h2 class="text-xl font-semibold mt-8 mb-4">Thèmes</h2>
+    <h2 class="text-xl font-semibold mb-4">Thèmes</h2>
     <div *ngIf="themeItems$ | async as themeItems" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div *ngFor="let item of themeItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
-            <h3 class="text-lg font-medium">{{ item.name }}</h3>
-            <p class="text-gray-500">Coût : {{ item.cost }} crédits</p>
-            <ng-container *ngIf="userCurrency$ | async as userCurrency">
+        <ng-container *ngIf="themeItems.length; else noThemesMessage">
+            <div *ngFor="let item of themeItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+                <h3 class="text-lg font-medium">{{ item.name }}</h3>
                 <button
-                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                        [disabled]="userCurrency < item.cost" (click)="buyItem(item.id)">
-                    Acheter
+                        [ngClass]="{
+                        'bg-gray-400 cursor-not-allowed': item.isOwned,
+                        'bg-red-500 text-white cursor-not-allowed': !item.isOwned && ((userCurrency$ | async) || 0) < item.cost,
+                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && ((userCurrency$ | async) || 0) >= item.cost
+                    }"
+                        class="mt-4 px-4 py-2 rounded-full"
+                        [disabled]="item.isOwned || ((userCurrency$ | async) || 0) < item.cost"
+                        (click)="buyItem(item.id)">
+                    <ng-container *ngIf="item.isOwned">Déjà possédé</ng-container>
+                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) < item.cost">Pas assez de fonds ({{ item.cost }} $)</ng-container>
+                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) >= item.cost">Acheter ({{ item.cost }} $)</ng-container>
                 </button>
-            </ng-container>
-        </div>
+            </div>
+        </ng-container>
     </div>
+    <ng-template #noThemesMessage>
+        <p class="text-center text-gray-500">Aucun thème disponible pour le moment.</p>
+    </ng-template>
+
+    <!-- Section des Images -->
+    <h2 class="text-xl font-semibold mt-8 mb-4">Images</h2>
+    <div *ngIf="imageItems$ | async as imageItems" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <ng-container *ngIf="imageItems.length; else noImagesMessage">
+            <div *ngFor="let item of imageItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+                <img [src]="item.source" alt="{{ item.name }}" class="w-24 h-24 rounded-full mb-4 object-cover" />
+                <h3 class="text-lg font-medium">{{ item.name }}</h3>
+                <button
+                        [ngClass]="{
+                        'bg-gray-400 cursor-not-allowed': item.isOwned,
+                        'bg-red-500 text-white cursor-not-allowed': !item.isOwned && ((userCurrency$ | async) || 0) < item.cost,
+                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && ((userCurrency$ | async) || 0) >= item.cost
+                    }"
+                        class="mt-4 px-4 py-2 rounded-full"
+                        [disabled]="item.isOwned || ((userCurrency$ | async) || 0) < item.cost"
+                        (click)="buyItem(item.id)">
+                    <ng-container *ngIf="item.isOwned">Déjà possédé</ng-container>
+                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) < item.cost">Pas assez de fonds ({{ item.cost }} $)</ng-container>
+                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) >= item.cost">Acheter ({{ item.cost }} $)</ng-container>
+                </button>
+            </div>
+        </ng-container>
+    </div>
+    <ng-template #noImagesMessage>
+        <p class="text-center text-gray-500">Aucune image disponible pour le moment.</p>
+    </ng-template>
 </div>
