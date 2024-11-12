@@ -77,6 +77,18 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Text('Jouer hors-ligne')),
             const SizedBox(height: 20),
+
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/store');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: this.themeService.secondaryBackground.value,
+                  foregroundColor: this.themeService.secondaryAccent.value,
+                ),
+                child: Text('Magasin')),
+            const SizedBox(height: 20),
+
             /*ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/user');
