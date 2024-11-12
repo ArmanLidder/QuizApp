@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import {HttpClient, HttpClientModule, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -79,6 +79,13 @@ import {MatMenuModule} from "@angular/material/menu";
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
 import {MatBadgeModule} from "@angular/material/badge";
 import { ShoppingPageComponent } from './pages/shopping-page/shopping-page.component';
+import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+
+const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
+    new TranslateHttpLoader(http, './i18n/', '.json');
+
+
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -170,10 +177,18 @@ import { ShoppingPageComponent } from './pages/shopping-page/shopping-page.compo
         NgxSliderModule,
         MatMenuModule,
         MatBadgeModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: httpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
     ],
     providers: [
         CanalService,
-        { provide: FIREBASE_OPTIONS, useValue: environment.firebase }
+        { provide: FIREBASE_OPTIONS, useValue: environment.firebase },
+        provideHttpClient(withInterceptorsFromDi())
     ],
     bootstrap: [AppComponent],
 })
