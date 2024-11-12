@@ -364,7 +364,14 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
   final inputController = TextEditingController();
   final channelService = ChannelService.instance;
   final loggedInService = LoggedInUserService.instance;
+  bool _hasTyped = false;
   String _currentName = "";
+
+  bool get hasTyped => _hasTyped;
+
+  void set hasTyped(bool newValue) => setState(() {
+    _hasTyped = newValue;
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -380,7 +387,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
                     icon: Icon(Icons.arrow_back)))),
         Expanded(
             child: Align(
-                alignment: Alignment.center, child: Text("Joindre Canal")))
+                alignment: Alignment.center, child: Text("Création canal")))
       ]),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -388,6 +395,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
             controller: inputController,
             onChanged: (content) {
               setState(() {
+                if (!hasTyped) hasTyped = true;
                 _currentName = inputController.text.trim();
               });
             },
@@ -436,7 +444,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
         "Le nom du canal doit contenir 20 caractères maximum.",
         style: errorStyle,
       ));
-    if (name.isEmpty)
+    if (name.isEmpty && hasTyped)
       errors.add(Text(
         "Le nom de canal est requis.",
         style: errorStyle,

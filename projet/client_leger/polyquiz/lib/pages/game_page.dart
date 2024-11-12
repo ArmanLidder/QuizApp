@@ -162,34 +162,37 @@ class _MyWidgetState extends State<GamePage> {
                         _gameInterfaceManagementService.gameService
                       ]),
                       builder: (BuildContext context, Widget? snapshot) {
-                        if(_gameInterfaceManagementService.isResultPage) {
+                        if (_gameInterfaceManagementService.isResultPage) {
                           return Scaffold(
                             appBar: AppBar(
                               title: const Text('PolyQuiz'),
                               centerTitle: true,
                               backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                             ),
-                            body: Material( // This ensures that DataTable has a Material ancestor.
+                            body: Material(
+                              // This ensures that DataTable has a Material ancestor.
                               child: ListView(
                                 children: [
                                   ResultPage(
-                                    gameService: _gameInterfaceManagementService.gameService,
-                                    interactiveListService: _interactiveListService,
-                                    gameInterfaceManagementService: _gameInterfaceManagementService,
+                                    gameService: _gameInterfaceManagementService
+                                        .gameService,
+                                    interactiveListService:
+                                        _interactiveListService,
+                                    gameInterfaceManagementService:
+                                        _gameInterfaceManagementService,
                                   ),
                                 ],
                               ),
                             ),
                           );
-                        }
-                        else{
+                        } else {
                           return Scaffold(
                             appBar: AppBar(
                               title: const Text('PolyQuiz'),
                               centerTitle: true,
                               backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                             ),
-                            body: ListView(children: [
+                            body: ListView(shrinkWrap: true, children: [
                               Visibility(
                                 // Vue du joueur commence ici
                                 visible: !isHost,
@@ -203,8 +206,9 @@ class _MyWidgetState extends State<GamePage> {
                                             timeTxt:
                                                 _gameInterfaceManagementService
                                                     .timerText,
-                                            time: _gameInterfaceManagementService
-                                                .gameService.timer,
+                                            time:
+                                                _gameInterfaceManagementService
+                                                    .gameService.timer,
                                           ),
                                         ),
                                         QuestionInfoWidget(
@@ -213,10 +217,14 @@ class _MyWidgetState extends State<GamePage> {
                                                     .gameService.questionNumber,
                                             questionPts:
                                                 _gameInterfaceManagementService
-                                                    .gameService.question!.points,
+                                                    .gameService
+                                                    .question!
+                                                    .points,
                                             questionText:
                                                 _gameInterfaceManagementService
-                                                    .gameService.question!.text),
+                                                    .gameService
+                                                    .question!
+                                                    .text),
                                         Expanded(
                                           child: Container(
                                             alignment: Alignment.center,
@@ -224,35 +232,27 @@ class _MyWidgetState extends State<GamePage> {
                                             padding: EdgeInsets.all(10.0),
                                             decoration: BoxDecoration(
                                                 border: Border.all()),
-                                            child: Text(
-                                              'Pointage: ${_gameInterfaceManagementService.playerScore}',
-                                              style: TextStyle(fontSize: 20),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  'Pointage: ${_gameInterfaceManagementService.playerScore}',
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                                _gameInterfaceManagementService
+                                                        .isBonus
+                                                    ? Text(
+                                                        'Vous avez reçu le bonus!')
+                                                    : SizedBox()
+                                              ],
                                             ),
                                           ),
                                         )
                                       ],
                                     ),
-                                    if (getImageWidgetFromQuestion() != null) getImageWidgetFromQuestion()!,
+                                    if (getImageWidgetFromQuestion() != null)
+                                      getImageWidgetFromQuestion()!,
                                     getPlayerQuestion(),
-                                    // Visibility(
-                                    //     visible: _gameInterfaceManagementService
-                                    //                 .gameService.question?.type ==
-                                    //             QuestionType.QCM &&
-                                    //         !_gameInterfaceManagementService
-                                    //             .gameService
-                                    //             .realGameService
-                                    //             .isHostEvaluating,
-                                    //     child: Container(
-                                    //         height: 500, child: PlayerQcm())),
-                                    // Visibility(
-                                    //     visible: _gameInterfaceManagementService
-                                    //                 .gameService.question?.type ==
-                                    //             QuestionType.QRL &&
-                                    //         !_gameInterfaceManagementService
-                                    //             .gameService
-                                    //             .realGameService
-                                    //             .isHostEvaluating,
-                                    //     child: PlayerQrl()),
                                     Visibility(
                                       visible: _gameInterfaceManagementService
                                           .gameService
@@ -265,77 +265,13 @@ class _MyWidgetState extends State<GamePage> {
                                       ),
                                     ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        // Visibility(
-                                        //   visible:
-                                        //       !_gameInterfaceManagementService
-                                        //           .gameService
-                                        //           .realGameService
-                                        //           .isHostEvaluating && !_gameInterfaceManagementService
-                                        //           .gameService
-                                        //           .realGameService
-                                        //           .isSentAnswer,
-                                        //   child: TextButton(
-                                        //     onPressed: () {
-                                        //       if (_gameInterfaceManagementService
-                                        //               .gameService
-                                        //               .question
-                                        //               ?.type ==
-                                        //           QuestionType.QRL) {
-                                        //         _gameInterfaceManagementService
-                                        //             .gameService
-                                        //             .realGameService
-                                        //             .isHostEvaluating = true;
-                                        //       }
-                                        //       _gameInterfaceManagementService
-                                        //           .gameService
-                                        //           .sendAnswer();
-                                        //       _gameInterfaceManagementService
-                                        //             .gameService
-                                        //             .realGameService
-                                        //             .isSentAnswer = true;
-                                        //     },
-                                        //     child: Text(
-                                        //       'Confirmer',
-                                        //       style: TextStyle(
-                                        //           color: Color.fromRGBO(
-                                        //               255, 255, 255, 1),
-                                        //           fontSize: 20),
-                                        //     ),
-                                        //     style: TextButton.styleFrom(
-                                        //         textStyle: TextStyle(
-                                        //             fontWeight:
-                                        //                 FontWeight.normal),
-                                        //         splashFactory:
-                                        //             NoSplash.splashFactory,
-                                        //         shape: RoundedRectangleBorder(
-                                        //             borderRadius:
-                                        //                 BorderRadius.circular(
-                                        //                     20.0)),
-                                        //         backgroundColor: Color.fromRGBO(
-                                        //             53, 121, 246, 1)),
-                                        //   ),
-                                        // ),
-                                        // SizedBox(width: 100.0),
-                                        // QuitBtn(
-                                        //     isHost: false,
-                                        //     roomId: this
-                                        //         ._gameService
-                                        //         .realGameService
-                                        //         .roomId,
-                                        //     gameService: _gameService,
-                                        //     interactiveListService:
-                                        //         _interactiveListService,
-                                        //     gameInterfaceManagementService:
-                                        //         _gameInterfaceManagementService),
-                                        getButtons(),
-                                        ChatPopup()
-                                      ],
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [getButtons(), ChatPopup()],
                                     )
                                   ],
                                 ),
-                              ), //////////////////// Fin de la vue du joueur et debut de la vue de l'organisateur
+                              ),
                             ]),
                           );
                         }
@@ -384,11 +320,11 @@ class _MyWidgetState extends State<GamePage> {
         ),
         SizedBox(width: 100.0),
         QuitBtn(
-            isHost: false,
-            roomId: this._gameService.realGameService.roomId,
-            gameService: _gameService,
-            interactiveListService: _interactiveListService,
-            gameInterfaceManagementService: _gameInterfaceManagementService,
+          isHost: false,
+          roomId: this._gameService.realGameService.roomId,
+          gameService: _gameService,
+          interactiveListService: _interactiveListService,
+          gameInterfaceManagementService: _gameInterfaceManagementService,
         )
       ],
     );
@@ -425,7 +361,9 @@ class ResultPage extends StatelessWidget {
           'Le jeux est terminé! voici les résultats.',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        PlayersDataTable(isHost: false,),
+        PlayersDataTable(
+          isHost: false,
+        ),
         QuitBtn(
           isHost: false,
           roomId: gameService.realGameService.roomId,

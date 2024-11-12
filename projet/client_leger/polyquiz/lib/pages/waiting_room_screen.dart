@@ -178,7 +178,14 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   if (widget.isHost && !waitingRoomService.isTransition)
-                    ElevatedButton(
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            (waitingRoomService.players.length >= 1 &&
+                                    isRoomLocked)
+                                ? Color.fromRGBO(53, 121, 246, 1)
+                                : Color.fromRGBO(200, 200, 200, 1),
+                      ),
                       onPressed:
                           waitingRoomService.players.length >= 1 && isRoomLocked
                               ? () => setState(() {
@@ -186,7 +193,11 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                     waitingRoomService.sendStartSignals();
                                   })
                               : null,
-                      child: Text('Commencer'),
+                      child: Text('Commencer',
+                          style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal)),
                     ),
                   QuitBtn(
                       isHost: widget.isHost, roomId: waitingRoomService.roomId),
@@ -201,31 +212,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                           'Game starts in: ${waitingRoomService.time} second(s)'),
                     );
                   }),
-              if (widget.isHost)
-                IconButton(
-                  icon: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      shape: BoxShape.circle,
-                    ),
-                    padding: EdgeInsets.all(8),
-                    child: Icon(Icons.close, color: Colors.white),
-                  ),
-                  onPressed: _leaveRoom,
-                ),
-              if (showPopup && newPlayerName != null)
-                Container(
-                  padding: EdgeInsets.all(16),
-                  margin: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'The player $newPlayerName has joined the room',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
             ],
           ),
         ),
