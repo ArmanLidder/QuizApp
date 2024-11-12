@@ -156,7 +156,10 @@ class WaitingRoomService extends ChangeNotifier {
   // }
 
   void onRemovedPlayer(Function(dynamic) callback) {
-    _socketService.onMessage(SocketEvent.REMOVED_PLAYER, callback);
+    _socketService.onMessage(SocketEvent.REMOVED_PLAYER, (username) {
+      print('REMOVED PLAYER CALLED');
+      this.removePlayer(username);
+    });
   }
 
   void onStartGame(Function(dynamic) callback) {
@@ -171,6 +174,7 @@ class WaitingRoomService extends ChangeNotifier {
 
   void removePlayer(String username) {
     players.remove(username);
+    notifyListeners();
   }
 
   void gatherPlayers() {
