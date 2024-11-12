@@ -1,12 +1,25 @@
 <div class="space-y-6">
     <h2 class="text-xl text-center font-semibold">Choisissez votre avatar</h2>
-
+    <div *ngIf="loading" class="flex justify-center my-4">
+        <mat-spinner></mat-spinner>
+    </div>
     <div class="flex flex-wrap justify-center gap-4">
-        <div *ngFor="let avatarUrl of defaultAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
-            <img [src]="avatarUrl" alt="Avatar" class="w-24 h-24 rounded-full"
-                 [class.ring-4]="avatarUrl === selectedAvatar"
-                 [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
-        </div>
+        <ng-container *ngIf="!loading">
+            <div *ngFor="let avatarUrl of defaultAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
+                <img [src]="avatarUrl" alt="Avatar" class="w-24 h-24 rounded-full"
+                     [class.ring-4]="avatarUrl === selectedAvatar"
+                     [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
+            </div>
+            <ng-container *ngIf="showOwnedAvatars" >
+                <div *ngFor="let avatarUrl of ownedAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
+                    <img [src]="avatarUrl" alt="Avatar" class="w-24 h-24 rounded-full"
+                         [class.ring-4]="avatarUrl === selectedAvatar"
+                         [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
+                </div>
+            </ng-container>
+        </ng-container>
+
+
         <div *ngIf="customAvatarUrl" class="avatar-item">
             <img [src]="customAvatarUrl"
                  alt="Custom Avatar" class="w-24 h-24 rounded-full"

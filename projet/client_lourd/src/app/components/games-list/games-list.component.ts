@@ -66,9 +66,11 @@ export class GamesListComponent implements OnInit {
 
     getAllVisibleQuizzes() {
         this.quizServices.basicGetAll().subscribe((res) => {
-            this.quizzes = res.filter(
-                (quiz) => quiz.visible || quiz.owner === this.currentUserUid
-            );
+            if (res) {
+                this.quizzes = res.filter(
+                    (quiz) => quiz.visible || quiz.owner === this.currentUserUid
+                );
+            }
         });
     }
 

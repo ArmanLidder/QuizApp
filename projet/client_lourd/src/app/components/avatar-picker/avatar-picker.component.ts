@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Output} from '@angular/core';
-import {AvatarService} from "@app/services/avatar.service/avatar.service";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AvatarService } from "@app/services/avatar.service/avatar.service";
 
 @Component({
     selector: 'app-avatar-picker',
@@ -8,53 +8,67 @@ import {AvatarService} from "@app/services/avatar.service/avatar.service";
 })
 export class AvatarPickerComponent {
     @Output() avatarSelected = new EventEmitter<string | File>(); // Emit string (URL) or File (for custom uploads)
+    @Input() showOwnedAvatars = false;
+
     defaultAvatars: string[] = [];
+    ownedAvatars: string[] = [];
+    loading: boolean = true; // Loading flag for spinner
+
     selectedAvatar: string | null = null;
     customAvatarFile: File | null = null;
     customAvatarUrl: string | ArrayBuffer | null = null;
     customAvatarSelected: boolean = false;
 
-    constructor(private avatarService: AvatarService) {
+    constructor(private avatarService: AvatarService) {}
+
+    async ngOnInit() {
+        await this.loadAvatars();
     }
 
-    ngOnInit(): void {
-        this.loadDefaultAvatars();
-    }
-
-    loadDefaultAvatars(): void {
+    async loadAvatars() {
+        this.loading = true; // Start loading
+        // Load default avatars
         this.avatarService.getDefaultAvatarUrls().subscribe((avatars: string[]) => {
             this.defaultAvatars = avatars;
+            this.checkLoadingStatus();
         });
+        // Load owned avatars
+        this.ownedAvatars = await this.avatarService.getBoughtAvatars();
+        this.checkLoadingStatus();
     }
 
-    // Called when a default avatar is selected
+    checkLoadingStatus() {
+        // Set loading to false only when both avatar arrays are populated
+        if (this.defaultAvatars.length > 0 && this.ownedAvatars.length > 0) {
+            this.loading = false;
+        }
+    }
+
     selectAvatar(avatarUrl: string): void {
         this.customAvatarSelected = false;
         this.selectedAvatar = avatarUrl;
         this.avatarSelected.emit(this.selectedAvatar); // Emit the selected avatar URL
     }
 
-    // Handle custom avatar upload (emit File directly)
     onCustomAvatarUploaded(event: Event): void {
         const input = event.target as HTMLInputElement;
         const file = input.files?.[0];
         if (file) {
-            this.customAvatarFile = file; // Store the custom avatar file
+            this.customAvatarFile = file;
             const reader = new FileReader();
             reader.onload = () => {
-                this.customAvatarUrl = reader.result; // Set the custom avatar preview URL
-                this.selectedAvatar = null; // Unselect default avatars when a custom one is uploaded
-                this.avatarSelected.emit(this.customAvatarFile as File); // Emit the custom avatar file
+                this.customAvatarUrl = reader.result;
+                this.selectedAvatar = null;
+                this.avatarSelected.emit(this.customAvatarFile as File);
                 this.customAvatarSelected = true;
             };
-            reader.readAsDataURL(file); // Read the file as a data URL for preview
+            reader.readAsDataURL(file);
         }
     }
 
     selectCustomAvatar(): void {
         this.customAvatarSelected = true;
-        this.selectedAvatar = null
+        this.selectedAvatar = null;
         this.avatarSelected.emit(this.customAvatarFile as File);
     }
-
 }
