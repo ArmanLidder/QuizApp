@@ -12,8 +12,8 @@ export class AppComponent implements OnDestroy {
 
     constructor(private socketService: SocketClientService, private authService: AuthService,private translate: TranslateService) {
         this.translate.addLangs(['en','fr']);
-        this.translate.setDefaultLang('en');
-        this.translate.use('en');
+        this.translate.setDefaultLang('fr');
+        this.translate.use('fr');
     }
 
     @HostListener('window:beforeunload')

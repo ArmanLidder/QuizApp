@@ -1,0 +1,135 @@
+{
+  "MAINPAGE": {
+    "WELCOME": "Welcome",
+    "JOIN_GAME": "Join Game",
+    "CREATE_GAME": "Create Game",
+    "ADMIN_GAMES": "Administer Games",
+    "SHOP": "Shop"
+  },
+  "HEADER": {
+    "TOOLTIP_FRIENDS": "Friends"
+  },
+  "PROFILE": {
+    "LEVEL": "Level",
+    "PRESTIGE": "Prestige",
+    "CURRENCY": "Currency",
+    "STATISTICS": "Statistics",
+    "GAMES_PLAYED": "Games Played",
+    "GAMES_WON": "Games Won",
+    "AVG_CORRECT_ANSWERS": "Correct Answers Per Game",
+    "AVG_GAME_TIME": "Average Game Time",
+    "SECONDS": "seconds",
+    "ACHIEVEMENTS": "Achievements",
+    "CONNECTION_HISTORY": "Connection History",
+    "LOGIN": "Login",
+    "LOGOUT": "Logout",
+    "GAME_HISTORY": "Game History",
+    "WIN": "Win",
+    "LOSS": "Loss",
+    "GAME_MODE_CLASSIC": "Classic",
+    "GAME_MODE_TEAM": "Team",
+    "SCORE": "Score",
+    "GAMEMODE": "Gamemode",
+    "GAMEMODE_CLASSIC": "Classic",
+    "GAMEMODE_TEAM": "Team",
+    "ALL_ACHIEVEMENTS": [
+      "Win an online game",
+      "Win a team game",
+      "Win 5 games",
+      "Win 10 games",
+      "Reach bronze prestige",
+      "Reach silver prestige",
+      "Reach gold prestige",
+      "Reach platinum prestige"
+    ]
+  },
+  "FRIENDS": {
+    "TITLE": "Friends",
+    "ADD_FRIEND": "Add",
+    "FRIENDS_TAB": "Friends",
+    "EMPTY_FRIENDS_LIST": "Your friends list is empty for now.",
+    "PENDING_REQUESTS_TAB": "Received Requests",
+    "NO_PENDING_REQUESTS": "You have not received any friend requests.",
+    "REMOVE_FRIEND": "Remove Friend",
+    "ACCEPT_REQUEST": "Accept",
+    "DECLINE_REQUEST": "Decline"
+  },
+  "AVATAR_MODIFICATION": {
+    "TITLE": "Avatar Modification",
+    "CHOOSE_AVATAR": "Choose Your Avatar",
+    "UPLOAD_OWN": "Or upload your own avatar",
+    "SELECT_IMAGE": "Select an image",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm"
+  },
+  "USERNAME_MODIFICATION": {
+    "TITLE": "Username Modification",
+    "NEW_USERNAME": "New Username",
+    "PLACEHOLDER": "Enter a new username",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm"
+  },
+  "USER_SEARCH": {
+    "TITLE": "User Search...",
+    "PLACEHOLDER": "Search for a user",
+    "TOOLTIP_SEND_REQUEST": "Send friend request",
+    "TOOLTIP_PENDING_REQUEST": "Request already sent"
+  },
+  "SHOPPING": {
+    "CURRENCY": "Currency",
+    "THEMES": "Themes",
+    "NO_THEMES": "No themes available at the moment.",
+    "IMAGES": "Images",
+    "NO_IMAGES": "No images available at the moment.",
+    "OWNED": "Already owned",
+    "NOT_ENOUGH_FUNDS": "Not enough funds",
+    "BUY": "Buy",
+    "COST_SUFFIX": "$"
+  },
+  "GAME_ADMIN": {
+    "TITLE": "Admin Panel: Manage All Quiz Games",
+    "QUIZZES": "Games",
+    "LAST_MODIFIED": "Last Modified",
+    "NO_QUIZZES": "No quizzes available at the moment.",
+    "REFRESH": "Refresh",
+    "ADD": "Add",
+    "IMPORT": "Import",
+    "PLAY_TOOLTIP": "Please select a quiz",
+    "PLAY": "Play",
+    "TOOLTIP_EXPORT": "Export quiz",
+    "TOOLTIP_EDIT": "Edit quiz",
+    "TOOLTIP_DELETE": "Delete quiz"
+  },
+  "QUIZ_SELECTION": {
+    "PAGE_TITLE": "Select one of the available games:",
+    "DESCRIPTION": "Description",
+    "DURATION": "Duration",
+    "DURATION_SUFFIX": "s",
+    "QUESTIONS": "Questions"
+  },
+  "QUIZ_CREATION": {
+    "TITLE_CREATION": "Game Creation",
+    "TITLE_EDIT": "Game Modification",
+    "VISIBILITY": "Visibility",
+    "PUBLIC": "Public",
+    "PRIVATE": "Private",
+    "CREATOR": "Creator",
+    "TITLE_LABEL": "Title",
+    "TITLE_PLACEHOLDER": "Enter the game title",
+    "TITLE_REQUIRED": "The title is required",
+    "TITLE_PATTERN": "The title must not be composed of spaces only",
+    "DURATION_LABEL": "Duration",
+    "DURATION_PLACEHOLDER": "Enter the duration (seconds) for each question",
+    "DURATION_REQUIRED": "The duration is required",
+    "DURATION_RANGE": "The duration must be between 10 and 60 seconds",
+    "DESCRIPTION_LABEL": "Description",
+    "DESCRIPTION_PLACEHOLDER": "Enter the game description",
+    "DESCRIPTION_REQUIRED": "The description is required",
+    "DESCRIPTION_PATTERN": "The description must not be composed of spaces only",
+    "CREATE": "Create",
+    "EDIT": "Edit",
+    "CANCEL": "Cancel"
+  }
+
+
+}

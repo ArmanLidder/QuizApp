@@ -1,0 +1,164 @@
+{
+  "MAINPAGE": {
+    "WELCOME": "Bienvenue",
+    "JOIN_GAME": "Joindre une partie",
+    "CREATE_GAME": "Créer une partie",
+    "ADMIN_GAMES": "Administrer les jeux",
+    "SHOP": "Magasiner"
+  },
+  "HEADER": {
+    "TOOLTIP_FRIENDS": "Amis"
+  },
+  "PROFILE": {
+    "LEVEL": "Niveau",
+    "PRESTIGE": "Prestige",
+    "CURRENCY": "Argent",
+    "STATISTICS": "Statistiques",
+    "GAMES_PLAYED": "Parties Jouées",
+    "GAMES_WON": "Parties Gagnées",
+    "AVG_CORRECT_ANSWERS": "Bonnes Réponses Par Partie",
+    "AVG_GAME_TIME": "Temps Moyen Par Partie",
+    "SECONDS": "secondes",
+    "ACHIEVEMENTS": "Exploits",
+    "CONNECTION_HISTORY": "Historique des Connexions",
+    "LOGIN": "Connexion",
+    "LOGOUT": "Déconnexion",
+    "GAME_HISTORY": "Historique des Parties",
+    "WIN": "Gagné",
+    "LOSS": "Perdu",
+    "GAME_MODE_CLASSIC": "Classique",
+    "GAME_MODE_TEAM": "Équipe",
+    "SCORE": "Score",
+    "GAMEMODE": "Mode de jeu",
+    "GAMEMODE_CLASSIC": "Classique",
+    "GAMEMODE_TEAM": "Équipe",
+    "ALL_ACHIEVEMENTS": [
+      "Gagner une partie en ligne",
+      "Gagner une partie en équipe",
+      "Gagner 5 parties",
+      "Gagner 10 parties",
+      "Atteindre le prestige bronze",
+      "Atteindre le prestige argent",
+      "Atteindre le prestige or",
+      "Atteindre le prestige platine"
+    ]
+  },
+  "FRIENDS": {
+    "TITLE": "Amis",
+    "ADD_FRIEND": "Ajouter",
+    "FRIENDS_TAB": "Amis",
+    "EMPTY_FRIENDS_LIST": "Votre liste d'amis est vide pour le moment.",
+    "PENDING_REQUESTS_TAB": "Demandes Reçues",
+    "NO_PENDING_REQUESTS": "Vous n'avez reçu aucune demande d'ami.",
+    "REMOVE_FRIEND": "Supprimer un ami",
+    "ACCEPT_REQUEST": "Accepter",
+    "DECLINE_REQUEST": "Refuser"
+  },
+  "USERNAME_MODIFICATION": {
+    "TITLE": "Modification du nom d'utilisateur",
+    "NEW_USERNAME": "Nouveau nom d'utilisateur",
+    "PLACEHOLDER": "Entrer un nouveau nom d'utilisateur",
+    "CANCEL": "Annuler",
+    "CONFIRM": "Confirmer"
+  },
+  "USER_SEARCH": {
+    "TITLE": "Recherche d'utilisateurs...",
+    "PLACEHOLDER": "Rechercher un utilisateur",
+    "TOOLTIP_SEND_REQUEST": "Envoyer une requête d'ami",
+    "TOOLTIP_PENDING_REQUEST": "Demande déjà envoyée"
+  },
+  "SHOPPING": {
+    "CURRENCY": "Argent",
+    "THEMES": "Thèmes",
+    "NO_THEMES": "Aucun thème disponible pour le moment.",
+    "IMAGES": "Images",
+    "NO_IMAGES": "Aucune image disponible pour le moment.",
+    "OWNED": "Déjà possédé",
+    "NOT_ENOUGH_FUNDS": "Pas assez de fonds",
+    "BUY": "Acheter",
+    "COST_SUFFIX": "$"
+  },
+  "GAME_ADMIN": {
+    "TITLE": "Panneau d'administration : gérer tous les jeux-questionnaires",
+    "QUIZZES": "Jeux",
+    "LAST_MODIFIED": "Dernière Modification",
+    "NO_QUIZZES": "Aucun jeu-questionnaire disponible pour le moment.",
+    "REFRESH": "Rafraîchir",
+    "ADD": "Ajouter",
+    "IMPORT": "Importer",
+    "PLAY_TOOLTIP": "Veuillez sélectionner un quiz",
+    "PLAY": "Jouer",
+    "TOOLTIP_EXPORT": "Exporter le questionnaire",
+    "TOOLTIP_EDIT": "Modifier le questionnaire",
+    "TOOLTIP_DELETE": "Supprimer le questionnaire"
+  },
+  "QUIZ_SELECTION": {
+    "PAGE_TITLE": "Sélectionnez un des jeux disponibles :",
+    "DESCRIPTION": "Description",
+    "DURATION": "Durée",
+    "DURATION_SUFFIX": "s",
+    "QUESTIONS": "Questions"
+  },
+  "QUIZ_CREATION": {
+    "TITLE_CREATION": "Création du jeu",
+    "TITLE_EDIT": "Modification du jeu",
+    "VISIBILITY": "Visibilité",
+    "PUBLIC": "Public",
+    "PRIVATE": "Privé",
+    "CREATOR": "Créateur",
+    "TITLE_LABEL": "Titre",
+    "TITLE_PLACEHOLDER": "Entrez le titre du jeu",
+    "TITLE_REQUIRED": "Le titre est requis",
+    "TITLE_PATTERN": "Le titre ne doit pas être composé uniquement d'espaces",
+    "DURATION_LABEL": "Durée",
+    "DURATION_PLACEHOLDER": "Entrez la durée (secondes) de chaque question",
+    "DURATION_REQUIRED": "La durée est requise",
+    "DURATION_RANGE": "La durée doit être entre 10 et 60 secondes",
+    "DESCRIPTION_LABEL": "Description",
+    "DESCRIPTION_PLACEHOLDER": "Entrez la description du jeu",
+    "DESCRIPTION_REQUIRED": "La description est requise",
+    "DESCRIPTION_PATTERN": "La description ne doit pas être composée uniquement d'espaces",
+    "CREATE": "Créer",
+    "EDIT": "Modifier",
+    "CANCEL": "Annuler"
+  },
+  "QUIZ_CREATION_QUESTION": {
+    "QUESTIONS": "Questions",
+    "ADD_QUESTION": "Add a question",
+    "EDIT_QUESTION": "Edit question",
+    "MOVE_QUESTION_UP": "Move question up",
+    "MOVE_QUESTION_DOWN": "Move question down",
+    "DELETE_QUESTION": "Delete question",
+    "QUESTION_NUMBER": "Question",
+    "QUESTION_TYPE_LABEL": "Question type",
+    "QUESTION_TYPE_OPTIONS": {
+      "QCM": "MCQ",
+      "QRL": "QRL",
+      "QRE": "QRE"
+    },
+    "QUESTION_TEXT_LABEL": "Question text",
+    "QUESTION_TEXT_PLACEHOLDER": "Enter the question text",
+    "POINTS_LABEL": "Number of points for the question",
+    "POINTS_PLACEHOLDER": "Enter the number of points",
+    "IMAGE_LABEL": "Image (optional)",
+    "UPLOAD_IMAGE": "Select an image",
+    "DELETE_IMAGE": "Delete",
+    "CHOICES_LABEL": "Choices",
+    "ADD_CHOICE": "Add choice",
+    "MOVE_CHOICE_UP": "Move choice up",
+    "MOVE_CHOICE_DOWN": "Move choice down",
+    "DELETE_CHOICE": "Delete choice",
+    "INTERVAL_LABEL": "Response interval",
+    "MIN_LABEL": "Minimum",
+    "MAX_LABEL": "Maximum",
+    "ANSWER_LABEL": "Correct answer",
+    "MARGIN_LABEL": "Tolerance margin",
+    "SAVE_QUESTION": "Save question",
+    "CONFIRM": "Confirm",
+    "TRUE": "True",
+    "FALSE": "False"
+  }
+
+
+
+}

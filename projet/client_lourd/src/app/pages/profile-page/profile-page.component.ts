@@ -1,7 +1,7 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import { UsersService} from "@app/services/users.service/users.service";
 import { MatDialog } from "@angular/material/dialog";
-import { Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import { User } from '@app/interfaces/user/user-data.interface';
 import {
   AvatarModificationDialogComponent
@@ -12,13 +12,15 @@ import {
   UsernameModificationDialogComponent
 } from "@app/components/username-modification-dialog/username-modification-dialog.component";
 import {UserSearchDialogComponent} from "@app/components/user-search-dialog/user-search-dialog.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss'],
 })
-export class ProfilePageComponent implements OnInit {
+export class ProfilePageComponent implements OnInit, OnDestroy {
+  private translate = inject(TranslateService);
   private usersService = inject(UsersService);
   private dialog = inject(MatDialog);
   private avatarService= inject(AvatarService);
@@ -26,17 +28,8 @@ export class ProfilePageComponent implements OnInit {
 
   currentUser$: Observable<User | null>; // Using an observable to get user data
   userAchievements: number[] | undefined;
-
-  allAchievements: string[] = [
-    "Gagner une partie en ligne",
-    "Gagner une partie en équipe",
-    "Gagner 5 parties",
-    "Gagner 10 parties",
-    "Atteindre le prestige bronze",
-    "Atteindre le prestige argent",
-    "Atteindre le prestige or",
-    "Atteindre le prestige platine"
-  ];
+  allAchievements: string[] = [];
+  private languageSubscription: Subscription;
 
   ngOnInit(): void {
     // Fetch user achievements when the component is initialized
@@ -45,6 +38,24 @@ export class ProfilePageComponent implements OnInit {
       if (user) {
         this.userAchievements = user.achievements.map((achievement) => Number(achievement));
       }
+    });
+    this.loadAchievements();
+
+    // Subscribe to language changes to reload achievements on language switch
+    this.languageSubscription = this.translate.onLangChange.subscribe(() => {
+      this.loadAchievements();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.languageSubscription) {
+      this.languageSubscription.unsubscribe();
+    }
+  }
+
+  loadAchievements() {
+    this.translate.get('PROFILE.ALL_ACHIEVEMENTS').subscribe((translatedAchievements: string[]) => {
+      this.allAchievements = translatedAchievements;
     });
   }
 

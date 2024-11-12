@@ -5,6 +5,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {FriendService} from "@app/services/friend.service/friend.service";
 import {Observable} from "rxjs";
 import {User} from "@common/interfaces/user-data.interface";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -20,6 +21,7 @@ export class HeaderComponent implements OnInit{
       public usersService: UsersService,
       private dialog: MatDialog,
       public friendsService: FriendService,
+      private translate: TranslateService,
   ) {}
   
   ngOnInit() {
@@ -32,5 +34,10 @@ export class HeaderComponent implements OnInit{
       width: '35%',
       height: '375px',
     });
+  }
+
+  switchLanguage(event: Event) {
+    const language = (event.target as HTMLSelectElement).value;
+    this.translate.use(language);
   }
 }

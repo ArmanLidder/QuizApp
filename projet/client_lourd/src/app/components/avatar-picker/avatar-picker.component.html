@@ -1,5 +1,5 @@
 <div class="space-y-6">
-    <h2 class="text-xl text-center font-semibold">Choisissez votre avatar</h2>
+    <h2 class="text-xl text-center font-semibold">{{ 'AVATAR_MODIFICATION.CHOOSE_AVATAR' | translate }}</h2>
     <div *ngIf="loading" class="flex justify-center my-4">
         <mat-spinner></mat-spinner>
     </div>
@@ -19,7 +19,6 @@
             </ng-container>
         </ng-container>
 
-
         <div *ngIf="customAvatarUrl" class="avatar-item">
             <img [src]="customAvatarUrl"
                  alt="Custom Avatar" class="w-24 h-24 rounded-full"
@@ -31,12 +30,12 @@
 
     <div class="text-center">
         <label for="custom-avatar" class="block text-center font-medium text-gray-700 mb-3">
-            Ou téléchargez votre propre avatar
+            {{ 'AVATAR_MODIFICATION.UPLOAD_OWN' | translate }}
         </label>
         <div class="space-y-6">
             <label for="custom-avatar" class="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 w-fit">
                 <mat-icon class="mr-2">upload</mat-icon>
-                Choisir une image
+                {{ 'AVATAR_MODIFICATION.SELECT_IMAGE' | translate }}
             </label>
             <input id="custom-avatar" type="file" accept="image/jpeg,image/png,image/jpg" (change)="onCustomAvatarUploaded($event)" class="hidden"/>
         </div>

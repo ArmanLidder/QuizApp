@@ -4,7 +4,7 @@
                 mat-icon-button
                 class="icon-button-large"
                 (click)="openFriendsDialog()"
-                matTooltip="Amis"
+                [matTooltip]="'HEADER.TOOLTIP_FRIENDS' | translate"
                 [matBadge]="(pendingRequests$ | async)?.length"
                 [matBadgeHidden]="!(pendingRequests$ | async)?.length"
                 matBadgeOverlap="false"
@@ -21,6 +21,11 @@
     </div>
 
     <div class="absolute top-0 right-0 flex items-center justify-center h-full p-4">
+        <select (change)="switchLanguage($event)" class="bg-white text-black rounded p-2">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+        </select>
+
         <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="true"></app-avatar>
     </div>
 </header>
