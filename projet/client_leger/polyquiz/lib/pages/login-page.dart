@@ -13,6 +13,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('PolyQuiz'),
+        automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: const Color.fromRGBO(53, 121, 246, 1),
         actions: [

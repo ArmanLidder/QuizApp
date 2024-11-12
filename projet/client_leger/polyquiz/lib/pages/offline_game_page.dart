@@ -99,6 +99,7 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                       return Scaffold(
                         appBar: AppBar(
                           title: const Text('PolyQuiz'),
+                          automaticallyImplyLeading: false,
                           centerTitle: true,
                           backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                         ),
