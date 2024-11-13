@@ -57,25 +57,37 @@ class FriendService extends GetxService {
   // Function to create a friend request
   Future<void> createFriendRequest(String currentUserId, String targetUserId) async {
     try {
-      await _firestore.collection('users').doc(targetUserId).update({
-        'friendRequests': FieldValue.arrayUnion([
-          {'fromUserId': currentUserId, 'toUserId': targetUserId}
-        ]),
-      });
-      await _firestore.collection('users').doc(currentUserId).update({
-        'friendRequests': FieldValue.arrayUnion([
-          {'fromUserId': currentUserId, 'toUserId': targetUserId}
-        ]),
-      });
+      // Retrieve the target user's friend requests to check for a reverse request
+      final targetUserDoc = await _firestore.collection('users').doc(targetUserId).get();
+      final targetUserFriendRequests = List<Map<String, dynamic>>.from(targetUserDoc.data()?['friendRequests'] ?? []);
+
+      final reverseRequestExists = targetUserFriendRequests.any((request) =>
+      request['fromUserId'] == targetUserId && request['toUserId'] == currentUserId);
+
+      if (reverseRequestExists) {
+        await acceptFriendRequest(targetUserId, currentUserId);
+        return;
+
+      } else {
+        await _firestore.collection('users').doc(targetUserId).update({
+          'friendRequests': FieldValue.arrayUnion([
+            {'fromUserId': currentUserId, 'toUserId': targetUserId}
+          ]),
+        });
+        await _firestore.collection('users').doc(currentUserId).update({
+          'friendRequests': FieldValue.arrayUnion([
+            {'fromUserId': currentUserId, 'toUserId': targetUserId}
+          ]),
+        });
+      }
     } catch (e) {
       print('Error creating friend request: $e');
     }
 
-    // Update the RxList
     friendRequests.add(targetUserId);
   }
 
-  // Function to accept a friend request
+
   Future<void> acceptFriendRequest(String currentUserId, String requesterId) async {
     try {
       await _firestore.collection('users').doc(currentUserId).update({
@@ -90,12 +102,10 @@ class FriendService extends GetxService {
       print('Error accepting friend request: $e');
     }
 
-    // Update the RxList
     friendRequests.remove(requesterId);
     friends.add(requesterId);
   }
 
-  // Function to refuse a friend request
   Future<void> refuseFriendRequest(String currentUserId, String requesterId) async {
     try {
       await _firestore.collection('users').doc(currentUserId).update({
@@ -108,11 +118,9 @@ class FriendService extends GetxService {
       print('Error refusing friend request: $e');
     }
 
-    // Update the RxList
     friendRequests.remove(requesterId);
   }
 
-  // Function to delete a friendship
   Future<void> deleteFriendship(String currentUserId, String friendId) async {
     try {
       await _firestore.collection('users').doc(currentUserId).update({
@@ -125,11 +133,9 @@ class FriendService extends GetxService {
       print('Error deleting friendship: $e');
     }
 
-    // Update the RxList
     friends.remove(friendId);
   }
 
-  // Function to check friendship status
   Future<String> friendshipStatus(String currentUserId, String targetUserId) async {
     try {
       DocumentSnapshot currentUserDoc = await _firestore.collection('users').doc(currentUserId).get();
@@ -155,12 +161,10 @@ class FriendService extends GetxService {
     }
   }
 
-  // Fetch friend list (returns a list of friends' IDs)
   Future<List<String>> getFriendList() async {
     return friends;
   }
 
-  // Fetch pending friend requests (returns a list of pending requesters' IDs)
   Future<List<String>> getPendingList() async {
     return friendRequests;
   }

@@ -217,7 +217,6 @@ class ProfileCard extends StatelessWidget {
             right: 16,
             child: GestureDetector(
               onTap: () {
-                print("settings button pressed"); //TODO: remove
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
