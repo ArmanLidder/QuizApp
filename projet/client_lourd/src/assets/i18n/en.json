@@ -206,5 +206,18 @@
       "ROOM_LOCKED": "The room is currently locked.",
       "VALIDATION_CODE_ERROR": "Your code must contain exactly 4 digits (e.g., 1234)"
     }
+  },
+  "ACTIVE_GAME_LIST": {
+    "PUBLIC_GAME_LIST": "Public Game List",
+    "MINIMUM_PRESTIGE": "Minimum Prestige",
+    "FRIENDS_ONLY": "Friends Only",
+    "FRIENDS_AND_OTHERS": "Friends and Others",
+    "GAME_MODE": "Game Mode",
+    "CLASSIC": "Classic",
+    "TEAM": "Team",
+    "FREE": "Free",
+    "ONGOING_GAME": "Ongoing Game",
+    "NO_GAMES_AVAILABLE": "No games available",
+    "CANCEL": "Cancel"
   }
 }

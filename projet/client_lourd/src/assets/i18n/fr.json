@@ -206,5 +206,18 @@
       "ROOM_LOCKED": "La salle est actuellement verrouillée.",
       "VALIDATION_CODE_ERROR": "Votre code doit contenir seulement 4 chiffres (ex: 1234)"
     }
+  },
+  "ACTIVE_GAME_LIST": {
+    "PUBLIC_GAME_LIST": "Liste des Jeux Publics",
+    "MINIMUM_PRESTIGE": "Prestige minimum",
+    "FRIENDS_ONLY": "Amis seulement",
+    "FRIENDS_AND_OTHERS": "Amis et autres",
+    "GAME_MODE": "Mode de jeu",
+    "CLASSIC": "Classique",
+    "TEAM": "Équipe",
+    "FREE": "Gratuit",
+    "ONGOING_GAME": "Partie en cours",
+    "NO_GAMES_AVAILABLE": "Aucune partie présentement",
+    "CANCEL": "Annuler"
   }
 }
