@@ -37,21 +37,17 @@ class SingleFriendInteractable extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Blue circle
                 SmartAvatar(userId: userId,size: 35,),
                 const SizedBox(width: 12),
-                // Username text
                 Expanded(
                   child: Text(
                     username,
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                 ),
-                // Person add icon
                 IconButton(
                   icon: SmartFriendIcon(targetUserId: userId),
                   onPressed: () {
-                    // Add onPressed functionality here
                     print('Add friend pressed for $username');
                   },
                 ),

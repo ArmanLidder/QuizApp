@@ -66,23 +66,50 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
     super.initState();
   }
 
+  ButtonStyle get channelModificationStyle {
+    return TextButton.styleFrom(
+      backgroundColor: Colors.blueAccent,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0))
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       Row(children: <Widget>[
         Expanded(
-            child: ElevatedButton(
+            child: TextButton(
                 onPressed: () {
                   widget.changePage(Page.create);
                 },
-                child: Text("Créer un canal"))),
+                child: Text("Ajouter un Canal"),
+              style: channelModificationStyle,
+            )
+        ),
+        SizedBox(width: 10,),
         Expanded(
-            child: ElevatedButton(
+            child: TextButton(
                 onPressed: () {
                   widget.changePage(Page.join);
                 },
-                child: Text("Joindre un canal")))
+                child: Text("Joindre un Canal"),
+                style: channelModificationStyle,
+            )
+        )
       ]),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 15),
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+                "Mes canaux",
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+            )
+        ),
+      ),
       Expanded(child: Obx(() {
         return channelService.channels.isEmpty
             ? Text("empty")
@@ -124,31 +151,81 @@ class ChannelSelectionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-        title: TextButton(
-            onPressed: () => buttonCallback(id),
-            child: Container(child: Text(name)),
-            style: TextButton.styleFrom(
-                alignment: Alignment.centerLeft,
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
-        trailing: name == 'general'
-            ? null
-            : SizedBox(
-                width: 100,
-                child: Row(children: <Widget>[
-                  IconButton(
-                      onPressed: () {
-                        leaveChannelCallback();
-                      },
-                      icon: Icon(Icons.logout)),
-                  IconButton(
-                      onPressed: () {
-                        deleteChannelPopup(context);
-                      },
-                      icon: Icon(Icons.delete))
-                ]),
-              ));
+    bool shouldHaveLeaveAndDeleteButton = name != 'general' && !name.toLowerCase().contains("room");
+
+    Widget leaveAndDeleteButtons =  SizedBox(
+      width: 100,
+      child: Row(children: <Widget>[
+        IconButton(
+            onPressed: () {
+              leaveChannelCallback();
+            },
+            icon: Icon(Icons.logout, size: 20)),
+        IconButton(
+            onPressed: () {
+              deleteChannelPopup(context);
+            },
+            icon: Icon(Icons.delete, color: Colors.red, size: 20)
+        )
+      ]),
+    );
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5.0),
+      child: TextButton(
+          onPressed: () => buttonCallback(id),
+          style: TextButton.styleFrom(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            minimumSize: Size(double.infinity, 50),
+            backgroundColor: Colors.grey[200],
+            foregroundColor: Colors.black,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0))
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(name),
+              ),
+              if (shouldHaveLeaveAndDeleteButton) leaveAndDeleteButtons,
+            ],
+          )
+      )
+    );
+    // return Padding(
+    //   padding: const EdgeInsets.all(8.0),
+    //   child: ListTile(
+    //       tileColor: Colors.grey[200],
+    //       title: TextButton(
+    //           onPressed: () => buttonCallback(id),
+    //           child: Container(child: Text(name)),
+    //           style: TextButton.styleFrom(
+    //               alignment: Alignment.centerLeft,
+    //
+    //               shape:
+    //                   RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
+    //       trailing: name == 'general'
+    //           ? null
+    //           : SizedBox(
+    //               width: 100,
+    //               child: Row(children: <Widget>[
+    //                 IconButton(
+    //                     onPressed: () {
+    //                       leaveChannelCallback();
+    //                     },
+    //                     icon: Icon(Icons.logout)),
+    //                 IconButton(
+    //                     onPressed: () {
+    //                       deleteChannelPopup(context);
+    //                     },
+    //                     icon: Icon(Icons.delete)
+    //                 )
+    //               ]),
+    //             )
+    //   ),
+    // );
   }
 
   void deleteChannelPopup(BuildContext context) {
@@ -187,11 +264,11 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
   final channelService = ChannelService.instance;
   String _query = "";
 
-  void searchChannels(String query) {
-    setState(() {
-      _query = query;
-    });
-  }
+  String get query => _query;
+
+  void set query(String value) => setState(() {
+    _query = value;
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -209,36 +286,69 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
             child: Align(
                 alignment: Alignment.center, child: Text("Joindre Canal")))
       ]),
-      // buildSearchBar(),
+      buildSearchBar(),
       Expanded(
         child: Obx(
-          () => ListView.builder(
-              itemCount: channelService.joinableChannels.length,
+          () {
+            final filteredChannels = channelService.joinableChannels.where((channel) =>
+              channel.name.toLowerCase().contains(query.toLowerCase())
+            ).toList();
+            return ListView.builder(
+              itemCount: filteredChannels.length,
               itemBuilder: (context, index) {
-                final channel = channelService.joinableChannels[index];
+                final channel = filteredChannels[index];
                 return buildChannelTile(channel.name, channel.id ?? '');
-              }),
+              });
+            },
         ),
       )
     ]);
   }
 
   Widget buildSearchBar() {
-    return Placeholder();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+      child: TextField(
+        onChanged: (value) {
+          query = value.trim(); // Update query and refresh the list
+        },
+        decoration: InputDecoration(
+          hintText: "Chercher un canal...",
+          prefixIcon: Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildChannelTile(String name, String id) {
-    return ListTile(
-        title: TextButton(
-            onPressed: () {
-              channelService.joinChannel(id);
-              widget.returnCallback();
-            },
-            child: Container(child: Text(name)),
-            style: TextButton.styleFrom(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: TextButton(
+              onPressed: () {
+                channelService.joinChannel(id);
+                widget.returnCallback();
+              },
+              child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(name)
+              ),
+              // style: TextButton.styleFrom(
+              //     alignment: Alignment.centerLeft,
+              //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)
+              // )
+              style: TextButton.styleFrom(
                 alignment: Alignment.centerLeft,
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.zero))));
+                padding: EdgeInsets.symmetric(horizontal: 0),
+                minimumSize: Size(double.infinity, 50),
+                backgroundColor: Colors.grey[200],
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
+              )
+      ),
+    );
   }
 }
 

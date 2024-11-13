@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/channelService.dart';
@@ -50,7 +52,10 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
             controller: _messageController,
             decoration: InputDecoration(
               hintText: "input a message...",
-              border: InputBorder.none,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.grey, width: 1)
+              ),
             ),
             onSubmitted: (value) => sendMessage(),
           ),
@@ -90,7 +95,7 @@ class MessageListWidget extends StatelessWidget {
         controller: scrollController,
         itemCount: messages.length,
         itemBuilder: (context, index) {
-          return MessageTile(content: messages[index].message, userId: messages[index].userUid);
+          return MessageTile(message: messages[index],);
         }
     );
   }
@@ -102,9 +107,11 @@ class MessageTile extends StatelessWidget {
   final userService = UserService.instance;
   final loggedInService = LoggedInUserService.instance;
 
-  final String content;
-  final String userId;
-  MessageTile({required this.content, required this.userId, super.key});
+  final Message message;
+  String get content => message.message;
+  String get userId => message.userUid;
+  Timestamp get timestamp => message.createdAt;
+  MessageTile({required this.message, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +131,34 @@ class MessageTile extends StatelessWidget {
     return user.avatar;
   }
 
+  String formatTimestamp() {
+    DateTime dateTime = timestamp.toDate();
+    return DateFormat("MM/dd/yy, hh:mm a").format(dateTime);
+  }
+
+  Widget getTimestampText() {
+    return Text(
+      formatTimestamp(),
+      style: TextStyle(
+        fontSize: 10,
+        color: Colors.grey[900]
+      ),
+    );
+  }
+
+  Widget getTextContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(content),
+        SizedBox(height: 5),
+        getTimestampText(),
+      ],
+    );
+  }
+
   Widget buildSentMessage() {
+    print("this is the timestamp: $timestamp");
     return ListTile(
       title: Align(
         alignment: Alignment.centerRight,
@@ -134,7 +168,7 @@ class MessageTile extends StatelessWidget {
               color: Colors.lightBlue,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: Text(content)
+            child: getTextContent()
         ),
       ),
       trailing: buildUserInfo(),
@@ -151,7 +185,7 @@ class MessageTile extends StatelessWidget {
               color: Colors.grey[300],
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: Text(content)
+            child: getTextContent()
         ),
       ),
       leading: buildUserInfo(),
@@ -170,7 +204,18 @@ class MessageTile extends StatelessWidget {
             ),
           ),
         ),
-        Flexible(child: FutureBuilder(future: getUsername(), builder: (BuildContext context, AsyncSnapshot<String> snapshot) => Text(snapshot.data ?? username)))
+        Flexible(child: FutureBuilder(
+            future: getUsername(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot)
+              => Container(
+                width: 70,
+                child: Text(
+                  snapshot.data ?? username,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,),
+              )
+        ))
       ],
     );
   }

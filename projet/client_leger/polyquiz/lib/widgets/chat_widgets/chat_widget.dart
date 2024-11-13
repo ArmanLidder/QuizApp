@@ -20,12 +20,13 @@ class _ChatWidgetState extends State<ChatWidget> {
         children: <Widget>[
           Expanded(
             child: Container(
-                color: Colors.blue,
+                color: Colors.blueAccent,
                 padding: EdgeInsets.all(10.0),
                 child: Row(
                   children: [
-                    Icon(Icons.textsms, size: 40),
-                    Text("Clavardage", style: TextStyle(fontSize: 40)),
+                    Icon(Icons.textsms, size: 40, color: Colors.white,),
+                    SizedBox(width: 10,),
+                    Text("Clavardage", style: TextStyle(fontSize: 40, color: Colors.white)),
                   ],
                 )
             ),
