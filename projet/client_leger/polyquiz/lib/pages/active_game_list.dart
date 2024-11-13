@@ -346,7 +346,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                             Navigator.pushReplacementNamed(context, '/join');
                           },
                           child: Text(
-                            'Rejoindre jeu privé',
+                            'Rejoindre Jeu Privé',
                             style: TextStyle(
                               color: Color.fromRGBO(255, 255, 255, 1),
                               fontSize: 20,
