@@ -182,5 +182,29 @@
     "WARNING": "Warning!",
     "CANCEL": "Cancel",
     "CONFIRM": "Confirm"
+  },
+  "PLAYER_WAITING_PAGE": {
+    "JOIN_PUBLIC_GAME": "Join Public Game",
+    "JOIN_PRIVATE_GAME": "Join Private Game",
+    "ROOM_CODE_PROMPT": {
+      "ENTER_CODE_MESSAGE": "Please enter the 4-digit code provided by the host",
+      "ENTER_CODE_LABEL": "Enter Code:",
+      "ERROR_MESSAGE": "Invalid code",
+      "VALIDATE_BUTTON": "Validate",
+      "CANCEL_BUTTON": "Quit",
+      "JOIN_SUCCESS_MESSAGE": "Perfect! You can join the game",
+      "BANNED_MESSAGE": "You have been banned from this game by the host!",
+      "ROOM_LOCKED_MESSAGE": "Sorry! The game is locked.",
+      "JOIN_BUTTON": "Join"
+    },
+    "ROOM_CODE_PROMPT_ERRORS": {
+      "GAME_NOT_FOUND": "No game matches this code.",
+      "FRIENDS_ONLY": "This game is only open to the host's friends.",
+      "INSUFFICIENT_PRESTIGE": "You do not have the required prestige level to join this game.",
+      "INSUFFICIENT_FUNDS": "You do not have enough funds to join this game.",
+      "BANNED_USER": "You have been banned from this room by the host.",
+      "ROOM_LOCKED": "The room is currently locked.",
+      "VALIDATION_CODE_ERROR": "Your code must contain exactly 4 digits (e.g., 1234)"
+    }
   }
 }

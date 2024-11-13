@@ -182,5 +182,29 @@
     "WARNING": "Attention!",
     "CANCEL": "Annuler",
     "CONFIRM": "Confirmer"
+  },
+  "PLAYER_WAITING_PAGE": {
+    "JOIN_PUBLIC_GAME": "Rejoindre Jeu Public",
+    "JOIN_PRIVATE_GAME": "Rejoindre Jeu Privé",
+    "ROOM_CODE_PROMPT": {
+      "ENTER_CODE_MESSAGE": "Veuillez saisir le code de 4 chiffres fourni par l'organisateur",
+      "ENTER_CODE_LABEL": "Saisir le code:",
+      "ERROR_MESSAGE": "Code invalide",
+      "VALIDATE_BUTTON": "Valider",
+      "CANCEL_BUTTON": "Quitter",
+      "JOIN_SUCCESS_MESSAGE": "Parfait! Vous pouvez rejoindre la partie",
+      "BANNED_MESSAGE": "Vous avez été banni de cette partie par l'hôte!",
+      "ROOM_LOCKED_MESSAGE": "Désolé! La partie est verrouillée.",
+      "JOIN_BUTTON": "Rejoindre"
+    },
+    "ROOM_CODE_PROMPT_ERRORS": {
+      "GAME_NOT_FOUND": "Il n'y a aucune partie correspondant à ce code.",
+      "FRIENDS_ONLY": "Cette partie est exclusive aux amis de l'hôte.",
+      "INSUFFICIENT_PRESTIGE": "Vous n'avez pas le prestige minimum pour rejoindre cette partie.",
+      "INSUFFICIENT_FUNDS": "Vous n'avez pas assez d'argent pour rejoindre cette partie.",
+      "BANNED_USER": "Vous avez été banni de cette partie par l'hôte.",
+      "ROOM_LOCKED": "La salle est actuellement verrouillée.",
+      "VALIDATION_CODE_ERROR": "Votre code doit contenir seulement 4 chiffres (ex: 1234)"
+    }
   }
 }

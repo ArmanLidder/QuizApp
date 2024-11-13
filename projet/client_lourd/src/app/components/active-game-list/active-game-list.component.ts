@@ -79,7 +79,7 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         console.log('On destroy')
-        this.gameListService.cleanup();
+        // this.gameListService.cleanup();
     }
 
     async joinRoom(game: GameListItem) {
