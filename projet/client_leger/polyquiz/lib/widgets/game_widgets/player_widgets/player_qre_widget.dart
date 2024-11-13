@@ -87,6 +87,24 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     );
   }
 
+  Widget getIncrementalAdjustmentButtons() {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          onPressed: canDecrement ? decrementSlider : null,
+          icon: Icon(Icons.add),
+          color: canDecrement ? Colors.blueAccent : Colors.grey,
+        ),
+        Spacer(),
+        IconButton(
+          onPressed: canIncrement ? incrementSlider : null,
+          icon: Icon(Icons.remove),
+          color: canIncrement ? Colors.blueAccent : Colors.grey,
+        ),
+      ],
+    );
+  }
+
   Widget getSlider() {
     return Slider(
       value: currentValue.toDouble(),
@@ -158,5 +176,21 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     setState(() {
       currentValue = value.round();
     });
+  }
+
+  bool get canIncrement {
+    return !(isValidated || (currentValue >= this.max));
+  }
+
+  bool get canDecrement {
+    return !(isValidated || (currentValue <= this.min));
+  }
+
+  void incrementSlider() {
+    if (canIncrement) changeSliderValue(currentValue + 1);
+  }
+
+  void decrementSlider() {
+    if (canDecrement) changeSliderValue(currentValue - 1);
   }
 }
