@@ -41,7 +41,12 @@
       "Reach silver prestige",
       "Reach gold prestige",
       "Reach platinum prestige"
-    ]
+    ],
+    "NONE": "None",
+    "BRONZE": "Bronze",
+    "SILVER": "Silver",
+    "GOLD": "Gold",
+    "PLATINUM": "Platinum"
   },
   "FRIENDS": {
     "TITLE": "Friends",
@@ -60,14 +65,20 @@
     "UPLOAD_OWN": "Or upload your own avatar",
     "SELECT_IMAGE": "Select an image",
     "CANCEL": "Cancel",
-    "CONFIRM": "Confirm"
+    "CONFIRM": "Confirm",
+    "SUCCESS_POPUP": "Avatar successfully modified",
+    "ERROR": "An error occured during modification"
   },
   "USERNAME_MODIFICATION": {
     "TITLE": "Username Modification",
     "NEW_USERNAME": "New Username",
     "PLACEHOLDER": "Enter a new username",
     "CANCEL": "Cancel",
-    "CONFIRM": "Confirm"
+    "CONFIRM": "Confirm",
+    "LETTERS_NUMBERS_ONLY": "The username can only contain letters and numbers.",
+    "MAXIMUM_10_CHAR": "The username can contain at most 10 characters.",
+    "SUCCESSFUL_MODIFICATION": "Username changed successfully.",
+    "ALREADY_USED": "This username is already used."
   },
   "USER_SEARCH": {
     "TITLE": "User Search...",
@@ -256,5 +267,9 @@
     "DELETE_CONFIRMATION": "This action is irreversible. The channel {{channelName}} will be deleted forever.",
     "ROOM_IN_NAME_UNALLOWED": "The channel name cannot contain: room. Please choose another name.",
     "ROOM_NAME_ALREADY_USED": "The name {{canalName}} is already in use. Please choose another name."
+  },
+  "AVATAR_CLICK_MENU" : {
+    "PROFIL": "Profile",
+    "DISCONNECT": "Logout"
   }
 }

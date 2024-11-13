@@ -41,7 +41,12 @@
       "Atteindre le prestige argent",
       "Atteindre le prestige or",
       "Atteindre le prestige platine"
-    ]
+    ],
+    "NONE": "Aucun",
+    "BRONZE": "Bronze",
+    "SILVER": "Argent",
+    "GOLD": "Or",
+    "PLATINUM": "Platine"
   },
   "FRIENDS": {
     "TITLE": "Amis",
@@ -60,14 +65,21 @@
     "UPLOAD_OWN": "Ou télécharger votre propre avatar",
     "SELECT_IMAGE": "Choisir une image",
     "CANCEL": "Annuler",
-    "CONFIRM": "Confirmer"
+    "CONFIRM": "Confirmer",
+    "SUCCESS_POPUP": "Avatar modifié avec succès",
+    "ERROR": "Erreur de modification"
   },
   "USERNAME_MODIFICATION": {
     "TITLE": "Modification du nom d'utilisateur",
     "NEW_USERNAME": "Nouveau nom d'utilisateur",
     "PLACEHOLDER": "Entrer un nouveau nom d'utilisateur",
     "CANCEL": "Annuler",
-    "CONFIRM": "Confirmer"
+    "CONFIRM": "Confirmer",
+    "LETTERS_NUMBERS_ONLY": "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres.",
+    "MAXIMUM_10_CHAR": "Le nom d'utilisateur peut contenir au plus 10 caractères.",
+    "SUCCESSFUL_MODIFICATION": "Nom d’utilisateur modifié avec succès.",
+    "ALREADY_USED": "Ce nom est déja utilisé.",
+    "ERROR": "Erreur de modification"
   },
   "USER_SEARCH": {
     "TITLE": "Recherche d'utilisateurs...",
@@ -256,5 +268,9 @@
     "DELETE_CONFIRMATION": "Cette action est irreversible. Le canal {{channelName}} sera effacé à jamais.",
     "ROOM_IN_NAME_UNALLOWED": "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom.",
     "ROOM_NAME_ALREADY_USED": "Le nom {{canalName}} est déjà utilisé. Veuillez choisir un autre nom."
+  },
+  "AVATAR_CLICK_MENU" : {
+    "PROFIL": "Profil",
+    "DISCONNECT": "Déconnexion"
   }
 }

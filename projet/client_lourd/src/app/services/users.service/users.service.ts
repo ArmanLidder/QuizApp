@@ -15,6 +15,7 @@ import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
 import {LoginHistory} from "@common/interfaces/user-data.interface";
 import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
+import {TranslateService} from "@ngx-translate/core";
 
 
 const defaultUser: User = {
@@ -52,8 +53,10 @@ const defaultUser: User = {
 export class UsersService {
     user$ = authState(this.auth);
 
-    constructor(private firestore: Firestore, private auth: Auth,private serverTimeService: ServerTimeService) {
-    }
+    constructor(private firestore: Firestore,
+                private auth: Auth,
+                private serverTimeService: ServerTimeService,
+                private translate: TranslateService) {}
 
     get currentUserProfile$(): Observable<User | null> {
         return this.user$.pipe(
@@ -97,11 +100,11 @@ export class UsersService {
 
     async updateUsername(newUsername: string): Promise<void> {
         const isTaken = await this.isUsernameTaken(newUsername);
-        if (isTaken) throw new Error('Ce nom est déja utilisé');
+        if (isTaken) throw new Error(await firstValueFrom(this.translate.get('USERNAME_MODIFICATION.ALREADY_USED')));
         if (this.auth.currentUser?.uid){
             const userDocRef = doc(this.firestore, `users/${this.auth.currentUser?.uid}`);
             await updateDoc(userDocRef, {username: newUsername});
-        } else throw new Error('Erreur: essayez de vous reconnectez.');
+        }
     }
 
     async addLogEvent(event : 'login' | 'logout'): Promise<void> {

@@ -18,11 +18,11 @@ export class LeaveButtonComponent {
         private translate: TranslateService
     ) {}
     @Input() action: () => void = async () => this.router.navigate([`./${HOME_PAGE}`]);
-    openConfirmationDialog(): void {
+    async openConfirmationDialog() {
         const messageKey = this.isGame ? PopUpMessage.LEAVE_MESSAGE : PopUpMessage.DELETE_MESSAGE;
 
         // Fetch the translated message based on the key
-        const message = this.translate.instant(messageKey);
+        const message = await this.translate.get(messageKey).toPromise();
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
             width: '300px',
             data: { message },

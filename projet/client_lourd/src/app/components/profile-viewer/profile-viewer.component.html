@@ -28,8 +28,8 @@
                 <h1 class="text-xl font-bold text-gray-900">{{ user.username }}</h1>
                 <div class="flex items-center space-x-2 mt-1 text-sm text-gray-600">
                     <span class="font-semibold">{{ 'PROFILE_POPUP.PRESTIGE' | translate }}:</span>
-                    <span class="text-lg">{{ getPrestigeIcon(user.prestige) }}</span>
-                    <span class="text-sm text-gray-600">{{ getPrestigeLabel(user.prestige) }}</span>
+                    <span class="text-lg">{{ prestigeIcon }}</span>
+                    <span class="text-sm text-gray-600">{{ prestigeLabel }}</span>
                 </div>
                 <div class="text-sm text-gray-600 mt-1">
                     <span class="font-semibold mr-2">{{ 'PROFILE_POPUP.CURRENCY' | translate }}:</span>
@@ -63,8 +63,8 @@
             <div class="space-y-1">
                 <div *ngFor="let achievement of allAchievements; let i = index"
                      class="flex items-center space-x-2 text-sm p-1.5 rounded"
-                     [ngClass]="getAchievementClass(i)">
-                    <span class="text-base">{{ getAchievementIcon(i) }}</span>
+                     [ngClass]="achievementClasses[i]">
+                    <span class="text-base">{{ achievementIcons[i] }}</span>
                     <span>{{ achievement }}</span>
                 </div>
             </div>
