@@ -114,7 +114,7 @@ class _RewardButtonState extends State<RewardButton> {
 
   Future<void> _updateButtonStatus() async {
     await loggedInUserService.reloadUser();
-    num availableFunds = user?.currency ?? 0;
+    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
     bool ownsItem = await storeService.isOwned(loggedInUserService.getUid() ?? "noIdInButtonWidget", widget.itemId);
     bool hasRequiredPrestige = (loggedInUserService.observablePrestige.value ?? 0) >= widget.minPrestige;
     bool hasRequiredLevel = (loggedInUserService.observableLevel.value ?? 0) >= widget.minLevel;
