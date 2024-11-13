@@ -38,18 +38,12 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/join');
-              },
-              child: Text('Join'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
                 Navigator.pushReplacementNamed(context, '/quizz');
               },
               child: Text('Quizz'),
             ),
             const SizedBox(height: 20),
+
             ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/roomList');

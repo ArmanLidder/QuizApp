@@ -32,6 +32,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   bool isPanicMode = false;
   bool isAlreadyInit = false;
   bool isAlreadyCalled = false;
+  bool NextQuestionBtnDisabled = true;
 
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
@@ -125,7 +126,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
       switch (type) {
         case QuestionType.QRL:
           this.sendQrlAnswer();
+          print('CALLED 1');
           this.isHostEvaluating = true;
+          this.NextQuestionBtnDisabled = false;
           notifyListeners();
           break;
         case QuestionType.QRE:
@@ -133,6 +136,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
         default:
           print('CALLED 1');
           this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+          this.NextQuestionBtnDisabled = false;
           break;
       }
       //
@@ -192,6 +196,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
           ._interactiveListService
           .getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
+      this.NextQuestionBtnDisabled = true;
     });
   }
 
@@ -338,6 +343,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.isPanicMode = false;
     this.isAlreadyInit = false;
     this.isAlreadyCalled = false;
+    this.NextQuestionBtnDisabled = true;
     notifyListeners();
   }
 

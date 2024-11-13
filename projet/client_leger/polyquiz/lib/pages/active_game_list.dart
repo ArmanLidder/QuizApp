@@ -113,24 +113,28 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
     if (game.friendsOnly && !isHostFriend) {
-      snackbarService.show("Cette partie est exclusive aux amis de l'hôte.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Cette partie est exclusive aux amis de l'hôte.")),
+      );
     } else {
       final isPrestigeValid = await _validatePrestige(game.prestige);
       if (!isPrestigeValid) {
-        snackbarService.show(
-            "Vous n'avez pas le prestige minimum pour rejoindre cette partie.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
+        );
       } else {
         await roomValidationService.verifyUsername();
         if (!roomValidationService.isUsernameValid) {
-          snackbarService.show("Vous avez été banni de cette partie.");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Vous avez été banni de cette partie.")),
+          );
         } else {
           if (roomValidationService.isLocked) {
-            snackbarService.show("La partie est actuellement verouillez.");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("La partie est actuellement verouillez.")),
+            );
           }
-          // _joinWaitingRoom(game.room.toString(), roomValidationService.userData!.username);
-          final isValid = !roomValidationService.isLocked &&
-              roomValidationService.isUsernameValid;
-          if (true) {
+          if (!roomValidationService.isLocked && roomValidationService.isUsernameValid) {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -223,38 +227,171 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         ),
         backgroundColor: Color.fromRGBO(53, 121, 246, 1),
       ),
-      body: FutureBuilder<void>(
+      body: 
+      FutureBuilder<void>(
         future: _initializeFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/join');
+                  },
+                  child: Text(
+                    'Rejoindre jeu privé',
+                    style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                    fontSize: 20,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                  ),
+                  ),
+                ),
+                Center(child: CircularProgressIndicator()),
+              ],
+            );
           } else if (snapshot.hasError) {
             print('Error: ${snapshot.error}');
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return 
+              Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/join');
+                  },
+                  child: Text(
+                    'Rejoindre jeu privé',
+                    style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                    fontSize: 20,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                  ),
+                  ),
+                ),
+                Center(child: Text('Error: ${snapshot.error}')),
+              ],
+            );
           } else {
             return StreamBuilder<List<GameListItem>>(
               stream: gameListService.games$,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return 
+                  Column(
+                    children: [
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/join');
+                          },
+                          child: Text(
+                            'Rejoindre jeu privé',
+                            style: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 1),
+                            fontSize: 20,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
+                          ),
+                        ),
+                      Center(child: CircularProgressIndicator()),
+                    ],
+                  );
                 } else if (snapshot.hasError) {
                   print('Error: ${snapshot.error}');
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  return 
+                    Column(
                       children: [
-                        Text('Aucune partie en cours'),
-                        SizedBox(height: 100),
-                        CancelBtn()
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/join');
+                          },
+                          child: Text(
+                            'Rejoindre jeu privé',
+                            style: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 1),
+                            fontSize: 20,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
+                          ),
+                        ),
+                        Center(child: Text('Error: ${snapshot.error}')),
                       ],
-                    ),
+                    );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return 
+                  Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/join');
+                          },
+                          child: Text(
+                            'Rejoindre jeu privé',
+                            style: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 1),
+                            fontSize: 20,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
+                          ),
+                        ),
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Aucune partie en cours'),
+                              SizedBox(height: 100),
+                              CancelBtn()
+                            ],
+                          ),
+                        ),
+                      ],
                   );
                 } else {
                   final games = snapshot.data!;
                   return Column(
                     children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/join');
+                        },
+                        child: Text(
+                          'Rejoindre jeu privé',
+                          style: TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 1),
+                          fontSize: 20,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                        ),
+                        ),
+                      ),
                       Expanded(
                         child: ListView.builder(
                           itemCount: games.length,
