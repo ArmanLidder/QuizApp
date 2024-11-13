@@ -78,6 +78,41 @@ class UserService extends GetxController {
     }
   }
 
+  Future<String?> getAvatar(String id) async {
+    try {
+      DocumentSnapshot documentSnapshot = await _db.collection(collectionName).doc(id).get();
+
+      if (documentSnapshot.exists) {
+        // Access the 'avatar' field if it exists
+        return documentSnapshot.get('avatar') as String?;
+      } else {
+        print('Document does not exist');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching avatar: $e');
+      return null;
+    }
+  }
+
+  Future<num?> getLevel(String id) async {
+    try {
+      DocumentSnapshot documentSnapshot = await _db.collection(collectionName).doc(id).get();
+
+      if (documentSnapshot.exists) {
+        // Access the 'avatar' field if it exists
+        return documentSnapshot.get('level') as num?;
+      } else {
+        print('Document does not exist');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching avatar: $e');
+      return null;
+    }
+  }
+
+
   Future<void> updateUserAvatar({
     required String id,
     required String newAvatarUrl,

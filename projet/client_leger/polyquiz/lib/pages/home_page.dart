@@ -5,6 +5,7 @@ import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../widgets/fancyAppBar.dart';
 
 class HomePage extends StatefulWidget {
@@ -87,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Text('Magasin')),
             const SizedBox(height: 20),
-
+            SmartAvatar(userId: "eITkq1GxeMPIigh2azge7mu7J6w1",size: 35,),
             /*ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/user');
