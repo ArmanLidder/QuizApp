@@ -146,7 +146,7 @@ class HostHeader extends StatelessWidget {
       textStyle: TextStyle(fontWeight: FontWeight.normal),
       splashFactory: NoSplash.splashFactory,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      backgroundColor: this.hostInterfaceManagementService.NextQuestionBtnDisabled ? Colors.grey : Color.fromRGBO(53, 121, 246, 1),
+      backgroundColor: (this.hostInterfaceManagementService.NextQuestionBtnDisabled || this.hostInterfaceManagementService.isHostEvaluating) ? Colors.grey : Color.fromRGBO(53, 121, 246, 1),
     );
     return Stack(children: [
       Column(
@@ -166,7 +166,7 @@ class HostHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                onPressed: this.hostInterfaceManagementService.NextQuestionBtnDisabled ? null : onNextQuestion,
+                onPressed: (this.hostInterfaceManagementService.NextQuestionBtnDisabled || this.hostInterfaceManagementService.isHostEvaluating) ? null : onNextQuestion,
                 child: Text(
                   gameService.realGameService.isLast
                       ? 'Résultats'
