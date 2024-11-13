@@ -101,6 +101,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
       this.timerText = 'Prochaine question dans: ';
       this.gameService.realGameService.timer = timeValue;
+      notifyListeners();
       if (this.gameService.realGameService.timer == 0) {
         print('TIMER GOT TO 0');
         this.gameService.realGameService.inTimeTransition = false;
@@ -120,14 +121,29 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.gameService.realGameService.inTimeTransition = true;
       this.resetInterface();
 
-      if (this.gameService.question?.type == QuestionType.QCM) {
-        print('CALLED 1');
-        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
-      } else {
-        this.sendQrlAnswer();
-        this.isHostEvaluating = true;
-        notifyListeners();
+      QuestionType? type = this.gameService.question?.type ?? null;
+      switch (type) {
+        case QuestionType.QRL:
+          this.sendQrlAnswer();
+          this.isHostEvaluating = true;
+          notifyListeners();
+          break;
+        case QuestionType.QRE:
+        case QuestionType.QCM:
+        default:
+          print('CALLED 1');
+          this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+          break;
       }
+      //
+      // if (this.gameService.question?.type == QuestionType.QCM) {
+      //   print('CALLED 1');
+      //   this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+      // } else {
+      //   this.sendQrlAnswer();
+      //   this.isHostEvaluating = true;
+      //   notifyListeners();
+      // }
     });
   }
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/typedefs.dart';
@@ -139,6 +140,9 @@ class QrlEvaluationService extends ChangeNotifier {
   void initializePlayerAnswers(Map<String, ResponseData> qrlAnswers) {
     var sortedEntries = qrlAnswers.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
+
+    var random = Random();
+    sortedEntries.shuffle(random);
 
     for (var entry in sortedEntries) {
       var key = entry.key;

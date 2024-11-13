@@ -4,7 +4,7 @@ import 'package:polyquiz/services/interactive_list_service.dart';
 
 class PlayersDataTable extends StatefulWidget {
   final bool isHost;
-  
+
   const PlayersDataTable({super.key, required this.isHost});
 
   @override
@@ -14,6 +14,7 @@ class PlayersDataTable extends StatefulWidget {
 class _PlayersDataTableState extends State<PlayersDataTable> {
   int? columnIndex;
   bool isAscending = true;
+  TextStyle _textStyle = TextStyle(fontSize: 16);
   InteractiveListService _interactiveListService = InteractiveListService();
 
   void onSort(int columnIndex, bool isAscending) {
@@ -75,11 +76,6 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
         label: Expanded(child: Center(child: Text('Points'))),
       ),
       DataColumn(label: Expanded(child: Center(child: Text('Bonus')))),
-      if (widget.isHost)
-        DataColumn(
-          onSort: (columnIndex, isAscending) => onSort(columnIndex, isAscending),
-          label: Expanded(child: Center(child: Text('Chat'))),
-        ),
     ];
     return Container(
       width: 650.0,
@@ -91,29 +87,34 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                   WidgetStateProperty.all(Color.fromRGBO(53, 121, 246, 1)),
               headingTextStyle: TextStyle(
                   color: Color.fromRGBO(255, 255, 255, 1),
+                  fontSize: 18,
                   fontWeight: FontWeight.bold),
               border: TableBorder.all(),
               sortColumnIndex: columnIndex,
               sortAscending: isAscending,
               columns: columns,
               rows: _interactiveListService.players.map((player) {
-                return DataRow(
-                    color: WidgetStatePropertyAll(getColor(player)),
-                    cells: [
-                      DataCell(Center(child: Text(player.username))),
-                      DataCell(Center(child: Text(player.score.toString()))),
-                      DataCell(Center(child: Text(player.bonus.toString()))),
-                        if (widget.isHost)
-                        DataCell(Center(
-                          child: Switch(
-                            value: player.canChat,
-                            activeTrackColor: Color.fromRGBO(53, 121, 246, 1),
-                            onChanged: (value) {
-                              setState(() {
-                              player.canChat = value;
-                              });
-                            })))
-                    ]);
+                TextStyle playerTextStyle = _textStyle;
+                Color rowColor = getColor(player);
+
+                if (player.status == PlayerStatus.LEFT) {
+                  playerTextStyle = TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      decoration: TextDecoration.lineThrough,
+                      decorationColor: Colors.white,
+                      decorationThickness: 2);
+                }
+                return DataRow(color: WidgetStatePropertyAll(rowColor), cells: [
+                  DataCell(Center(
+                      child: Text(player.username, style: playerTextStyle))),
+                  DataCell(Center(
+                      child: Text(player.score.toString(),
+                          style: playerTextStyle))),
+                  DataCell(Center(
+                      child: Text(player.bonus.toString(),
+                          style: playerTextStyle))),
+                ]);
               }).toList(),
             );
           }),

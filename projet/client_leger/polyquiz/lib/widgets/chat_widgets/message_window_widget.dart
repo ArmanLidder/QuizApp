@@ -20,31 +20,55 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
   final channelService = ChannelService.instance;
   final _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  String defaultName = 'null';
+  List<Message> defaultMessages = [];
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(child: Align(alignment: Alignment.centerLeft, child: IconButton(onPressed: (){ widget.returnCallback(); }, icon: Icon(Icons.arrow_back)))),
-            Expanded(child: Align(alignment: Alignment.center, child: Text(getChannel().name)))
-          ]
-        ),
-        Expanded(child: Obx(() {
-          return MessageListWidget(messages: getChannel().messages.isEmpty ? [] : getChannel().messages, scrollController: _scrollController,);
-        })),
-        buildInputBox(),
-      ]
+    return Obx(() {
+      List<Message> messages = getChannel()?.messages ?? defaultMessages;
+      String channelName = getChannel()?.name ?? defaultName;
+      return Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(child: Align(alignment: Alignment.centerLeft, child: IconButton(onPressed: (){ widget.returnCallback(); }, icon: Icon(Icons.arrow_back)))),
+              Expanded(child: Align(alignment: Alignment.center, child: Text(channelName)))
+            ]
+          ),
+          Expanded(child: MessageListWidget(
+            messages: messages.isEmpty ? [] : messages,
+            scrollController: _scrollController,
+          )),
+          if (getChannel() == null) getDeletedChannelText(),
+          buildInputBox(),
+        ]
+      );
+    });
+  }
+
+  Canal? getChannel() {
+    bool channelById(Canal channel) => channel.id == widget.channelId;
+    try {
+      Canal channel = channelService.channels.toList().firstWhere(channelById);
+      defaultName = channel.name;
+      return channel;
+    } on StateError catch (e) {
+      return null;
+    }
+  }
+
+  Widget getDeletedChannelText() {
+    return Text(
+      "Le canal a été effacé. Veuillez quitter. Au revoir!",
+      style: TextStyle(
+        color: Colors.red,
+      ),
     );
   }
 
-  Canal getChannel() {
-    bool channelById(Canal channel) => channel.id == widget.channelId;
-    return channelService.channels.toList().firstWhere(channelById);
-  }
-
   Widget buildInputBox() {
+    bool isChannelAvailable = getChannel() != null;
     return Row(
       children: <Widget>[
         Expanded(
@@ -57,10 +81,14 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
                 borderSide: BorderSide(color: Colors.grey, width: 1)
               ),
             ),
-            onSubmitted: (value) => sendMessage(),
+            enabled: isChannelAvailable,
+            onSubmitted: isChannelAvailable ? (value) => sendMessage() : null,
           ),
         ),
-        IconButton(onPressed: sendMessage, icon: Icon(Icons.send, color: Colors.blue))
+        IconButton(
+            onPressed: isChannelAvailable ? sendMessage : null,
+            icon: Icon(Icons.send, color: isChannelAvailable ? Colors.blue : Colors.grey)
+        )
       ],
     );
   }

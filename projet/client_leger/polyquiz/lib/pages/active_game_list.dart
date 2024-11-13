@@ -213,6 +213,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        automaticallyImplyLeading: false,
         title: Text(
           'Liste des Jeux Publics',
           style: TextStyle(
@@ -259,23 +260,50 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                           itemCount: games.length,
                           itemBuilder: (context, index) {
                             final game = games[index];
-                            return GestureDetector(
-                              onTap: () {
-                                _joinRoom(game);
-                              },
-                              child: ActiveGameInfoWidget(
-                                quizTitle: _getQuizName(game.quizId),
-                                minRank: _minimumPrestige(game.prestige),
-                                allowedPlayers: game.friendsOnly
-                                    ? 'Amis seulement'
-                                    : 'Amis et autres',
-                                playerNum: game.numberOfPlayers.toString(),
-                                gameMode: game.gameType == 'classic'
-                                    ? 'Classique'
-                                    : 'Équipe',
-                                price: game.price.toString(),
-                              ),
-                            );
+                            if (!game.onGoing)
+                              return GestureDetector(
+                                onTap: () {
+                                  _joinRoom(game);
+                                },
+                                child: ActiveGameInfoWidget(
+                                  quizTitle: _getQuizName(game.quizId),
+                                  minRank: _minimumPrestige(game.prestige),
+                                  allowedPlayers: game.friendsOnly
+                                      ? 'Amis seulement'
+                                      : 'Amis et autres',
+                                  playerNum: game.numberOfPlayers.toString(),
+                                  gameMode: game.gameType == 'classic'
+                                      ? 'Classique'
+                                      : 'Équipe',
+                                  price: game.price.toString(),
+                                ),
+                              );
+                            if (game.onGoing)
+                              return GestureDetector(
+                                  onTap: () {
+                                    // add method for observer
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(_getQuizName(game.quizId),
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16)),
+                                              Text('Partie en cours')
+                                            ]),
+                                        Divider()
+                                      ],
+                                    ),
+                                  ));
                           },
                         ),
                       ),
