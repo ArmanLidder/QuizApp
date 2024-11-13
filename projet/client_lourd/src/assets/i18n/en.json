@@ -219,5 +219,18 @@
     "ONGOING_GAME": "Ongoing Game",
     "NO_GAMES_AVAILABLE": "No games available",
     "CANCEL": "Cancel"
+  },
+  "PROFILE_POPUP": {
+    "ACHIEVEMENTS": "Achievements",
+    "ALREADY_FRIENDS_TOOLTIP": "Already friends",
+    "SEND_FRIEND_REQUEST_TOOLTIP": "Send friend request",
+    "REQUEST_PENDING_TOOLTIP": "Request already sent",
+    "PRESTIGE": "Prestige",
+    "CURRENCY": "Currency",
+    "GAMES_PLAYED": "Games Played",
+    "GAMES_WON": "Games Won",
+    "AVG_CORRECT_ANSWERS": "Correct Answers per Game",
+    "AVG_GAME_TIME": "Average Game Time",
+    "SECONDS": "seconds"
   }
 }

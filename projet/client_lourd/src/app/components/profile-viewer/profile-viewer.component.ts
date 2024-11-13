@@ -1,18 +1,19 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UsersService } from '@app/services/users.service/users.service';
-import {combineLatest, firstValueFrom, Observable} from 'rxjs';
+import {combineLatest, firstValueFrom, Observable, Subscription} from 'rxjs';
 import { User } from '@app/interfaces/user/user-data.interface';
 import {FriendService} from "@app/services/friend.service/friend.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {map} from "rxjs/operators";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-profile-viewer',
   templateUrl: './profile-viewer.component.html',
   styleUrls: ['./profile-viewer.component.scss'],
 })
-export class ProfileViewerComponent implements OnInit {
+export class ProfileViewerComponent implements OnInit, OnDestroy {
   viewedUser$: Observable<User>;
   userAchievements: number[] | undefined;
   hasPendingRequest$: Observable<boolean>;
@@ -20,22 +21,15 @@ export class ProfileViewerComponent implements OnInit {
 
   hideFriendButtons: boolean = false;
 
-  allAchievements: string[] = [
-    "Gagner une partie en ligne",
-    "Gagner une partie en équipe",
-    "Gagner 5 parties",
-    "Gagner 10 parties",
-    "Atteindre le prestige bronze",
-    "Atteindre le prestige argent",
-    "Atteindre le prestige or",
-    "Atteindre le prestige platine"
-  ];
+  allAchievements: string[] = [];
+  languageSubscription: Subscription;
 
   constructor(
       private dialogRef: MatDialogRef<ProfileViewerComponent>,
       private usersService: UsersService,
       private friendService: FriendService,
       private snackbar: SnackbarService,
+      private translate: TranslateService,
       @Inject(MAT_DIALOG_DATA) public data: { uid: string }
   ) {}
 
@@ -53,6 +47,20 @@ export class ProfileViewerComponent implements OnInit {
 
     this.hasPendingRequest$ = this.friendService.hasPendingRequest(this.viewedUser$);
     this.isFriend$ = this.friendService.isFriend(this.viewedUser$);
+    this.loadAchievements();
+    this.languageSubscription = this.translate.onLangChange.subscribe(() => {
+      this.loadAchievements();
+    });
+  }
+
+  ngOnDestroy() {
+    this.languageSubscription.unsubscribe();
+  }
+
+  loadAchievements() {
+    this.translate.get('PROFILE.ALL_ACHIEVEMENTS').subscribe((translatedAchievements: string[]) => {
+      this.allAchievements = translatedAchievements;
+    });
   }
 
   closeDialog(): void {

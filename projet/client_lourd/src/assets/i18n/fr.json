@@ -219,5 +219,18 @@
     "ONGOING_GAME": "Partie en cours",
     "NO_GAMES_AVAILABLE": "Aucune partie présentement",
     "CANCEL": "Annuler"
+  },
+  "PROFILE_POPUP": {
+    "ACHIEVEMENTS": "Exploits",
+    "ALREADY_FRIENDS_TOOLTIP": "Déjà amis",
+    "SEND_FRIEND_REQUEST_TOOLTIP": "Envoyer une requête d'ami",
+    "REQUEST_PENDING_TOOLTIP": "Demande déjà envoyée",
+    "PRESTIGE": "Prestige",
+    "CURRENCY": "Argent",
+    "GAMES_PLAYED": "Parties Jouées",
+    "GAMES_WON": "Parties Gagnées",
+    "AVG_CORRECT_ANSWERS": "Bonnes Réponses par Partie",
+    "AVG_GAME_TIME": "Temps Moyen par Partie",
+    "SECONDS": "secondes"
   }
 }

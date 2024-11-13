@@ -1,28 +1,24 @@
 <div class="w-full p-4 bg-white rounded-lg relative">
     <ng-container *ngIf="viewedUser$ | async as user" class="w-full">
-        <!-- Add Friend, Pending, or Already Friends Icon -->
         <div *ngIf="!hideFriendButtons" class="absolute top-2 right-2">
-            <!-- Display if already friends -->
             <ng-container *ngIf="isFriend$ | async; else addOrPendingIcons">
                 <span class="text-black font-semibold">
-                    <mat-icon matTooltip="Déjà amis" matTooltipClass="custom-tooltip">people</mat-icon>
+                    <mat-icon [matTooltip]="'PROFILE_POPUP.ALREADY_FRIENDS_TOOLTIP' | translate" matTooltipClass="custom-tooltip">people</mat-icon>
                 </span>
             </ng-container>
 
-            <!-- Add Friend or Pending Icon -->
             <ng-template #addOrPendingIcons>
                 <ng-container *ngIf="!(hasPendingRequest$ | async); else pendingRequestIcon">
                     <button (click)="sendFriendRequest(user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out">
-                        <mat-icon matTooltip="Envoyer une requête d'ami">person_add</mat-icon>
+                        <mat-icon [matTooltip]="'PROFILE_POPUP.SEND_FRIEND_REQUEST_TOOLTIP' | translate">person_add</mat-icon>
                     </button>
                 </ng-container>
                 <ng-template #pendingRequestIcon>
-                    <mat-icon matTooltip="Demande déjà envoyée" matTooltipClass="custom-tooltip">hourglass_empty</mat-icon>
+                    <mat-icon [matTooltip]="'PROFILE_POPUP.REQUEST_PENDING_TOOLTIP' | translate" matTooltipClass="custom-tooltip">hourglass_empty</mat-icon>
                 </ng-template>
             </ng-template>
         </div>
 
-        <!-- Header with Avatar and Basic Info -->
         <div class="flex items-start space-x-4">
             <div class="relative flex-shrink-0">
                 <app-avatar [showProfileOnClick]="false" [showMenu]="false" [uid]="user.uid"></app-avatar>
@@ -31,41 +27,38 @@
             <div class="flex-1">
                 <h1 class="text-xl font-bold text-gray-900">{{ user.username }}</h1>
                 <div class="flex items-center space-x-2 mt-1 text-sm text-gray-600">
-                    <span class="font-semibold">Prestige:</span>
+                    <span class="font-semibold">{{ 'PROFILE_POPUP.PRESTIGE' | translate }}:</span>
                     <span class="text-lg">{{ getPrestigeIcon(user.prestige) }}</span>
                     <span class="text-sm text-gray-600">{{ getPrestigeLabel(user.prestige) }}</span>
                 </div>
                 <div class="text-sm text-gray-600 mt-1">
-                    <span class="font-semibold mr-2">Argent:</span>
+                    <span class="font-semibold mr-2">{{ 'PROFILE_POPUP.CURRENCY' | translate }}:</span>
                     {{ user.currency }}
                 </div>
             </div>
         </div>
 
-        <!-- Statistics Section -->
         <div class="mt-3 text-sm text-gray-600">
             <div class="flex justify-between py-1">
-                <span>Parties Jouées:</span>
+                <span>{{ 'PROFILE_POPUP.GAMES_PLAYED' | translate }}:</span>
                 <span class="font-medium">{{ user.stats.gamesPlayed }}</span>
             </div>
             <div class="flex justify-between py-1">
-                <span>Parties Gagnées:</span>
+                <span>{{ 'PROFILE_POPUP.GAMES_WON' | translate }}:</span>
                 <span class="font-medium">{{ user.stats.gamesWon }}</span>
             </div>
             <div class="flex justify-between py-1">
-                <span>Bonnes réponses par partie:</span>
+                <span>{{ 'PROFILE_POPUP.AVG_CORRECT_ANSWERS' | translate }}:</span>
                 <span class="font-medium">{{ user.stats.avgCorrectAnswers }}</span>
             </div>
             <div class="flex justify-between py-1">
-                <span>Temps moyen par partie:</span>
-                <span class="font-medium">{{ user.stats.avgGameTime }}s</span>
+                <span>{{ 'PROFILE_POPUP.AVG_GAME_TIME' | translate }}:</span>
+                <span class="font-medium">{{ user.stats.avgGameTime }} {{ 'PROFILE_POPUP.SECONDS' | translate }}</span>
             </div>
         </div>
-
-        <!-- Achievements Section -->
         <div class="mt-4">
             <div class="flex items-center justify-between mb-2">
-                <h2 class="text-sm font-semibold text-gray-900">Exploits</h2>
+                <h2 class="text-sm font-semibold text-gray-900">{{ 'PROFILE_POPUP.ACHIEVEMENTS' | translate }}</h2>
             </div>
             <div class="space-y-1">
                 <div *ngFor="let achievement of allAchievements; let i = index"

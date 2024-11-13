@@ -32,7 +32,6 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
   private languageSubscription: Subscription;
 
   ngOnInit(): void {
-    // Fetch user achievements when the component is initialized
     this.currentUser$ = this.usersService.currentUserProfile$;
     this.currentUser$.subscribe((user) => {
       if (user) {
@@ -41,7 +40,6 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     });
     this.loadAchievements();
 
-    // Subscribe to language changes to reload achievements on language switch
     this.languageSubscription = this.translate.onLangChange.subscribe(() => {
       this.loadAchievements();
     });
