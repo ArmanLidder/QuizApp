@@ -193,6 +193,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     //   isValidated = true;
     // });
     gameInterfaceManagementService.gameService.qreAnswer = currentValue;
+    gameInterfaceManagementService.gameService.selectQREanswer(currentValue);
     gameInterfaceManagementService.gameService.sendAnswer();
   }
 
@@ -206,6 +207,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     setState(() {
       currentValue = value.round();
     });
+    gameInterfaceManagementService.gameService.selectQREanswer(currentValue);
   }
 
   bool get canIncrement {
