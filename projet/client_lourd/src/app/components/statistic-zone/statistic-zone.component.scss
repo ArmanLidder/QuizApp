@@ -1,15 +1,22 @@
 .arrow {
-    margin-left: 10px;
+    flex: 1; /* Make each button take up equal width */
+
     background-color: #007bff;
     color: white;
     border: 4px solid #007bff;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
 }
+
 
 .arrow:hover {
     background-color: white;
     color: #007bff;
-    transition: 0.3s;
 }
+
 
 .arrow:active {
     background-color: #007bff;
@@ -18,18 +25,23 @@
 }
 
 .app-organizer-histogram {
-    margin-top: 20px;
+    width: 100%; /* Ensures histogram takes the full width of stats-container */
+    max-width: 600px; /* Same max-width as the container */
+    margin: 0 auto;
 }
 
 .stats-container {
+    max-width: 600px; /* Constrain width for the entire container */
     text-align: center;
-    margin-right: 25px;
 }
 
 .graph-title {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    gap: 10px; /* Space between buttons */
+    margin-bottom: 20px; /* Space between buttons and histogram */
 }
+
 
 button {
     flex: 1;

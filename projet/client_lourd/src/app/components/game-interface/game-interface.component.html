@@ -1,19 +1,25 @@
-<div class="grid-container" *ngIf='gameInterfaceManagementService.isGameOver'>
+<div class="grid-container mt-6" *ngIf='gameInterfaceManagementService.isGameOver'>
     <h2>Le jeu est terminé!</h2>
     <p>Votre score final : {{ score }}</p>
     <app-leave-boutton></app-leave-boutton>
 </div>
-<div class="result-container">
-<app-statistic-zone *ngIf="gameInterfaceManagementService.isGameOver" [gameStats]="gameInterfaceManagementService.gameStats"></app-statistic-zone>
-    <app-player-list
-        [hidden]='!gameInterfaceManagementService.isGameOver'
-        #playerListChild
-        [roomId]='gameInterfaceManagementService.gameService.gameRealService.roomId'
-        [leftPlayers]='[]'
-        [isHost] = 'false'>
-    </app-player-list>
+<div class="result-container" *ngIf="gameInterfaceManagementService.isGameOver">
+    <app-statistic-zone *ngIf="gameInterfaceManagementService.isGameOver" [gameStats]="gameInterfaceManagementService.gameStats"></app-statistic-zone>
+    <div class="players-list">
+        <div class="custom-legend">
+            <p> Résultats des joueurs: </p>
+        </div>
+        <app-player-list
+                [hidden]='!gameInterfaceManagementService.isGameOver'
+                #playerListChild
+                [roomId]='gameInterfaceManagementService.gameService.gameRealService.roomId'
+                [leftPlayers]='[]'
+                [isHost] = 'false'>
+        </app-player-list>
+    </div>
+
 </div>
-<div *ngIf='!gameInterfaceManagementService.isGameOver' class="grid-container">
+<div *ngIf='!gameInterfaceManagementService.isGameOver' class="grid-container w-full">
     <div id="flex-container">
         <div class="circle">
             <span>{{gameInterfaceManagementService.timerText}}</span>
@@ -31,12 +37,19 @@
         </div>
     </div>
     <h1>{{ gameInterfaceManagementService.gameService.question?.text }}</h1>
+
+    <div *ngIf="gameInterfaceManagementService.gameService.question?.imageUrl" class="question-image-container">
+        <img
+                [src]="gameInterfaceManagementService.gameService.question!.imageUrl"
+                alt="Question Image"
+                class="responsive-image"
+        />
+    </div>
     <br>
-    <app-game-answers-list *ngIf='gameInterfaceManagementService.gameService.question?.type === questionType.QCM' id='answer-field'>
+    <app-game-answers-list *ngIf='gameInterfaceManagementService.gameService.question?.type === questionType.QCM' id='answer-field' class="w-4/5">
     </app-game-answers-list>
-    <app-qrl-response-area *ngIf='gameInterfaceManagementService.gameService.question?.type === questionType.QRL' id='answer-qrl-field'>
+    <app-qrl-response-area *ngIf='gameInterfaceManagementService.gameService.question?.type === questionType.QRL' id='answer-qrl-field' class="w-1/2">
     </app-qrl-response-area>
-    <app-qre-response-area *ngIf="gameInterfaceManagementService.gameService.question?.type === questionType.QRE" id="answer-qre-field">
+    <app-qre-response-area *ngIf="gameInterfaceManagementService.gameService.question?.type === questionType.QRE" id="answer-qre-field" class="w-full">
     </app-qre-response-area>
 </div>
-

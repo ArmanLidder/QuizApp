@@ -32,6 +32,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   bool isPanicMode = false;
   bool isAlreadyInit = false;
   bool isAlreadyCalled = false;
+  bool NextQuestionBtnDisabled = true;
 
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
@@ -125,14 +126,18 @@ class HostInterfaceManagementService extends ChangeNotifier {
       switch (type) {
         case QuestionType.QRL:
           this.sendQrlAnswer();
+          print('CALLED 1');
           this.isHostEvaluating = true;
+          this.NextQuestionBtnDisabled = false;
           notifyListeners();
           break;
         case QuestionType.QRE:
         case QuestionType.QCM:
         default:
           print('CALLED 1');
-          this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+          this._interactiveListService.getPlayersList(roomId,
+              leftPlayers: leftPlayers, resetPlayerStatus: false);
+          this.NextQuestionBtnDisabled = false;
           break;
       }
       //
@@ -158,8 +163,11 @@ class HostInterfaceManagementService extends ChangeNotifier {
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
         print('CALLED 2');
-        this._interactiveListService.getPlayersList(this.roomId, leftPlayers: leftPlayers);
-        this._socketService.sendMessage(SocketEvent.SAVE_FINAL_GAME_STATS, this.gameService.realGameService.roomId);
+        this
+            ._interactiveListService
+            .getPlayersList(this.roomId, leftPlayers: leftPlayers);
+        this._socketService.sendMessage(SocketEvent.SAVE_FINAL_GAME_STATS,
+            this.gameService.realGameService.roomId);
       }
     });
   }
@@ -176,10 +184,11 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void handleGetInitialQuestion() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION,
         (data) async {
-      // if (isAlreadyCalled) 
+      // if (isAlreadyCalled)
       //   return;
       print('CALLED 3');
-      final numberOfPlayers = await _interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers);
+      final numberOfPlayers = await _interactiveListService
+          .getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
       // isAlreadyCalled = true;
     });
@@ -187,11 +196,15 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleGetNextQuestion() {
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) async {
+      this.histogramDataChangingResponses.clear();
+      this.histogramDataValue.clear();
+      notifyListeners();
       print('CALLED 4');
       final numberOfPlayers = await this
           ._interactiveListService
           .getPlayersList(roomId, leftPlayers: leftPlayers);
       initGraph(QuizQuestion.fromJson(data['question']), numberOfPlayers);
+      this.NextQuestionBtnDisabled = true;
     });
   }
 
@@ -260,8 +273,6 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void resetInterface() {
     this.gameService.realGameService.validated = true;
     this.gameService.realGameService.locked = true;
-    this.histogramDataChangingResponses.clear();
-    this.histogramDataValue.clear();
     notifyListeners();
   }
 
@@ -338,6 +349,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.isPanicMode = false;
     this.isAlreadyInit = false;
     this.isAlreadyCalled = false;
+    this.NextQuestionBtnDisabled = true;
     notifyListeners();
   }
 

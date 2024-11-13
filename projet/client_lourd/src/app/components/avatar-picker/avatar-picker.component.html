@@ -1,15 +1,28 @@
 <div class="space-y-6">
     <h2 class="text-xl text-center font-semibold">Choisissez votre avatar</h2>
-
+    <div *ngIf="loading" class="flex justify-center my-4">
+        <mat-spinner></mat-spinner>
+    </div>
     <div class="flex flex-wrap justify-center gap-4">
-        <div *ngFor="let avatarUrl of defaultAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
-            <img [src]="avatarUrl" alt="Avatar" class="w-24 h-24 rounded-full"
-                 [class.ring-4]="avatarUrl === selectedAvatar"
-                 [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
-        </div>
+        <ng-container *ngIf="!loading">
+            <div *ngFor="let avatarUrl of defaultAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
+                <img [src]="avatarUrl" alt="Avatar" class="w-24 h-24 rounded-full"
+                     [class.ring-4]="avatarUrl === selectedAvatar"
+                     [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
+            </div>
+            <ng-container *ngIf="showOwnedAvatars" >
+                <div *ngFor="let avatarUrl of ownedAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
+                    <img [src]="avatarUrl" alt="Avatar" class="w-24 h-24 rounded-full"
+                         [class.ring-4]="avatarUrl === selectedAvatar"
+                         [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
+                </div>
+            </ng-container>
+        </ng-container>
+
+
         <div *ngIf="customAvatarUrl" class="avatar-item">
             <img [src]="customAvatarUrl"
-                 alt="Custom Avatar" class="w-24 h-24 rounded-full "
+                 alt="Custom Avatar" class="w-24 h-24 rounded-full"
                  [class.ring-4]="customAvatarSelected"
                  [class.ring-blue-500]="customAvatarSelected"
                  (click)="selectCustomAvatar()"/>
@@ -21,11 +34,11 @@
             Ou téléchargez votre propre avatar
         </label>
         <div class="space-y-6">
-            <label for="custom-avatar" class="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Choisir un fichier
+            <label for="custom-avatar" class="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 w-fit">
+                <mat-icon class="mr-2">upload</mat-icon>
+                Choisir une image
             </label>
-            <input id="custom-avatar" type="file" accept="image/*" (change)="onCustomAvatarUploaded($event)" class="hidden"/>
+            <input id="custom-avatar" type="file" accept="image/jpeg,image/png,image/jpg" (change)="onCustomAvatarUploaded($event)" class="hidden"/>
         </div>
     </div>
-
 </div>

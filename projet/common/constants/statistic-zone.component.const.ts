@@ -86,3 +86,7 @@ export const mockStats: QuestionStatistics[] = [
     [responses2, numberOfResponses2, question2],
     [responses3, numberOfResponses3, question3],
 ];
+
+export const WITHIN_MARGIN = 'Dans l\'intervalle';
+export const EXACT_ANSWER = 'Exact'
+export const INCORRECT_ANSWER = 'Incorrect'

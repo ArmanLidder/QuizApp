@@ -139,8 +139,15 @@ class HostHeader extends StatelessWidget {
     this.gameInterfaceManagementService,
   });
 
+
   @override
   Widget build(BuildContext context) {
+    final validateButtonStyle = TextButton.styleFrom(
+      textStyle: TextStyle(fontWeight: FontWeight.normal),
+      splashFactory: NoSplash.splashFactory,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      backgroundColor: this.hostInterfaceManagementService.NextQuestionBtnDisabled ? Colors.grey : Color.fromRGBO(53, 121, 246, 1),
+    );
     return Stack(children: [
       Column(
         children: [
@@ -159,25 +166,7 @@ class HostHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                onPressed: onNextQuestion,
-                // ()
-                // {
-                // hostInterfaceManagementService.saveStats();
-                // if (gameService.realGameService.isLast) {
-                //   isResultPage = true;
-                // }
-                // if (gameService.realGameService.isLast) {
-                //   print('isLast');
-                //   gameService.realGameService.isNotified = false;
-                //   hostInterfaceManagementService.handleLastQuestion();
-                //   isLastButton = true;
-                // }
-                // else {
-                //   gameService.realGameService.isNotified = false;
-                //   hostInterfaceManagementService.requestNextQuestion();
-                // }
-
-                // },
+                onPressed: this.hostInterfaceManagementService.NextQuestionBtnDisabled ? null : onNextQuestion,
                 child: Text(
                   gameService.realGameService.isLast
                       ? 'Résultats'
@@ -185,10 +174,7 @@ class HostHeader extends StatelessWidget {
                   style: TextStyle(
                       color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
                 ),
-                style: TextButton.styleFrom(
-                  textStyle: TextStyle(fontWeight: FontWeight.normal),
-                  backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                ),
+                style: validateButtonStyle,
               ),
               SizedBox(width: 50),
               QuitBtn(

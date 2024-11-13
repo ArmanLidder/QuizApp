@@ -111,6 +111,12 @@ class GameService extends ChangeNotifier {
     }
   }
 
+  void selectQREanswer(int selectedAnswer) {
+    if (this.lockedStatus) return;
+    this.qreAnswer = selectedAnswer;
+    this.realGameService.sendQRESelection(selectedAnswer);
+  }
+
   void selectChoiceOffline(int index) {
     if (this.answers.containsKey(index)) {
       this.answers.remove(index);

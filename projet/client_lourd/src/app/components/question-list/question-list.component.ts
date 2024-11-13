@@ -1,29 +1,57 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnDestroy} from '@angular/core';
 import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
-import { POPUP_TIMEOUT } from '@common/constants/quiz-creation.component.const';
+import {MAX_IMG_SIZE, POPUP_TIMEOUT} from '@common/constants/quiz-creation.component.const';
 import { ChoiceService } from '@app/services/choice-service/choice.service';
 import { QuestionService } from '@app/services/question-service/question.service';
 import { ItemMovingDirection } from 'src/enums/item-moving-direction';
 import { QuestionChoicePosition } from '@app/interfaces/question-choice-position/question-choice-position';
+import {QuestionImageService} from "@app/services/question-image.service/question-image.service";
+import {NON_EXISTANT_INDEX} from "@common/constants/question.service.const";
 
 @Component({
     selector: 'app-question-list',
     templateUrl: './question-list.component.html',
     styleUrls: ['./question-list.component.scss'],
 })
-export class QuestionListComponent {
+export class QuestionListComponent implements OnDestroy {
     @Input() questionsArray: FormArray | undefined;
     @Input() parentGroup: FormGroup;
     isPopUpVisible: boolean = false;
     questionErrors: string[] = [];
     protected readonly itemMovingDirection = ItemMovingDirection;
-
+    imageUploadError: string | null = null;
+    isUploading: boolean = false;
     constructor(
         private questionService: QuestionService,
         private choiceService: ChoiceService,
+        private questionImageService: QuestionImageService,
     ) {}
+    ngOnDestroy() {
+        this.questionService.modifiedQuestionIndex = NON_EXISTANT_INDEX;
+    }
+
+    async onImageSelected(event: Event, index: number) {
+        const input = event.target as HTMLInputElement;
+        (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(null);
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+            if (file.size > MAX_IMG_SIZE) {
+                this.imageUploadError = 'La taille de l\'image ne doit pas dépasser 2 MB.';
+                return;
+            }
+            this.imageUploadError = null;
+            try {
+                this.isUploading = true;
+                const imageUrl = await this.questionImageService.uploadQuestionImage(file, this.parentGroup.get('id')?.value);
+                this.isUploading = false;
+                (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(imageUrl);
+            } catch (error) {
+                this.imageUploadError = 'Une erreur est survenue lors du téléchargement de l\'image.';
+            }
+        }
+    }
+
     showPopupIfConditionMet(condition: boolean) {
-        console.log("setting")
         if (condition) {
             this.isPopUpVisible = true;
             setTimeout(() => {
@@ -36,7 +64,6 @@ export class QuestionListComponent {
     addQuestion(index: number) {
         this.questionErrors = this.questionService.addQuestion(index, this.questionsArray)
         if (index >= 0 ) {
-            console.log(index);
             this.showPopupIfConditionMet(this.questionErrors.length !== 0);
         }
     }
@@ -78,11 +105,12 @@ export class QuestionListComponent {
         return this.choiceService.getChoicesArray(index, this.questionsArray);
     }
 
-    calculateMarginLimit(answer: number | null): string {
-        if (answer === null || answer === undefined) return '';
-        const limit = 0.25 * answer; // 25% of the answer
-        return limit.toFixed(2); // Format with two decimal places
+    calculateMarginLimit(min: number | null, max: number | null): string {
+        if (min === null || max === null) return '';
+        const limit = Math.abs((max - min) / 4);
+        return Math.floor(limit).toString();
     }
+
 
     calculateAnswerInterval(answer: number | null, margin: number | null, min: number | null, max: number | null): string {
         if (
@@ -113,5 +141,9 @@ export class QuestionListComponent {
             !marginControl.errors &&
             !minControl.errors &&
             !maxControl.errors;
+    }
+
+    removeImage(index: number) {
+        (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(null);
     }
 }

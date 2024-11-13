@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { SocketClientService } from "@app/services/socket-client.service/socket-client.service";
+import {UsersService} from "@app/services/users.service/users.service";
 
 @Component({
     selector: 'app-main-page',
@@ -7,9 +8,13 @@ import { SocketClientService } from "@app/services/socket-client.service/socket-
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent {
-    readonly title: string = 'OnlyQuiz';
+    readonly title: string = 'Polyquiz';
+    username: string;
+    constructor(private socketService: SocketClientService, public usersService: UsersService) {
+        this.usersService.currentUserProfile$.subscribe((user)=>{
+            this.username = user?.username!;
+        })
 
-    constructor(private socketService: SocketClientService) {
         window.onload = () => {
             localStorage.removeItem('token');
             this.socketService.disconnect();

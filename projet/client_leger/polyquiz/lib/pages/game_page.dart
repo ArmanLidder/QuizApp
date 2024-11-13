@@ -127,13 +127,16 @@ class _MyWidgetState extends State<GamePage> {
           centerTitle: true,
           backgroundColor: Color.fromRGBO(53, 121, 246, 1),
         ),
-        body: ListView(children: [
-          Visibility(
-              visible: isHost,
-              child: HostInterface(
-                  interactiveListService: _interactiveListService,
-                  gameInterfaceManagementService:
-                      _gameInterfaceManagementService))
+        body: Stack(children: [
+          ListView(children: [
+            Visibility(
+                visible: isHost,
+                child: HostInterface(
+                    interactiveListService: _interactiveListService,
+                    gameInterfaceManagementService:
+                        _gameInterfaceManagementService))
+          ]),
+          Positioned(bottom: 20, left: 20, child: ChatPopup())
         ]),
       );
     } else {
@@ -195,86 +198,91 @@ class _MyWidgetState extends State<GamePage> {
                               centerTitle: true,
                               backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                             ),
-                            body: ListView(shrinkWrap: true, children: [
-                              Visibility(
-                                // Vue du joueur commence ici
-                                visible: !isHost,
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: TimerWidget(
-                                            isHost: isHost,
-                                            timeTxt:
-                                                _gameInterfaceManagementService
-                                                    .timerText,
-                                            time:
-                                                _gameInterfaceManagementService
-                                                    .gameService.timer,
-                                          ),
-                                        ),
-                                        QuestionInfoWidget(
-                                            questionNum:
-                                                _gameInterfaceManagementService
-                                                    .gameService.questionNumber,
-                                            questionPts:
-                                                _gameInterfaceManagementService
-                                                    .gameService
-                                                    .question!
-                                                    .points,
-                                            questionText:
-                                                _gameInterfaceManagementService
-                                                    .gameService
-                                                    .question!
-                                                    .text),
-                                        Expanded(
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            margin: EdgeInsets.all(5.0),
-                                            padding: EdgeInsets.all(10.0),
-                                            decoration: BoxDecoration(
-                                                border: Border.all()),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  'Pointage: ${_gameInterfaceManagementService.playerScore}',
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
-                                                _gameInterfaceManagementService
-                                                        .isBonus
-                                                    ? Text(
-                                                        'Vous avez reçu le bonus!')
-                                                    : SizedBox()
-                                              ],
+                            body: Stack(children: [
+                              ListView(shrinkWrap: true, children: [
+                                Visibility(
+                                  // Vue du joueur commence ici
+                                  visible: !isHost,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: TimerWidget(
+                                              isHost: isHost,
+                                              timeTxt:
+                                                  _gameInterfaceManagementService
+                                                      .timerText,
+                                              time:
+                                                  _gameInterfaceManagementService
+                                                      .gameService.timer,
                                             ),
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                    if (getImageWidgetFromQuestion() != null)
-                                      getImageWidgetFromQuestion()!,
-                                    getPlayerQuestion(),
-                                    Visibility(
-                                      visible: _gameInterfaceManagementService
-                                          .gameService
-                                          .realGameService
-                                          .isHostEvaluating,
-                                      child: PlayerNotice(
-                                        message: message,
-                                        gameInterfaceManagementService:
-                                            _gameInterfaceManagementService,
+                                          QuestionInfoWidget(
+                                              questionNum:
+                                                  _gameInterfaceManagementService
+                                                      .gameService
+                                                      .questionNumber,
+                                              questionPts:
+                                                  _gameInterfaceManagementService
+                                                      .gameService
+                                                      .question!
+                                                      .points,
+                                              questionText:
+                                                  _gameInterfaceManagementService
+                                                      .gameService
+                                                      .question!
+                                                      .text),
+                                          Expanded(
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              margin: EdgeInsets.all(5.0),
+                                              padding: EdgeInsets.all(10.0),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all()),
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    'Pointage: ${_gameInterfaceManagementService.playerScore}',
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                  _gameInterfaceManagementService
+                                                          .isBonus
+                                                      ? Text(
+                                                          'Vous avez reçu le bonus!')
+                                                      : SizedBox()
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [getButtons(), ChatPopup()],
-                                    )
-                                  ],
+                                      if (getImageWidgetFromQuestion() != null)
+                                        getImageWidgetFromQuestion()!,
+                                      getPlayerQuestion(),
+                                      Visibility(
+                                        visible: _gameInterfaceManagementService
+                                            .gameService
+                                            .realGameService
+                                            .isHostEvaluating,
+                                        child: PlayerNotice(
+                                          message: message,
+                                          gameInterfaceManagementService:
+                                              _gameInterfaceManagementService,
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [getButtons()],
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
+                              ]),
+                              Positioned(
+                                  bottom: 0, left: 20, child: ChatPopup())
                             ]),
                           );
                         }

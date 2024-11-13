@@ -2,7 +2,7 @@ import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 import {
     GameStats,
     PanicModeData,
-    PlayerAnswerData,
+    PlayerAnswerData, PlayerQRESelection,
     PlayerSelection,
     PlayerUsername,
     RemainingTime,
@@ -23,6 +23,7 @@ import {TimerService} from '@app/services/timer.service/timer.service';
 import {Service} from 'typedi';
 import {Canal} from "@common/interfaces/message.interface";
 import {FirebaseService} from "@app/services/firebase.service/firebase.service";
+import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
 
 
 @Service()
@@ -55,6 +56,7 @@ export class GameManagementService {
         this.handlePauseTimer(roomManager, socket, sio);
         this.handlePanicMode(roomManager, socket, sio);
         this.handleGameStatusDistribution(socket, sio);
+        this.handleQRESelection(roomManager,socket, sio)
     }
 
     private handleStartGame(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
@@ -83,8 +85,8 @@ export class GameManagementService {
                 index,
                 numberOfQuestions: game.quiz.questions.length
             });
-            const isChoiceQuestion = game.currentQuizQuestion.type === QuestionType.QCM;
-            const duration = isChoiceQuestion ? roomManager.getGameByRoomId(roomId).duration : QRL_DURATION;
+            const isChoiceOrQREQuestion = game.currentQuizQuestion.type === QuestionType.QCM || game.currentQuizQuestion.type === QuestionType.QRE;
+            const duration = isChoiceOrQREQuestion ? roomManager.getGameByRoomId(roomId).duration : QRL_DURATION;
             if (roomManager.getUsernameBySocketId(roomId, socket.id) === HOST_USERNAME) {
                 roomManager.clearRoomTimer(roomId);
                 this.timerService.startTimer({roomId, time: duration});
@@ -116,6 +118,22 @@ export class GameManagementService {
             const username = roomManager.getUsernameBySocketId(data.roomId, socket.id);
             const choicesStatsValues = Array.from(game.choicesStats.values());
             sio.to(hostSocketId).emit(SocketEvent.REFRESH_CHOICES_STATS, choicesStatsValues);
+            sio.to(hostSocketId).emit(SocketEvent.UPDATE_INTERACTION, username);
+        });
+    }
+
+    private handleQRESelection(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.UPDATE_QRE_SELECTION, (data: PlayerQRESelection) => {
+            const game = roomManager.getGameByRoomId(data.roomId);
+            const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
+            const username = roomManager.getUsernameBySocketId(data.roomId, socket.id);
+            game.updateQREStats(data.selectedAnswer, username)
+            const choicesStatsValues = [
+                game.qreStats.get(WITHIN_MARGIN) || 0,
+                game.qreStats.get(EXACT_ANSWER) || 0,
+                game.qreStats.get(INCORRECT_ANSWER) || 0
+            ];
+            sio.to(hostSocketId).emit(SocketEvent.REFRESH_QRE_STATS, choicesStatsValues);
             sio.to(hostSocketId).emit(SocketEvent.UPDATE_INTERACTION, username);
         });
     }

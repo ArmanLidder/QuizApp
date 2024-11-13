@@ -8,6 +8,7 @@ export interface Quiz {
     lastModification: string | null;
     questions: QuizQuestion[];
     visible?: boolean;
+    owner?: string; //firebase uid string
 }
 
 export interface QuizQuestion {
@@ -18,6 +19,7 @@ export interface QuizQuestion {
     answer? : number, //Only QRE
     interval? : {max:number, min:number} //Only QRE
     margin?: number //Only QRE
+    imageUrl?: string;
 }
 
 export interface QuizChoice {

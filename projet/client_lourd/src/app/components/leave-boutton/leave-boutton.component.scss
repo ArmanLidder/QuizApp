@@ -18,10 +18,14 @@
 }
 
 button {
-    flex: 1;
     margin: 5px;
     border-radius: 20px;
     padding: 5px 10px;
     font-size: 20px;
     cursor: pointer;
+}
+
+.button-width {
+    flex: 0 0 auto; /* Prevents the button from stretching */
+    width: auto;
 }
