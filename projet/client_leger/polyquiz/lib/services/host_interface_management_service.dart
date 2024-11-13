@@ -101,6 +101,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
       this.timerText = 'Prochaine question dans: ';
       this.gameService.realGameService.timer = timeValue;
+      notifyListeners();
       if (this.gameService.realGameService.timer == 0) {
         print('TIMER GOT TO 0');
         this.gameService.realGameService.inTimeTransition = false;

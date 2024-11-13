@@ -52,6 +52,7 @@ class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Quizzes'),
+        automaticallyImplyLeading: false,
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
