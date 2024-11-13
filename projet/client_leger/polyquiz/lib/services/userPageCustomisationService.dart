@@ -38,7 +38,7 @@ class UserPageCustomisationService extends GetxService {
       // For each item in `itemsOwned`, get the document in `storeItems` and check `itemType`
       for (var itemId in itemsOwned) {
         DocumentSnapshot itemDoc = await _firestore.collection('storeItems').doc(itemId).get();
-        if (itemDoc.exists && itemDoc.get('itemType') == 'image') {
+        if (itemDoc.exists && (itemDoc.get('itemType') == 'image' || itemDoc.get('itemType') == 'rewardImage')) {
           var source = itemDoc.get('source');
           if (source is String) {
             imageUrls.add(source);
@@ -56,7 +56,6 @@ class UserPageCustomisationService extends GetxService {
     // Fetch default avatars and purchased avatars and combine them
     imageUrls.addAll(await defaultAvatars());
     imageUrls.addAll(await purchasedAvatars(userId));
-
     return imageUrls;
   }
   Future<List<String>> purchasedThemes(String userId) async {
