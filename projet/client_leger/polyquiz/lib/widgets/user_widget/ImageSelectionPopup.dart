@@ -22,7 +22,7 @@ class ImageSelectionPopup extends StatelessWidget {
         height: 300,
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, //TODO: change peut-etre?
+            crossAxisCount: 6, //TODO: change peut-etre?
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
@@ -48,8 +48,10 @@ class ImageSelectionPopup extends StatelessWidget {
                 Navigator.of(context).pop(); // Close the popup after selecting the image
               },
               child: Container(
+                width:50,
+                height:50,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
+                  shape: BoxShape.circle,
                   image: DecorationImage(
                     image: NetworkImage(imageUrls[index]),
                     fit: BoxFit.cover,
