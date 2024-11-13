@@ -79,11 +79,18 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   Widget getMinMaxCard() {
+    const numberPadding = 70.0;
     return Row(
       children: [
-        Text(this.min.toString()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: numberPadding),
+          child: Text(this.min.toString()),
+        ),
         Spacer(),
-        Text(this.max.toString())
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: numberPadding),
+          child: Text(this.max.toString()),
+        )
       ],
     );
   }
