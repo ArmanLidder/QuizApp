@@ -136,7 +136,9 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handleRemovedFromGame() {
     this._socketService.onMessage(SocketEvent.REMOVED_FROM_GAME, (_) {
-      print('GOT TO HERE...');
+      this.gameService.destroy();
+      this.reset();
+      this._interactiveListService.reset();
       this._globalNavigationService.navigateTo('/home');
     });
   }
