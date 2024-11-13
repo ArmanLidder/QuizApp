@@ -32,8 +32,6 @@ export class ObservationSelectorDialogComponent implements OnInit {
   }
 
   observe(userId: string): void {
-    console.log("observe UserID", userId)
-    console.log("current UserId", this.playerObserved)
     this.observationService.observeOtherPlayer(this.playerObserved, userId);
     this.socketService.socket.off(SocketEvent.SENDING_OBSERVER_PLAYER_LIST);
     this.dialogRef.close(userId);
@@ -48,7 +46,6 @@ export class ObservationSelectorDialogComponent implements OnInit {
       this.observationService.playersList = [];
       this.observationService.playersList.push(this.observationService.gameConfigs.hostUserId);
       this.observationService.playersList.push(...data);
-      console.log(this.observationService.playersList);
     })
   }
 
