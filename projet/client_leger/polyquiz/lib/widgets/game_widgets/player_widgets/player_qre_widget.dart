@@ -65,6 +65,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 getMinMaxCard(),
+                getIncrementalAdjustmentButtons(),
                 getSlider(),
                 getToleranceWidget(),
                 getIntervalWidget(),
