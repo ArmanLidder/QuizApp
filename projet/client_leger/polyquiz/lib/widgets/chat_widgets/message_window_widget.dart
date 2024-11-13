@@ -20,12 +20,14 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
   final channelService = ChannelService.instance;
   final _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  String defaultName = 'null';
+  List<Message> defaultMessages = [];
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      List<Message> messages = getChannel()?.messages ?? [];
-      String channelName = getChannel()?.name ?? "null";
+      List<Message> messages = getChannel()?.messages ?? defaultMessages;
+      String channelName = getChannel()?.name ?? defaultName;
       return Column(
         children: <Widget>[
           Row(
@@ -48,7 +50,9 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
   Canal? getChannel() {
     bool channelById(Canal channel) => channel.id == widget.channelId;
     try {
-      return channelService.channels.toList().firstWhere(channelById);
+      Canal channel = channelService.channels.toList().firstWhere(channelById);
+      defaultName = channel.name;
+      return channel;
     } on StateError catch (e) {
       return null;
     }
