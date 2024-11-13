@@ -4,6 +4,7 @@ import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
+import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../services/waiting_room_service.dart';
 import '../models/quiz.dart';
 import 'package:polyquiz/constants/socket-event.dart';
@@ -160,7 +161,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                         itemCount: waitingRoomService.players.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            title: Text(waitingRoomService.players[index]),
+                            title: SmartAvatar(
+                                userId: waitingRoomService.players[index]),
                             trailing: widget.isHost
                                 ? IconButton(
                                     icon: Icon(Icons.remove_circle_outline,

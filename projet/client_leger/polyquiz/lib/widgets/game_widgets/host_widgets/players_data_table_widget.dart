@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/player_status.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 
 class PlayersDataTable extends StatefulWidget {
   final bool isHost;
@@ -106,8 +107,7 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                       decorationThickness: 2);
                 }
                 return DataRow(color: WidgetStatePropertyAll(rowColor), cells: [
-                  DataCell(Center(
-                      child: Text(player.username, style: playerTextStyle))),
+                  DataCell(Center(child: SmartAvatar(userId: player.username))),
                   DataCell(Center(
                       child: Text(player.score.toString(),
                           style: playerTextStyle))),
