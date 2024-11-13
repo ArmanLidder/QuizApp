@@ -232,5 +232,29 @@
     "AVG_CORRECT_ANSWERS": "Correct Answers per Game",
     "AVG_GAME_TIME": "Average Game Time",
     "SECONDS": "seconds"
+  },
+  "CHAT_COMPONENT": {
+    "CHAT": "Chat",
+    "ADD_CHANNEL": "Add Channel",
+    "JOIN_CHANNEL": "Join Channel",
+    "MY_CHANNELS": "My channels",
+    "CHANNELS": "Channels",
+    "CHANNEL_CREATION": "Channel Creation",
+    "CHANNEL_DELETION": "Channel Deletion",
+    "BACK": "Back",
+    "CREATE": "Create",
+    "DELETE": "Delete",
+    "ENTER_MESSAGE": "Enter a message...",
+    "ENTER_CHANNEL_NAME": "Enter a channel name...",
+    "SEARCH_CHANNEL": "Search a channel...",
+    "CHANNEL_NAME_REQUIRED": "Channel name is required.",
+    "CHANNEL_NAME_PATTERN": "Channel name must only contain alphanumeric characters.",
+    "CHANNEL_NAME_MAX_LENGTH": "Channel name must contain maximum 20 characters.",
+    "MESSAGE_MAX_LENGTH": "Message must contain maximum 200 characters",
+    "CHANNEL_DELETED": "The channel has been deleted. Please leave. Goodbye!",
+    "DELETE_WARNING": "Warning!!!",
+    "DELETE_CONFIRMATION": "This action is irreversible. The channel {{channelName}} will be deleted forever.",
+    "ROOM_IN_NAME_UNALLOWED": "The channel name cannot contain: room. Please choose another name.",
+    "ROOM_NAME_ALREADY_USED": "The name {{canalName}} is already in use. Please choose another name."
   }
 }

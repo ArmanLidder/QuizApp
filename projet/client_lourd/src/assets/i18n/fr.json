@@ -232,5 +232,29 @@
     "AVG_CORRECT_ANSWERS": "Bonnes Réponses par Partie",
     "AVG_GAME_TIME": "Temps Moyen par Partie",
     "SECONDS": "secondes"
+  },
+  "CHAT_COMPONENT": {
+    "CHAT": "Clavardage",
+    "ADD_CHANNEL": "Ajouter un Canal",
+    "JOIN_CHANNEL": "Joindre un Canal",
+    "MY_CHANNELS": "Mes canaux",
+    "CHANNELS": "Canaux",
+    "CHANNEL_CREATION": "Création canal",
+    "CHANNEL_DELETION": "Suppression canal",
+    "BACK": "Retour",
+    "CREATE": "Créer",
+    "DELETE": "Supprimer",
+    "ENTER_MESSAGE": "Saisir un message...",
+    "ENTER_CHANNEL_NAME": "Saisir un nom de canal...",
+    "SEARCH_CHANNEL": "Chercher un canal...",
+    "CHANNEL_NAME_REQUIRED": "Le nom de canal est requis.",
+    "CHANNEL_NAME_PATTERN": "Le nom du canal doit seulement contenir des caractères alphanumériques.",
+    "CHANNEL_NAME_MAX_LENGTH": "Le nom du canal doit contenir 20 caractères maximum.",
+    "MESSAGE_MAX_LENGTH": "Le message doit contenir un maximum de 200 caractères",
+    "CHANNEL_DELETED": "Le canal a été effacé. Veuillez quitter. Au revoir!",
+    "DELETE_WARNING": "Attention !!!",
+    "DELETE_CONFIRMATION": "Cette action est irreversible. Le canal {{channelName}} sera effacé à jamais.",
+    "ROOM_IN_NAME_UNALLOWED": "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom.",
+    "ROOM_NAME_ALREADY_USED": "Le nom {{canalName}} est déjà utilisé. Veuillez choisir un autre nom."
   }
 }
