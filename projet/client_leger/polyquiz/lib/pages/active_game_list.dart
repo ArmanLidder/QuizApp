@@ -396,7 +396,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                           itemCount: games.length,
                           itemBuilder: (context, index) {
                             final game = games[index];
-                            if (!game.onGoing)
+                            if (!game.onGoing && !game.private)
                               return GestureDetector(
                                 onTap: () {
                                   _joinRoom(game);
@@ -414,7 +414,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                   price: game.price.toString(),
                                 ),
                               );
-                            if (game.onGoing)
+                            if (game.onGoing && !game.private)
                               return GestureDetector(
                                   onTap: () {
                                     // add method for observer
