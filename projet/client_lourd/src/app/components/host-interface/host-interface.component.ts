@@ -1,11 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { GameService } from '@app/services/game.service/game.service';
-import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
-import { HostInterfaceManagementService } from '@app/services/host-interface-management.service/host-interface-management.service';
-import { QrlEvaluationService } from '@app/services/qrl-evaluation.service/qrl-evaluation.service';
-import { TimerMessage } from '@common/browser-message/displayable-message/timer-message';
-import { NEXT_QUESTION, SHOW_RESULT } from '@common/constants/host-interface.component.const';
+import {Component, inject} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {GameService} from '@app/services/game.service/game.service';
+import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
+import {
+    HostInterfaceManagementService
+} from '@app/services/host-interface-management.service/host-interface-management.service';
+import {QrlEvaluationService} from '@app/services/qrl-evaluation.service/qrl-evaluation.service';
+import {TimerMessage} from '@common/browser-message/displayable-message/timer-message';
+import {NEXT_QUESTION, SHOW_RESULT} from '@common/constants/host-interface.component.const';
 
 @Component({
     selector: 'app-host-interface',
@@ -23,8 +25,13 @@ export class HostInterfaceComponent {
         public hostInterfaceManagerService: HostInterfaceManagementService,
         private readonly socketService: SocketClientService,
     ) {
-        if (this.socketService.isSocketAlive()) this.hostInterfaceManagerService.configureBaseSocketFeatures();
-        this.gameService.init(this.route.snapshot.paramMap.get('id') as string);
+        if (!this.gameService.observerMode) {
+            if (this.socketService.isSocketAlive()) {
+                this.hostInterfaceManagerService.configureBaseSocketFeatures();
+                console.log("Congfig on Host-Interface");
+            }
+            this.gameService.init(this.route.snapshot.paramMap.get('id') as string);
+        }
     }
 
     isDisabled() {

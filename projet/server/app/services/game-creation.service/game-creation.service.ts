@@ -13,6 +13,8 @@ import {GameConfig} from "@common/interfaces/game-info.interface";
 import {Score} from "@common/interfaces/score.interface";
 import {Game} from "@app/classes/game/game";
 import {GameHistory, User, UserStats} from "@common/interfaces/user-data.interface";
+import {HostCurrentGameInterface} from "@common/interfaces/host.interface";
+// import {InitialQuestionData, ObsQuestionData} from "@common/interfaces/host.interface";
 
 @Service()
 export class GameCreationService {
@@ -42,6 +44,7 @@ export class GameCreationService {
         this.handleNewObserver(roomManager, socket, sio);
         this.handleObserverGetPlayerList(roomManager, socket, sio);
         this.handleChangeObservedPLayer(roomManager, socket);
+        this.handleGameStatusForObsReception(roomManager, socket, sio);
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
@@ -80,16 +83,29 @@ export class GameCreationService {
             const hostId = roomManager.getSocketIdByUsername(roomId, HOST_USERNAME);
             const observerId = socket.handshake.auth.userId;
             await this.addUserToRoomCanal(roomId, observerId);
-            socket.join(String(roomId))
+            socket.join(String(roomId));
             socket.join(String(hostId));
+            sio.to(String(hostId)).emit(SocketEvent.REQUEST_HOST_GAME_STATUS);
+        });
+    }
+
+    private handleGameStatusForObsReception(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.SENDING_HOST_GAME_STATUS, (data: HostCurrentGameInterface) => {
+            console.log("Requesting Initial Data", data);
+            if (data.histogramDataChangingResponses[0] === 1000) { // To tell me it is QCM
+                const game = roomManager.getGameByRoomId(data.roomId)
+                data.histogramDataChangingResponses = Array.from(game.choicesStats.values());
+            }
+            sio.emit(SocketEvent.RECEIVING_HOST_GAME_STATUS, data);
         });
     }
 
     private handleChangeObservedPLayer(roomManager: RoomManagingService, socket: io.Socket) {
         socket.on(SocketEvent.CHANGE_OBSERVED_PLAYER, (data: NewObservedPlayer) => {
            const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
+           const newObservedPlayerId = data.isHost ? HOST_USERNAME : data.newUserId;
            const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
-           const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, data.newUserId);
+           const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, newObservedPlayerId);
            socket.leave(String(observedPlayerSocketId));
            socket.join(String(newObservedPlayerSocketId));
         });

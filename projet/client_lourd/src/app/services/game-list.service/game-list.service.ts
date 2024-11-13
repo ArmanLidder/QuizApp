@@ -14,6 +14,7 @@ export class GameListService {
   constructor(private socketService: SocketClientService) {}
 
   async initialize() {
+    this.gamesSubject.next([]);
     if (!this.socketService.isSocketAlive()) {
       await this.socketService.asyncConnect();
     }
@@ -32,15 +33,8 @@ export class GameListService {
 
   private configureBaseSocket(): void {
     this.socketService.on(SocketEvent.UPDATE_GAME_LIST, (games: GameListItem[]) => {
-      const currentGames = this.gamesSubject.getValue();
-      const updatedGames = currentGames.filter(game => games.some(updatedGame => updatedGame.room !== game.room));
-      games.forEach(updatedGame => {
-        const existingGameIndex = updatedGames.findIndex(game => game.room === updatedGame.room);
-        if (existingGameIndex === -1) {
-          updatedGames.push(updatedGame);  // Add the new game
-        }
-      });
-      this.gamesSubject.next(updatedGames);
+      this.gamesSubject.next([]);
+      this.gamesSubject.next(games);
     });
   }
 }

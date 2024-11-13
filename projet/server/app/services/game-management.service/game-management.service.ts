@@ -79,12 +79,6 @@ export class GameManagementService {
             const question = game.currentQuizQuestion;
             const index = game.currIndex + 1;
             const username = roomManager.getUsernameBySocketId(roomId, socket.id);
-            console.log(`
-            GET QUESTION
-            Questions length ${game.quiz.questions.length}
-            Current question index ${game.currIndex}
-            Id = ${socket.handshake.auth.userId}
-            `);
             socket.emit(SocketEvent.GET_INITIAL_QUESTION, {
                 question,
                 username,
@@ -108,6 +102,7 @@ export class GameManagementService {
                 const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
                 sio.to(hostSocketId).emit(SocketEvent.SUBMIT_ANSWER, data.username);
             }
+            if (game.currentQuizQuestion.type === QuestionType.QRL) sio.to(socket.id).emit(SocketEvent.GET_QRL_ANSWER_FOR_OBS, data.answers)
             if (game.playersAnswers.size === game.players.size) {
                 if (game.currentQuizQuestion.type === QuestionType.QCM || game.currentQuizQuestion.type === QuestionType.QRE) roomManager.getGameByRoomId(data.roomId).updateScores();
                 roomManager.clearRoomTimer(data.roomId);
@@ -151,6 +146,7 @@ export class GameManagementService {
             game.switchActivityStatus(data.isActive);
             const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
             sio.to(hostSocketId).emit(SocketEvent.REFRESH_ACTIVITY_STATS, game.activityStatusStats);
+            sio.to(socket.id).emit(SocketEvent.GET_QRL_INTERACTION, data.isActive);
         });
     }
 
@@ -189,6 +185,7 @@ export class GameManagementService {
     private handleGetScore(roomManager: RoomManagingService, socket: io.Socket) {
         socket.on(SocketEvent.GET_SCORE, (data: PlayerUsername, callback) => {
             const playerScore = roomManager.getGameByRoomId(data.roomId).players.get(data.username);
+            console.log(playerScore);
             callback(playerScore);
         });
     }
@@ -198,18 +195,7 @@ export class GameManagementService {
             const game = roomManager.getGameByRoomId(roomId);
             roomManager.clearRoomTimer(roomId);
             const lastIndex = game.quiz.questions.length - 1;
-            console.log(`
-            NEXT QUESTION
-            Questions length ${game.quiz.questions.length}
-            Current question index ${game.currIndex}
-            Id = ${socket.handshake.auth.userId}
-            `);
             game.next();
-            console.log(`
-            Questions length ${game.quiz.questions.length}
-            After next question index ${game.currIndex}
-            Id = ${socket.handshake.auth.userId}
-            `)
             let index = game.currIndex;
             const isLast = index === lastIndex;
             const nextQuestionNumber = ++index;

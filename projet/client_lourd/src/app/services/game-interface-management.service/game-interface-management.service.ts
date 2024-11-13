@@ -40,8 +40,10 @@ export class GameInterfaceManagementService {
         if (this.gameService.isTestMode) {
             if (this.socketService.isSocketAlive()) this.socketService.disconnect();
         }
-        if (this.socketService.isSocketAlive()) this.configureBaseSocketFeatures();
-        this.gameService.init(pathId);
+        if (!this.gameService.observerMode) {
+            if (this.socketService.isSocketAlive()) this.configureBaseSocketFeatures();
+            this.gameService.init(pathId);
+        }
     }
 
     reset() {
@@ -66,29 +68,53 @@ export class GameInterfaceManagementService {
     }
 
     private resetData() {
-        this.gameService.audio.pause();
-        this.gameService.audio.currentTime = 0;
-        this.gameService.gameRealService.audioPaused = false;
+        if (!this.gameService.observingHost) {
+            this.gameService.audio.pause();
+            this.gameService.audio.currentTime = 0;
+            this.gameService.gameRealService.audioPaused = false;
+            this.gameService.gameRealService.locked = false;
+            this.gameService.gameRealService.validated = false;
+        }
         this.inPanicMode = false;
-        this.gameService.gameRealService.locked = false;
-        this.gameService.gameRealService.validated = false;
         this.isBonus = false;
         this.timerText = TimerMessage.TIME_LEFT;
     }
 
     private handleEndQuestion() {
         this.socketService.on(SocketEvent.END_QUESTION, () => {
+            if (!this.gameService.observerMode) {
+                this.gameService.audio.pause();
+                this.gameService.audio.currentTime = 0;
+                this.gameService.gameRealService.audioPaused = false;
+                this.inPanicMode = false;
+                if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
+                    this.getScore();
+                } else {
+                    this.gameService.qrlAnswer = '';
+                    this.gameService.gameRealService.validated = true;
+                }
+            } else {
+                this.obsHandleEndQuestion();
+            }
+
+        });
+    }
+
+    private obsHandleEndQuestion() {
+        if (!this.gameService.observingHost) {
             this.gameService.audio.pause();
             this.gameService.audio.currentTime = 0;
             this.gameService.gameRealService.audioPaused = false;
-            this.inPanicMode = false;
-            if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
-                this.getScore();
-            } else {
+        }
+        this.inPanicMode = false;
+        if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
+            this.getScore();
+        } else {
+            if (!this.gameService.observingHost) {
                 this.gameService.qrlAnswer = '';
                 this.gameService.gameRealService.validated = true;
             }
-        });
+        }
     }
 
     private handleEvaluationOver() {
@@ -99,21 +125,36 @@ export class GameInterfaceManagementService {
 
     private handleTimeTransition() {
         this.socketService.on(SocketEvent.TIME_TRANSITION, (timeValue: number) => {
-            this.gameService.gameRealService.timer = timeValue;
-            if (this.gameService.timer === 0) {
-                this.resetData();
+            if (!this.gameService.observerMode) {
+                this.gameService.gameRealService.timer = timeValue;
+                if (this.gameService.timer === 0) {
+                    this.resetData();
+                }
+            } else if (!this.gameService.observingHost) {
+                this.gameService.gameRealService.timer = timeValue;
+                if (this.gameService.timer === 0) {
+                    this.resetData();
+                }
             }
         });
     }
 
     private handleFinalTimeTransition() {
         this.socketService.on(SocketEvent.FINAL_TIME_TRANSITION, (timeValue: number) => {
-            this.timerText = TimerMessage.FINAL_RESULT;
-            this.gameService.gameRealService.timer = timeValue;
-            if (this.gameService.timer === 0) {
-                this.isGameOver = true;
-                this.interactiveListService.isFinal = true;
-                this.interactiveListService.getPlayersList(this.gameService.gameRealService.roomId, []);
+            if (!this.gameService.observerMode) {
+                this.timerText = TimerMessage.FINAL_RESULT;
+                this.gameService.gameRealService.timer = timeValue;
+                if (this.gameService.timer === 0) {
+                    this.isGameOver = true;
+                    this.interactiveListService.isFinal = true;
+                    this.interactiveListService.getPlayersList(this.gameService.gameRealService.roomId, []);
+                }
+            } else {
+                this.timerText = TimerMessage.FINAL_RESULT;
+                if (!this.gameService.observingHost) this.gameService.gameRealService.timer = timeValue;
+                if (this.gameService.timer === 0) {
+                    this.isGameOver = true;
+                }
             }
         });
     }
@@ -126,8 +167,14 @@ export class GameInterfaceManagementService {
 
     private handlePanicMode() {
         this.socketService.on(SocketEvent.PANIC_MODE, () => {
-            if (this.gameService.timer > 0 && !this.gameService.gameRealService.audioPaused) {
-                this.gameService.audio.play();
+            if (!this.gameService.observerMode) {
+                if (this.gameService.timer > 0 && !this.gameService.gameRealService.audioPaused) {
+                    this.gameService.audio.play();
+                }
+            } else if (!this.gameService.observingHost){
+                if (this.gameService.timer > 0 && !this.gameService.gameRealService.audioPaused) {
+                    this.gameService.audio.play();
+                }
             }
             this.inPanicMode = true;
         });
@@ -135,12 +182,21 @@ export class GameInterfaceManagementService {
 
     private handlePauseTimer() {
         this.socketService.on(SocketEvent.PAUSE_TIMER, () => {
-            if (this.gameService.gameRealService.audioPaused && this.inPanicMode) {
-                this.gameService.audio.play();
-            } else if (!this.gameService.gameRealService.audioPaused && this.inPanicMode) {
-                this.gameService.audio.pause();
+            if (!this.gameService.observerMode) {
+                if (this.gameService.gameRealService.audioPaused && this.inPanicMode) {
+                    this.gameService.audio.play();
+                } else if (!this.gameService.gameRealService.audioPaused && this.inPanicMode) {
+                    this.gameService.audio.pause();
+                }
+                this.gameService.gameRealService.audioPaused = !this.gameService.gameRealService.audioPaused;
+            } else if (!this.gameService.observingHost) {
+                if (this.gameService.gameRealService.audioPaused && this.inPanicMode) {
+                    this.gameService.audio.play();
+                } else if (!this.gameService.gameRealService.audioPaused && this.inPanicMode) {
+                    this.gameService.audio.pause();
+                }
+                this.gameService.gameRealService.audioPaused = !this.gameService.gameRealService.audioPaused;
             }
-            this.gameService.gameRealService.audioPaused = !this.gameService.gameRealService.audioPaused;
         });
     }
 
@@ -168,7 +224,7 @@ export class GameInterfaceManagementService {
                 SocketEvent.GET_SCORE,
                 {
                     roomId: this.gameService.gameRealService.roomId,
-                    username: this.gameService.gameRealService.username,
+                    username: this.gameService.observerMode ? this.gameService.observedPlayerId : this.gameService.gameRealService.username,
                 },
                 (score: Score) => {
                     this.gameService.gameRealService.validated = true;

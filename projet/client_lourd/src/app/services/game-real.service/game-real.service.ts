@@ -42,7 +42,6 @@ export class GameRealService implements GameServiceInterface {
         if (isObserver) {
             this.observerMode = true;
             this.username = HOST_USERNAME;
-            console.log("game real service init with isObserver as true");
         }
         this.configureBaseSockets();
         this.socketService.send(SocketEvent.GET_QUESTION, this.roomId);
@@ -72,7 +71,7 @@ export class GameRealService implements GameServiceInterface {
     configureBaseSockets() {
         this.socketService.on(SocketEvent.GET_INITIAL_QUESTION, (data: InitialQuestionData) => {
             this.question = data.question;
-            this.username = data.username;
+            if (!this.observerMode) this.username = data.username;
             if (data.numberOfQuestions === 1) {
                 this.isLast = true;
             }

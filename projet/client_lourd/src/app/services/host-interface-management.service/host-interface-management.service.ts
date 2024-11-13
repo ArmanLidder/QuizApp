@@ -17,7 +17,7 @@ import {
 import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
 import {TimerMessage} from '@common/browser-message/displayable-message/timer-message';
 import {QuestionType} from '@common/enums/question-type.enum';
-import {InitialQuestionData, NextQuestionData} from '@common/interfaces/host.interface';
+import {HostCurrentGameInterface, InitialQuestionData, NextQuestionData} from '@common/interfaces/host.interface';
 import {QuizChoice, QuizQuestion} from '@common/interfaces/quiz.interface';
 import {HOST_USERNAME} from '@common/names/host-username';
 import {SocketEvent} from '@common/socket-event-name/socket-event-name';
@@ -32,7 +32,6 @@ import {
     providedIn: 'root',
 })
 export class HostInterfaceManagementService {
-    observerMode: boolean = false;
     timerText: string = TimerMessage.TIME_LEFT;
     isGameOver: boolean = false;
     histogramDataChangingResponses = new Map<string, number>();
@@ -48,8 +47,7 @@ export class HostInterfaceManagementService {
         public gameService: GameService,
         private readonly socketService: SocketClientService,
         private interactiveListService: InteractiveListSocketService,
-    ) {
-    }
+    ) {}
 
     private get roomId() {
         return this.gameService.gameRealService.roomId;
@@ -80,7 +78,7 @@ export class HostInterfaceManagementService {
         this.isPanicMode = false;
         this.gameService.gameRealService.validated = false;
         this.gameService.gameRealService.locked = false;
-        this.socketService.send(SocketEvent.START_TRANSITION, this.gameService.gameRealService.roomId);
+        if (!this.gameService.observerMode) this.socketService.send(SocketEvent.START_TRANSITION, this.gameService.gameRealService.roomId);
     }
 
     handleLastQuestion() {
@@ -89,65 +87,124 @@ export class HostInterfaceManagementService {
     }
 
     configureBaseSocketFeatures() {
-        if (!this.observerMode) {
+        console.log("configuring base socket for host")
+        if (!this.gameService.observerMode) {
             this.reset();
-            this.handleTimeTransition();
-            this.handleEndQuestion();
-            this.handleFinalTimeTransition();
-            this.handleRefreshChoicesStats();
-            this.handleGetInitialQuestion();
-            this.handleGetNextQuestion();
-            this.handleRemovedPlayer();
-            this.handleEndQuestionAfterRemoval();
-            this.handleEvaluationOver();
-            this.handleRefreshActivityStats();
-            this.handleHostPanicMode();
-            this.handleHostTimerPause();
-            this.handleRefreshQREStats();
-        }        
+            this.handleRequestHostGameStatus();
+        }
+        this.handleTimeTransition();
+        this.handleEndQuestion();
+        this.handleFinalTimeTransition();
+        this.handleRefreshChoicesStats();
+        this.handleGetInitialQuestion();
+        this.handleGetNextQuestion();
+        this.handleRemovedPlayer();
+        this.handleEndQuestionAfterRemoval();
+        this.handleEvaluationOver();
+        this.handleRefreshActivityStats();
+        this.handleHostPanicMode();
+        this.handleHostTimerPause();
+        this.handleRefreshQREStats();
+
     }
 
     private handleTimeTransition() {
         this.socketService.on(SocketEvent.TIME_TRANSITION, (timeValue: number) => {
-            this.timerText = TimerMessage.NEXT;
-            this.gameService.gameRealService.timer = timeValue;
-            if (this.gameService.timer === 0) {
-                this.gameService.gameRealService.inTimeTransition = false;
-                this.resetInterface();
-                this.socketService.send(SocketEvent.NEXT_QUESTION, this.gameService.gameRealService.roomId);
-                this.timerText = TimerMessage.TIME_LEFT;
+            if (!this.gameService.observerMode) {
+                this.timerText = TimerMessage.NEXT;
+                this.gameService.gameRealService.timer = timeValue;
+                if (this.gameService.timer === 0) {
+                    this.gameService.gameRealService.inTimeTransition = false;
+                    this.resetInterface();
+                    this.socketService.send(SocketEvent.NEXT_QUESTION, this.gameService.gameRealService.roomId);
+                    this.timerText = TimerMessage.TIME_LEFT;
+                }
+            } else {
+                this.obsHandleTimeTransition(timeValue);
             }
         });
     }
 
+    private obsHandleTimeTransition(timeValue: number){
+        this.timerText = TimerMessage.NEXT;
+        if (this.gameService.observingHost) this.gameService.gameRealService.timer = timeValue;
+        if (this.gameService.timer === 0) {
+            if (this.gameService.observingHost) {
+                this.gameService.gameRealService.inTimeTransition = false;
+                this.resetInterface();
+            }
+            this.timerText = TimerMessage.TIME_LEFT;
+        }
+    }
+
     private handleEndQuestion() {
         this.socketService.on(SocketEvent.END_QUESTION, () => {
+            if (!this.gameService.observerMode) {
+                this.gameService.audio.pause();
+                this.gameService.audio.currentTime = 0;
+                this.gameService.gameRealService.audioPaused = false;
+                this.gameService.gameRealService.inTimeTransition = true;
+                this.resetInterface();
+                if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
+                    this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
+                    console.log("handling end question like normal");
+                } else {
+                    this.sendQrlAnswer();
+                    this.isHostEvaluating = true;
+                }
+            } else {
+                this.obsHandleEndQuestion();
+            }
+        });
+    }
+
+    private obsHandleEndQuestion() {
+        if (this.gameService.observingHost) {
             this.gameService.audio.pause();
             this.gameService.audio.currentTime = 0;
             this.gameService.gameRealService.audioPaused = false;
             this.gameService.gameRealService.inTimeTransition = true;
             this.resetInterface();
-            if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
+        }
+        if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
+            if (this.gameService.observingHost) {
                 this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
-            } else {
-                this.sendQrlAnswer();
-                this.isHostEvaluating = true;
+                console.log("receiving from host interface end question");
             }
-        });
+        } else {
+            this.isHostEvaluating = true;
+        }
     }
 
     private handleFinalTimeTransition() {
         this.socketService.on(SocketEvent.FINAL_TIME_TRANSITION, (timeValue: number) => {
-            this.timerText = TimerMessage.RESULT_AVAILABLE_IN;
-            this.gameService.gameRealService.timer = timeValue;
-            if (this.gameService.timer === 0 && this.gameService.username === HOST_USERNAME) {
-                this.isGameOver = true;
-                this.interactiveListService.isFinal = true;
-                this.gameService.audio.pause();
-                this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
-                this.socketService.send(SocketEvent.SAVE_FINAL_GAME_STATS, this.gameService.gameRealService.roomId);
+            if (!this.gameService.observerMode) {
+                this.timerText = TimerMessage.RESULT_AVAILABLE_IN;
+                this.gameService.gameRealService.timer = timeValue;
+                if (this.gameService.timer === 0 && this.gameService.username === HOST_USERNAME) {
+                    this.isGameOver = true;
+                    this.interactiveListService.isFinal = true;
+                    this.gameService.audio.pause();
+                    this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
+                    this.socketService.send(SocketEvent.SAVE_FINAL_GAME_STATS, this.gameService.gameRealService.roomId);
+                }
+            } else {
+                this.obsHandleFinalTimeTransition(timeValue);
             }
         });
+    }
+
+    private obsHandleFinalTimeTransition(timeValue: number){
+        this.timerText = TimerMessage.RESULT_AVAILABLE_IN;
+        if (this.gameService.observingHost) this.gameService.gameRealService.timer = timeValue;
+        if (this.gameService.timer === 0 && this.gameService.username === HOST_USERNAME) {
+            this.isGameOver = true;
+            this.interactiveListService.isFinal = true;
+            if (this.gameService.observingHost) this.gameService.audio.pause();
+            this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
+            console.log("receiving from host interface final transition");
+
+        }
     }
 
     private handleRefreshChoicesStats() {
@@ -158,19 +215,18 @@ export class HostInterfaceManagementService {
 
     private handleRefreshQREStats() {
         this.socketService.on(SocketEvent.REFRESH_QRE_STATS, (qreStatsValue: number[]) => {
-            const qreStatsMap = new Map([
+            this.histogramDataChangingResponses = new Map([
                 [WITHIN_MARGIN, qreStatsValue[0]],
                 [EXACT_ANSWER, qreStatsValue[1]],
                 [INCORRECT_ANSWER, qreStatsValue[2]]
             ]);
-            console.log(qreStatsMap);
-            this.histogramDataChangingResponses = qreStatsMap;
         });
     }
 
     private handleGetInitialQuestion() {
         this.socketService.on(SocketEvent.GET_INITIAL_QUESTION, async (data: InitialQuestionData) => {
             const numberOfPlayers = await this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
+            console.log(numberOfPlayers)
             this.initGraph(data.question, numberOfPlayers);
         });
     }
@@ -194,14 +250,21 @@ export class HostInterfaceManagementService {
 
     private handleEndQuestionAfterRemoval() {
         this.socketService.on(SocketEvent.END_QUESTION_AFTER_REMOVAL, () => {
-            this.resetInterface();
+            if (!this.gameService.observerMode) this.resetInterface();
+            else if(this.gameService.observingHost) this.resetInterface();
         });
     }
 
     private handleHostPanicMode() {
         this.socketService.on(SocketEvent.PANIC_MODE, () => {
-            if (this.gameService.timer > 0 && !this.gameService.gameRealService.audioPaused) {
-                this.gameService.audio.play();
+            if (!this.gameService.observerMode) {
+                if (this.gameService.timer > 0 && !this.gameService.gameRealService.audioPaused) {
+                    this.gameService.audio.play();
+                }
+            } else if (this.gameService.observingHost) {
+                if (this.gameService.timer > 0 && !this.gameService.gameRealService.audioPaused) {
+                    this.gameService.audio.play();
+                }
             }
             this.isPanicMode = true;
         });
@@ -209,12 +272,21 @@ export class HostInterfaceManagementService {
 
     private handleHostTimerPause() {
         this.socketService.on(SocketEvent.PAUSE_TIMER, () => {
-            if (this.gameService.gameRealService.audioPaused && this.isPanicMode) {
-                this.gameService.audio.play();
-            } else if (!this.gameService.gameRealService.audioPaused && this.isPanicMode) {
-                this.gameService.audio.pause();
+            if (!this.gameService.observerMode) {
+                if (this.gameService.gameRealService.audioPaused && this.isPanicMode) {
+                    this.gameService.audio.play();
+                } else if (!this.gameService.gameRealService.audioPaused && this.isPanicMode) {
+                    this.gameService.audio.pause();
+                }
+                this.gameService.gameRealService.audioPaused = !this.gameService.gameRealService.audioPaused;
+            } else if (!this.gameService.observingHost) {
+                if (this.gameService.gameRealService.audioPaused && this.isPanicMode) {
+                    this.gameService.audio.play();
+                } else if (!this.gameService.gameRealService.audioPaused && this.isPanicMode) {
+                    this.gameService.audio.pause();
+                }
+                this.gameService.gameRealService.audioPaused = !this.gameService.gameRealService.audioPaused;
             }
-            this.gameService.gameRealService.audioPaused = !this.gameService.gameRealService.audioPaused;
         });
     }
 
@@ -230,6 +302,39 @@ export class HostInterfaceManagementService {
                 [ACTIVE, activityStatsValue[ACTIVE_STATUS]],
                 [INACTIVE, activityStatsValue[INACTIVE_STATUS]],
             ]);
+        });
+    }
+
+    private handleRequestHostGameStatus() {
+        this.socketService.on(SocketEvent.REQUEST_HOST_GAME_STATUS, () => {
+            let histogramDataChangingResponses: [number, number] | number[];
+            if (this.gameService.gameRealService.question?.type === QuestionType.QRE)
+                histogramDataChangingResponses = [
+                    Number(this.histogramDataChangingResponses.get(WITHIN_MARGIN)),
+                    Number(this.histogramDataChangingResponses.get(EXACT_ANSWER)),
+                    Number(this.histogramDataChangingResponses.get(INCORRECT_ANSWER)),
+                ]
+            else histogramDataChangingResponses = [
+                Number(this.histogramDataChangingResponses.get(ACTIVE)),
+                Number(this.histogramDataChangingResponses.get(INACTIVE))
+            ]
+            console.log(this.interactiveListService.players);
+            console.log(this.leftPlayers)
+            console.log(histogramDataChangingResponses);
+            console.log(this.histogramDataValue)
+            const gameStatus: HostCurrentGameInterface = {
+                roomId: this.roomId,
+                timerText: this.timerText,
+                isGameOver: this.isGameOver,
+                leftPlayers: this.leftPlayers,
+                players: this.interactiveListService.players,
+                histogramDataChangingResponses: this.gameService.gameRealService.question?.type === QuestionType.QCM ? [1000] : histogramDataChangingResponses,
+                isHostEvaluating: this.isHostEvaluating,
+                gameStats: this.stringifyStats(),
+                isPaused: this.isPaused,
+                isPanicMode: this.isPanicMode,
+            }
+            this.socketService.send(SocketEvent.SENDING_HOST_GAME_STATUS, gameStatus);
         });
     }
 
@@ -298,8 +403,7 @@ export class HostInterfaceManagementService {
         return data;
     }
 
-     reset() {
-        this.observerMode = false;
+    reset() {
         this.timerText = TimerMessage.TIME_LEFT;
         this.isGameOver = false;
         this.histogramDataChangingResponses = new Map<string, number>();
