@@ -149,5 +149,38 @@
     "GAME_TYPE_REQUIRED": "The game type is required. Please select a type.",
     "PRICE_INVALID": "The price must be an integer greater than or equal to 0.",
     "PRESTIGE_REQUIRED": "Minimum prestige is required. Please select a minimum prestige."
+  },
+  "WAITING_ROOM_PAGE": {
+    "TITLE": "Waiting Room",
+    "ROOM_CODE": "Code",
+    "ROOM_STATUS": "The room is",
+    "STATUS_LOCKED": "locked",
+    "STATUS_UNLOCKED": "open",
+    "LOCK_ROOM_TOOLTIP": "Lock Room",
+    "PLAYERS_TITLE": "Players:",
+    "BAN_TOOLTIP": "ban",
+    "NO_PLAYERS": "No players present",
+    "TEAMS_TITLE": "Teams:",
+    "TEAM_LABEL": "Team",
+    "JOIN_TEAM": "Join",
+    "NO_TEAMS": "No teams present",
+    "START_BUTTON": "Start",
+    "CREATE_TEAM": "Create Team",
+    "QUIZ_STARTING_IN": "Quiz starts in:"
+  },
+  "POP_UP_MESSAGE": {
+    "LEAVE_MESSAGE": "Are you sure you want to leave?",
+    "DELETE_MESSAGE": "Are you sure you want to delete?",
+    "DELETE_FRIEND_MESSAGE": "Are you sure you want to delete this friend?",
+    "DELETE_QUIZ_MESSAGE": "Are you sure you want to delete this quiz?"
+  },
+  "BUTTON": {
+    "QUIT": "Leave",
+    "DELETE": "Delete"
+  },
+  "CONFIRMATION_DIALOG": {
+    "WARNING": "Warning!",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm"
   }
 }

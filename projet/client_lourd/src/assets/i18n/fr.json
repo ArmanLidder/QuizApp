@@ -54,6 +54,14 @@
     "ACCEPT_REQUEST": "Accepter",
     "DECLINE_REQUEST": "Refuser"
   },
+  "AVATAR_MODIFICATION": {
+    "TITLE": "Modification d'avatar",
+    "CHOOSE_AVATAR": "Choisissez votre avatar",
+    "UPLOAD_OWN": "Ou télécharger votre propre avatar",
+    "SELECT_IMAGE": "Choisir une image",
+    "CANCEL": "Annuler",
+    "CONFIRM": "Confirmer"
+  },
   "USERNAME_MODIFICATION": {
     "TITLE": "Modification du nom d'utilisateur",
     "NEW_USERNAME": "Nouveau nom d'utilisateur",
@@ -122,42 +130,6 @@
     "EDIT": "Modifier",
     "CANCEL": "Annuler"
   },
-  "QUIZ_CREATION_QUESTION": {
-    "QUESTIONS": "Questions",
-    "ADD_QUESTION": "Add a question",
-    "EDIT_QUESTION": "Edit question",
-    "MOVE_QUESTION_UP": "Move question up",
-    "MOVE_QUESTION_DOWN": "Move question down",
-    "DELETE_QUESTION": "Delete question",
-    "QUESTION_NUMBER": "Question",
-    "QUESTION_TYPE_LABEL": "Question type",
-    "QUESTION_TYPE_OPTIONS": {
-      "QCM": "MCQ",
-      "QRL": "QRL",
-      "QRE": "QRE"
-    },
-    "QUESTION_TEXT_LABEL": "Question text",
-    "QUESTION_TEXT_PLACEHOLDER": "Enter the question text",
-    "POINTS_LABEL": "Number of points for the question",
-    "POINTS_PLACEHOLDER": "Enter the number of points",
-    "IMAGE_LABEL": "Image (optional)",
-    "UPLOAD_IMAGE": "Select an image",
-    "DELETE_IMAGE": "Delete",
-    "CHOICES_LABEL": "Choices",
-    "ADD_CHOICE": "Add choice",
-    "MOVE_CHOICE_UP": "Move choice up",
-    "MOVE_CHOICE_DOWN": "Move choice down",
-    "DELETE_CHOICE": "Delete choice",
-    "INTERVAL_LABEL": "Response interval",
-    "MIN_LABEL": "Minimum",
-    "MAX_LABEL": "Maximum",
-    "ANSWER_LABEL": "Correct answer",
-    "MARGIN_LABEL": "Tolerance margin",
-    "SAVE_QUESTION": "Save question",
-    "CONFIRM": "Confirm",
-    "TRUE": "True",
-    "FALSE": "False"
-  },
   "GAME_CONFIG_DIALOG": {
     "CONFIGURE_GAME": "Configurer la partie",
     "GAME_TYPE_LABEL": "Type de partie",
@@ -177,7 +149,38 @@
     "GAME_TYPE_REQUIRED": "Le type de partie est requis. Veuillez sélectionner un type.",
     "PRICE_INVALID": "Le prix doit être un entier supérieur ou égal à 0.",
     "PRESTIGE_REQUIRED": "Le prestige minimum est requis. Veuillez sélectionner un prestige minimum."
+  },
+  "WAITING_ROOM_PAGE": {
+    "TITLE": "Salle d'attente",
+    "ROOM_CODE": "Code",
+    "ROOM_STATUS": "La salle est",
+    "STATUS_LOCKED": "verrouillée",
+    "STATUS_UNLOCKED": "ouverte",
+    "LOCK_ROOM_TOOLTIP": "Verrouiller la salle",
+    "PLAYERS_TITLE": "Joueurs:",
+    "BAN_TOOLTIP": "bannir",
+    "NO_PLAYERS": "Aucun joueur présent",
+    "TEAMS_TITLE": "Équipes:",
+    "TEAM_LABEL": "Équipe",
+    "JOIN_TEAM": "Rejoindre",
+    "NO_TEAMS": "Aucune équipe présente",
+    "START_BUTTON": "Commencer",
+    "CREATE_TEAM": "Créer Équipe",
+    "QUIZ_STARTING_IN": "Quiz commence dans :"
+  },
+  "POP_UP_MESSAGE": {
+    "LEAVE_MESSAGE": "Êtes-vous sûr de vouloir quitter?",
+    "DELETE_MESSAGE": "Êtes-vous sûr de vouloir supprimer?",
+    "DELETE_FRIEND_MESSAGE": "Êtes-vous sûr de vouloir supprimer cet ami?",
+    "DELETE_QUIZ_MESSAGE": "Êtes-vous sûr de vouloir supprimer ce quiz?"
+  },
+  "BUTTON": {
+    "QUIT": "Quitter",
+    "DELETE": "Supprimer"
+  },
+  "CONFIRMATION_DIALOG": {
+    "WARNING": "Attention!",
+    "CANCEL": "Annuler",
+    "CONFIRM": "Confirmer"
   }
-
-
 }
