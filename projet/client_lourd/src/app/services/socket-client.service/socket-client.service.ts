@@ -32,9 +32,9 @@ export class SocketClientService {
     }
 
     async asyncConnect() {
+        if (this.isSocketAlive()) this.disconnect();
         await this.fetchUserID();
         const serverUrlWithoutApi = environment.serverUrl.replace('/api', '');
-        console.log(`UserId: ${this.userID}`)
         this.socket = io(serverUrlWithoutApi, {
             transports: ['websocket'],
             upgrade: false,
@@ -59,7 +59,6 @@ export class SocketClientService {
 
     private async fetchUserID() {
         const user: User | null = await firstValueFrom(this.usersService.currentUserProfile$)
-        console.log(`Fetch userId: ${user?.uid}`)
         if (user) this.userID = user.uid;
         else throw new Error("User Id not fetch since user is null or undefined");
     }

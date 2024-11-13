@@ -47,7 +47,6 @@ export class MainPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log("Delete all services")
         this.resetAllServices();
     }
 
@@ -58,5 +57,6 @@ export class MainPageComponent implements OnInit {
         this.observationServices.reset();
         this.gameConfigService.reset();
         this.activeGameListService.cleanup();
+        if (this.socketService.isSocketAlive()) this.socketService.disconnect();
     }
 }

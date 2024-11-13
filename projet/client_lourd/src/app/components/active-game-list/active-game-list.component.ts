@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 import {GameListService} from "@app/services/game-list.service/game-list.service";
 import {GameListItem} from "@common/interfaces/room-interface";
 import {Observable, of, firstValueFrom} from 'rxjs';
@@ -18,7 +18,7 @@ import {HOST_USERNAME} from "@common/names/host-username";
     templateUrl: './active-game-list.component.html',
     styleUrls: ['./active-game-list.component.scss']
 })
-export class ActiveGameListComponent implements OnInit, OnDestroy {
+export class ActiveGameListComponent implements OnInit {
     @Output() sendRoomData: EventEmitter<number> = new EventEmitter<number>();
     @Output() sendUsernameData: EventEmitter<string> = new EventEmitter<string>();
     @Output() validationDone: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -82,9 +82,6 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         return this.quizNameMap.get(id) || 'Chargement...';
     }
 
-    ngOnDestroy() {
-        // this.gameListService.cleanup();
-    }
 
     async joinRoom(game: GameListItem) {
         this.gameService.observerMode = false;
