@@ -227,25 +227,35 @@ class HostMiddleSection extends StatelessWidget {
     required this.hostInterfaceManagementService,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Visibility(
-          visible: gameService.question!.type == QuestionType.QCM,
-          child: Column(
-            children: [HistogramLegend(), Histogram()],
-          ),
-        ),
-        Visibility(
+  Widget getHostInterface() {
+    Widget? returnedWidget;
+    QuestionType? type = gameService.question?.type ?? null;
+    switch (type) {
+      case QuestionType.QRL:
+        returnedWidget = Visibility(
           visible: hostInterfaceManagementService.isHostEvaluating,
           child: HostGrading(
             gameStats: hostInterfaceManagementService.gameStats,
             qrlAnswers: hostInterfaceManagementService.responsesQRL,
           ),
-        ),
-      ],
-    );
+        );
+        break;
+      case QuestionType.QRE:
+      case QuestionType.QCM:
+      default:
+        returnedWidget = Column(
+          children: [
+            HistogramLegend(), Histogram()
+          ],
+        );
+        break;
+    }
+    return returnedWidget;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return getHostInterface();
   }
 }
 

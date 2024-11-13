@@ -121,14 +121,29 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.gameService.realGameService.inTimeTransition = true;
       this.resetInterface();
 
-      if (this.gameService.question?.type == QuestionType.QCM) {
-        print('CALLED 1');
-        this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
-      } else {
-        this.sendQrlAnswer();
-        this.isHostEvaluating = true;
-        notifyListeners();
+      QuestionType? type = this.gameService.question?.type ?? null;
+      switch (type) {
+        case QuestionType.QRL:
+          this.sendQrlAnswer();
+          this.isHostEvaluating = true;
+          notifyListeners();
+          break;
+        case QuestionType.QRE:
+        case QuestionType.QCM:
+        default:
+          print('CALLED 1');
+          this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+          break;
       }
+      //
+      // if (this.gameService.question?.type == QuestionType.QCM) {
+      //   print('CALLED 1');
+      //   this._interactiveListService.getPlayersList(roomId, leftPlayers: leftPlayers, resetPlayerStatus: false);
+      // } else {
+      //   this.sendQrlAnswer();
+      //   this.isHostEvaluating = true;
+      //   notifyListeners();
+      // }
     });
   }
 
