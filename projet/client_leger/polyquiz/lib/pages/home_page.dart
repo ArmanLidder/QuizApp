@@ -88,19 +88,6 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Text('Magasin')),
             const SizedBox(height: 20),
-            SmartAvatar(userId: "eITkq1GxeMPIigh2azge7mu7J6w1",size: 35,),
-            /*ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/user');
-                },
-                child: Text("user page")),
-            const SizedBox(height: 20),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/store');
-                },
-                child: Text("store")),*/
-
             ChatPopup(),
           ],
         ),

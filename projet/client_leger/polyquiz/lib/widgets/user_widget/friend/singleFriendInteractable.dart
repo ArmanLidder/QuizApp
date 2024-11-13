@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/widgets/user_widget/friend/smartFriendIcon.dart';
 
+import '../smartAvatar.dart';
+
 class SingleFriendInteractable extends StatelessWidget {
   final String userId;
   const SingleFriendInteractable({Key? key, required this.userId}) : super(key: key);
@@ -36,14 +38,7 @@ class SingleFriendInteractable extends StatelessWidget {
             child: Row(
               children: [
                 // Blue circle
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.blue,
-                  ),
-                ),
+                SmartAvatar(userId: userId,size: 35,),
                 const SizedBox(width: 12),
                 // Username text
                 Expanded(
