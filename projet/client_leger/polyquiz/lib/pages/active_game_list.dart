@@ -114,13 +114,16 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     final isHostFriend = await _validateFriendship(game);
     if (game.friendsOnly && !isHostFriend) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Cette partie est exclusive aux amis de l'hôte.")),
+        SnackBar(
+            content: Text("Cette partie est exclusive aux amis de l'hôte.")),
       );
     } else {
       final isPrestigeValid = await _validatePrestige(game.prestige);
       if (!isPrestigeValid) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
+          SnackBar(
+              content: Text(
+                  "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
         );
       } else {
         await roomValidationService.verifyUsername();
@@ -134,7 +137,8 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
               SnackBar(content: Text("La partie est actuellement verouillez.")),
             );
           }
-          if (!roomValidationService.isLocked && roomValidationService.isUsernameValid) {
+          if (!roomValidationService.isLocked &&
+              roomValidationService.isUsernameValid) {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -227,8 +231,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         ),
         backgroundColor: Color.fromRGBO(53, 121, 246, 1),
       ),
-      body: 
-      FutureBuilder<void>(
+      body: FutureBuilder<void>(
         future: _initializeFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -237,19 +240,19 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/join');
-                  },
-                  child: Text(
-                    'Rejoindre jeu privé',
-                    style: TextStyle(
-                    color: Color.fromRGBO(255, 255, 255, 1),
-                    fontSize: 20,
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/join');
+                    },
+                    child: Text(
+                      'Rejoindre jeu privé',
+                      style: TextStyle(
+                        color: Color.fromRGBO(255, 255, 255, 1),
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                  ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                    ),
                   ),
                 ),
                 Center(child: CircularProgressIndicator()),
@@ -257,25 +260,24 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
             );
           } else if (snapshot.hasError) {
             print('Error: ${snapshot.error}');
-            return 
-              Column(
+            return Column(
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
                   child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/join');
-                  },
-                  child: Text(
-                    'Rejoindre jeu privé',
-                    style: TextStyle(
-                    color: Color.fromRGBO(255, 255, 255, 1),
-                    fontSize: 20,
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/join');
+                    },
+                    child: Text(
+                      'Rejoindre jeu privé',
+                      style: TextStyle(
+                        color: Color.fromRGBO(255, 255, 255, 1),
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                  ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                    ),
                   ),
                 ),
                 Center(child: Text('Error: ${snapshot.error}')),
@@ -286,89 +288,86 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
               stream: gameListService.games$,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return 
-                  Column(
+                  return Column(
                     children: [
                       Align(
-                          alignment: Alignment.centerLeft,
-                          child: ElevatedButton(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
                           onPressed: () {
                             Navigator.pushReplacementNamed(context, '/join');
                           },
                           child: Text(
                             'Rejoindre jeu privé',
                             style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: 20,
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                           ),
-                          ),
                         ),
+                      ),
                       Center(child: CircularProgressIndicator()),
                     ],
                   );
                 } else if (snapshot.hasError) {
                   print('Error: ${snapshot.error}');
-                  return 
-                    Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: ElevatedButton(
+                  return Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
                           onPressed: () {
                             Navigator.pushReplacementNamed(context, '/join');
                           },
                           child: Text(
                             'Rejoindre jeu privé',
                             style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: 20,
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                           ),
-                          ),
                         ),
-                        Center(child: Text('Error: ${snapshot.error}')),
-                      ],
-                    );
+                      ),
+                      Center(child: Text('Error: ${snapshot.error}')),
+                    ],
+                  );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return 
-                  Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: ElevatedButton(
+                  return Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
                           onPressed: () {
                             Navigator.pushReplacementNamed(context, '/join');
                           },
                           child: Text(
                             'Rejoindre jeu privé',
                             style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: 20,
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                           ),
-                          ),
                         ),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Aucune partie en cours'),
-                              SizedBox(height: 100),
-                              CancelBtn()
-                            ],
-                          ),
+                      ),
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Aucune partie en cours'),
+                            SizedBox(height: 100),
+                            CancelBtn()
+                          ],
                         ),
-                      ],
+                      ),
+                    ],
                   );
                 } else {
                   final games = snapshot.data!;
@@ -377,19 +376,19 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/join');
-                        },
-                        child: Text(
-                          'Rejoindre jeu privé',
-                          style: TextStyle(
-                          color: Color.fromRGBO(255, 255, 255, 1),
-                          fontSize: 20,
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/join');
+                          },
+                          child: Text(
+                            "Rejoindre Jeu Privé",
+                            style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
+                            ),
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                        ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
                         ),
                       ),
                       Expanded(

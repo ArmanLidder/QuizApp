@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 import '../models/quiz.dart';
 import 'waiting_room_screen.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
@@ -75,43 +76,74 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
         title: Text('Join a Room'),
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _roomIdController,
-                decoration: InputDecoration(
-                  labelText: 'Enter the Room ID',
-                  border: OutlineInputBorder(),
+      body: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/roomList');
+              },
+              child: Text(
+                "Rejoindre Jeu Public",
+                style: TextStyle(
+                  color: Color.fromRGBO(255, 255, 255, 1),
+                  fontSize: 20,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a Room ID';
-                  }
-                  return null;
-                },
               ),
-              SizedBox(height: 24),
-              _isJoining
-                  ? CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _joinRoom,
-                      child: Text('Join Room'),
-                    ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
-                child: Text("Retours a la page d'origine"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(53, 121, 246, 1),
               ),
-            ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                      "Veuillez saisir le code de 4 chiffre fourni par l'organisateur",
+                      style: TextStyle(fontSize: 20)),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: _roomIdController,
+                    decoration: InputDecoration(
+                      labelText: 'Saisir le code',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a Room ID';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+                  _isJoining
+                      ? CircularProgressIndicator()
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            TextButton(
+                                onPressed: _joinRoom,
+                                child: Text('Valider',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 20)),
+                                style: TextButton.styleFrom(
+                                    backgroundColor:
+                                        Color.fromRGBO(53, 121, 246, 1))),
+                            CancelBtn()
+                          ],
+                        ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
