@@ -13,13 +13,15 @@ class AchievementColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(8, (index) {
         bool isCompleted = completedAchievements.contains(index);
-        return AchievementBox(
-            label: AchievementsName[index],  // Use the index number as the title
-            isDone: isCompleted,
-        );
+        return Column(
+          children: [
+          AchievementBox(
+          label: AchievementsName[index], // Use the index number as the title
+          isDone: isCompleted,
+        ),
+          SizedBox(height: 5,)]);
       }),
     );
   }
@@ -46,7 +48,7 @@ class AchievementBox extends StatelessWidget {
         children: [
           Icon(
             this.isDone ? Icons.star : Icons.star_border,
-            size: 36,
+            size: 24,
             color: this.isDone ? Color(0xFFFCDB03) : Colors.black54,
           ),
           SizedBox(width: 12), // Space between icon and text

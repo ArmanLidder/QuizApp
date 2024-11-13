@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/widgets/user_widget/ImageSelectionPopup.dart';
+import 'package:polyquiz/widgets/user_widget/PrestigeIndicator.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 import '../../services/imageStorageService.dart';
 import '../../services/logged_in_user_service.dart';
@@ -149,17 +150,7 @@ class ProfileCard extends StatelessWidget {
                       child: Wrap(
                         spacing: 8.0,
                         children: [
-                          Chip(
-                            label: Text(
-                              "prestige: $prestige",
-                              style: TextStyle(color: themeService.mainAccent.value),
-                            ),
-                            backgroundColor: themeService.mainBackground.value.withOpacity(0.5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                              side: BorderSide(color: themeService.mainBackground.value),
-                            ),
-                          ),
+                          PrestigeIndicator(prestige: prestige),
                           Chip(
                             label: Text(
                               "argent: $argent",

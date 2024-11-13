@@ -62,12 +62,26 @@ class _FancyAppBarState extends State<FancyAppBar> {
         itemBuilder: (context) => [
           PopupMenuItem(
             value: 1,
-            child: Text("Profile"),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Icons.person), // Add an icon to the right
+                Text(" Profil"),
+                Spacer()
+              ],
+            ),
             onTap: () {Navigator.pushReplacementNamed(widget.context, '/user');}, // Placeholder onPressed for "Profile"
           ),
           PopupMenuItem(
             value: 2,
-            child: Text("Log Out"),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Icons.logout), // Add an icon to the right
+                Text(" Déconnection"),
+                Spacer()
+              ],
+            ),
             onTap: () async {
               await loggedInUserService.logout();
               Navigator.pushReplacementNamed(widget.context, '/auth');}, // Placeholder onPressed for "Log Out"

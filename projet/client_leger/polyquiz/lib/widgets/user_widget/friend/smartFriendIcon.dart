@@ -7,7 +7,6 @@ import '../../../services/friendService.dart';
 class SmartFriendIcon extends StatefulWidget {
   final String targetUserId;
   final FriendService friendService = FriendService.instance;
-
   SmartFriendIcon({
     Key? key,
     required this.targetUserId,

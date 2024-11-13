@@ -11,6 +11,9 @@ class LoggedInUserService extends GetxController {
   final UserService userService = UserService();
   final ImageStorageService imageStorageService = ImageStorageService();
   late var observableCurrency = 0.obs;
+  late var observablePrestige = 0.obs;
+  late var observableLevel = 0.obs;
+
   late var observableAvatar = ''.obs;
   User? user;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -19,6 +22,9 @@ class LoggedInUserService extends GetxController {
   void setUser(User? user) {
     this.user = user;
     this.observableCurrency.value = (this.user?.currency ?? 0).round();
+    this.observablePrestige.value = (this.user?.prestige ?? 0).round();
+    this.observableLevel.value = (this.user?.level ?? 0).round();
+
     this.observableAvatar.value = (this.user?.avatar ?? "");
   }
 

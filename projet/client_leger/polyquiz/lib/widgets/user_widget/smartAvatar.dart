@@ -7,17 +7,19 @@ import 'OtherUserPresentation.dart';
 class SmartAvatar extends StatelessWidget {
   final double size;
   final String userId;
+  final bool interactible;
 
-  SmartAvatar({required this.userId, this.size = 40.0});
+  SmartAvatar({required this.userId, this.size = 40.0,    this.interactible = true});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) => OtherUserPresentation(userId: userId),
-        );
+      onTap: () {if (interactible) {
+          showDialog(
+            context: context,
+            builder: (context) => OtherUserPresentation(userId: userId),
+          );
+        }
       },
       child: SizedBox(
         height: size,
@@ -48,7 +50,6 @@ class SmartAvatar extends StatelessWidget {
                 }
               },
             ),
-            // Level indicator using FutureBuilder
             Positioned(
               bottom: 0,
               right: 0,
@@ -56,10 +57,10 @@ class SmartAvatar extends StatelessWidget {
                 future: userService.getLevel(userId).then((value) => value ?? 0),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Container(); // Show nothing if level isn't available yet
+                    return Container();
                   }
                   return Container(
-                    width: size * 0.4, // Adjust size relative to profile image
+                    width: size * 0.4,
                     height: size * 0.4,
                     decoration: BoxDecoration(
                       color: Colors.yellow,
@@ -69,7 +70,7 @@ class SmartAvatar extends StatelessWidget {
                       child: Text(
                         snapshot.data!.toString(),
                         style: TextStyle(
-                          fontSize: size * 0.2, // Adjust font size relative to profile image
+                          fontSize: size * 0.2,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -86,4 +87,3 @@ class SmartAvatar extends StatelessWidget {
   }
 }
 
-// Define the OtherUserPresentation widget as a placeholder

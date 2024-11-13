@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
-
 import '../../models/user.dart';
 import '../../services/user_service.dart';
 import 'AchievmentColumn.dart';
+import 'package:polyquiz/widgets/user_widget/friend/smartFriendIcon.dart';
 
 class OtherUserPresentation extends StatelessWidget {
   final String userId;
@@ -42,9 +42,7 @@ class OtherUserPresentation extends StatelessWidget {
 
         // Extract the data from snapshot
         final data = snapshot.data!;
-        final avatarUrl = data['avatarUrl'];
         final username = data['username'];
-        final level = data['level'];
         final prestige = data['prestige'];
         final currency = data['currency'];
         final gamesPlayed = data['gamesPlayed'];
@@ -56,41 +54,77 @@ class OtherUserPresentation extends StatelessWidget {
         // Build the UI using the fetched data
         return AlertDialog(
           contentPadding: EdgeInsets.zero,
-          content: Container(
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.5, // 80% of screen width
+        height: MediaQuery.of(context).size.height * 0.8, // 70% of screen height
+        child:
+
+          Container(
             padding: EdgeInsets.all(16),
             child: SingleChildScrollView(child:
-
-
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header with avatar, username, and level
-                Row(
-                  children: [SmartAvatar(userId: userId,size: 60),
-                    SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                Stack(
+                  children: [
+                    Row(
                       children: [
-                        Text(username, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text('Prestige: $prestige'),
-                        Text('Currency: $currency'),
+                        SmartAvatar(userId: userId, size: 60, interactible: false,),
+                        SizedBox(width: 8),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(username, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            Text('Prestige: $prestige'),
+                            Text('Currency: $currency'),
+                          ],
+                        ),
                       ],
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: SmartFriendIcon(targetUserId: userId),
                     ),
                   ],
                 ),
                 SizedBox(height: 16),
                 // Game stats
-                Text('Parties Jouées: $gamesPlayed'),
-                Text('Parties Gagnées: $gamesWon'),
-                Text('Bonnes réponses par partie: $correctAnswersPerGame'),
-                Text('Temps moyen par partie: ${avgTimePerGame}s'),
-                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Parties Jouées:'),
+                    Text('$gamesPlayed', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Parties Gagnées:'),
+                    Text('$gamesWon', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Bonnes réponses par partie:'),
+                    Text('$correctAnswersPerGame', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Temps moyen par partie:'),
+                    Text('${avgTimePerGame}s', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),                SizedBox(height: 16),
                 Text('Exploits', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                AchievementColumn(completedAchievements: [0,2,3]),
+                AchievementColumn(completedAchievements: achievements),
               ],
             ),),
           ),
-        );
+        ));
       },
     );
   }
