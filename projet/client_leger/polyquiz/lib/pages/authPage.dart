@@ -7,6 +7,8 @@ import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/constants/defaultAvatars.dart';
 import 'package:polyquiz/constants/errorMessageTranslator.dart';
+
+import '../services/userInfoValidation.dart';
 class AuthPage extends StatefulWidget {
   @override
   _AuthPageState createState() => _AuthPageState();
@@ -21,9 +23,12 @@ class _AuthPageState extends State<AuthPage> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
   final UserPageCustomisationService userPageCustomisationService = UserPageCustomisationService.instance;
-
+  final ValidationService validationService = ValidationService.instance;
   bool _isRegistering = false;
   bool _obscurePassword = true;
+  bool _isValidUsername = true;
+  bool _isValidEmail = true;
+  bool _isValidPassword = true;
   String? _selectedAvatar;
 
   Future<void> _login() async {
@@ -121,19 +126,35 @@ class _AuthPageState extends State<AuthPage> {
                 TextField(
                   controller: _usernameController,
                   decoration: InputDecoration(
+                    errorText: !_isValidUsername ? "doit etre 1 a 10 charactères et chiffres" : null,
                     prefixIcon: Icon(Icons.person),
                     labelText: "Nom d'utilisateur",
                     border: OutlineInputBorder(),
                   ),
+                  onChanged: (e) async {
+                    bool result = await validationService.isValidUsername(e);
+                    setState(() {
+                      _isValidUsername = result;
+                    });
+                    print(_isValidUsername); // You can print the result here
+                  },
                 ),
               if (_isRegistering) SizedBox(height: 16),
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
+                  errorText: !_isValidEmail ? "doit etre une addresse valide" : null,
                   prefixIcon: Icon(Icons.email),
                   labelText: 'Courriel*',
                   border: OutlineInputBorder(),
                 ),
+                onChanged: (e) async {
+                  bool result = await validationService.isValidAddress(e);
+                  setState(() {
+                    _isValidEmail = result;
+                  });
+                    print(_isValidEmail); // You can print the result here
+                  },
                 keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: 16),
@@ -143,6 +164,8 @@ class _AuthPageState extends State<AuthPage> {
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.lock),
                   labelText: 'Mot de passe*',
+                  errorText: !_isValidPassword ? "doit avoir une longeur de 6" : null,
+
                   border: OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -155,6 +178,12 @@ class _AuthPageState extends State<AuthPage> {
                     },
                   ),
                 ),
+                onChanged: (e) async {
+                  bool result = await validationService.isValidPassword(e);
+                  setState(() {
+                    _isValidPassword = result;
+                  });
+                },
               ),
               if (_isRegistering) ...[
                 SizedBox(height: 24),
@@ -214,16 +243,19 @@ class _AuthPageState extends State<AuthPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isRegistering ? _register : _login,
+                  onPressed: (_isRegistering && _isValidUsername && _isValidEmail && _isValidPassword)
+                      ? _register
+                      : (_isValidUsername && _isValidEmail && _isValidPassword)
+                      ? _login
+                      : null,  // Disable the button if conditions are not met
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:  Colors.blue[300],
+                    backgroundColor: Colors.blue[300],
                     padding: EdgeInsets.symmetric(vertical: 14),
                     textStyle: TextStyle(fontSize: 16),
                   ),
                   child: Text(_isRegistering ? "S'inscrire" : 'Se connecter'),
                 ),
-              ),
-              SizedBox(height: 16),
+              ),              SizedBox(height: 16),
               Center(
                 child: TextButton(
                   onPressed: () {

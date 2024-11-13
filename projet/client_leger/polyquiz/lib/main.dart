@@ -7,6 +7,7 @@ import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/userInfoValidation.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/background_notification_service.dart';
 import 'package:polyquiz/services/channelService.dart';
@@ -56,7 +57,7 @@ void main() async {
   Get.put(UserPageCustomisationService());
   Get.put(ThemeService());
   Get.put(FriendService());
-
+  Get.put(ValidationService());
   runApp(
     MultiProvider(
       providers: [
