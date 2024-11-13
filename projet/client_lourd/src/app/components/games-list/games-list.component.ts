@@ -208,7 +208,6 @@ export class GamesListComponent implements OnInit {
     playGame() {
         const isConfigured = this.dialog.open(GameConfigDialogComponent).afterClosed()
         isConfigured.subscribe((res) => {
-            console.log(`Response: ${res}`)
             if (res) this.handleQuizAction(`/${WAITING_ROOM_HOST_PAGE}/`);
         });
     }

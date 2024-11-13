@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
+// import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
 import {RoomValidationService} from '@app/services/room-validation.service/room-validation.service';
 import {NO_COLOR} from '@common/style/style';
 import {GameListService} from "@app/services/game-list.service/game-list.service";
@@ -23,22 +23,21 @@ export class RoomCodePromptComponent implements OnInit {
 
     constructor(
         public roomValidationService: RoomValidationService,
-        private socketService: SocketClientService,
+        // private socketService: SocketClientService,
         private gameListService: GameListService,
         private userService: UsersService,
     ) {
     }
 
     ngOnInit() {
-        this.connect();
         this.roomValidationService.resetService();
     }
 
-    connect() {
-        if (!this.socketService.isSocketAlive()) {
-            this.socketService.connect();
-        }
-    }
+    // connect() {
+    //     if (!this.socketService.isSocketAlive()) {
+    //         this.socketService.connect();
+    //     }
+    // }
 
     sendRoomIdToWaitingRoom() {
         this.sendRoomData.emit(Number(this.roomValidationService.roomId));
