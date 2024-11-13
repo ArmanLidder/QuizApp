@@ -50,10 +50,10 @@ class Historique extends StatelessWidget {
     List<Event> gameEvents(){
       return gameHistory.map((game) {
         String result = resultTypeToString[game.result]!;
-        DateTime dateTime =  game.timestamp.toDate();
+        //DateTime dateTime =  game.timestamp.toDate();
 
 
-        return Event(eventType: result, timestamp: DateFormat('yyyy-MM-dd-hh:mm').format(dateTime));
+        return Event(eventType: result, timestamp: game.timestamp);
       }).toList();
     }
     List<Event> loginEvents(){

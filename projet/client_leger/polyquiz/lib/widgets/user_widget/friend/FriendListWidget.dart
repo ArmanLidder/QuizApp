@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/user_service.dart';
-
-import '../../services/theme_service.dart';
+import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
+import '../../../services/theme_service.dart';
+import 'friendsPopup.dart';
 
 class FriendListDisplay extends StatefulWidget {
   final UserService userService = UserService.instance;
+  final FriendService friendService = FriendService.instance;
   final List<String> friends;
   final List<FriendRequest> pendingRequests;
   final ThemeService themeService = ThemeService.instance;
@@ -37,7 +40,7 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensure space between text and button
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Align(
               alignment: Alignment.centerLeft,
@@ -47,32 +50,37 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                   color: themeService.mainAccent.value,
-
                 ),
               ),
             ),
             ElevatedButton.icon(
               onPressed: () {
-                // Add your onPressed functionality here
-                print("Ajouter button pressed"); //TODO: addpopup
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: UserIdsRow(),
+                    );
+                  },
+                );
               },
-              icon: Icon(Icons.person_add, color: themeService.secondaryAccent.value), // Person + icon
+              icon: Icon(Icons.person_add, color: themeService.secondaryAccent.value),
               label: Text(
                 "Ajouter",
                 style: TextStyle(color: themeService.secondaryAccent.value),
-
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor : themeService.secondaryBackground.value, // Button color
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Button padding
+                backgroundColor: themeService.secondaryBackground.value,
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
             ),
           ],
         ),
-          SizedBox(
+        SizedBox(
           height: 400,
           child: Container(
             margin: EdgeInsets.all(16),
@@ -113,72 +121,55 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
               ],
             ),
           ),
-        )
+        ),
       ],
-
-
     );
   }
 
   Widget _buildFriendsList() {
-    return ListView.builder(
-      itemCount: widget.friends.length,
-      itemBuilder: (context, index) {
-        String userId = widget.friends[index];
-
-        return FutureBuilder<String>(
-          future: widget.userService.getUserNameById(userId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return ListTile(
-                title: Text('Loading...'),
-                leading: Icon(Icons.person),
+    return FutureBuilder<List<String>>(
+      future: widget.friendService.getFriendList(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error loading friends'));
+        } else {
+          List<String> friends = snapshot.data ?? [];
+          return ListView.builder(
+            itemCount: friends.length,
+            itemBuilder: (context, index) {
+              String friendId = friends[index];
+              return SingleFriendInteractable(
+                userId: friendId,
               );
-            } else if (snapshot.hasError) {
-              return ListTile(
-                title: Text('Error loading name'),
-                leading: Icon(Icons.error),
-              );
-            } else {
-              return ListTile(
-                title: Text(snapshot.data ?? 'No name found'),
-                leading: Icon(Icons.person),
-              );
-            }
-          },
-        );
+            },
+          );
+        }
       },
     );
   }
 
   Widget _buildPendingRequestsList() {
-    return ListView.builder(
-      itemCount: widget.pendingRequests.length,
-      itemBuilder: (context, index) {
-        String userId = widget.pendingRequests[index].fromUserId;
-
-        return FutureBuilder<String>(
-          future: widget.userService.getUserNameById(userId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return ListTile(
-                title: Text('Loading...'),
-                leading: Icon(Icons.person),
+    return FutureBuilder<List<String>>(
+      future: widget.friendService.getPendingList(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error loading pending requests'));
+        } else {
+          List<String> pendingRequests = snapshot.data ?? [];
+          return ListView.builder(
+            itemCount: pendingRequests.length,
+            itemBuilder: (context, index) {
+              String requestId = pendingRequests[index];
+              return SingleFriendInteractable(
+                userId: requestId,
               );
-            } else if (snapshot.hasError) {
-              return ListTile(
-                title: Text('Error loading name'),
-                leading: Icon(Icons.error),
-              );
-            } else {
-              return ListTile(
-                title: Text(snapshot.data ?? 'No name found'),
-                leading: Icon(Icons.person),
-              );
-            }
-          },
-        );
+            },
+          );
+        }
       },
     );
-  }
-}
+  }}

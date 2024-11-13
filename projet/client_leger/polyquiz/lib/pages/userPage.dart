@@ -3,7 +3,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
-import 'package:polyquiz/widgets/user_widget/FriendListWidget.dart';
+import 'package:polyquiz/widgets/user_widget/friend/FriendListWidget.dart';
 import '../widgets/fancyAppBar.dart';
 import '../widgets/user_widget/ProfileCard.dart';
 import '../widgets/user_widget/statisticBlorb.dart';
