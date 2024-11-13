@@ -63,29 +63,40 @@ export class FriendService {
         const currentUser = await firstValueFrom(this.usersService.currentUserProfile$); // Get current user
         if (!currentUser) throw new Error('Erreur de authentification, reconnectez vous');
 
+        // Check if a friend request from the target user already exists
+        const existingRequest = currentUser.friendRequests.find(
+            (request: FriendRequest) => request.fromUserId === toUserId
+        );
 
-        const friendRequest: FriendRequest = {
-            fromUserId: currentUser.uid,
-            toUserId: toUserId,
-        };
-        const userDocRef = doc(this.firestore, `users/${toUserId}`);
+        if (existingRequest) {
+            await this.acceptFriendRequest(toUserId);
+            return;
+        } else {
+            // Otherwise, proceed with sending a new friend request
+            const friendRequest: FriendRequest = {
+                fromUserId: currentUser.uid,
+                toUserId: toUserId,
+            };
+            const userDocRef = doc(this.firestore, `users/${toUserId}`);
 
-        return runTransaction(this.firestore, async (transaction) => {
-            const userDoc = await transaction.get(userDocRef);
-            if (!userDoc.exists) throw new Error("L'utilisateur n'existe plus");
+            return runTransaction(this.firestore, async (transaction) => {
+                const userDoc = await transaction.get(userDocRef);
+                if (!userDoc.exists) throw new Error("L'utilisateur n'existe plus");
 
-            const friendRequests = userDoc.data()?.friendRequests || [];
+                const friendRequests = userDoc.data()?.friendRequests || [];
 
-            const existingRequest = friendRequests.find(
-                (req: any) => req.fromUserId === currentUser.uid
-            );
-            if (existingRequest) throw new Error("La requête d'ami a déja été envoyée");
+                const existingOutgoingRequest = friendRequests.find(
+                    (req: any) => req.fromUserId === currentUser.uid
+                );
+                if (existingOutgoingRequest) throw new Error("La requête d'ami a déja été envoyée");
 
-            transaction.update(userDocRef, {
-                friendRequests: [...friendRequests, friendRequest],
+                transaction.update(userDocRef, {
+                    friendRequests: [...friendRequests, friendRequest],
+                });
             });
-        });
+        }
     }
+
 
     async acceptFriendRequest(fromUserId: string) {
         // Get the current user
@@ -156,6 +167,31 @@ export class FriendService {
         const unfriendedUserDocRef = doc(this.firestore, `users/${unfriendedUserId}`);
         await updateDoc(currentUserDocRef, {friends: arrayRemove(unfriendedUserId)});
         await updateDoc(unfriendedUserDocRef, {friends: arrayRemove(toUserId)});
+    }
+
+    hasPendingRequest(user: Observable<User>): Observable<boolean> {
+        return combineLatest([
+            this.usersService.currentUserProfile$,
+            user
+        ]).pipe(
+            map(([currentUser, viewedUser]) => {
+                if (!currentUser || !viewedUser) return false;
+                return viewedUser.friendRequests?.some(
+                    request => request.fromUserId === currentUser.uid
+                ) ?? false;
+            })
+        );
+    }
+    isFriend(user: Observable<User>): Observable<boolean> {
+        return combineLatest([
+            this.usersService.currentUserProfile$,
+            user
+        ]).pipe(
+            map(([currentUser, viewedUser]) => {
+                if (!currentUser || !viewedUser) return false;
+                return currentUser.friends?.includes(viewedUser.uid) ?? false;
+            })
+        );
     }
 
 }

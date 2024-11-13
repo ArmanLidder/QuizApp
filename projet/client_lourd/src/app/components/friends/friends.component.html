@@ -1,61 +1,76 @@
-<mat-tab-group class="h-full">
-    <!-- Friends Tab -->
-    <mat-tab label="Amis">
-        <div class="p-4 h-60 flex flex-col">
-            <div *ngIf="(friends$ | async) as friends; else noFriends" class="flex-grow overflow-y-auto">
-                <ng-container *ngIf="friends.length > 0; else noFriends">
-                    <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
-                        <li *ngFor="let friend of friends" class="p-4 flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <app-avatar-with-level [user]="friend"></app-avatar-with-level>
-                                <span class="font-medium text-gray-700">{{ friend.username }}</span>
-                            </div>
-                            <button class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out"
-                                    (click)="removeConfirmDialog(friend.uid)">
-                                <mat-icon>person_remove</mat-icon>
-                            </button>
-                        </li>
-                    </ul>
-                </ng-container>
-            </div>
-            <ng-template #noFriends>
-                <div class="flex justify-center items-center h-full">
-                    <p class="text-center text-gray-600">Votre liste d'amis est vide pour le moment.</p>
+<div class="border-b h-full">
+    <div class="flex items-center justify-between pl-8 pt-4 pb-4 pr-4">
+        <h2 class="text-2xl font-semibold">Amis</h2>
+        <button (click)="openUserSearch()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center">
+            <mat-icon class="mr-2">person_add</mat-icon>
+            Ajouter
+        </button>
+    </div>
+    <div class="min-h-40">
+        <mat-tab-group class="h-full">
+            <!-- Friends Tab -->
+            <mat-tab label="Amis">
+                <div class="p-4 h-60 flex flex-col">
+                    <div *ngIf="(friends$ | async) as friends; else noFriends" class="flex-grow overflow-y-auto">
+                        <ng-container *ngIf="friends.length > 0; else noFriends">
+                            <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
+                                <li *ngFor="let friend of friends" class="p-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <app-avatar [size]="'small'" [uid]="friend.uid"></app-avatar>
+                                        <span class="font-medium text-gray-700">{{ friend.username }}</span>
+                                    </div>
+                                    <button class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out"
+                                            (click)="removeConfirmDialog(friend.uid)">
+                                        <mat-icon>person_remove</mat-icon>
+                                    </button>
+                                </li>
+                            </ul>
+                        </ng-container>
+                    </div>
+                    <ng-template #noFriends>
+                        <div class="flex justify-center items-center h-full">
+                            <p class="text-center text-gray-600">Votre liste d'amis est vide pour le moment.</p>
+                        </div>
+                    </ng-template>
                 </div>
-            </ng-template>
-        </div>
-    </mat-tab>
+            </mat-tab>
 
-    <!-- Pending Requests Tab -->
-    <mat-tab label="Demandes Reçues">
-        <div class="p-4 h-60 flex flex-col">
-            <div *ngIf="(pendingRequests$ | async) as requests; else noRequests" class="flex-grow overflow-y-auto">
-                <ng-container *ngIf="requests.length > 0; else noRequests">
-                    <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
-                        <li *ngFor="let request of requests" class="p-4 flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <app-avatar-with-level [user]="request"></app-avatar-with-level>
-                                <span class="font-medium text-gray-700">{{ request.username }}</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="text-green-600 hover:text-green-700 transition duration-300 ease-in-out"
-                                        (click)="acceptFriendRequest(request.uid)">
-                                    <mat-icon>check_circle</mat-icon>
-                                </button>
-                                <button class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out"
-                                        (click)="denyFriendRequest(request.uid)">
-                                    <mat-icon>cancel</mat-icon>
-                                </button>
-                            </div>
-                        </li>
-                    </ul>
-                </ng-container>
-            </div>
-            <ng-template #noRequests>
-                <div class="flex justify-center items-center h-full">
-                    <p class="text-center text-gray-600">Vous n'avez reçu aucune demande d'ami.</p>
+            <!-- Pending Requests Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <span [matBadge]="(pendingRequests$ | async)?.length" [matBadgeSize]="'small'" [matBadgeHidden]="!(pendingRequests$ | async)?.length" matBadgeOverlap="false" matBadgeColor="primary">Demandes Reçues</span>
+                </ng-template>
+                <div class="p-4 h-60 flex flex-col">
+                    <div *ngIf="(pendingRequests$ | async) as requests; else noRequests" class="flex-grow overflow-y-auto">
+                        <ng-container *ngIf="requests.length > 0; else noRequests">
+                            <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
+                                <li *ngFor="let request of requests" class="p-4 flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <app-avatar [size]="'small'" [uid]="request.uid"></app-avatar>
+                                        <span class="font-medium text-gray-700">{{ request.username }}</span>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-green-600 hover:text-green-700 transition duration-300 ease-in-out"
+                                                (click)="acceptFriendRequest(request.uid)">
+                                            <mat-icon>check_circle</mat-icon>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out"
+                                                (click)="denyFriendRequest(request.uid)">
+                                            <mat-icon>cancel</mat-icon>
+                                        </button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </ng-container>
+                    </div>
+                    <ng-template #noRequests>
+                        <div class="flex justify-center items-center h-full">
+                            <p class="text-center text-gray-600">Vous n'avez reçu aucune demande d'ami.</p>
+                        </div>
+                    </ng-template>
                 </div>
-            </ng-template>
-        </div>
-    </mat-tab>
-</mat-tab-group>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
+

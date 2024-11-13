@@ -84,6 +84,10 @@ export class GameRealService implements GameServiceInterface {
         if (this.socketService.isSocketAlive()) this.socketService.send(SocketEvent.UPDATE_SELECTION, { roomId: this.roomId, isSelected, index });
     }
 
+    sendQRESelection(selectedAnswer: number) {
+        if (this.socketService.isSocketAlive()) this.socketService.send(SocketEvent.UPDATE_QRE_SELECTION, { roomId: this.roomId, selectedAnswer });
+    }
+
     private reset() {
         this.username = '';
         this.roomId = 0;

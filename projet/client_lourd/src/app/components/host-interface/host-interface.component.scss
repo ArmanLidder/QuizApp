@@ -7,19 +7,14 @@
 /* Timer circle */
 .circle {
     border-radius: 50%;
-    width: 180px;
-    height: 180px;
-    padding: 0;
+    width: 200px;
+    height: 200px;
     color: #FFF;
     border: 2px solid #000000;
     text-align: center;
-    font-family: Arial;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    position: relative;
-    margin-right: 40px;
 }
 
 .circle span:first-child {
@@ -224,22 +219,27 @@ button {
 
 .result-container {
     display: flex;
-    margin-left: 10px;
-    margin-right: 10px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px; /* Add space between histogram and host player list */
+    width: 100%; /* Use full available width */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .histogram,
 app-organizer-histogram,
-app-statistic-zone,
 app-player-list {
     flex: 1;
 }
+.histogram,
+.host-players-list {
+    flex: 1 1 50%; /* Allow both components to take up equal space */
+    max-width: 600px; /* Set a max width for each component to avoid overgrowth */
+}
 
 .histogram,
 app-organizer-histogram,
-app-statistic-zone {
-    flex: 1.25;
-}
 
 app-player-list {
     flex: 1;
@@ -272,9 +272,10 @@ mat-icon.disable {
     border: 2px solid black;
   }
 
-.host-players-list{
+.host-players-list {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .legend-item > span{

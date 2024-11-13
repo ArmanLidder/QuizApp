@@ -1,45 +1,101 @@
 @use '@angular/material' as mat;
+@import '@angular/material/theming';
 @include mat.core();
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "bootstrap-icons";
 
-.mdc-notched-outline__notch {
-  border-style: none;
+// Typography
+html {
+  font-family: 'Poppins', sans-serif;
 }
 
-.mat-mdc-icon-button {
-  line-height: normal;
-}
+// Custom Palettes
+$primary-palette: mat.define-palette(mat.$indigo-palette);
+$accent-palette: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$warn-palette: mat.define-palette(mat.$red-palette);
 
-.my-snack-bar {
-  background-color: #fff;
-}
-.my-snack-bar button {
-  font-weight: bold;
-}
-.my-snack-bar button:hover {
-  opacity: 0.7;
-}
+// Theme Configuration
+$theme-config: (
+        color: (
+                primary: $primary-palette,
+                accent: $accent-palette,
+                warn: $warn-palette,
+        )
+);
 
-.custom-tooltip {
-  background-color: rgba(0, 0, 0, 0.75);
-  color: white;
-  padding: 8px;
-  font-size: 14px;
-  border-radius: 4px;
-  text-align: center;
-}
+// Create the theme
+$custom-theme: mat.define-light-theme($theme-config);
 
+// Apply the theme globally
+@include mat.all-component-themes($custom-theme);
+
+// Container utility
 .container {
   width: 100%;
 }
 
+// Global MDC SnackBar override with more specific selectors
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #000000 !important;
+
+  .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
+    --mdc-text-button-label-text-color: #{mat.get-color-from-palette($primary-palette)} !important;
+    color: #{mat.get-color-from-palette($primary-palette)} !important;
+  }
+}
+
+// Ensure the button uses primary color
+.mat-mdc-snack-bar-action {
+  --mdc-text-button-label-text-color: #{mat.get-color-from-palette($primary-palette)} !important;
+  color: #{mat.get-color-from-palette($primary-palette)} !important;
+}
 
 
+button[mat-icon-button]{
+  $large-size-button: 80px;
+  $large-size-icon: 48px;
 
+  &.icon-button-large {
+    width: $large-size-button;
+    height: $large-size-button;
+    line-height: $large-size-button;
+    .mat-icon {
+      font-size: $large-size-icon;
+      width: $large-size-icon;
+      height: $large-size-icon;
+      line-height: $large-size-icon;
+    }
+    .mat-button-ripple {
+      font-size: inherit;
+      width: inherit;
+      height: inherit;
+      line-height: inherit;
+    }
+  }
+
+  $small-size-button: 24px;
+  $small-size-icon: 18px;
+
+  &.icon-button-small {
+    width: $small-size-button;
+    height: $small-size-button;
+    line-height: $small-size-button;
+    .mat-icon {
+      font-size: $small-size-icon;
+      width: $small-size-icon;
+      height: $small-size-icon;
+      line-height: $small-size-icon;
+    }
+    .mat-button-ripple {
+      font-size: inherit;
+      width: inherit;
+      height: inherit;
+      line-height: inherit;
+    }
+  }
+}
 

@@ -1,4 +1,4 @@
-import {ApplicationRef, Component, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {ApplicationRef, Component, ElementRef, inject, OnInit, ViewChild, HostListener} from '@angular/core';
 import {CanalService} from "@app/services/canal.service/canal.service";
 import {Message, Canal} from "@common/interfaces/message.interface";
 import {
@@ -66,6 +66,14 @@ export class ChatComponent implements OnInit {
         this.setUp();
     }
 
+    @HostListener('click', ['$event'])
+    @HostListener('keydown', ['$event'])
+    @HostListener('keypress', ['$event'])
+    @HostListener('keyup', ['$event'])
+    async handleEvents(event: Event) {
+        if (this.state === State.opened) event.stopImmediatePropagation();
+    }
+
     async ngOnInit() {
         await this.canalService.ensureGeneralCanal();
     }
@@ -82,6 +90,8 @@ export class ChatComponent implements OnInit {
     popOut() {
         this.state = State.outside;
         this.popWindow.popOut();
+        const input = this.popWindow["popoutWindow"].document.getElementById('input_message') as HTMLElement;
+        input?.focus();
     }
 
     // Methods for UI
@@ -93,6 +103,8 @@ export class ChatComponent implements OnInit {
     toggleChatState() {
         if (this.state === State.closed) {
             this.state = State.opened;
+            if (this.isChatFocused) this.focusOnForm('input_message');
+            if (this.isCreateCanal) this.focusOnForm('input_canal')
         } else if (this.state === State.opened) {
             this.state = State.closed;
         }
@@ -157,7 +169,6 @@ export class ChatComponent implements OnInit {
                     this.toggleIsChat();
                     this.appRef.tick();
                     this.canalSubscription.unsubscribe();
-                    console.log('returnToMenu');
                 }
             });
         this.focusOnForm('input_message');
@@ -286,7 +297,9 @@ export class ChatComponent implements OnInit {
 
     private focusOnForm(id: string) {
         setTimeout(() => {
-            const input = document.getElementById(id) as HTMLElement;
+            let input;
+            if (this.popWindow.isPoppedOut) input = this.popWindow["popoutWindow"].document.getElementById(id) as HTMLElement;
+            else input = document.getElementById(id) as HTMLElement;
             input?.focus();
         }, 400);
     }

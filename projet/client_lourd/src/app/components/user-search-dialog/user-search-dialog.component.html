@@ -1,5 +1,5 @@
-<div class="p-6 mx-auto bg-white rounded-xl shadow-md space-y-6" style="width: 100%;">
-    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Recherche d'utilisateurs</h2>
+<div class="p-6 mx-auto bg-white rounded-xl shadow-md space-y-6">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Recherche d'utilisateurs...</h2>
 
     <mat-form-field class="w-full">
         <mat-icon matPrefix>search</mat-icon>
@@ -7,21 +7,20 @@
     </mat-form-field>
 
     <div class="mt-4 space-y-2 max-h-80 overflow-y-auto">
-        <div *ngFor="let user of filteredUsers$ | async" class="bg-gray-100 rounded-lg p-3 flex items-center space-x-3 shadow-sm">
-            <app-avatar-with-level [user]="user"></app-avatar-with-level>
+        <div *ngFor="let userData of filteredUsers$ | async" class="bg-gray-100 rounded-lg p-3 flex items-center space-x-3 shadow-sm">
+            <app-avatar class="flex-shrink-0 flex-grow-0" [size]="'small'" [uid]="userData.user.uid"></app-avatar>
             <div class="flex-grow">
-                <h3 class="text-base font-medium text-gray-900">{{ user.username }}</h3>
+                <h3 class="text-base font-medium text-gray-900">{{ userData.user.username }}</h3>
             </div>
-            <div class="items-center">
-                <ng-container *ngIf="!hasPendingRequest(user, currentUser$ | async); else pendingRequestIcon">
-                    <button (click)="sendFriendRequest(user)" class="items-center text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex">
-                        <mat-icon class="mr-2" matTooltip="Envoyer une requête d'ami"
-                                  matTooltipClass="custom-tooltip">person_add</mat-icon>
+            <div class="flex items-center space-x-2 mt-4">
+                <ng-container *ngIf="!userData.hasPending; else pendingRequestIcon">
+                    <button (click)="sendFriendRequest(userData.user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex items-center">
+                        <mat-icon matTooltip="Envoyer une requête d'ami" matTooltipClass="custom-tooltip">person_add</mat-icon>
                     </button>
                 </ng-container>
                 <ng-template #pendingRequestIcon>
                     <mat-icon
-                            class="mr-2 items-center text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex"
+                            class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex items-center"
                             matTooltip="Demande déjà envoyée"
                             matTooltipClass="custom-tooltip"
                     >hourglass_empty</mat-icon>

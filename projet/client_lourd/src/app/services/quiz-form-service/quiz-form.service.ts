@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
+    MAX_NUMBER_ALLOWED,
     MAX_NUMBER_OF_CHOICES_PER_QUESTION,
     MAX_POINTS_PER_QUESTION,
-    MAX_QCM_DURATION,
+    MAX_QCM_DURATION, MIN_NUMBER_ALLOWED,
     MIN_NUMBER_OF_CHOICES_PER_QUESTION,
     MIN_NUMBER_OF_QUESTIONS,
     MIN_POINTS_PER_QUESTION,
@@ -13,27 +14,46 @@ import { QuizValidationService } from '@app/services/quiz-validation.service/qui
 import { QuestionType } from '@common/enums/question-type.enum';
 import { Quiz, QuizChoice, QuizQuestion } from '@common/interfaces/quiz.interface';
 import { getCurrentDateService } from 'src/utils/current-date-format/current-date-format';
+import {AuthService} from "@app/services/auth.service/auth.service";
+import {firstValueFrom} from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class QuizFormService {
     quiz: Quiz;
-
+    userId: string | null = null;
     constructor(
         private formBuilder: FormBuilder,
         private validationService: QuizValidationService,
-    ) {}
-
-    fillForm(quiz?: Quiz) {
-        const quizForm: FormGroup = this.formBuilder.group({
-            title: [quiz?.title, Validators.required],
-            duration: [quiz?.duration, [Validators.required, Validators.min(MIN_QCM_DURATION), Validators.max(MAX_QCM_DURATION)]],
-            description: [quiz?.description, Validators.required],
-            questions: this.formBuilder.array([], [Validators.minLength(MIN_NUMBER_OF_QUESTIONS), Validators.required]),
-            visible: [quiz?.visible],
+        private authService: AuthService,
+    ) {
+        firstValueFrom(this.authService.user$).then(user => {
+            this.userId = user?.uid ?? null;
+        }).catch(() => {
+            this.userId = null;
         });
+    }
+
+    async fillForm(quiz?: Quiz) {
+        try {
+            const user = await firstValueFrom(this.authService.user$);
+            this.userId = user?.uid ?? null;
+        } catch (error) {
+            this.userId = null;
+        }
+
+        const quizForm: FormGroup = this.formBuilder.group({
+            title: [quiz?.title, [Validators.required, Validators.pattern(/^.*\S.*$/)]],
+            duration: [quiz?.duration, [Validators.required, Validators.min(MIN_QCM_DURATION), Validators.max(MAX_QCM_DURATION)]],
+            description: [quiz?.description, [Validators.required, Validators.pattern(/^.*\S.*$/)]],
+            questions: this.formBuilder.array([], [Validators.minLength(MIN_NUMBER_OF_QUESTIONS), Validators.required]),
+            visible: [quiz?.visible ?? true],
+            owner: [quiz?.owner ?? this.userId]
+        });
+
         this.fillQuestions(quizForm.get('questions') as FormArray, quiz?.questions);
+        console.log(quizForm.value)
         return quizForm;
     }
 
@@ -50,7 +70,7 @@ export class QuizFormService {
                     question?.type === QuestionType.QRE ? 'QRE' : 'QRL',
                 Validators.required
             ],
-            text: [question?.text ?? '', Validators.required],
+            text: [question?.text ?? '', [Validators.required, Validators.pattern(/^.*\S.*$/)]],
             points: [
                 question?.points ?? null,
                 [
@@ -60,6 +80,7 @@ export class QuizFormService {
                     this.validationService.divisibleByTen,
                 ],
             ],
+            imageUrl: [question?.imageUrl ?? null],
             choices: this.formBuilder.array(
                 [],
                 question?.type === QuestionType.QCM
@@ -73,22 +94,22 @@ export class QuizFormService {
             answer: [
                 question?.answer ?? null,
                 question?.type === QuestionType.QRE
-                    ? [Validators.required,Validators.pattern("^[0-9]*$"), (control: any) => this.validationService.validateAnswerInRange(control, question?.interval?.min || 0, question?.interval?.max || 0)]
+                    ? [Validators.required,Validators.pattern("^-?[0-9]+$"), (control: any) => this.validationService.validateAnswerInRange(control, question?.interval?.min || 0, question?.interval?.max || 0),
+                        Validators.max(MAX_NUMBER_ALLOWED), Validators.min(MIN_NUMBER_ALLOWED)]
                     : []
             ],
-
             interval: this.formBuilder.group(
                 {
                     min: [
                         question?.interval?.min ?? null,
                         question?.type === QuestionType.QRE
-                            ? [Validators.required, Validators.pattern("^[0-9]*$")]
+                            ? [Validators.required, Validators.pattern("^-?[0-9]+$"),Validators.max(MAX_NUMBER_ALLOWED), Validators.min(MIN_NUMBER_ALLOWED)]
                             : []
                     ],
                     max: [
                         question?.interval?.max ?? null,
                         question?.type === QuestionType.QRE
-                            ? [Validators.required, Validators.pattern("^[0-9]*$")]
+                            ? [Validators.required, Validators.pattern("^-?[0-9]+$"),Validators.max(MAX_NUMBER_ALLOWED), Validators.min(MIN_NUMBER_ALLOWED)]
                             : []
                     ],
                 },
@@ -97,7 +118,7 @@ export class QuizFormService {
 
             margin: [
                 question?.margin ?? null,
-                question?.type === QuestionType.QRE ? [Validators.required, Validators.pattern("^[0-9]*$"), this.validationService.validateMarginWithinLimit, Validators.min(0)] : []
+                question?.type === QuestionType.QRE ? [Validators.required, this.validationService.validateMarginWithinLimit, Validators.min(0)] : []
             ],
             beingModified: question === undefined,
         });
@@ -152,19 +173,20 @@ export class QuizFormService {
 
         const quiz: Quiz = {
             id: this.quiz?.id,
-            title: quizForm.value.title,
-            description: quizForm.value.description,
+            title: quizForm.value.title.trim(),
+            description: quizForm.value.description.trim(),
             duration: quizForm.value.duration,
             lastModification: now,
             questions,
             visible: quizForm.value.visible,
+            owner:quizForm.value.owner,
         };
         return quiz;
     }
 
     private extractQuestionFromForm(questionForm: FormArray): QuizQuestion {
         const type = questionForm.get('type')?.value;
-
+        const imageUrl = questionForm.get('imageUrl')?.value
         // Initialize the question object
         const question: QuizQuestion = {
             type: type === 'QCM' ? QuestionType.QCM : type === 'QRE' ? QuestionType.QRE : QuestionType.QRL,
@@ -174,6 +196,7 @@ export class QuizFormService {
             answer: type === 'QRE' ? questionForm.get('answer')?.value : undefined, // Only QRE questions have an answer
             interval: type === 'QRE' ? questionForm.get('interval')?.value : undefined, // Only QRE questions have an interval
             margin: type === 'QRE' ? questionForm.get('margin')?.value : undefined, // Only QRE questions have a margin
+            imageUrl: imageUrl ? imageUrl : undefined
         };
 
         if (type === 'QCM') {
@@ -192,10 +215,12 @@ export class QuizFormService {
             isCorrect: choiceForm.get('isCorrect')?.value === 'true',
         };
     }
-    //ugly function but it works
+
     private attachListenerToQuestionType(questionForm: FormGroup) {
         questionForm.get('type')?.valueChanges.subscribe((type: string | null) => {
             const choicesControl = questionForm.get('choices') as FormArray;
+
+            // Apply validators based on the selected question type
             if (type === 'QCM') {
                 choicesControl.setValidators([
                     Validators.minLength(MIN_NUMBER_OF_CHOICES_PER_QUESTION),
@@ -206,48 +231,55 @@ export class QuizFormService {
                 choicesControl.clearValidators();
                 choicesControl.clear();
             }
-            choicesControl?.updateValueAndValidity();
+            choicesControl.updateValueAndValidity();
+
+
+            const applyQREValidators = type === 'QRE';
+
+            questionForm.get('answer')?.setValidators(
+                applyQREValidators
+                    ? [Validators.required, Validators.pattern("^-?[0-9]+$"),
+                        (control) => this.validationService.validateAnswerInRange(control, questionForm.get('interval.min')?.value || 0, questionForm.get('interval.max')?.value || 0),
+                        Validators.max(MAX_NUMBER_ALLOWED), Validators.min(MIN_NUMBER_ALLOWED)]
+                    : []
+            );
+
+            questionForm.get('interval.min')?.setValidators(
+                applyQREValidators ? [Validators.required, Validators.pattern("^-?[0-9]+$"),Validators.max(MAX_NUMBER_ALLOWED), Validators.min(MIN_NUMBER_ALLOWED)] : []
+            );
+
+            questionForm.get('interval.max')?.setValidators(
+                applyQREValidators ? [Validators.required, Validators.pattern("^-?[0-9]+$"),Validators.max(MAX_NUMBER_ALLOWED), Validators.min(MIN_NUMBER_ALLOWED)] : []
+            );
+
+            questionForm.get('margin')?.setValidators(
+                applyQREValidators ? [Validators.required, this.validationService.validateMarginWithinLimit, Validators.min(0)] : []
+            );
+
+
+            questionForm.get('answer')?.updateValueAndValidity();
+            questionForm.get('interval.min')?.updateValueAndValidity();
+            questionForm.get('interval.max')?.updateValueAndValidity();
+            questionForm.get('margin')?.updateValueAndValidity();
         });
 
-        // Function to set answer validators
-        const updateAnswerValidators = () => {
-            const minValue = questionForm.get('interval.min')?.value || 0;
-            const maxValue = questionForm.get('interval.max')?.value || 0;
 
-            questionForm.get('answer')?.setValidators([
-                Validators.required,
-                Validators.pattern("^[0-9]*$"),
-                (control) => this.validationService.validateAnswerInRange(control, minValue, maxValue)
-            ]);
-            questionForm.get('answer')?.updateValueAndValidity();
-        };
-
-        questionForm.get('interval.min')?.valueChanges.subscribe(updateAnswerValidators);
-        questionForm.get('interval.max')?.valueChanges.subscribe(updateAnswerValidators);
-
-        // Function to set margin validators
-        const updateMarginValidators = () => {
-            questionForm.get('margin')?.setValidators([
-                Validators.required,
-                Validators.pattern("^[0-9]*$"),
-                Validators.min(0),
-                (control) => this.validationService.validateMarginWithinLimit(control)
-            ]);
-            questionForm.get('margin')?.updateValueAndValidity();
-        };
-
-        // Ensure that the margin validators are set correctly whenever the answer changes
-        questionForm.get('answer')?.valueChanges.subscribe(updateMarginValidators);
-
-        // Additional subscriptions to update interval validation
         questionForm.get('interval.min')?.valueChanges.subscribe(() => {
             questionForm.get('interval')?.setValidators(this.validationService.validateInterval);
             questionForm.get('interval')?.updateValueAndValidity();
+            questionForm.get('answer')?.updateValueAndValidity();
         });
+
         questionForm.get('interval.max')?.valueChanges.subscribe(() => {
             questionForm.get('interval')?.setValidators(this.validationService.validateInterval);
             questionForm.get('interval')?.updateValueAndValidity();
+            questionForm.get('answer')?.updateValueAndValidity();
+        });
+
+        questionForm.get('answer')?.valueChanges.subscribe(() => {
+            questionForm.get('margin')?.updateValueAndValidity();
         });
     }
+
 
 }

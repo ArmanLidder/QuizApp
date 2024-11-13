@@ -26,7 +26,7 @@
                                         <button *ngIf="!this.checkCanalType(canal.name)"
                                                 (click)="leaveChat(canal.id!); $event.stopPropagation()">
                                             <i style="color: black; display: flex; align-items: center;"
-                                               class="bi bi-box-arrow-left"></i>
+                                               class="bi bi-box-arrow-right"></i>
                                         </button>
                                         <button *ngIf="!this.checkCanalType(canal.name)"
                                                 (click)="accessDeleteCanal(canal.id!, canal.name!); $event.stopPropagation()">
@@ -51,7 +51,7 @@
                                 <ng-container *ngFor="let msg of canal!.messages">
                                     <div [ngClass]="['message', getMessageClass(msg, user)]">
                                         <ng-container *ngIf="getMessageClass(msg, user) == 'received'">
-                                            <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
+                                            <app-avatar [isChat]="true" [uid]="msg.userUid" [size]="'small'"></app-avatar>
                                             <div class="bubble">
                                                 <span>{{ msg.message }}</span>
                                                 <small>{{ msg.createdAt.toDate() | date: 'short' }}</small>
@@ -62,7 +62,7 @@
                                                 <span>{{ msg.message }}</span>
                                                 <small style="color:antiquewhite">{{ msg.createdAt.toDate() | date: 'short' }}</small>
                                             </div>
-                                            <app-avatar [isChat]="true" [uid]="msg.userUid"></app-avatar>
+                                            <app-avatar [isChat]="true" [uid]="msg.userUid" [size]="'small'"></app-avatar>
                                         </ng-container>
                                     </div>
                                 </ng-container>

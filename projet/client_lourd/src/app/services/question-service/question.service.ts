@@ -16,6 +16,7 @@ export class QuestionService {
     ) {}
 
     addQuestion(index: number, questionsFormArray?: FormArray) {
+        if (index === -1) this.modifiedQuestionIndex = -1;
         if (this.modifiedQuestionIndex !== NON_EXISTANT_INDEX) {
             const validationErrors = this.saveQuestion(this.modifiedQuestionIndex, questionsFormArray);
             if (validationErrors.length !== 0) {

@@ -1,54 +1,62 @@
-<app-unique-quiz-error-feedback 
-    *ngIf='!isQuizUnique' 
-    [quizName]="this.importedQuiz.title" 
-    (sendNewQuizName)="receiveQuizName($event)"
-    (cancelOperation)="killErrorFeedback($event)">
-</app-unique-quiz-error-feedback>
-<!--<app-validation-quiz-error-feedback-->
-<!--    *ngIf='isErrors'-->
-<!--    [errors]='this.errors'-->
-<!--    (cancelOperation)="killErrorFeedback($event)">-->
-<!--</app-validation-quiz-error-feedback>-->
-<div class="quizzes-container" *ngIf='!isErrors && isQuizUnique'>
-    <table>
+<div class="quizzes-container">
+    <table class="table-auto w-full">
         <thead>
-            <tr>
-                <th>Jeu</th>
-                <th *ngIf="isAdmin">Visibilité</th>
-                <th *ngIf="isAdmin">Dernière Modification</th>
-            </tr>
+        <tr>
+            <th class="w-1/2 px-4 py-2 text-left">Jeux</th>
+            <th *ngIf="isAdmin" class="w-1/4 px-4 py-2 text-left">Dernière Modification</th>
+        </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let quiz of quizzes"  [class.selected]="!isAdmin && quiz === selectedQuiz" (click)="selectQuiz(quiz)">
-                <td  [class.hover] = "!isAdmin">
-                    <app-game-item [quiz]="quiz" class="game-item" [isAdmin]="isAdmin" (removeQuiz)="removeQuiz($event)"></app-game-item>
-                    <app-quiz-info *ngIf="quiz === selectedQuiz && !isAdmin" [selectedQuiz]="quiz"></app-quiz-info>
-                </td>
-                <td *ngIf="isAdmin">
-                    <label class="switch-btn" matTooltipClass="custom-tooltip" matTooltip="Afficher le questionnaire">
-                        <input type="checkbox" [(ngModel)]="quiz.visible" (click)="updateVisibility(quiz)" />
-                        <span class="slider round"></span>
-                    </label>
-                </td>
-                <td *ngIf="isAdmin">
-                    <span>{{ quiz.lastModification }}</span>
-                </td>
-            </tr>
+        <tr *ngIf="quizzes.length === 0">
+            <td colspan="3" class="text-center text-gray-500 py-4">
+                Aucun jeu-questionnaire disponible pour le moment.
+            </td>
+        </tr>
+        <tr *ngFor="let quiz of quizzes" [class.selected]="!isAdmin && quiz === selectedQuiz" (click)="selectQuiz(quiz)">
+            <td [class.hover]="!isAdmin" class="px-4 py-3">
+                <app-game-item [quiz]="quiz" class="game-item" [isAdmin]="isAdmin" (removeQuiz)="removeQuiz($event)" (refresh)="refresh($event)"></app-game-item>
+                <app-quiz-info *ngIf="quiz === selectedQuiz && !isAdmin" [selectedQuiz]="quiz"></app-quiz-info>
+            </td>
+            <td *ngIf="isAdmin" class="text-gray-600 px-4 py-3">{{ quiz.lastModification }}</td>
+        </tr>
         </tbody>
         <tfoot>
-            <tr>
-                <td class="button-container" *ngIf="isAdmin">
-                    <button routerLink="/quiz-creation" class="add"><i class="fas fa-plus"></i> Ajouter</button>
-                    <input type="file" class="file-selector" #fileInput accept="application/json" [class.hide-file-input]="true" (change)="selectFile($event)" />
-                    <button class="add upload" (click)="this.uploadFile()"><i class="fas fa-file-import"></i> Importer</button>
-                </td>
-                <td class="button-container" *ngIf="!isAdmin">
-                    <button (click)="playGame()" class="add" [class.disabled-button]="!selectedQuiz" [disabled]="!selectedQuiz">Jouer</button>
-<!--                    <button (click)="testGame()" class="add" [class.disabled-button]="!selectedQuiz" [disabled]="!selectedQuiz">Tester</button>-->
-                    <button routerLink="/home" class="cancel">Annuler</button>
-                </td>
-            </tr>
+        <tr>
+            <td colspan="3">
+                <div class="flex justify-between space-x-4">
+                    <button (click)="refresh()"
+                            class="px-4 py-2 border border-gray-500 rounded bg-gray-500 text-white hover:bg-gray-600 transition">
+                        <i class="fas fa-sync mr-2"></i> Rafraîchir
+                    </button>
+
+                    <div class="flex space-x-4">
+                        <ng-container *ngIf="isAdmin; else nonAdminButtons">
+                            <button routerLink="/quiz-creation"
+                                    class="px-4 py-2 border border-blue-500 rounded bg-blue-600 text-white hover:bg-blue-700 transition">
+                                <i class="fas fa-plus mr-2"></i> Ajouter
+                            </button>
+                            <input type="file" class="file-selector hidden" #fileInput accept="application/json" (change)="selectFile($event)" />
+                            <button (click)="uploadFile()"
+                                    class="px-4 py-2 border border-green-500 rounded bg-green-500 text-white hover:bg-green-600 transition">
+                                <i class="fas fa-file-import mr-2"></i> Importer
+                            </button>
+                        </ng-container>
+                        <ng-template #nonAdminButtons>
+                            <button [matTooltip]="!selectedQuiz ? 'Veuillez sélectionner un quiz':''" (click)="playGame()"
+                                    class="px-4 py-2 border rounded transition"
+                                    [ngClass]="{
+          'border-blue-500 bg-blue-600 text-white hover:bg-blue-700': selectedQuiz,
+          'border-gray-300 bg-gray-300 text-gray-500 cursor-not-allowed': !selectedQuiz
+        }"
+                                    [disabled]="!selectedQuiz">
+                                Jouer
+                            </button>
+
+                        </ng-template>
+                    </div>
+                </div>
+            </td>
+        </tr>
         </tfoot>
     </table>
 </div>
-

@@ -8,4 +8,5 @@ import {User} from "@common/interfaces/user-data.interface";
 })
 export class AvatarWithLevelComponent {
   @Input() user!: User; // Expecting a User input to be passed to this component
+  @Input() hideLevel: boolean = false;
 }

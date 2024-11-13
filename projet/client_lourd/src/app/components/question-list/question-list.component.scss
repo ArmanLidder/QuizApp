@@ -1,3 +1,4 @@
+
 .quiz-question {
     align-content: space-between;
     border: 1px solid black;
@@ -171,4 +172,8 @@
 .arrow-down{
     display: flex;
     flex-direction: row;
+}
+img{
+    max-width:100px;
+    max-height:100px;
 }

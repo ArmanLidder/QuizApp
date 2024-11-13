@@ -89,8 +89,11 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
             this.snackbarService.show("Cette partie est exclusive aux amis de l'hôte.")
         } else {
             const isPrestigeValid = await this.validatePrestige(game.prestige);
+            const enoughMoney = await this.validateMoney(game.price);
             if (!isPrestigeValid) {
                 this.snackbarService.show("Vous n'avez pas le prestige minimum pour rejoindre cette partie.")
+            } else if (!enoughMoney){
+                this.snackbarService.show("Vous n'avez pas assez d'argent pour rejoindre cette partie.")
             } else {
                 await this.roomValidationService.verifyUsername();
                 if (!this.roomValidationService.isUsernameValid) this.snackbarService.show("Vous avez été banni de cette partie.")
@@ -118,5 +121,13 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
     private async validatePrestige(prestige: number) {
         const currentUserPrestige = (await firstValueFrom(this.roomValidationService.user$) as User)?.prestige;
         return currentUserPrestige >= prestige;
+    }
+
+    private async validateMoney(money: number) {
+        const currentUserMoney = (await firstValueFrom(this.roomValidationService.user$) as User)?.currency;
+        const isValid = currentUserMoney >= money;
+        console.log(currentUserMoney, money, isValid)
+        if (isValid) await this.userService.updateUser({currency: (currentUserMoney - money)});
+        return isValid;
     }
 }

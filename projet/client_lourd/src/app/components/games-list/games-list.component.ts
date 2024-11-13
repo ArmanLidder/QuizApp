@@ -1,9 +1,7 @@
 import {Component, ElementRef, Input, OnInit, ViewChild, inject} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
-import {AlertDialogComponent} from '@app/components/alert-dialog/alert-dialog.component';
 import {GameConfigDialogComponent} from "@app/components/game-config-dialog/game-config-dialog.component";
-import {HTTP_STATUS_CODE_CREATED} from '@common/constants/games-list.component.const';
 import {QuizValidationService} from '@app/services/quiz-validation.service/quiz-validation.service';
 import {QuizService} from '@app/services/quiz.service/quiz.service';
 import {ErrorDictionary} from '@common/browser-message/error-message/error-message';
@@ -12,6 +10,10 @@ import {getCurrentDateService} from 'src/utils/current-date-format/current-date-
 import {generateRandomId} from 'src/utils/random-id-generator/random-id-generator';
 import {QUIZ_TESTING_PAGE, WAITING_ROOM_HOST_PAGE} from '@common/page-url/page-url';
 import {ErrorDialogComponent} from "@app/components/error-dialog/error-dialog.component";
+import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
+// import {UniqueQuizNameDialogComponent} from "@app/components/unique-quiz-name-dialog/unique-quiz-name-dialog.component";
+import {AuthService} from "@app/services/auth.service/auth.service";
+import {QuizFormService} from "@app/services/quiz-form-service/quiz-form.service";
 
 @Component({
     selector: 'app-games-list',
@@ -28,6 +30,7 @@ export class GamesListComponent implements OnInit {
     errors: string | null = null;
     isErrors: boolean = false;
     isQuizUnique: boolean = true;
+    currentUserUid: string | null = null;
 
     private router = inject(Router);
     private fileReader: FileReader = new FileReader();
@@ -37,28 +40,37 @@ export class GamesListComponent implements OnInit {
     constructor(
         public quizServices: QuizService,
         public quizValidator: QuizValidationService,
+        private quizFormService: QuizFormService,
         private dialog: MatDialog,
+        private snackbar: SnackbarService,
+        private authService: AuthService,
     ) {
     }
 
     ngOnInit() {
-        this.populateGameList();
-    }
-
-    populateGameList() {
-        if (this.isAdmin) this.getAllQuizzes();
-        else this.getAllVisibleQuizzes();
-    }
-
-    getAllQuizzes() {
-        this.quizServices.basicGetAll().subscribe((res) => {
-            this.quizzes = res;
+        this.authService.user$.subscribe((user) => {
+            this.currentUserUid = user?.uid ?? null;
+            this.populateGameList();
         });
     }
 
+    refresh(event: any = {}) {
+        this.selectedQuiz = null;
+        this.populateGameList();
+        this.snackbar.show( 'Les quiz ont été actualisés.')
+    }
+
+    populateGameList() {
+        this.getAllVisibleQuizzes();
+    }
+
     getAllVisibleQuizzes() {
-        this.quizServices.basicGetAllVisible().subscribe((res) => {
-            this.quizzes = res;
+        this.quizServices.basicGetAll().subscribe((res) => {
+            if (res) {
+                this.quizzes = res.filter(
+                    (quiz) => quiz.visible || quiz.owner === this.currentUserUid
+                );
+            }
         });
     }
 
@@ -72,11 +84,6 @@ export class GamesListComponent implements OnInit {
         this.errors = null;
     }
 
-    receiveQuizName(newName: string) {
-        this.importedQuiz.title = newName;
-        this.checkQuizNameUnique();
-        this.isQuizUnique = true;
-    }
 
     removeQuiz(id: string) {
         const index = this.quizzes.findIndex((quiz) => quiz.id === id);
@@ -110,8 +117,13 @@ export class GamesListComponent implements OnInit {
         try {
             this.importedQuiz = JSON.parse(event.target?.result as string);
             this.importedQuiz.lastModification = getCurrentDateService();
+            this.importedQuiz.owner = this.currentUserUid as string;
+            if(this.importedQuiz.title) this.importedQuiz.title = this.importedQuiz.title.trim();
+            if (this.importedQuiz.description) this.importedQuiz.description = this.importedQuiz.description.trim();
             this.resolveAsyncFileRead();
-        } catch (error) {
+
+        } catch (error:any) {
+            this.snackbar.show(`Erreur : le fichier JSON est mal formaté.(${error.message})`)
             this.rejectAsyncFileRead(error);
         }
     }
@@ -134,13 +146,14 @@ export class GamesListComponent implements OnInit {
         this.asyncFileRejecter(error);
     }
 
-    validateFileData() {
+    async validateFileData() {
         const errors = this.quizValidator.validateQuiz(this.importedQuiz);
         if (errors.length === 0) {
-            this.checkQuizNameUnique();
+            await this.addImportedQuiz();
         } else {
             this.errors = this.setValidatorError(errors);
             this.showErrorDialog(this.errors)
+            await this.addImportedQuiz();
         }
     }
 
@@ -162,25 +175,13 @@ export class GamesListComponent implements OnInit {
         return errorMessage;
     }
 
-    checkQuizNameUnique() {
-        this.quizServices.checkTitleUniqueness(this.importedQuiz.title).subscribe((res) => {
-            this.treatResponse(res.body?.isUnique as boolean);
+    async addImportedQuiz() {
+        this.importedQuiz.id = generateRandomId();
+        await this.router.navigate(['/quiz-creation'], {
+            queryParams: { import: true }
         });
-    }
-
-    treatResponse(value: boolean) {
-        if (!value) {
-            this.isQuizUnique = false;
-        } else {
-            this.importedQuiz.id = generateRandomId();
-            this.addImportedQuiz();
-        }
-    }
-
-    addImportedQuiz() {
-        this.quizServices.basicPost(this.importedQuiz as Quiz).subscribe((res) => {
-            if (res.status === HTTP_STATUS_CODE_CREATED) this.populateGameList();
-        });
+        this.quizFormService.quiz = this.importedQuiz;
+        await this.quizFormService.fillForm(this.importedQuiz as Quiz);
     }
 
     handleQuizAction(route: string){
@@ -192,11 +193,12 @@ export class GamesListComponent implements OnInit {
             this.selectedQuiz = null;
 
             if (res === null) {
-                this.showError(ErrorDictionary.QUIZ_DELETED);
-            } else if (res.visible) {
+                this.showErrorDialog(ErrorDictionary.QUIZ_DELETED);
+            } else if (!res.visible && res.owner !== this.currentUserUid) {
+                this.showErrorDialog(ErrorDictionary.QUIZ_INVISIBLE);
+            }
+            else if (res.visible) {
                 this.router.navigate([route, res.id]);
-            } else {
-                this.showError(ErrorDictionary.QUIZ_INVISIBLE);
             }
         });
     }
@@ -210,15 +212,6 @@ export class GamesListComponent implements OnInit {
         isConfigured.subscribe((res) => {
             console.log(`Response: ${res}`)
             if (res) this.handleQuizAction(`/${WAITING_ROOM_HOST_PAGE}/`);
-        });
-    }
-
-    private showError(error: string) {
-        this.dialog.open(AlertDialogComponent, {
-            data: {
-                title: ErrorDictionary.ERROR_TITLE_IMPORT,
-                content: error,
-            },
         });
     }
 }

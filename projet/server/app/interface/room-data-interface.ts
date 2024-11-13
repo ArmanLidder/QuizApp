@@ -19,5 +19,6 @@ export interface RoomData {
     friendsOnly?: boolean; // prix d'une partie
     teams?: Map<TeamId, Team>; // teams
     prestige: number;
+    total_price: number; // Sum all adding price
 }
 

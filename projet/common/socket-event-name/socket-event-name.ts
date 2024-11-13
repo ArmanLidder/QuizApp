@@ -25,6 +25,7 @@ export namespace SocketEvent {
     export const SUBMIT_ANSWER = 'submitAnswer';
     export const TIME = 'time';
     export const UPDATE_SELECTION = 'updateSelection';
+    export const UPDATE_QRE_SELECTION = 'updateQRESelection'
     export const UPDATE_INTERACTION = 'updateInteraction';
     export const NEW_PLAYER = 'newPlayer';
     export const BAN_PLAYER = 'banPlayer';
@@ -44,7 +45,7 @@ export namespace SocketEvent {
     export const PANIC_MODE = 'panicMode'
     export const GAME_STATUS_DISTRIBUTION = 'gameStatsDistribution';
     export const GET_USER_DATA = 'getUserData';
-
+    export const REFRESH_QRE_STATS= 'refreshQREStats';
     export const UPDATE_GAME_LIST = 'update_game_list';
     export const GET_GAME_LIST = 'get_game_list';
     export const SAVE_FINAL_GAME_STATS = 'save_final_game_stats';
