@@ -14,7 +14,6 @@ class ThemeStoreList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(themes);
     List<Widget> items = [];
     themes.forEach((item) {
       print(item);

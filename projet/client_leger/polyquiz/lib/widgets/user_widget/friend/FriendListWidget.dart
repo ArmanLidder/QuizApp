@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/user_service.dart';
@@ -127,49 +128,37 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
   }
 
   Widget _buildFriendsList() {
-    return FutureBuilder<List<String>>(
-      future: widget.friendService.getFriendList(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error loading friends'));
-        } else {
-          List<String> friends = snapshot.data ?? [];
-          return ListView.builder(
-            itemCount: friends.length,
-            itemBuilder: (context, index) {
-              String friendId = friends[index];
-              return SingleFriendInteractable(
-                userId: friendId,
-              );
-            },
+    return Obx(() {
+      return ListView.builder(
+        itemCount: widget.friendService.friends.length,
+        itemBuilder: (context, index) {
+          String friendId = widget.friendService.friends[index];
+          return SingleFriendInteractable(
+            userId: friendId,
           );
-        }
-      },
-    );
+        },
+      );
+    });
   }
 
   Widget _buildPendingRequestsList() {
-    return FutureBuilder<List<String>>(
-      future: widget.friendService.getPendingList(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error loading pending requests'));
-        } else {
-          List<String> pendingRequests = snapshot.data ?? [];
-          return ListView.builder(
-            itemCount: pendingRequests.length,
-            itemBuilder: (context, index) {
-              String requestId = pendingRequests[index];
-              return SingleFriendInteractable(
-                userId: requestId,
-              );
-            },
+    // You don't need FutureBuilder here since we're using Obx with RxList
+    return Obx(() {
+      // If the pending requests list is empty or null, show a message
+      if (widget.friendService.friendRequests.isEmpty) {
+        return Center(child: Text('No pending requests'));
+      }
+
+      return ListView.builder(
+        itemCount: widget.friendService.friendRequests.length,
+        itemBuilder: (context, index) {
+          String requestId = widget.friendService.friendRequests[index];
+          return SingleFriendInteractable(
+            userId: requestId,
           );
-        }
-      },
-    );
-  }}
+        },
+      );
+    });
+  }
+
+}

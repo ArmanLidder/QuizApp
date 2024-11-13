@@ -58,7 +58,6 @@ class Historique extends StatelessWidget {
     }
     List<Event> loginEvents(){
         return loginHistory.map((login) {
-          print(login.timestamp.toDate());
           DateTime dateTime =  login.timestamp.toDate();
         String eventType = loginEventTypeToString[login.eventType]!;
         return Event(eventType: eventType, timestamp: DateFormat('yyyy-MM-dd-hh:mm').format(dateTime));

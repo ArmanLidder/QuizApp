@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/animation.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'user_service.dart';
 
@@ -30,8 +31,10 @@ class LoggedInUserService extends GetxController {
     }
   }
   Future<void> login(String email) async {
+
     // Fetch and set the user by email
     await setUserByEmail(email);
+    FriendService.instance.manuallyLoadFriends();
     // Get the user object (assuming `userService.user` holds the current user)
     User? currentUser = this.user;
 

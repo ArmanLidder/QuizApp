@@ -2,21 +2,66 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 
-class FriendService {
+class FriendService extends GetxService {
   static FriendService get instance => Get.find();
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Reactive lists for friends and friend requests
+  RxList<String> friends = <String>[].obs;
+  RxList<String> friendRequests = <String>[].obs;
+
+  manuallyLoadFriends() {
+    // Manually initialize the lists when the service is instantiated
+    print("loaded");
+    _loadFriends();
+    _loadPendingRequests();
+  }
+
+  Future<void> _loadFriends() async {
+    String? userId = LoggedInUserService.instance.getUid();
+    try {
+      DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
+      List<dynamic> friendsList = userDoc['friends'] ?? [];
+      friends.assignAll(friendsList as List<String>);
+    } catch (e) {
+      print('Error loading friends: $e');
+    }
+  }
+
+  Future<void> _loadPendingRequests() async {
+    String? currentUserId = LoggedInUserService.instance.getUid();
+    try {
+      DocumentSnapshot userDoc = await _firestore.collection('users').doc(currentUserId).get();
+      List<dynamic> friendRequestsList = userDoc['friendRequests'] ?? [];
+
+      // Map the requests to user IDs, excluding the current user's ID
+      List<String> pendingRequests = friendRequestsList.map<String>((request) {
+        if (request is Map<String, dynamic>) {
+          String userId;
+          if (request['fromUserId'] == currentUserId) {
+            userId = request['toUserId'] as String;
+          } else {
+            userId = request['fromUserId'] as String;
+          }
+          return userId;
+        }
+        return '';
+      }).where((id) => id.isNotEmpty).toList();
+
+      friendRequests.assignAll(pendingRequests);
+    } catch (e) {
+      print('Error loading pending requests: $e');
+    }
+  }
+
+  // Function to create a friend request
   Future<void> createFriendRequest(String currentUserId, String targetUserId) async {
     try {
-      // Add a request to the target user's 'friendRequests' with both fromUserId and toUserId
       await _firestore.collection('users').doc(targetUserId).update({
         'friendRequests': FieldValue.arrayUnion([
           {'fromUserId': currentUserId, 'toUserId': targetUserId}
         ]),
       });
-
-      // Add an entry to the sender's 'friendRequests' with both fromUserId and toUserId
       await _firestore.collection('users').doc(currentUserId).update({
         'friendRequests': FieldValue.arrayUnion([
           {'fromUserId': currentUserId, 'toUserId': targetUserId}
@@ -25,10 +70,14 @@ class FriendService {
     } catch (e) {
       print('Error creating friend request: $e');
     }
+
+    // Update the RxList
+    friendRequests.add(targetUserId);
   }
+
+  // Function to accept a friend request
   Future<void> acceptFriendRequest(String currentUserId, String requesterId) async {
     try {
-      // Accept the request by adding each user to the other's 'friends' list
       await _firestore.collection('users').doc(currentUserId).update({
         'friends': FieldValue.arrayUnion([requesterId]),
         'friendRequests': FieldValue.arrayRemove([{'fromUserId': requesterId, 'toUserId': currentUserId}]),
@@ -40,11 +89,15 @@ class FriendService {
     } catch (e) {
       print('Error accepting friend request: $e');
     }
+
+    // Update the RxList
+    friendRequests.remove(requesterId);
+    friends.add(requesterId);
   }
 
+  // Function to refuse a friend request
   Future<void> refuseFriendRequest(String currentUserId, String requesterId) async {
     try {
-      // Remove the friend request without adding to friends
       await _firestore.collection('users').doc(currentUserId).update({
         'friendRequests': FieldValue.arrayRemove([{'fromUserId': requesterId, 'toUserId': currentUserId}]),
       });
@@ -54,10 +107,14 @@ class FriendService {
     } catch (e) {
       print('Error refusing friend request: $e');
     }
+
+    // Update the RxList
+    friendRequests.remove(requesterId);
   }
+
+  // Function to delete a friendship
   Future<void> deleteFriendship(String currentUserId, String friendId) async {
     try {
-      // Remove each user from the other's 'friends' list
       await _firestore.collection('users').doc(currentUserId).update({
         'friends': FieldValue.arrayRemove([friendId]),
       });
@@ -67,17 +124,21 @@ class FriendService {
     } catch (e) {
       print('Error deleting friendship: $e');
     }
+
+    // Update the RxList
+    friends.remove(friendId);
   }
 
+  // Function to check friendship status
   Future<String> friendshipStatus(String currentUserId, String targetUserId) async {
     try {
       DocumentSnapshot currentUserDoc = await _firestore.collection('users').doc(currentUserId).get();
-      List<dynamic> friends = currentUserDoc['friends'] ?? [];
-      List<dynamic> friendRequests = currentUserDoc['friendRequests'] ?? [];
+      List<dynamic> friendsList = currentUserDoc['friends'] ?? [];
+      List<dynamic> friendRequestsList = currentUserDoc['friendRequests'] ?? [];
 
-      if (friends.contains(targetUserId)) {
+      if (friendsList.contains(targetUserId)) {
         return 'friends';
-      } else if (friendRequests.any((request) => request['fromUserId'] == targetUserId)) {
+      } else if (friendRequestsList.any((request) => request['fromUserId'] == targetUserId)) {
         return 'receivedPending';
       } else {
         DocumentSnapshot targetUserDoc = await _firestore.collection('users').doc(targetUserId).get();
@@ -94,43 +155,13 @@ class FriendService {
     }
   }
 
+  // Fetch friend list (returns a list of friends' IDs)
   Future<List<String>> getFriendList() async {
-    String? userId =  LoggedInUserService.instance.getUid();
-    try {
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
-      List<dynamic> friends = userDoc['friends'] ?? [];
-      return friends.cast<String>();  // Cast to List<String> if 'friends' is a list of user IDs
-    } catch (e) {
-      print('Error getting friend list: $e');
-      return [];
-    }
+    return friends;
   }
 
+  // Fetch pending friend requests (returns a list of pending requesters' IDs)
   Future<List<String>> getPendingList() async {
-    String? currenUserId = LoggedInUserService.instance.getUid();
-    try {
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(currenUserId).get();
-      List<dynamic> friendRequests = userDoc['friendRequests'] ?? [];
-
-      //retourne le id qui n<est pas le sien -Maxime Pageot
-        List<String> pendingRequests = friendRequests.map<String>((request) {
-        if (request is Map<String, dynamic>) {
-          String userId;
-          if (request['fromUserId'] == currenUserId) {
-            userId = request['toUserId'] as String;
-          } else {
-            userId = request['fromUserId'] as String;
-          }
-          return userId;
-        }
-        return '';
-      }).where((id) => id.isNotEmpty).toList();
-
-      return pendingRequests;
-    } catch (e) {
-      print('Error getting pending friend requests: $e');
-      return [];
-    }
+    return friendRequests;
   }
-
 }

@@ -73,6 +73,7 @@ class _AuthPageState extends State<AuthPage> {
       setState(() {
         _isRegistering = false;
       });
+      _login();
     } catch (e) {
       FirebaseAuthException? error = e as FirebaseAuthException?;
       String? errorCode = error?.code;
