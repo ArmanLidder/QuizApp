@@ -65,7 +65,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 getMinMaxCard(),
-                getIncrementalAdjustmentButtons(),
+                // getIncrementalAdjustmentButtons(),
                 getSlider(),
                 getToleranceWidget(),
                 getIntervalWidget(),
@@ -107,13 +107,35 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   Widget getSlider() {
-    return Slider(
-      value: currentValue.toDouble(),
-      max: this.max.toDouble(),
-      min: this.min.toDouble(),
-      divisions: (this.max - this.min).toInt(),
-      label: currentValue.toString(),
-      onChanged: changeSliderValue,
+    return Row(
+      children: [
+        IconButton(
+          onPressed: canDecrement ? decrementSlider : null,
+          icon: Icon(Icons.remove),
+          color: Colors.black,
+          style: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(canDecrement ? Colors.blueAccent : Colors.grey)
+          ),
+        ),
+        Expanded(
+          child: Slider(
+            value: currentValue.toDouble(),
+            max: this.max.toDouble(),
+            min: this.min.toDouble(),
+            divisions: (this.max - this.min).toInt(),
+            label: currentValue.toString(),
+            onChanged: changeSliderValue,
+          ),
+        ),
+        IconButton(
+          onPressed: canIncrement ? incrementSlider : null,
+          icon: Icon(Icons.add),
+          color: Colors.black,
+          style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(canIncrement ? Colors.blueAccent : Colors.grey)
+          ),
+        )
+      ],
     );
   }
 
