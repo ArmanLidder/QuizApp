@@ -141,6 +141,7 @@ class _AuthPageState extends State<AuthPage> {
                 ),
               if (_isRegistering) SizedBox(height: 16),
               TextField(
+                keyboardType: TextInputType.emailAddress,
                 controller: _emailController,
                 decoration: InputDecoration(
                   errorText: !_isValidEmail ? "doit etre une addresse valide" : null,
@@ -155,7 +156,6 @@ class _AuthPageState extends State<AuthPage> {
                   });
                     print(_isValidEmail); // You can print the result here
                   },
-                keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: 16),
               TextField(
@@ -261,6 +261,7 @@ class _AuthPageState extends State<AuthPage> {
                   onPressed: () {
                     setState(() {
                       _isRegistering = !_isRegistering;
+                      _isValidUsername = true;
                     });
                   },
                   child: Text(

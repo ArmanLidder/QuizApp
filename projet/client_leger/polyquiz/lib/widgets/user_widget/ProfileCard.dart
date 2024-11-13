@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/main.dart';
+import 'package:polyquiz/services/userInfoValidation.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
+import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/widgets/user_widget/ImageSelectionPopup.dart';
 import 'package:polyquiz/widgets/user_widget/PrestigeIndicator.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 import '../../services/imageStorageService.dart';
 import '../../services/logged_in_user_service.dart';
 import '../../services/theme_service.dart';
+import 'changeNameWidget.dart';
+
+
 
 class ProfileCard extends StatelessWidget {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
   final ThemeService themeService = ThemeService.instance;
+  final UserService userService = UserService.instance;
+  final ValidationService validationService = ValidationService.instance;
 
   final UserPageCustomisationService userPageCustomisationService = UserPageCustomisationService.instance;
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {  // Use Obx to listen to Rx variables
@@ -24,6 +33,7 @@ class ProfileCard extends StatelessWidget {
       Future<void> _imageChangeButton() async {
         await loggedInUserService.uploadCustomProfilePicture();
       }
+
 
       Future<void> _showImageSelectionPopup() async {
         String? uid = loggedInUserService.getUid();
@@ -94,7 +104,7 @@ class ProfileCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: themeService.mainBackground.value,
+                                    color: themeService.mainAccent.value,
                                   ),
                                 ),
                               ),
@@ -126,13 +136,45 @@ class ProfileCard extends StatelessWidget {
                       ),
                     ),
                     Center(
-                      child: Text(
-                        'Profile of $username',
-                        style: TextStyle(
-                          color: themeService.mainBackground.value,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Profile of ' + loggedInUserService.observableUsername.value,
+                            style: TextStyle(
+                              color: themeService.mainBackground.value,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 8), // Add some spacing between the text and the icon
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ChangeNamePopup(
+                                    initialUsername: username!,
+                                  );
+                                },
+                              );
+                            },                            child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: themeService.mainBackground.value,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.edit,
+                                  color: themeService.secondaryBackground.value,
+                                  size: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(height: 8.0),

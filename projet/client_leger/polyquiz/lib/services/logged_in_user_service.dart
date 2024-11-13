@@ -13,7 +13,7 @@ class LoggedInUserService extends GetxController {
   late var observableCurrency = 0.obs;
   late var observablePrestige = 0.obs;
   late var observableLevel = 0.obs;
-
+  late var observableUsername = "".obs;
   late var observableAvatar = ''.obs;
   User? user;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -24,7 +24,7 @@ class LoggedInUserService extends GetxController {
     this.observableCurrency.value = (this.user?.currency ?? 0).round();
     this.observablePrestige.value = (this.user?.prestige ?? 0).round();
     this.observableLevel.value = (this.user?.level ?? 0).round();
-
+    this.observableUsername.value = this.user!.username;
     this.observableAvatar.value = (this.user?.avatar ?? "");
   }
 
@@ -36,6 +36,16 @@ class LoggedInUserService extends GetxController {
       print('User not found with email: $email');
     }
   }
+  setUsername(String newUsername) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(this.getUid())
+        .update({'username': newUsername});
+    reloadUser();
+
+  }
+
+
   Future<void> login(String email) async {
 
     // Fetch and set the user by email
