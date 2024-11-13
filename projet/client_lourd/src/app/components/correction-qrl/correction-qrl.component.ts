@@ -1,9 +1,7 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { QuestionStatistics } from '@common/constants/statistic-zone.component.const';
 import { QrlEvaluationService } from '@app/services/qrl-evaluation.service/qrl-evaluation.service';
-import {
-    HostInterfaceManagementService
-} from "@app/services/host-interface-management.service/host-interface-management.service";
+import {GameService} from "@app/services/game.service/game.service";
 
 @Component({
     selector: 'app-correction-qrl',
@@ -17,7 +15,7 @@ export class CorrectionQRLComponent implements OnChanges, OnInit, OnDestroy {
 
     constructor(
         public qrlEvaluationService: QrlEvaluationService,
-        public hostInterfaceManagerService: HostInterfaceManagementService
+        public gameService: GameService
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {

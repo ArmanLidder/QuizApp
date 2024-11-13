@@ -8,7 +8,7 @@
         <div class="circle">
             <span>{{hostInterfaceManagerService.timerText}}</span>
             <span>{{gameService.timer}}</span>
-            <div *ngIf="!hostInterfaceManagerService.observerMode" class="button-container">
+            <div *ngIf="!gameService.observerMode" class="button-container">
                 <mat-icon [matTooltip]="hostInterfaceManagerService.isPaused ? 'Play' : 'Pause'" (click)='hostInterfaceManagerService.sendPauseTimer()'>{{ hostInterfaceManagerService.isPaused ? 'play_circle_outline' : 'pause_circle_outline' }}</mat-icon>
                 <mat-icon [matTooltip]="gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode ? 'Vous ne pouvez  pas encore activer le mode panique' : 'Activez mode panique !'" (click)='hostInterfaceManagerService.startPanicMode()' [ngClass]="{'disable': gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode}"> whatshot </mat-icon>
             </div>
@@ -22,14 +22,15 @@
         </section>
     </div>
     <div class='btn-container'>
-        <button class='enter'
-                [disabled]='isDisabled() || hostInterfaceManagerService.timerText === timerMessage.RESULT_AVAILABLE_IN || hostInterfaceManagerService.observerMode'
+        <button *ngIf="!gameService.observerMode"
+                class='enter'
+                [disabled]='isDisabled() || hostInterfaceManagerService.timerText === timerMessage.RESULT_AVAILABLE_IN'
                 (click)='handleHostCommand()'>
                 {{updateHostCommand()}}
         </button>
         <app-leave-boutton></app-leave-boutton>
     </div>
-    <app-observation-selector *ngIf="hostInterfaceManagerService.gameService.observerMode"></app-observation-selector>
+    <app-observation-selector *ngIf="gameService.observerMode"></app-observation-selector>
 </div>
 <app-correction-qrl *ngIf='!hostInterfaceManagerService.isGameOver' [gameStats] ='hostInterfaceManagerService.gameStats' [qrlAnswers]='hostInterfaceManagerService.responsesQRL' [isHostEvaluating]='hostInterfaceManagerService.isHostEvaluating'></app-correction-qrl>
 <div class="result-container">

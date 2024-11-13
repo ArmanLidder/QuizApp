@@ -12,9 +12,6 @@ import {Router} from "@angular/router";
 import {GameService} from "@app/services/game.service/game.service";
 import {ObservationService} from "@app/services/observation.service/observation.service";
 import {HOST_USERNAME} from "@common/names/host-username";
-import {
-    HostInterfaceManagementService
-} from "@app/services/host-interface-management.service/host-interface-management.service";
 
 @Component({
     selector: 'app-active-game-list',
@@ -37,8 +34,6 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         private userService: UsersService,
         private router: Router,
         private observationService: ObservationService,
-        private hostInterfaceManagementService: HostInterfaceManagementService,
-
     ) {}
 
     async ngOnInit() {
@@ -88,11 +83,11 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.gameListService.cleanup();
+        // this.gameListService.cleanup();
     }
 
     async joinRoom(game: GameListItem) {
-        this.hostInterfaceManagementService.observerMode = false;
+        this.gameService.observerMode = false;
         this.roomValidationService.roomId = game.room as unknown as string;
         const isHostFriend = await this.validateFriendship(game);
         if (game.friendsOnly && !isHostFriend)  {
@@ -118,8 +113,6 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
     observeGame(game: GameListItem) {
         this.gameService.init(String(game.room), true);
         this.gameService.gameRealService.username = HOST_USERNAME;
-        console.log(`On active game list ${this.gameService.gameRealService.username}`)
-        this.hostInterfaceManagementService.observerMode = true;
         this.observationService.observeGame(game);
         setTimeout(() => {this.router.navigate([`game/${game.room}`]);}, 500);
     }

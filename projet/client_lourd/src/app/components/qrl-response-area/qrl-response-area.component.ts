@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import {Component, HostListener, OnDestroy} from '@angular/core';
 import { DEBOUNCE_INACTIVE_TIME, INACTIVITY_TIME, MAX_RESPONSE_CHARACTERS } from '@common/constants/qrl-response-area.component.const';
 import { GameService } from '@app/services/game.service/game.service';
 import { SocketClientService } from '@app/services/socket-client.service/socket-client.service';
