@@ -129,7 +129,25 @@
     "CREATE": "Create",
     "EDIT": "Edit",
     "CANCEL": "Cancel"
+  },
+  "GAME_CONFIG_DIALOG": {
+    "CONFIGURE_GAME": "Configure Game",
+    "GAME_TYPE_LABEL": "Game Type",
+    "CLASSIC": "Classic",
+    "TEAM": "Team",
+    "PRICE_LABEL": "Price",
+    "FRIENDS_ONLY_LABEL": "Friends Only",
+    "PRIVATE_GAME_LABEL": "Private Game",
+    "MIN_PRESTIGE_LABEL": "Minimum Prestige",
+    "NONE": "None",
+    "BRONZE": "🥉Bronze",
+    "SILVER": "🥈Silver",
+    "GOLD": "🥇Gold",
+    "PLATINUM": "🏅Platinum",
+    "CANCEL_BUTTON": "Cancel",
+    "CREATE_GAME_BUTTON": "Create Game",
+    "GAME_TYPE_REQUIRED": "The game type is required. Please select a type.",
+    "PRICE_INVALID": "The price must be an integer greater than or equal to 0.",
+    "PRESTIGE_REQUIRED": "Minimum prestige is required. Please select a minimum prestige."
   }
-
-
 }

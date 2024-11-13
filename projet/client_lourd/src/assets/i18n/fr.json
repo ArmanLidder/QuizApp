@@ -157,8 +157,27 @@
     "CONFIRM": "Confirm",
     "TRUE": "True",
     "FALSE": "False"
+  },
+  "GAME_CONFIG_DIALOG": {
+    "CONFIGURE_GAME": "Configurer la partie",
+    "GAME_TYPE_LABEL": "Type de partie",
+    "CLASSIC": "Classique",
+    "TEAM": "Équipe",
+    "PRICE_LABEL": "Prix",
+    "FRIENDS_ONLY_LABEL": "Amis Seulement",
+    "PRIVATE_GAME_LABEL": "Partie privée",
+    "MIN_PRESTIGE_LABEL": "Prestige minimum",
+    "NONE": "Aucun",
+    "BRONZE": "🥉Bronze",
+    "SILVER": "🥈Argent",
+    "GOLD": "🥇Or",
+    "PLATINUM": "🏅Platine",
+    "CANCEL_BUTTON": "Annuler",
+    "CREATE_GAME_BUTTON": "Créer partie",
+    "GAME_TYPE_REQUIRED": "Le type de partie est requis. Veuillez sélectionner un type.",
+    "PRICE_INVALID": "Le prix doit être un entier supérieur ou égal à 0.",
+    "PRESTIGE_REQUIRED": "Le prestige minimum est requis. Veuillez sélectionner un prestige minimum."
   }
-
 
 
 }
