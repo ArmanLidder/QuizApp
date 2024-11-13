@@ -162,7 +162,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                         itemBuilder: (context, index) {
                           return ListTile(
                             title: SmartAvatar(
-                                userId: waitingRoomService.players[index]),
+                                userId: waitingRoomService.players[index],
+                                size: 60),
                             trailing: widget.isHost
                                 ? IconButton(
                                     icon: Icon(Icons.remove_circle_outline,
