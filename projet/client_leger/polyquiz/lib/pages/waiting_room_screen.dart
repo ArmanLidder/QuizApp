@@ -148,7 +148,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   inactiveThumbColor: Color.fromRGBO(255, 255, 255, 1),
                   activeTrackColor: Color.fromRGBO(53, 121, 246, 1),
                   inactiveTrackColor: Color.fromRGBO(217, 217, 218, 1),
-                  onChanged: (bool value) => _toggleRoomLock(),
+                  onChanged: !this.waitingRoomService.isTransition
+                      ? (bool value) => _toggleRoomLock()
+                      : null,
                 ),
               SizedBox(height: 20.0),
               Text('Joueurs:',
@@ -166,7 +168,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                 userId: waitingRoomService.players[index],
                                 size: 60,
                               ),
-                              SizedBox(width: 16), // Space between avatar and text
+                              SizedBox(
+                                  width: 16), // Space between avatar and text
                               Expanded(
                                 child: Text(
                                   "User Name", // Replace with the actual user name if available
@@ -175,18 +178,22 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                               ),
                               if (widget.isHost)
                                 IconButton(
-                                  icon: Icon(
-                                    Icons.remove_circle_outline,
-                                    color: Color.fromRGBO(246, 53, 53, 1),
-                                    size: 28.0,
-                                  ),
-                                  onPressed: () => waitingRoomService.sendBanPlayer(
-                                    waitingRoomService.players[index],
-                                  ),
-                                ),
+                                    icon: Icon(
+                                      Icons.remove_circle_outline,
+                                      color: Color.fromRGBO(246, 53, 53, 1),
+                                      size: 28.0,
+                                    ),
+                                    onPressed: !this
+                                            .waitingRoomService
+                                            .isTransition
+                                        ? () =>
+                                            waitingRoomService.sendBanPlayer(
+                                              waitingRoomService.players[index],
+                                            )
+                                        : null),
                             ],
                           );
-                          },
+                        },
                       );
                     }),
               ),
