@@ -9,6 +9,7 @@ import 'package:polyquiz/constants/defaultAvatars.dart';
 import 'package:polyquiz/constants/errorMessageTranslator.dart';
 
 import '../services/userInfoValidation.dart';
+
 class AuthPage extends StatefulWidget {
   @override
   _AuthPageState createState() => _AuthPageState();
@@ -22,7 +23,8 @@ class _AuthPageState extends State<AuthPage> {
   final UserService userService = UserService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
-  final UserPageCustomisationService userPageCustomisationService = UserPageCustomisationService.instance;
+  final UserPageCustomisationService userPageCustomisationService =
+      UserPageCustomisationService.instance;
   final ValidationService validationService = ValidationService.instance;
   bool _isRegistering = false;
   bool _obscurePassword = true;
@@ -45,18 +47,20 @@ class _AuthPageState extends State<AuthPage> {
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       print(e);
-      if (e == "USER ALREADY CONNECTED"){
+      if (e == "USER ALREADY CONNECTED") {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Connexion échouée: ce compte est deja connecte')),
-        );}
-      else{
-      print(e);
-      FirebaseAuthException? error = e as FirebaseAuthException?;
-      String? errorCode = error?.code;
-      String? cleanErrorCode = firebaseAuthErrors[errorCode];
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Connexion échouée: $cleanErrorCode')),
-      );}
+          SnackBar(
+              content: Text('Connexion échouée: ce compte est deja connecte')),
+        );
+      } else {
+        print(e);
+        FirebaseAuthException? error = e as FirebaseAuthException?;
+        String? errorCode = error?.code;
+        String? cleanErrorCode = firebaseAuthErrors[errorCode];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Connexion échouée: $cleanErrorCode')),
+        );
+      }
     }
   }
 
@@ -118,7 +122,9 @@ class _AuthPageState extends State<AuthPage> {
               ),
               SizedBox(height: 8),
               Text(
-                _isRegistering ? "Créez un compte pour commencer" : "Connectez-vous à votre compte",
+                _isRegistering
+                    ? "Créez un compte pour commencer"
+                    : "Connectez-vous à votre compte",
                 style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
               SizedBox(height: 24),
@@ -126,7 +132,9 @@ class _AuthPageState extends State<AuthPage> {
                 TextField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                    errorText: !_isValidUsername ? "doit etre 1 a 10 charactères et chiffres" : null,
+                    errorText: !_isValidUsername
+                        ? "doit etre 1 a 10 charactères et chiffres"
+                        : null,
                     prefixIcon: Icon(Icons.person),
                     labelText: "Nom d'utilisateur",
                     border: OutlineInputBorder(),
@@ -144,7 +152,8 @@ class _AuthPageState extends State<AuthPage> {
                 keyboardType: TextInputType.emailAddress,
                 controller: _emailController,
                 decoration: InputDecoration(
-                  errorText: !_isValidEmail ? "doit etre une addresse valide" : null,
+                  errorText:
+                      !_isValidEmail ? "doit etre une addresse valide" : null,
                   prefixIcon: Icon(Icons.email),
                   labelText: 'Courriel*',
                   border: OutlineInputBorder(),
@@ -154,8 +163,8 @@ class _AuthPageState extends State<AuthPage> {
                   setState(() {
                     _isValidEmail = result;
                   });
-                    print(_isValidEmail); // You can print the result here
-                  },
+                  print(_isValidEmail); // You can print the result here
+                },
               ),
               SizedBox(height: 16),
               TextField(
@@ -164,12 +173,14 @@ class _AuthPageState extends State<AuthPage> {
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.lock),
                   labelText: 'Mot de passe*',
-                  errorText: !_isValidPassword ? "doit avoir une longeur de 6" : null,
-
+                  errorText:
+                      !_isValidPassword ? "doit avoir une longeur de 6" : null,
                   border: OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: () {
                       setState(() {
@@ -209,7 +220,8 @@ class _AuthPageState extends State<AuthPage> {
                             backgroundImage: NetworkImage(avatarUrl),
                             radius: 30,
                           ),
-                          if (_selectedAvatar == avatarUrl) // Show checkmark if selected
+                          if (_selectedAvatar ==
+                              avatarUrl) // Show checkmark if selected
                             Positioned(
                               bottom: 0,
                               right: 0,
@@ -243,11 +255,14 @@ class _AuthPageState extends State<AuthPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: (_isRegistering && _isValidUsername && _isValidEmail && _isValidPassword)
+                  onPressed: (_isRegistering &&
+                          _isValidUsername &&
+                          _isValidEmail &&
+                          _isValidPassword)
                       ? _register
                       : (_isValidUsername && _isValidEmail && _isValidPassword)
-                      ? _login
-                      : null,  // Disable the button if conditions are not met
+                          ? _login
+                          : null, // Disable the button if conditions are not met
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[300],
                     padding: EdgeInsets.symmetric(vertical: 14),
@@ -255,7 +270,8 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                   child: Text(_isRegistering ? "S'inscrire" : 'Se connecter'),
                 ),
-              ),              SizedBox(height: 16),
+              ),
+              SizedBox(height: 16),
               Center(
                 child: TextButton(
                   onPressed: () {
@@ -272,6 +288,18 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                 ),
               ),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/offline');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[500],
+                      foregroundColor: Colors.black,
+                    ),
+                    child: Text('Jouer hors-ligne')),
+              )
             ],
           ),
         ),

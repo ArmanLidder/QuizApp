@@ -75,16 +75,6 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/offline');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
-                ),
-                child: Text('Jouer hors-ligne')),
-            const SizedBox(height: 20),
-            ElevatedButton(
-                onPressed: () {
                   Navigator.pushReplacementNamed(context, '/store');
                 },
                 style: ElevatedButton.styleFrom(

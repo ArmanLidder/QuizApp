@@ -36,7 +36,7 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
       setState(() {
         currentTime--;
         if (currentTime == 0 && isFinalTransition) {
-          _globalNavigationService.navigateTo('/home');
+          _globalNavigationService.navigateTo('/auth');
         } else if (currentTime == 0 && !isTimerTransition) {
           gameInterfaceManagementService.gameService.sendAnswer();
           this.isLastQuestion = !_gameService.offlineGameService.next();
@@ -255,7 +255,7 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                   TextButton(
                                     onPressed: () {
                                       _globalNavigationService
-                                          .navigateTo('/home');
+                                          .navigateTo('/auth');
                                     },
                                     child: Text(
                                       'Quitter',
@@ -274,8 +274,7 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                         ),
                                         backgroundColor:
                                             Color.fromRGBO(246, 53, 53, 1)),
-                                  ),
-                                  ChatPopup()
+                                  )
                                 ],
                               )
                             ],
