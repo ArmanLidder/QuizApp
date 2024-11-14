@@ -33,13 +33,14 @@ export class AvatarPickerComponent {
             this.checkLoadingStatus();
         });
         // Load owned avatars
-        this.ownedAvatars = await this.avatarService.getBoughtAvatars();
+        if (this.showOwnedAvatars) this.ownedAvatars = await this.avatarService.getBoughtAvatars();
+
         this.checkLoadingStatus();
     }
 
     checkLoadingStatus() {
         // Set loading to false only when both avatar arrays are populated
-        if (this.defaultAvatars.length > 0 && this.ownedAvatars.length > 0) {
+        if (this.defaultAvatars.length > 0) {
             this.loading = false;
         }
     }

@@ -8,6 +8,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { PopUpMessage } from "@common/browser-message/displayable-message/pop-up-message";
 import { SnackbarService } from "@app/services/snackbar.service/snack-bar.service";
 import {UserSearchDialogComponent} from "@app/components/user-search-dialog/user-search-dialog.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-friends',
@@ -22,6 +23,7 @@ export class FriendsComponent {
         private friendService: FriendService,
         private dialog: MatDialog,
         private snackbar: SnackbarService,
+        private translate: TranslateService,
         @Optional() private dialogRef?: MatDialogRef<FriendsComponent>
     ) {}
 
@@ -50,7 +52,7 @@ export class FriendsComponent {
 
     async removeConfirmDialog(uid: string) {
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            data: { message: PopUpMessage.DELETE_FRIEND_MESSAGE },
+            data: { message: this.translate.instant( PopUpMessage.DELETE_FRIEND_MESSAGE) },
         });
 
         dialogRef.afterClosed().subscribe(async (result) => {

@@ -7,12 +7,12 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {GameService} from '@app/services/game.service/game.service';
 import {HOST_USERNAME} from '@common/names/host-username';
-import {LOCKED, UNLOCKED} from '@common/constants/waiting-room.component.const';
 import {GameConfigService} from "@app/services/game-config.service/game-config.service";
 import {GameConfig} from "@common/interfaces/game-info.interface";
 import {UsersService} from "@app/services/users.service/users.service";
 import {firstValueFrom, Observable} from "rxjs";
 import {User} from "@common/interfaces/user-data.interface";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -35,6 +35,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         public usersService: UsersService,
         private socketService: SocketClientService,
         private gameConfigService: GameConfigService,
+        private translate: TranslateService
     ) {
         // this.connect();
         this.currentUser$ = this.usersService.currentUserProfile$;
@@ -85,7 +86,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     }
 
     setLockActionMessage() {
-        return this.waitingRoomManagementService.isRoomLocked ? LOCKED : UNLOCKED;
+        return this.waitingRoomManagementService.isRoomLocked
+            ? this.translate.instant('WAITING_ROOM_PAGE.STATUS_LOCKED')
+            : this.translate.instant('WAITING_ROOM_PAGE.STATUS_UNLOCKED');
     }
 
     startGame() {

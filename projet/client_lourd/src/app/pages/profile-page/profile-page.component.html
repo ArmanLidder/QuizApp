@@ -2,10 +2,8 @@
 <div class="min-h-screen bg-gray-100">
     <div class="max-w-4xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
         <ng-container *ngIf="currentUser$ | async as user">
-            <!-- User Info Section -->
             <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-lg shadow-md overflow-hidden">
                 <div class="p-8 text-white text-center relative">
-                    <!-- Avatar and Level -->
                     <div class="relative inline-block">
                         <div class="absolute -top-2 -left-0.5 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
                             {{ user.level }}
@@ -17,7 +15,6 @@
                             <mat-icon class="text-xl">edit</mat-icon>
                         </button>
                     </div>
-                    <!-- Username and Email -->
                     <div class="mt-4">
                         <div class="flex items-center justify-center">
                             <h1 class="text-3xl font-bold">{{ user.username }}</h1>
@@ -28,94 +25,86 @@
                         </div>
                         <p class="text-lg mt-2">{{ user.email }}</p>
                     </div>
-                    <!-- Prestige and Currency -->
                     <div class="mt-4 flex justify-center items-center space-x-4">
                         <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center">
-                            <span class="font-semibold mr-2">Prestige :</span>
-                            <span class="text-2xl mr-1">{{ getPrestigeIcon(user.prestige) }}</span>
-                            {{ getPrestigeLabel(user.prestige) }}
+                            <span class="font-semibold mr-2">{{ 'PROFILE.PRESTIGE' | translate }} :</span>
+                            <span class="text-2xl mr-1">{{ prestigeIcon }}</span>
+                            {{ prestigeLabel }}
                         </div>
                         <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
-                            <span class="font-semibold">Argent :</span> {{ user.currency }}
+                            <span class="font-semibold">{{ 'PROFILE.CURRENCY' | translate }} :</span> {{ user.currency }}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Content Area -->
             <div class="bg-white shadow-md rounded-b-lg">
-                <!-- Statistics Section -->
                 <div class="p-8 border-b">
-                    <h2 class="text-2xl font-semibold mb-4">Statistiques</h2>
+                    <h2 class="text-2xl font-semibold mb-4">{{ 'PROFILE.STATISTICS' | translate }}</h2>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-semibold">Parties Jouées</p>
+                            <p class="font-semibold">{{ 'PROFILE.GAMES_PLAYED' | translate }}</p>
                             <p class="text-2xl">{{ user.stats.gamesPlayed }}</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-semibold">Parties Gagnées</p>
+                            <p class="font-semibold">{{ 'PROFILE.GAMES_WON' | translate }}</p>
                             <p class="text-2xl">{{ user.stats.gamesWon }}</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-semibold">Bonnes Réponses Par Partie</p>
+                            <p class="font-semibold">{{ 'PROFILE.AVG_CORRECT_ANSWERS' | translate }}</p>
                             <p class="text-2xl">{{ user.stats.avgCorrectAnswers }}</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-semibold">Temps Moyen Par Partie</p>
-                            <p class="text-2xl">{{ user.stats.avgGameTime }} secondes</p>
+                            <p class="font-semibold">{{ 'PROFILE.AVG_GAME_TIME' | translate }}</p>
+                            <p class="text-2xl">{{ user.stats.avgGameTime }} {{ 'PROFILE.SECONDS' | translate }}</p>
                         </div>
                     </div>
                 </div>
 
                 <app-friends></app-friends>
 
-
-                <!-- Achievements Section -->
                 <div class="p-8 border-b">
-                    <h2 class="text-2xl font-semibold mb-4">Exploits</h2>
+                    <h2 class="text-2xl font-semibold mb-4">{{ 'PROFILE.ACHIEVEMENTS' | translate }}</h2>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <div *ngFor="let achievement of allAchievements; let i = index"
-                             class="p-4 rounded-lg text-center" [ngClass]="getAchievementClass(i)">
-                            <span class="text-2xl mb-2 block">{{ getAchievementIcon(i) }}</span>
+                             class="p-4 rounded-lg text-center" [ngClass]="achievementClasses[i]">
+                            <span class="text-2xl mb-2 block">{{ achievementIcons[i] }}</span>
                             <p class="text-sm">{{ achievement }}</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Expandable Sections -->
                 <mat-accordion class="mt-8 space-y-4">
-                    <!-- Connection History Panel -->
                     <mat-expansion-panel>
                         <mat-expansion-panel-header class="p-4 ">
                             <mat-panel-title class="p-4 text-lg font-bold text-gray-700">
-                                Historique des Connexions
+                                {{ 'PROFILE.CONNECTION_HISTORY' | translate }}
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <ul class="bg-gray-50 p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
                             <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
-                <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
-                    {{ history.eventType === 'login' ? 'Connexion' : 'Déconnexion' }}
-                </span>
-                                le {{ history.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }}
+                                <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
+                                    {{ history.eventType === 'login' ? ('PROFILE.LOGIN' | translate) : ('PROFILE.LOGOUT' | translate) }} -
+                                </span>
+                                {{ history.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }}
                             </li>
                         </ul>
                     </mat-expansion-panel>
 
-                    <!-- Game History Panel -->
                     <mat-expansion-panel>
                         <mat-expansion-panel-header class="p-4">
                             <mat-panel-title class="p-4 text-lg font-bold text-gray-700">
-                                Historique des Parties
+                                {{ 'PROFILE.GAME_HISTORY' | translate }}
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <ul class="bg-gray-50 p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
                             <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
-                <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
-                    {{ game.result === 'win' ? 'Gagné' : 'Perdu' }}
-                </span>
-                                le {{ game.timestamp }},
-                                Mode de jeu: {{ game.gameMode === 'classic' ? "Classique": "Équipe" }},
-                                Score: {{ game.score }}
+                                <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
+                                    {{ game.result === 'win' ? ('PROFILE.WIN' | translate) : ('PROFILE.LOSS' | translate) }} -
+                                </span>
+                                {{ game.timestamp }},
+                                {{ 'PROFILE.GAMEMODE' | translate }} :
+                                {{ game.gameMode === 'classic' ? ('PROFILE.GAMEMODE_CLASSIC' | translate) : ('PROFILE.GAMEMODE_TEAM' | translate) }},
                             </li>
                         </ul>
                     </mat-expansion-panel>

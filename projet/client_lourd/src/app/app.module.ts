@@ -1,5 +1,5 @@
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import {HttpClient, HttpClientModule, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import {APP_INITIALIZER, Injector, NgModule} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -79,6 +79,32 @@ import {MatMenuModule} from "@angular/material/menu";
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
 import {MatBadgeModule} from "@angular/material/badge";
 import { ShoppingPageComponent } from './pages/shopping-page/shopping-page.component';
+import {TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
+import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import {LOCATION_INITIALIZED} from "@angular/common";
+
+export const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
+    new TranslateHttpLoader(http, "assets/i18n/", ".json");
+
+
+export function appInitializerFactory(translate: TranslateService, injector: Injector) {
+    return () => new Promise<any>((resolve: any) => {
+        const locationInitialized = injector.get(LOCATION_INITIALIZED, Promise.resolve(null));
+        locationInitialized.then(() => {
+            const langToSet = 'fr'
+            translate.addLangs(['en','fr']);
+            translate.setDefaultLang('fr');
+            translate.use(langToSet).subscribe(() => {
+                console.info(`Successfully initialized '${langToSet}' language.'`);
+            }, err => {
+                console.error(`Problem with '${langToSet}' language initialization.'`);
+            }, () => {
+                resolve(null);
+            });
+        });
+    });
+}
+
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -170,10 +196,22 @@ import { ShoppingPageComponent } from './pages/shopping-page/shopping-page.compo
         NgxSliderModule,
         MatMenuModule,
         MatBadgeModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: httpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
     ],
     providers: [
         CanalService,
-        { provide: FIREBASE_OPTIONS, useValue: environment.firebase }
+        { provide: FIREBASE_OPTIONS, useValue: environment.firebase },
+        provideHttpClient(withInterceptorsFromDi()),
+        {provide: APP_INITIALIZER,
+            useFactory: appInitializerFactory,
+            deps: [TranslateService, Injector],
+            multi: true}
     ],
     bootstrap: [AppComponent],
 })

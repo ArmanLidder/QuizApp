@@ -32,10 +32,14 @@ export class QuizService {
         await this.collection.updateOne({ id: quizId }, { $set: { visible: quizVisibility } }, { upsert: true });
     }
 
-    async isTitleUnique(title: string): Promise<boolean> {
+    async isTitleUnique(title: string): Promise<{ isUnique: boolean, id?: string }> {
         const quiz = await this.collection.findOne({ title });
-        return quiz === null;
+        if (quiz) {
+            return { isUnique: false, id: quiz.id }; // Return ID if title is not unique
+        }
+        return { isUnique: true };
     }
+
 
     async replace(quiz: Quiz) {
         await this.collection.replaceOne({ id: quiz.id }, quiz, { upsert: true });
