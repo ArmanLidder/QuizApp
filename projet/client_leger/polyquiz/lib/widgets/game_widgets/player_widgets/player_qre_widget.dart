@@ -131,7 +131,12 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
             min: this.min.toDouble(),
             divisions: (this.max - this.min).toInt(),
             label: currentValue.toString(),
-            onChanged: changeSliderValue,
+            onChanged: (value) {
+              setState(() {
+                currentValue = value.round();
+              });
+            },
+            onChangeEnd: changeSliderValue,
           ),
         ),
         IconButton(
