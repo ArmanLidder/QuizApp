@@ -7,6 +7,7 @@ import { ItemMovingDirection } from 'src/enums/item-moving-direction';
 import { QuestionChoicePosition } from '@app/interfaces/question-choice-position/question-choice-position';
 import {QuestionImageService} from "@app/services/question-image.service/question-image.service";
 import {NON_EXISTANT_INDEX} from "@common/constants/question.service.const";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-question-list',
@@ -25,6 +26,7 @@ export class QuestionListComponent implements OnDestroy {
         private questionService: QuestionService,
         private choiceService: ChoiceService,
         private questionImageService: QuestionImageService,
+        private translate: TranslateService
     ) {}
     ngOnDestroy() {
         this.questionService.modifiedQuestionIndex = NON_EXISTANT_INDEX;
@@ -36,7 +38,7 @@ export class QuestionListComponent implements OnDestroy {
         if (input.files && input.files.length > 0) {
             const file = input.files[0];
             if (file.size > MAX_IMG_SIZE) {
-                this.imageUploadError = 'La taille de l\'image ne doit pas dépasser 2 MB.';
+                this.imageUploadError = await this.translate.get('QUIZ_CREATION.QUESTION_LIST.IMAGE_SIZE_ERROR').toPromise();
                 return;
             }
             this.imageUploadError = null;
@@ -46,7 +48,7 @@ export class QuestionListComponent implements OnDestroy {
                 this.isUploading = false;
                 (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(imageUrl);
             } catch (error) {
-                this.imageUploadError = 'Une erreur est survenue lors du téléchargement de l\'image.';
+                return;
             }
         }
     }
