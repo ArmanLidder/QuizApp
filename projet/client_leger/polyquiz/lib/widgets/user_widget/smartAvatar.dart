@@ -21,12 +21,12 @@ class SmartAvatar extends StatelessWidget {
           );
         }
       },
-      child: SizedBox(
+      child: Container(
         height: size,
         width: size,
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            // Profile image using FutureBuilder for async data
             FutureBuilder<String?>(
               future: userService.getAvatar(userId), // Async call for avatar
               builder: (context, snapshot) {
@@ -51,8 +51,8 @@ class SmartAvatar extends StatelessWidget {
               },
             ),
             Positioned(
-              bottom: 0,
-              right: 0,
+              bottom: size * 0,
+              right: size* 0,
               child: FutureBuilder<num>(
                 future: userService.getLevel(userId).then((value) => value ?? 0),
                 builder: (context, snapshot) {

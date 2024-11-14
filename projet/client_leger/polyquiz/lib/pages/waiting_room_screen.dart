@@ -160,23 +160,33 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                       return ListView.builder(
                         itemCount: waitingRoomService.players.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            title: SmartAvatar(
+                          return Row(
+                            children: [
+                              SmartAvatar(
                                 userId: waitingRoomService.players[index],
-                                size: 60),
-                            trailing: widget.isHost
-                                ? IconButton(
-                                    icon: Icon(Icons.remove_circle_outline,
-                                        color: Color.fromRGBO(246, 53, 53, 1),
-                                        size: 28.0),
-                                    onPressed: () => {
-                                      waitingRoomService.sendBanPlayer(
-                                          waitingRoomService.players[index])
-                                    },
-                                  )
-                                : null,
+                                size: 60,
+                              ),
+                              SizedBox(width: 16), // Space between avatar and text
+                              Expanded(
+                                child: Text(
+                                  "User Name", // Replace with the actual user name if available
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                              if (widget.isHost)
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.remove_circle_outline,
+                                    color: Color.fromRGBO(246, 53, 53, 1),
+                                    size: 28.0,
+                                  ),
+                                  onPressed: () => waitingRoomService.sendBanPlayer(
+                                    waitingRoomService.players[index],
+                                  ),
+                                ),
+                            ],
                           );
-                        },
+                          },
                       );
                     }),
               ),
