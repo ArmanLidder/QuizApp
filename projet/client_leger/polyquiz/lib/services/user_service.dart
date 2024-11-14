@@ -55,7 +55,7 @@ class UserService extends GetxController {
         'achievements': [],
         'level': 0,
         'prestige': 0,
-        'isConnected': true,
+        'isConnected': false,
         'stats': {
           'gamesPlayed': 0,
           'gamesWon': 0,
@@ -81,9 +81,7 @@ class UserService extends GetxController {
   Future<String?> getAvatar(String id) async {
     try {
       DocumentSnapshot documentSnapshot = await _db.collection(collectionName).doc(id).get();
-
       if (documentSnapshot.exists) {
-        // Access the 'avatar' field if it exists
         return documentSnapshot.get('avatar') as String?;
       } else {
         print('Document does not exist');
