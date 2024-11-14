@@ -79,7 +79,7 @@
     "MAXIMUM_10_CHAR": "Le nom d'utilisateur peut contenir au plus 10 caractères.",
     "SUCCESSFUL_MODIFICATION": "Nom d’utilisateur modifié avec succès.",
     "ALREADY_USED": "Ce nom est déja utilisé.",
-    "ERROR": "Erreur de modification"
+    "ERROR": "Erreur de modification."
   },
   "USER_SEARCH": {
     "TITLE": "Recherche d'utilisateurs...",
@@ -140,7 +140,14 @@
     "DESCRIPTION_PATTERN": "La description ne doit pas être composée uniquement d'espaces",
     "CREATE": "Créer",
     "EDIT": "Modifier",
-    "CANCEL": "Annuler"
+    "CANCEL": "Annuler",
+    "GAME_NO_LONGER_EXISTS": "Ce jeu n'existe plus.",
+    "GAME_PRIVATED": "Ce jeu a été défini comme privé par le créateur et ne peut pas être modifié/exporté/supprimé.",
+    "QUIZ_DELETED_BY_OTHER_USER": "Ce quiz a été supprimé par un autre utilisateur.",
+    "QUIZ_VISIBILITY_CHANGED_TO_PRIVATE": "La visibilité de ce quiz a été modifiée à privée par le propriétaire pendant l'édition.",
+    "TITLE_ALREADY_EXISTS": "Le titre existe déjà",
+    "QUIZ_UPDATED_SUCCESS": "Le quiz a été mis à jour avec succès",
+    "QUIZ_ADDED_SUCCESS": "Le quiz a été ajouté avec succès"
   },
   "GAME_CONFIG_DIALOG": {
     "CONFIGURE_GAME": "Configurer la partie",
@@ -184,7 +191,9 @@
     "LEAVE_MESSAGE": "Êtes-vous sûr de vouloir quitter?",
     "DELETE_MESSAGE": "Êtes-vous sûr de vouloir supprimer?",
     "DELETE_FRIEND_MESSAGE": "Êtes-vous sûr de vouloir supprimer cet ami?",
-    "DELETE_QUIZ_MESSAGE": "Êtes-vous sûr de vouloir supprimer ce quiz?"
+    "DELETE_QUIZ_MESSAGE": "Êtes-vous sûr de vouloir supprimer ce quiz?",
+    "ERRORS_DETECTED": "Erreurs détectées",
+    "CLOSE": "Fermer"
   },
   "BUTTON": {
     "QUIT": "Quitter",

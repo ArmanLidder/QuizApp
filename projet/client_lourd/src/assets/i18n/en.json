@@ -78,7 +78,8 @@
     "LETTERS_NUMBERS_ONLY": "The username can only contain letters and numbers.",
     "MAXIMUM_10_CHAR": "The username can contain at most 10 characters.",
     "SUCCESSFUL_MODIFICATION": "Username changed successfully.",
-    "ALREADY_USED": "This username is already used."
+    "ALREADY_USED": "This username is already used.",
+    "ERROR": "An error occured during modification."
   },
   "USER_SEARCH": {
     "TITLE": "User Search...",
@@ -139,7 +140,14 @@
     "DESCRIPTION_PATTERN": "The description must not be composed of spaces only",
     "CREATE": "Create",
     "EDIT": "Edit",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "GAME_NO_LONGER_EXISTS": "This game no longer exists.",
+    "GAME_PRIVATED": "This game has been set to private by the creator and cannot be modified/exported/deleted.",
+    "QUIZ_DELETED_BY_OTHER_USER": "This quiz has been deleted by another user.",
+    "QUIZ_VISIBILITY_CHANGED_TO_PRIVATE": "The visibility of this quiz has been changed to private by the owner during editing.",
+    "TITLE_ALREADY_EXISTS": "The title already exists",
+    "QUIZ_UPDATED_SUCCESS": "The quiz was successfully updated",
+    "QUIZ_ADDED_SUCCESS": "The quiz was successfully added"
   },
   "GAME_CONFIG_DIALOG": {
     "CONFIGURE_GAME": "Configure Game",
@@ -183,7 +191,9 @@
     "LEAVE_MESSAGE": "Are you sure you want to leave?",
     "DELETE_MESSAGE": "Are you sure you want to delete?",
     "DELETE_FRIEND_MESSAGE": "Are you sure you want to delete this friend?",
-    "DELETE_QUIZ_MESSAGE": "Are you sure you want to delete this quiz?"
+    "DELETE_QUIZ_MESSAGE": "Are you sure you want to delete this quiz?",
+    "ERRORS_DETECTED": "Errors detected",
+    "CLOSE": "Close"
   },
   "BUTTON": {
     "QUIT": "Leave",

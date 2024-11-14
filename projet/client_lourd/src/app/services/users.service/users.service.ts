@@ -10,7 +10,7 @@ import {
     getDocs,
     where, collectionData,
 } from '@angular/fire/firestore';
-import {firstValueFrom, Observable, of, switchMap} from 'rxjs';
+import {catchError, firstValueFrom, Observable, of, shareReplay, switchMap,map} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
 import {LoginHistory} from "@common/interfaces/user-data.interface";
@@ -52,20 +52,38 @@ const defaultUser: User = {
 })
 export class UsersService {
     user$ = authState(this.auth);
+    userProfile$: Observable<User | null> | undefined;
+    private currentUserId?: string;
 
     constructor(private firestore: Firestore,
                 private auth: Auth,
                 private serverTimeService: ServerTimeService,
-                private translate: TranslateService) {}
+                private translate: TranslateService)
+    {
+        this.user$.subscribe(() => {
+            this.userProfile$ = undefined;
+        });
+    }
 
     get currentUserProfile$(): Observable<User | null> {
-        return this.user$.pipe(
-            switchMap((user) => {
-                if (!user?.uid) return of(null);
-                const ref = doc(this.firestore, 'users', user.uid);
-                return docData(ref) as Observable<User>;
-            })
-        );
+        const userId = this.auth.currentUser?.uid;
+        if (!this.userProfile$ || userId !== this.currentUserId) { //if log out, log back in as diff user, need to check: userId !== this.currentUserId
+            this.userProfile$ = this.user$.pipe(
+                switchMap((user) => {
+                    if (!user?.uid) return of(null);
+                    const ref = doc(this.firestore, 'users', user.uid);
+                    return docData(ref).pipe(
+                        map(data => data as User),
+                        catchError(error => {
+                            console.error('Error fetching user profile:', error);
+                            return of(null);
+                        })
+                    );
+                }),
+                shareReplay(1)
+            );
+        }
+        return this.userProfile$;
     }
 
     getUser(uid: string): Observable<User | null> {
