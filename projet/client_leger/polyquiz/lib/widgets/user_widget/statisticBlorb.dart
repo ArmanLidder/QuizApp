@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 class StatitisticsBlorb extends StatelessWidget {
   final num nPlayedGames;
   final num nWonGames;
   final num avgGoodAnswers;
   final num avgGameTime;
+  final ThemeService themeService = ThemeService.instance;
 
   StatitisticsBlorb({
     required this.nPlayedGames,
@@ -15,38 +17,66 @@ class StatitisticsBlorb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-              "Statistiques",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-          StatRow("parties Jouées: ", nPlayedGames),
-          StatRow("parties Gagnées: ", nWonGames),
-          StatRow("bonnes réponses par partie: ", avgGoodAnswers),
-          StatRow("temps moyen par partie: ", avgGameTime, " secondes "),
-        ],
-      ),
-    );
+    return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+          Align(
+          alignment: Alignment.centerLeft,
+            child: Text(
+                "Statistiques",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: themeService.mainAccent.value,
+                ),
+              )
+          ),
+            SizedBox(
+              width: 450,
+              child: GridView(
+                shrinkWrap: true, // Ensures GridView takes only necessary space
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Sets 2 columns
+                  mainAxisSpacing: 60.0, // Space between rows
+                  crossAxisSpacing: 30.0, // Space between columns
+                  mainAxisExtent: 70.0, // Ensures consistent row height
+                ),
+                children: [
+                  StatRow("Parties Jouées:", nPlayedGames),
+                  StatRow("Parties Gagnées:", nWonGames),
+                  StatRow("Bonnes réponses par partie:", avgGoodAnswers),
+                  StatRow("Temps moyen par partie:", avgGameTime, " secondes"),
+                ],
+            ),)
+          ],
+        );
   }
 }
 
 Widget StatRow(String label, num value, [String postStatString = ""]) {
-  return Row(
+  final ThemeService themeService = ThemeService.instance;
+
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start, // Aligns content to the left
     children: [
       Text(
         label,
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: themeService.mainAccent.value,
+        ),
       ),
-      SizedBox(width: 8), // Adds some space between the label and value.
-      Text(value.toString()),
-      Text(postStatString),
+      SizedBox(height: 4),
+      Text(
+        value.toString() + postStatString,
+        style: TextStyle(
+          fontSize: 22,
+          color: themeService.mainAccent.value,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     ],
   );
 }

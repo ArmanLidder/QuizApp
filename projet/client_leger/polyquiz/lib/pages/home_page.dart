@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
+import '../widgets/fancyAppBar.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,6 +15,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
+  final ThemeService themeService = ThemeService.instance;
+
   final SocketService _socketService = SocketService();
   User? userData;
 
@@ -26,47 +32,61 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     this.userData = this.loggedInUserService.getUser();
-    print(this.userData);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-        automaticallyImplyLeading: false,
-      ),
+      backgroundColor: this.themeService.mainBackground.value,  // Set background color
+      appBar: FancyAppBar(
+        context: context,
+        ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text("Bienvenue " +this.loggedInUserService.getUser()!.username + " !",
+
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0, color: this.themeService.mainAccent.value),
+                  ) ,
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/join');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: this.themeService.secondaryBackground.value,
+                foregroundColor: this.themeService.secondaryAccent.value,
+              ),
+                child: Text('Joindre une partie'),
+              ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/quizz');
               },
-              child: Text('Quizz'),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: this.themeService.secondaryBackground.value,
+                  foregroundColor: this.themeService.secondaryAccent.value,
+              ),
+              child: Text('Créer une partie'),
             ),
-            const SizedBox(height: 20),
-
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/roomList');
-                },
-                child: Text('Rejoindre une partie')),
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/offline');
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: this.themeService.secondaryBackground.value,
+                  foregroundColor: this.themeService.secondaryAccent.value,
+                ),
                 child: Text('Jouer hors-ligne')),
             const SizedBox(height: 20),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/user');
-                },
-                child: Text("user page")),
-            const SizedBox(height: 20),
+
             ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/store');
                 },
-                child: Text("store")),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: this.themeService.secondaryBackground.value,
+                  foregroundColor: this.themeService.secondaryAccent.value,
+                ),
+                child: Text('Magasin')),
             ChatPopup(),
           ],
         ),

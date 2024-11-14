@@ -133,6 +133,7 @@ enum EventType {
   logout
 }
 
+
 class GameHistory {
   final Result result;
   final dynamic timestamp;

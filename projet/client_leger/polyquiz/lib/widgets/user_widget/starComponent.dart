@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/constants/AchievementsNames.dart';
 
 class StarCard extends StatelessWidget {
   final String label;
@@ -51,10 +52,10 @@ class StarCard extends StatelessWidget {
 }
 
 class StarCardGrid extends StatelessWidget {
-  final List<String> labels;
+  final List<String> labels = AchievementsName;
   final List<num> achievementsList;
 
-  StarCardGrid({required this.labels, required this.achievementsList});
+  StarCardGrid({ required this.achievementsList});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,6 @@ class StarCardGrid extends StatelessWidget {
         .floor();
 
     List<Widget> rows = [];
-
     for (int i = 0; i < labels.length; i += cardsPerRow) {
       List<Widget> starCards = [];
       for (int j = 0; j < cardsPerRow; j++) {

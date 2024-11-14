@@ -1,9 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
 
+import '../../services/theme_service.dart';
+import 'package:intl/intl.dart';
 class Event {
   final String eventType;
-  final DateTime timestamp;
+  final String timestamp;
 
   Event({required this.eventType, required this.timestamp});
 }
@@ -12,6 +17,7 @@ class EvenementRow extends StatelessWidget {
   final String date;
   final String label;
   final Color color;
+  final ThemeService themeService = ThemeService.instance;
 
   EvenementRow({
     required this.date,
@@ -23,7 +29,7 @@ class EvenementRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(date),
+        Text(date, style: TextStyle(color: themeService.mainAccent.value)),
         Text("   "),
         Text(
           label,
@@ -37,53 +43,70 @@ class EvenementRow extends StatelessWidget {
 class Historique extends StatelessWidget {
   final List<GameHistory> gameHistory;
   final List<LoginHistory> loginHistory;
+  final ThemeService themeService = ThemeService.instance;
 
   Historique({required this.gameHistory, required this.loginHistory});
 
-  List<EvenementRow> _generateEventRows() {
-    // Map each GameHistory to an Event with eventType "Game"
-    List<Event> gameEvents = gameHistory.map((game) {
-      return Event(eventType: 'Game', timestamp: game.timestamp.toDate());
-    }).toList();
+    List<Event> gameEvents(){
+      return gameHistory.map((game) {
+        String result = resultTypeToString[game.result]!;
+        //DateTime dateTime =  game.timestamp.toDate();
 
-    // Map each LoginHistory to an Event with eventType "Login"
-    List<Event> loginEvents = loginHistory.map((login) {
-      return Event(eventType: 'Login', timestamp: login.timestamp.toDate());
-    }).toList();
 
-    // Merge both lists of events
-    List<Event> allEvents = [...gameEvents, ...loginEvents];
+        return Event(eventType: result, timestamp: game.timestamp);
+      }).toList();
+    }
+    List<Event> loginEvents(){
+        return loginHistory.map((login) {
+          DateTime dateTime =  login.timestamp.toDate();
+        String eventType = loginEventTypeToString[login.eventType]!;
+        return Event(eventType: eventType, timestamp: DateFormat('yyyy-MM-dd-hh:mm').format(dateTime));
+      }).toList();}
 
-    // Sort events by timestamp
-    allEvents.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    List<EvenementRow> _generateEventRows(List<Event> allEvents) {
+      // Sort events by timestamp
+      allEvents.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-    // Generate EvenementRow widgets for each event
-    return allEvents.map((event) {
-      String date = "${event.timestamp.toLocal()}".split(' ')[0];
-      String label = event.eventType;
-      Color color = event.eventType == 'Login' ? Colors.blue : Colors.green;
+      return allEvents.map((event) {
+        String date = "${event.timestamp}".split(' ')[0];
+        String? label = eventMessage[event.eventType] ?? "nullEventMessage" ;
+        Color color = event.eventType == 'Login' ? Colors.blue : Colors.green;
 
-      return EvenementRow(date: date, label: label, color: color);
-    }).toList();
-  }
+        return EvenementRow(date: date, label: label, color: color);
+      }).toList();
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Historique",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+    @override
+    Widget build(BuildContext context) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Historique des connections",
+            style: TextStyle(
+              color: themeService.mainAccent.value,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
           ),
-        ),
-        SizedBox(height: 16),
-        Column(
-          children: _generateEventRows(),
-        ),
-      ],
-    );
+          SizedBox(height: 16),
+          Column(
+            children: _generateEventRows(loginEvents()),
+          ),
+          Text(
+            "Historique des parties",
+            style: TextStyle(
+              color: themeService.mainAccent.value,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          SizedBox(height: 16),
+          Column(
+            children: _generateEventRows(gameEvents()),
+          ),
+        ],
+      );
+    }
   }
-}
+

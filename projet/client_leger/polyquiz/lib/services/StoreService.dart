@@ -104,6 +104,7 @@ class StoreService extends GetxController {
       QuerySnapshot snapshot = await _firestore.collection('storeItems').get();
       List<Map<String, dynamic>> themes = [];
       List<Map<String, dynamic>> images = [];
+      List<Map<String, dynamic>> rewardImages = [];
 
       for (var doc in snapshot.docs) {
         Map<String, dynamic> item = doc.data() as Map<String, dynamic>;
@@ -114,12 +115,15 @@ class StoreService extends GetxController {
           themes.add(item);
         } else if (itemType == 'image') {
           images.add(item);
-        }
+        } else if (itemType == 'rewardImage') {
+          rewardImages.add(item);
+      }
       }
 
       return {
         'themes': themes,
         'images': images,
+        'rewardImages': rewardImages,
       };
     } catch (e) {
       print("Error browsing store items: $e");

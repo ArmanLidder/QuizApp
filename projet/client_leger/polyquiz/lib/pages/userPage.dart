@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
-import 'package:polyquiz/widgets/user_widget/FriendListWidget.dart';
-import '../widgets/user_widget/fancyAppBar.dart';
+import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/widgets/user_widget/friend/FriendListWidget.dart';
+import '../widgets/fancyAppBar.dart';
 import '../widgets/user_widget/ProfileCard.dart';
 import '../widgets/user_widget/statisticBlorb.dart';
 import '../widgets/user_widget/starComponent.dart';
@@ -14,6 +16,7 @@ class Userpage extends StatelessWidget {
   final UserService userService = UserService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
+  final ThemeService themeService = ThemeService.instance;
   User? userData;
 
   @override
@@ -23,61 +26,59 @@ class Userpage extends StatelessWidget {
     print(this.userData);
     List<num> achievements = this.userData?.achievements ?? [];
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: FancyAppBar(
-            context: context,
-            sourceImgUrl: this.userData?.avatar ?? "", name: this.userData?.username ?? ""),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              ProfileCard(
-                username: this.userData?.username ?? "",
-                email: this.userData?.email ?? "",
-                prestige: (this.userData?.prestige ?? 0).toString(),
-                argent: (this.userData?.currency ?? 0).toString(),
-              ),
-              StatitisticsBlorb(
-                nPlayedGames: userData?.stats.gamesPlayed ?? 0,
-                nWonGames: userData?.stats.gamesWon ?? 0,
-                avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
-                avgGameTime: userData?.stats.avgGameTime ?? 0,
-              ),
-              Text(
-            "Accomplissements",
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-            )),
-              StarCardGrid(
-                  labels:
-                  List.generate(8, (index) => "Defi numero ${index + 1}"),
-                  achievementsList: achievements),
-              Text(
-                  "Amis",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  )),
+    return Obx(() {
+      return MaterialApp(
+        home: Scaffold(        backgroundColor: themeService.mixedMain,
 
-              FriendListDisplay(friends: userData?.friends ?? [],
-                  pendingRequests: userData?.friendRequests ?? []),
+            appBar: FancyAppBar(
+              context: context,
+            ),
+            body: Center(
+                child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0), // Shift down by 10px
+                    child:FractionallySizedBox(
+                      widthFactor: 0.8,
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: themeService.mainBackground.value, // Set the background color here
+                            borderRadius: BorderRadius.circular(12.0), // Adjust the radius as needed
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(children: [
+                              ProfileCard(),
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    StatitisticsBlorb(
+                                      nPlayedGames: userData?.stats.gamesPlayed ?? 0,
+                                      nWonGames: userData?.stats.gamesWon ?? 0,
+                                      avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
+                                      avgGameTime: userData?.stats.avgGameTime ?? 0,
+                                    ),
 
-              Historique(
-                gameHistory: userData?.gameHistory ?? [],
-                loginHistory: userData?.loginHistory ?? [],
-              ),
+                                    FriendListDisplay(friends: userData?.friends ?? [],
+                                        pendingRequests: userData?.friendRequests ?? []),
 
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
-                child: Text("Retours a la page d'origine"),
-              ),
-            ],
-          ),
-        ),
-      ),
+                                    StarCardGrid(
+                                        achievementsList: achievements),
+
+                                    Historique(
+                                      gameHistory: userData?.gameHistory ?? [],
+                                      loginHistory: userData?.loginHistory ?? [],
+                                    ),
+
+                                  ],
+
+                                ),
+                              )
+                            ],),)
+                      ),
+                    )
+                )
+            )
+        )
     );
+    });
   }
 }
