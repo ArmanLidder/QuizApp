@@ -3,6 +3,7 @@ import { UsersService } from '@app/services/users.service/users.service';
 import {firstValueFrom, Observable} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
 import {map} from "rxjs/operators";
+import {TranslateService} from "@ngx-translate/core";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import {map} from "rxjs/operators";
 export class UserSettingsService {
   currentLanguage: Observable<'en' | 'fr'>;
 
-  constructor(private userService: UsersService) {
+  constructor(private userService: UsersService,private translate: TranslateService) {
     this.currentLanguage = this.getCurrentLanguage().pipe(
         map((language) => language || 'fr')
     );
@@ -39,6 +40,12 @@ export class UserSettingsService {
         }
       });
     }
+  }
+
+  setTranslationListener() {
+    this.currentLanguage.subscribe(language => {
+      this.translate.use(language);
+    });
   }
 
   getCurrentLanguage(): Observable<'en' | 'fr' | undefined> {

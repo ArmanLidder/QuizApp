@@ -8,7 +8,8 @@ import {
 
 import {UsersService} from "@app/services/users.service/users.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
-import {firstValueFrom} from "rxjs";
+import {first, switchMap} from "rxjs";
+import {map} from "rxjs/operators";
 
 
 @Injectable({
@@ -20,7 +21,13 @@ export class AuthService {
     // If the user is logged in: this.user$ will emit the current user object (with details like uid, email, etc.).
     // If the user is logged out: this.user$ will emit null when the user logs out (triggered by auth.signOut()).
 
-    user$ = authState(this.auth);
+    readonly user$ = authState(this.auth).pipe(
+        switchMap(firebaseUser =>
+            firebaseUser
+                ? this.usersService.getUserByEmail(firebaseUser.email!)
+                : Promise.resolve(null)
+        )
+    );
 
     constructor(private auth: Auth,
                 private usersService: UsersService,
@@ -34,6 +41,11 @@ export class AuthService {
             const {user} = await createUserWithEmailAndPassword(this.auth, email, password);
             await this.usersService.addUser({uid: user.uid, email, username});
             await this.avatarService.handleAvatarModification(selectedAvatar);
+
+            await this.user$.pipe(
+                map(user => !!user),
+                first(isReady => isReady)  // Wait for first truthy value
+            ).toPromise();
             await this.usersService.addLogEvent('login');
         } catch (error: any) {
             const frenchErrorMessage = this.mapFirebaseAuthError(error.code);
@@ -43,29 +55,30 @@ export class AuthService {
 
 
     async login(email: string, password: string): Promise<void> {
+        const existingUser = await this.usersService.getUserByEmail(email);
+        if (existingUser?.isConnected) {
+            throw new Error('Cet utilisateur est déjà connecté.');
+        }
+
         try {
-            const userData = await this.usersService.getUserByEmail(email);
-            if (userData?.isConnected) throw new Error('Cet utilisateur est déjà connecté.')
             await signInWithEmailAndPassword(this.auth, email, password);
+            await this.user$.pipe(
+                map(user => !!user),
+                first(isReady => isReady)  // Wait for first truthy value
+            ).toPromise();
+
+            //we can safely add the log event
             await this.usersService.addLogEvent('login');
         } catch (error: any) {
-            if (error.message === 'Cet utilisateur est déjà connecté.')  throw error;
-            const errorMessage = this.mapFirebaseAuthError(error.code);
+            console.error('Login error:', error);
             await this.auth.signOut();
-            throw new Error(errorMessage);
+            throw new Error(this.mapFirebaseAuthError(error.code));
         }
     }
 
-
-
-
     async logout(): Promise<void> {
-        const currentUser = await firstValueFrom(this.user$); // Resolves the observable to the current user data once
-        if (!currentUser) {
-            throw new Error("Cet utilisateur n'est pas connecté");
-        }
         await this.usersService.addLogEvent('logout');
-        await this.auth.signOut();
+        return await this.auth.signOut();
     }
 
     private mapFirebaseAuthError(errorCode: string): string {
@@ -94,5 +107,4 @@ export class AuthService {
                 return "Une erreur inconnue s'est produite.";
         }
     }
-
 }
