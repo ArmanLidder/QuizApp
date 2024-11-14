@@ -324,7 +324,12 @@
     "FREE": "Free",
     "ONGOING_GAME": "Ongoing Game",
     "NO_GAMES_AVAILABLE": "No games available",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "EXCLUSIVE_FRIENDS_GAME": "This game is exclusive to the host's friends.",
+    "INSUFFICIENT_PRESTIGE": "You do not have the minimum prestige to join this game.",
+    "INSUFFICIENT_FUNDS": "You do not have enough money to join this game.",
+    "USER_BANNED": "You have been banned from this game.",
+    "ROOM_LOCKED": "The room is currently locked."
   },
   "PROFILE_POPUP": {
     "ACHIEVEMENTS": "Achievements",

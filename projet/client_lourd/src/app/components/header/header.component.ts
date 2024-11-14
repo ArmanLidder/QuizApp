@@ -41,8 +41,8 @@ export class HeaderComponent implements OnInit{
     });
   }
 
-  switchLanguage(event: Event) {
+  async switchLanguage(event: Event) {
     const language = (event.target as HTMLSelectElement).value;
-    this.settings.switchLanguage(language as 'en'|'fr');
+    await this.settings.switchLanguage(language as 'en'|'fr');
   }
 }

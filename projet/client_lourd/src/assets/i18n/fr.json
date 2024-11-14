@@ -314,7 +314,7 @@
     }
   },
   "ACTIVE_GAME_LIST": {
-    "PUBLIC_GAME_LIST": "Liste des Jeux Publics",
+    "PUBLIC_GAME_LIST": "Liste des parties publiques",
     "MINIMUM_PRESTIGE": "Prestige minimum",
     "FRIENDS_ONLY": "Amis seulement",
     "FRIENDS_AND_OTHERS": "Amis et autres",
@@ -323,8 +323,13 @@
     "TEAM": "Équipe",
     "FREE": "Gratuit",
     "ONGOING_GAME": "Partie en cours",
-    "NO_GAMES_AVAILABLE": "Aucune partie présentement",
-    "CANCEL": "Annuler"
+    "NO_GAMES_AVAILABLE": "Aucune partie disponible",
+    "CANCEL": "Annuler",
+    "EXCLUSIVE_FRIENDS_GAME": "Cette partie est exclusive aux amis de l'hôte.",
+    "INSUFFICIENT_PRESTIGE": "Vous n'avez pas le prestige minimum pour rejoindre cette partie.",
+    "INSUFFICIENT_FUNDS": "Vous n'avez pas assez d'argent pour rejoindre cette partie.",
+    "USER_BANNED": "Vous avez été banni de cette partie.",
+    "ROOM_LOCKED": "La partie est actuellement verrouillée."
   },
   "PROFILE_POPUP": {
     "ACHIEVEMENTS": "Exploits",

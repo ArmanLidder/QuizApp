@@ -6,12 +6,13 @@ export const environment = {
     production: false,
     serverUrl: 'http://localhost:3000/api',
     firebase : {
-        apiKey: "AIzaSyDyZJZmbrP_Phc8C9SNoqZWrioatX89Pzk",
-        authDomain: "polyquiz-103.firebaseapp.com",
-        projectId: "polyquiz-103",
-        storageBucket: "polyquiz-103.firebasestorage.app",
-        messagingSenderId: "278944080772",
-        appId: "1:278944080772:web:3b2c748ffd601ee94a73d1"
+        apiKey: "AIzaSyAurHesdch5GUNG0at-Ek2PeTrSQCv1xmg",
+        authDomain: "polyquiz-app.firebaseapp.com",
+        projectId: "polyquiz-app",
+        storageBucket: "polyquiz-app.appspot.com",
+        messagingSenderId: "98437822234",
+        appId: "1:98437822234:web:eb97250f2dd5957eaa5ea3",
+        measurementId: "G-LYRYDVNRLW"
     }
 };
 

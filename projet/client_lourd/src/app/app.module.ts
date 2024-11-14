@@ -92,6 +92,7 @@ export function appInitializerFactory(translate: TranslateService, injector: Inj
         const locationInitialized = injector.get(LOCATION_INITIALIZED, Promise.resolve(null));
         locationInitialized.then(() => {
             const langToSet = 'fr'
+            translate.addLangs(['en','fr']);
             translate.setDefaultLang('fr');
             translate.use(langToSet).subscribe(() => {
                 console.info(`Successfully initialized '${langToSet}' language.'`);
