@@ -10,7 +10,7 @@ import {
     getDocs,
     where, collectionData,
 } from '@angular/fire/firestore';
-import {catchError, firstValueFrom, Observable, of, shareReplay, map} from 'rxjs';
+import {catchError, firstValueFrom, Observable, of, shareReplay, map, BehaviorSubject, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
 import {LoginHistory} from "@common/interfaces/user-data.interface";
@@ -53,6 +53,8 @@ const defaultUser: User = {
 export class UsersService {
     user$ = authState(this.auth);
     userProfile$: Observable<User | null> | undefined;
+    private userProfileSubject$ = new BehaviorSubject<Observable<User | null>>(of(null));
+
     constructor(private firestore: Firestore,
                 private auth: Auth,
                 private serverTimeService: ServerTimeService,
@@ -61,14 +63,16 @@ export class UsersService {
         this.user$.subscribe(async (user) => {
             if (user) {
                 this.userProfile$ = this.createUserProfileObservable(user.uid);
+                this.userProfileSubject$.next(this.userProfile$);
             } else if (!user) { //logout
                 this.userProfile$ = undefined;
+                this.userProfileSubject$.next(of(null));
             }
         });
     }
 
     get currentUserProfile$(): Observable<User | null> {
-        return this.userProfile$ || of(null);
+        return this.userProfileSubject$.pipe(switchMap(obs => obs));
     }
 
     private createUserProfileObservable(uid: string): Observable<User | null> {

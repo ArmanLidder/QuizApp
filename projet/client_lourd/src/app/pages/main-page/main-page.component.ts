@@ -18,7 +18,7 @@ export class MainPageComponent {
 
         window.onload = () => {
             localStorage.removeItem('token');
-            this.socketService.disconnect();
+            if (this.socketService.isSocketAlive()) this.socketService.disconnect();
         }
 
         this.settings.setTranslationListener();

@@ -83,8 +83,8 @@ import {TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {LOCATION_INITIALIZED} from "@angular/common";
 
-const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
-    new TranslateHttpLoader(http);
+export const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
+    new TranslateHttpLoader(http, "assets/i18n/", ".json");
 
 
 export function appInitializerFactory(translate: TranslateService, injector: Injector) {
