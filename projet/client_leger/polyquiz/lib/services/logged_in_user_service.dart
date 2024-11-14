@@ -57,7 +57,7 @@ class LoggedInUserService extends GetxController {
     // Check if the user was successfully set
     if (currentUser != null) {
       // Update the `isOnline` status in Firebase
-      if (false && this.user!.isConnected){ //TODO: disable this false flag
+      if (this.user!.isConnected){ //TODO: disable this false flag
         throw("USER ALREADY CONNECTED");
       }
       await FirebaseFirestore.instance
