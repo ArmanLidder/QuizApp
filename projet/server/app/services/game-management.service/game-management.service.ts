@@ -119,6 +119,7 @@ export class GameManagementService {
             const username = roomManager.getUsernameBySocketId(data.roomId, socket.id);
             const choicesStatsValues = Array.from(game.choicesStats.values());
             sio.to(hostSocketId).emit(SocketEvent.REFRESH_CHOICES_STATS, choicesStatsValues);
+            sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, [data.index, data.isSelected]);
             sio.to(hostSocketId).emit(SocketEvent.UPDATE_INTERACTION, username);
         });
     }

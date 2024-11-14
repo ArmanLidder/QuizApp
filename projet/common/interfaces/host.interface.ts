@@ -36,3 +36,14 @@ export interface HostCurrentGameInterface {
     isPaused: boolean;
     isPanicMode: boolean;
 }
+
+
+export interface PlayerCurrentGameInterface {
+    roomId: number;
+    isBonus: boolean;
+    playerScore: number;
+    players: [string, number][];
+    qreAnswer: number;
+    qrlAnswer: string;
+    choicesStatsValues: number[];
+}

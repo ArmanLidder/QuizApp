@@ -6,8 +6,8 @@ import {SocketClientService} from '@app/services/socket-client.service/socket-cl
 import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 import {HOST_USERNAME} from '@common/names/host-username';
 import {QuestionType} from "@common/enums/question-type.enum";
-import {Score} from "@common/interfaces/score.interface";
-import {QuestionStatistics} from "@common/constants/statistic-zone.component.const";
+// import {Score} from "@common/interfaces/score.interface";
+// import {QuestionStatistics} from "@common/constants/statistic-zone.component.const";
 
 @Injectable({
     providedIn: 'root',
@@ -27,38 +27,18 @@ export class GameService {
     hasInteracted: boolean = false;
     lastQrlScore: number | undefined = undefined;
     qreAnswer: number;
-    testQRLAnswer: string;
 
     // observationValues
 
     // For player QCM, QRL and QRE answers
     obs_qre_Answer: number;
-    obs_qcm_Answer: number[]; // index of each choices for SELECTION ONLY
     obs_qrl_Answer: string;
-
-    // For player score
-    obs_player_score: Score;
-
-    // For gameStats
-    obs_player_gameStats: QuestionStatistics[];
-
-    // obs Activity Host activityComponent
-
-    // PLayer List
-    obs_playerLeft: string
-
-
-    //
 
     constructor(
         public gameTestService: GameTestService,
         public gameRealService: GameRealService,
         private socketService: SocketClientService,
     ) {
-    }
-
-    get qrlAnswerForObserver() {
-        return this.qrlAnswer
     }
 
     get timer() {

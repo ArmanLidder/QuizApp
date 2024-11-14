@@ -22,7 +22,7 @@
 
         <ng-template #lockedSlider>
             <ngx-slider
-                    [(value)]="gameService.observerMode ? gameService.qreAnswer : selectedValue"
+                    [(value)]="gameService.observerMode ? gameService.obs_qre_Answer : selectedValue"
                     [options]="optionsDisabled"
                     (userChangeEnd)="onSliderChange()"
             ></ngx-slider>

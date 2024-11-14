@@ -12,7 +12,15 @@ import {
     GameInterfaceManagementService
 } from "@app/services/game-interface-management.service/game-interface-management.service";
 import {HOST_USERNAME} from "@common/names/host-username";
-import {HostCurrentGameInterface, InitialQuestionData} from "@common/interfaces/host.interface";
+import {
+    HostCurrentGameInterface,
+    InitialQuestionData,
+    PlayerCurrentGameInterface
+} from "@common/interfaces/host.interface";
+// import {
+//     HostCurrentGameInterface,
+//     InitialQuestionData,
+// } from "@common/interfaces/host.interface";
 import {ACTIVE, ACTIVE_STATUS, INACTIVE, INACTIVE_STATUS} from "@common/constants/host-interface.component.const";
 import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
 // import {ObsQuestionData} from "@common/interfaces/host.interface";
@@ -53,6 +61,7 @@ export class ObservationService {
         this.gameInterfaceManagementService.configureBaseSocketFeatures();
         this.hostInterfaceManagementService.configureBaseSocketFeatures();
         this.handleGameStateReception();
+        this.handlePlayerGameState();
          console.log("Congfig on Observation-Service");
      }
 
@@ -63,12 +72,13 @@ export class ObservationService {
             newUserId,
             isHost: this.isHost,
         }
-        this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
         this.isHost = newUserId === this.gameConfigs.hostUserId;
         this.gameService.observingHost = this.isHost;
         this.gameService.observedPlayerId = newUserId;
         this.gameService.gameRealService.username = this.isHost ? HOST_USERNAME : newUserId;
-        if (this.gameService.observerMode) this.gameService.qrlAnswer = "Le joueur est inactif ...";
+        if (this.gameService.observerMode) this.gameService.obs_qrl_Answer = "Le joueur est inactif ...";
+        this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
+        if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, this.gameConfigs.room);
     }
 
     private handleGetQRLInteraction() {
@@ -79,13 +89,13 @@ export class ObservationService {
 
     private handleGetQRLAnswer() {
         this.socketService.on(SocketEvent.GET_QRL_ANSWER_FOR_OBS, (answer: string) => {
-            this.gameService.testQRLAnswer = answer;
+            this.gameService.obs_qrl_Answer = answer;
         });
     }
 
     private handleGetQREAnswer() {
         this.socketService.on(SocketEvent.GET_QRE_ANSWER_FOR_OBS, (qreValue: number) => {
-            this.gameService.qreAnswer = qreValue
+            this.gameService.obs_qre_Answer = qreValue
         });
     }
 
@@ -102,6 +112,19 @@ export class ObservationService {
             const resetPlayerStatus = this.hostInterfaceManagementService.isGameOver
             console.log(this.hostInterfaceManagementService.leftPlayers)
             this.hostInterfaceManagementService['interactiveListService'].getPlayersList(this.gameService.gameRealService.roomId, this.hostInterfaceManagementService.leftPlayers, resetPlayerStatus)
+        });
+    }
+
+    private handlePlayerGameState() {
+        this.socketService.on(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, (data: PlayerCurrentGameInterface) => {
+            this.gameInterfaceManagementService.isBonus = data.isBonus;
+            this.gameInterfaceManagementService.isGameOver = this.hostInterfaceManagementService.isGameOver;
+            this.gameInterfaceManagementService.playerScore = data.playerScore;
+            this.gameInterfaceManagementService.timerText = this.hostInterfaceManagementService.timerText;
+            this.gameInterfaceManagementService.players = data.players;
+            this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
+            this.gameService.obs_qre_Answer = data.qreAnswer;
+            this.gameService.obs_qrl_Answer = data.qrlAnswer;
         });
     }
 

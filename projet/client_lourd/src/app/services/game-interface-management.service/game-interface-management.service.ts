@@ -211,6 +211,7 @@ export class GameInterfaceManagementService {
     }
 
     private unpackStats(stats: TransportStatsFormat) {
+        this.gameStats = [];
         stats.forEach((stat) => {
             const values = new Map<string, boolean>(stat[0]);
             const responses = new Map<string, number>(stat[1]);
@@ -230,6 +231,8 @@ export class GameInterfaceManagementService {
                     this.gameService.gameRealService.validated = true;
                     this.updateScore(score.points);
                     this.isBonus = score.isBonus;
+                    console.log('Calling back socre from get score to see if qrl last score get updated')
+                    console.log(this.gameService.lastQrlScore)
                 },
             );
         }

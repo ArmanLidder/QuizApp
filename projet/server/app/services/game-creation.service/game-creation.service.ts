@@ -13,7 +13,10 @@ import {GameConfig} from "@common/interfaces/game-info.interface";
 import {Score} from "@common/interfaces/score.interface";
 import {Game} from "@app/classes/game/game";
 import {GameHistory, User, UserStats} from "@common/interfaces/user-data.interface";
-import {HostCurrentGameInterface} from "@common/interfaces/host.interface";
+// import {HostCurrentGameInterface} from "@common/interfaces/host.interface";
+import {HostCurrentGameInterface, PlayerCurrentGameInterface} from "@common/interfaces/host.interface";
+import {QuestionType} from "@common/enums/question-type.enum";
+
 // import {InitialQuestionData, ObsQuestionData} from "@common/interfaces/host.interface";
 
 @Service()
@@ -43,7 +46,7 @@ export class GameCreationService {
         this.handleGetGameType(roomManager, socket);
         this.handleNewObserver(roomManager, socket, sio);
         this.handleObserverGetPlayerList(roomManager, socket, sio);
-        this.handleChangeObservedPLayer(roomManager, socket);
+        this.handleChangeObservedPLayer(roomManager, socket, sio);
         this.handleGameStatusForObsReception(roomManager, socket, sio);
     }
 
@@ -91,7 +94,6 @@ export class GameCreationService {
 
     private handleGameStatusForObsReception(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.SENDING_HOST_GAME_STATUS, (data: HostCurrentGameInterface) => {
-            console.log("Requesting Initial Data", data);
             if (data.histogramDataChangingResponses[0] === 1000) { // To tell me it is QCM
                 const game = roomManager.getGameByRoomId(data.roomId)
                 data.histogramDataChangingResponses = Array.from(game.choicesStats.values());
@@ -100,14 +102,39 @@ export class GameCreationService {
         });
     }
 
-    private handleChangeObservedPLayer(roomManager: RoomManagingService, socket: io.Socket) {
+    private handleChangeObservedPLayer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.CHANGE_OBSERVED_PLAYER, (data: NewObservedPlayer) => {
            const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
-           const newObservedPlayerId = data.isHost ? HOST_USERNAME : data.newUserId;
+           const newObservedPlayerId = data.newUserId === roomManager.getRoomById(data.roomId).hostUserId ? HOST_USERNAME : data.newUserId;
            const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
            const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, newObservedPlayerId);
            socket.leave(String(observedPlayerSocketId));
            socket.join(String(newObservedPlayerSocketId));
+           const roomId = data.roomId;
+           if (data.isHost) {
+               const room = roomManager.getRoomById(roomId);
+               const game = room.game;
+               const playerScore = game.players.get(newObservedPlayerId);
+               const playerQREAnswer =  game.currentQuizQuestion.type === QuestionType.QRE ? game.playerQREAnswer.get(newObservedPlayerId)[1] : 0;
+               const answers = game.playersAnswers.get(newObservedPlayerId)?.answers ?? "";
+               const qrlAnswer = answers && game.currentQuizQuestion.type === QuestionType.QRL ? answers : "";
+               let players: [string, number][] = [];
+               game.players.forEach((score, username) => {
+                   players.push([username, score.points]);
+               })
+               const choicesStatsValues = Array.from(game.choicesStats.values());
+               const data : PlayerCurrentGameInterface = {
+                   roomId: roomId,
+                   isBonus: playerScore.isBonus,
+                   playerScore: playerScore.points,
+                   players: players,
+                   qreAnswer: playerQREAnswer,
+                   qrlAnswer: String(qrlAnswer),
+                   choicesStatsValues: choicesStatsValues,
+               }
+               console.log(data);
+               sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, data);
+           }
         });
     }
 

@@ -10,6 +10,8 @@ import {
     SELECTED_DISPLAY,
 } from '@common/constants/game-answer-choice-card.component.const';
 import { ENTER_KEY } from '@common/shortcuts/shortcuts';
+import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
+import {SocketEvent} from "@common/socket-event-name/socket-event-name";
 
 export const DEBOUNCE_TIMER = 10;
 
@@ -27,12 +29,16 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     feedbackDisplay: string = NORMAL_DISPLAY;
     private isSelected: boolean = false;
 
-    constructor(public gameService: GameService) {}
+    constructor(public gameService: GameService, private socketService: SocketClientService) {
+        if (this.gameService.observerMode) this.handleSelection();
+    }
 
     @HostListener('document:keydown', ['$event'])
     handleKeyboardEvent(event: KeyboardEvent) {
-        if (event.key === String(this.index)) this.toggleSelect();
-        else if (event.key === ENTER_KEY) this.enterPressed.emit();
+        if (!this.gameService.observerMode) {
+            if (event.key === String(this.index)) this.toggleSelect();
+            else if (event.key === ENTER_KEY) this.enterPressed.emit();
+        }
     }
 
     ngOnChanges() {
@@ -40,6 +46,7 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     }
 
     handleHoverEffect() {
+        if (this.gameService.observerMode) return NO_EFFECT_DISPLAY;
         return this.gameService.lockedStatus ? NO_EFFECT_DISPLAY : ACTIVE_DISPLAY;
     }
 
@@ -47,16 +54,18 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     // before sending an event to the game-answer-list. This is an added security on client
     // in order to send the right infos to server.
     toggleSelect() {
-        if (!this.gameService.lockedStatus && !this.gameService.isInputFocused) {
-            this.isSelected = !this.isSelected;
-            const isSelected = this.isSelected;
-            if (this.isSelected) this.showSelectionFeedback();
-            else this.reset();
-            setTimeout(() => {
-                if (isSelected === this.isSelected) {
-                    this.selectEvent.emit(this.index - 1);
-                }
-            }, DEBOUNCE_TIMER);
+        if (!this.gameService.observerMode) {
+            if (!this.gameService.lockedStatus && !this.gameService.isInputFocused) {
+                this.isSelected = !this.isSelected;
+                const isSelected = this.isSelected;
+                if (this.isSelected) this.showSelectionFeedback();
+                else this.reset();
+                setTimeout(() => {
+                    if (isSelected === this.isSelected) {
+                        this.selectEvent.emit(this.index - 1);
+                    }
+                }, DEBOUNCE_TIMER);
+            }
         }
     }
 
@@ -79,5 +88,16 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
 
     private showBadAnswerFeedBack() {
         this.feedbackDisplay = BAD_ANSWER_DISPLAY;
+    }
+
+    private handleSelection(){
+        if (this.socketService.isSocketAlive()) {
+            console.log("handleSelection")
+            this.socketService.on(SocketEvent.OBS_QCM_INTERACTION, (choices: number[])=> {
+                const real_idx = this.index - 1;
+                if (choices[0] === real_idx) choices[1] ? this.showSelectionFeedback(): this.reset();
+                console.log(choices);
+            })
+        }
     }
 }
