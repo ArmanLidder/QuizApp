@@ -33,51 +33,46 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     this.userData = this.loggedInUserService.getUser();
     return Scaffold(
-      backgroundColor: this.themeService.mainBackground.value,  // Set background color
+      backgroundColor:
+          this.themeService.mainBackground.value, // Set background color
       appBar: FancyAppBar(
         context: context,
-        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Bienvenue " +this.loggedInUserService.getUser()!.username + " !",
-
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0, color: this.themeService.mainAccent.value),
-                  ) ,
+            Text(
+              "Bienvenue " +
+                  this.loggedInUserService.getUser()!.username +
+                  " !",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                  color: this.themeService.mainAccent.value),
+            ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/join');
+                Navigator.pushReplacementNamed(context, '/roomList');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: this.themeService.secondaryBackground.value,
                 foregroundColor: this.themeService.secondaryAccent.value,
               ),
-                child: Text('Joindre une partie'),
-              ),
+              child: Text('Joindre une partie'),
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/quizz');
               },
               style: ElevatedButton.styleFrom(
-                  backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
+                backgroundColor: this.themeService.secondaryBackground.value,
+                foregroundColor: this.themeService.secondaryAccent.value,
               ),
               child: Text('Créer une partie'),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/offline');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
-                ),
-                child: Text('Jouer hors-ligne')),
-            const SizedBox(height: 20),
-
             ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/store');
