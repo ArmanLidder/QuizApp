@@ -77,7 +77,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   }
 
   void handleLastQuestion() {
-    sendGameStats();
+    this.sendGameStats();
     this._socketService.sendMessage(SocketEvent.SHOW_RESULT, this.roomId);
   }
 
@@ -126,9 +126,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
       switch (type) {
         case QuestionType.QRL:
           this.sendQrlAnswer();
-          print('CALLED 1');
+          print('CALLED 1 QRL');
           this.isHostEvaluating = true;
-          this.NextQuestionBtnDisabled = false;
+          // this.NextQuestionBtnDisabled = false;
           notifyListeners();
           break;
         case QuestionType.QRE:
@@ -163,12 +163,10 @@ class HostInterfaceManagementService extends ChangeNotifier {
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
         print('CALLED 2');
-        this
-            ._interactiveListService
-            .getPlayersList(this.roomId, leftPlayers: leftPlayers);
-        this._socketService.sendMessage(SocketEvent.SAVE_FINAL_GAME_STATS,
-            this.gameService.realGameService.roomId);
+        this._interactiveListService.getPlayersList(this.roomId, leftPlayers: leftPlayers);
+        this._socketService.sendMessage(SocketEvent.SAVE_FINAL_GAME_STATS, this.gameService.realGameService.roomId);
       }
+      notifyListeners();
     });
   }
 
@@ -254,9 +252,11 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleEvaluationOver() {
     this._socketService.onMessage(SocketEvent.EVALUATION_OVER, (_) {
+      this.NextQuestionBtnDisabled = false;
       print('CALLED 6');
       _interactiveListService.getPlayersList(roomId,
           leftPlayers: leftPlayers, resetPlayerStatus: false);
+      notifyListeners();
     });
   }
 
@@ -313,7 +313,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
   }
 
   void sendGameStats() {
-    final gameStats = stringifyStats();
+    final gameStats = this.stringifyStats();
+    print(gameStats);
     this._socketService.sendMessage(SocketEvent.GAME_STATUS_DISTRIBUTION, {
       'roomId': this.gameService.realGameService.roomId,
       'stats': gameStats,
@@ -322,6 +323,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   String stringifyStats() {
     final stats = this.prepareStatsTransport();
+    print(stats.first);
     return stats.toString();
   }
 
@@ -330,6 +332,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.gameStats.forEach((stats) {
       final values = stats.responsesValues;
       final responses = stats.responsesNumber;
+      print(stats.responsesValues);
+      print(stats.responsesNumber);
+      print(stats.question);
       data.add(TransportStats(values.entries.toList(),
           responses.entries.toList(), stats.question as QuizQuestion));
     });
