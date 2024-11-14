@@ -87,6 +87,7 @@ class _HomePageState extends State<HomePage> {
                   foregroundColor: this.themeService.secondaryAccent.value,
                 ),
                 child: Text('Magasin')),
+            SmartAvatar(userId: loggedInUserService.getUid()!, size:100, hasName: true),
             ChatPopup(),
           ],
         ),
