@@ -63,8 +63,8 @@ export class QuestionListComponent implements OnDestroy {
         return condition;
     }
 
-    addQuestion(index: number) {
-        this.questionErrors = this.questionService.addQuestion(index, this.questionsArray)
+    async addQuestion(index: number) {
+        this.questionErrors = await this.questionService.addQuestion(index, this.questionsArray)
         if (index >= 0 ) {
             this.showPopupIfConditionMet(this.questionErrors.length !== 0);
         }
@@ -74,12 +74,12 @@ export class QuestionListComponent implements OnDestroy {
         this.questionService.removeQuestion(index, this.questionsArray);
     }
 
-    modifyQuestion(index: number) {
-        this.questionErrors = this.questionService.modifyQuestion(index, this.questionsArray);
+    async modifyQuestion(index: number) {
+        this.questionErrors = await this.questionService.modifyQuestion(index, this.questionsArray);
         this.showPopupIfConditionMet(this.questionErrors.length !== 0);
     }
-    saveQuestion(index: number) {
-        this.questionErrors = this.questionService.saveQuestion(index, this.questionsArray);
+    async saveQuestion(index: number) {
+        this.questionErrors = await this.questionService.saveQuestion(index, this.questionsArray);
         this.showPopupIfConditionMet(this.questionErrors.length !== 0);
     }
 

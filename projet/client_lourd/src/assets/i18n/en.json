@@ -110,7 +110,13 @@
     "PLAY": "Play",
     "TOOLTIP_EXPORT": "Export quiz",
     "TOOLTIP_EDIT": "Edit quiz",
-    "TOOLTIP_DELETE": "Delete quiz"
+    "TOOLTIP_DELETE": "Delete quiz",
+    "REFRESH_FEEDBACK": "The quizzes have been refreshed.",
+    "JSON_IMPORT_ERROR": "Error: the JSON file is poorly formatted.({{ error }})",
+    "IMPORT_ERROR_HEADER_TEXT": "The file you are trying to import contains the following issue(s):",
+    "QUIZ_DELETED": "This quiz has been deleted, please choose another one.",
+    "QUIZ_INVISIBLE": "This quiz is now hidden, please choose another one."
+
   },
   "QUIZ_SELECTION": {
     "PAGE_TITLE": "Select one of the available games:",
@@ -360,5 +366,41 @@
   "AVATAR_CLICK_MENU" : {
     "PROFIL": "Profile",
     "DISCONNECT": "Logout"
+  },
+  "IMPORT_ERRORS": {
+    "CHOICE_LABEL": "Choice",
+    "TITLE_REQUIRED": "Title is required",
+    "DESCRIPTION_REQUIRED": "Description is required",
+    "INVALID_DURATION": "Duration must be between 10 and 60 seconds",
+    "MINIMUM_NUMBER_OF_QUESTIONS_REQUIRED": "The quiz should contain at least one question",
+    "TEXT_REQUIRED": "Text is required",
+    "QUESTION_POINTS_REQUIRED": "Question points are required",
+    "INVALID_POINTS": "Points must be between 10 and 100",
+    "NON_DIVISIBLE_BY_TEN": "Question points must be divisible by 10",
+    "INVALID_NUMBER_OF_CHOICES": "There must be at least two choices and at most four choices",
+    "INVALID_CHOICE": "A choice must be either true or false",
+    "INVALID_QUESTION_CHOICES": "There must be at least one correct answer and one incorrect answer",
+    "TITLE_MAX_LENGTH": "Title must contain a maximum of 100 characters",
+    "DESCRIPTION_MAX_LENGTH": "Description must contain a maximum of 250 characters",
+    "DESCRIPTION_ONLY_SPACES": "Description must not consist only of spaces",
+    "TITLE_ONLY_SPACES": "Title must not consist only of spaces",
+    "QUESTION_TEXT_MAX_LENGTH": "Question text must contain a maximum of 250 characters",
+    "UNSUPPORTED_QUESTION_TYPE": "This question type is not supported",
+    "INTEGER_ANSWER_REQUIRED": "Answer must be an integer",
+    "INTEGER_MARGIN_REQUIRED": "Margin must be an integer",
+    "INTEGER_INTERVAL_REQUIRED": "Intervals must be integers",
+    "ANSWER_WITHIN_LIMITS": "Answer must be between",
+    "MINIMUM_WITHIN_LIMITS": "Minimum must be between",
+    "MAXIMUM_WITHIN_LIMITS": "Maximum must be between",
+    "QRE_ANSWER_REQUIRED": "Answer is required for QRE questions",
+    "QRE_INTERVAL_REQUIRED": "Min and max intervals are required for QRE questions",
+    "QRE_MARGIN_REQUIRED": "Margin is required for QRE questions",
+    "MIN_LESS_THAN_MAX": "Min interval must be less than or equal to max",
+    "MARGIN_NON_NEGATIVE": "Tolerance margin must be 0 or higher",
+    "SCIENTIFIC_NOTATION_NOT_ALLOWED": "must not be in scientific notation",
+    "ANSWER_OUTSIDE_INTERVAL": "Answer must be within the interval",
+    "MAX_MARGIN_LIMIT": "Margin must be at most",
+    "INTERVAL_25_PERCENT_LIMIT": "(25% of the interval)",
+    "CHOICE_TEXT_MAX_LENGTH": "Choice text must contain a maximum of 50 characters"
   }
 }

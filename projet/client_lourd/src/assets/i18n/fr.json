@@ -110,7 +110,13 @@
     "PLAY": "Jouer",
     "TOOLTIP_EXPORT": "Exporter le questionnaire",
     "TOOLTIP_EDIT": "Modifier le questionnaire",
-    "TOOLTIP_DELETE": "Supprimer le questionnaire"
+    "TOOLTIP_DELETE": "Supprimer le questionnaire",
+    "REFRESH_FEEDBACK": "Les quiz ont été actualisés.",
+    "JSON_IMPORT_FORMAT_ERROR": "Erreur : le fichier JSON est mal formaté.({{ error }})",
+    "IMPORT_ERROR_HEADER_TEXT": "Le fichier que vous tenter d'importer contient le(s) problème(s) suivant(s):",
+    "QUIZ_DELETED": "Ce quiz a été supprimé, veuillez choisir un autre.",
+    "QUIZ_INVISIBLE": "Ce quiz est maintenant caché, veuillez choisir un autre."
+
   },
   "QUIZ_SELECTION": {
     "PAGE_TITLE": "Sélectionnez un des jeux disponibles :",
@@ -360,5 +366,41 @@
   "AVATAR_CLICK_MENU" : {
     "PROFIL": "Profil",
     "DISCONNECT": "Déconnexion"
+  },
+  "IMPORT_ERRORS": {
+    "CHOICE_LABEL": "Choix",
+    "TITLE_REQUIRED": "Le titre est requis",
+    "DESCRIPTION_REQUIRED": "La description est requise",
+    "INVALID_DURATION": "La durée doit être comprise entre 10 et 60 secondes",
+    "MINIMUM_NUMBER_OF_QUESTIONS_REQUIRED": "Le quiz devrait contenir au moins une question",
+    "TEXT_REQUIRED": "le texte est requis",
+    "QUESTION_POINTS_REQUIRED": "les points d'une question sont requis",
+    "INVALID_POINTS": "les points doivent être entre 10 et 100",
+    "NON_DIVISIBLE_BY_TEN": "les points de la question doivent être divisible par 10",
+    "INVALID_NUMBER_OF_CHOICES": "doit avoir au moins deux choix et au plus quatre choix",
+    "INVALID_CHOICE": "un choix doit être soit vrai soit faux",
+    "INVALID_QUESTION_CHOICES": "on doit au moins avoir une bonne réponse et une mauvaise réponse",
+    "TITLE_MAX_LENGTH": "Le titre doit contenir au maximum 100 caractères",
+    "DESCRIPTION_MAX_LENGTH": "La description doit contenir au maximum 250 caractères",
+    "DESCRIPTION_ONLY_SPACES": "La description ne doit pas être composée uniquement d'espaces",
+    "TITLE_ONLY_SPACES": "Le titre ne doit pas être composé uniquement d'espaces",
+    "QUESTION_TEXT_MAX_LENGTH": "le texte de la question doit contenir au maximum 250 caractères",
+    "UNSUPPORTED_QUESTION_TYPE": "ce type de question n'est pas supporté",
+    "INTEGER_ANSWER_REQUIRED": "la réponse doit être un nombre entier",
+    "INTEGER_MARGIN_REQUIRED": "la marge doit être un nombre entier",
+    "INTEGER_INTERVAL_REQUIRED": "les intervalles doivent être des nombres entiers",
+    "ANSWER_WITHIN_LIMITS": "la réponse doit être entre",
+    "MINIMUM_WITHIN_LIMITS": "le minimum doit être entre",
+    "MAXIMUM_WITHIN_LIMITS": "le maximum doit être entre",
+    "QRE_ANSWER_REQUIRED": "la réponse est requise pour les questions de type QRE",
+    "QRE_INTERVAL_REQUIRED": "l'intervalle min et max sont requis pour les questions de type QRE",
+    "QRE_MARGIN_REQUIRED": "la marge est requise pour les questions de type QRE",
+    "MIN_LESS_THAN_MAX": "l'intervalle min doit être inférieur ou égal à max",
+    "MARGIN_NON_NEGATIVE": "la marge de tolérance doit être 0 ou plus",
+    "SCIENTIFIC_NOTATION_NOT_ALLOWED": "ne doit pas être en notation scientifique",
+    "ANSWER_OUTSIDE_INTERVAL": "la réponse doit être inclus dans l'intervalle",
+    "MAX_MARGIN_LIMIT": "la marge doit être au maximum",
+    "INTERVAL_25_PERCENT_LIMIT": "(25% de l'intervalle)",
+    "CHOICE_TEXT_MAX_LENGTH": "le texte du choix doit contenir au maximum 50 caractères"
   }
 }

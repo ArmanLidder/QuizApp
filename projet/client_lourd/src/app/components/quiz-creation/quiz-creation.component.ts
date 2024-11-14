@@ -111,7 +111,7 @@ export class QuizCreationComponent implements OnInit{
         return condition;
     }
 
-    onSubmit() {
+    async onSubmit() {
         const quiz = this.quizFormService.extractQuizFromForm(this.quizForm, this.questionsArray);
         if (this.quizForm?.valid) {
             const title = this.quizForm.get('title')?.value;
@@ -135,7 +135,7 @@ export class QuizCreationComponent implements OnInit{
                 this.checkTitleUniquenessAndUpdateQuiz(title, quiz);
             }
         } else {
-            this.formErrors = this.quizValidationService.validateQuiz(quiz);
+            this.formErrors = await this.quizValidationService.validateQuiz(quiz);
             this.showPopupIfFormConditionMet(true);
         }
     }

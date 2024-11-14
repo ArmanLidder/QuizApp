@@ -4,7 +4,6 @@ import {Router} from '@angular/router';
 import {GameConfigDialogComponent} from "@app/components/game-config-dialog/game-config-dialog.component";
 import {QuizValidationService} from '@app/services/quiz-validation.service/quiz-validation.service';
 import {QuizService} from '@app/services/quiz.service/quiz.service';
-import {ErrorDictionary} from '@common/browser-message/error-message/error-message';
 import {Quiz} from '@common/interfaces/quiz.interface';
 import {getCurrentDateService} from 'src/utils/current-date-format/current-date-format';
 import {generateRandomId} from 'src/utils/random-id-generator/random-id-generator';
@@ -14,6 +13,7 @@ import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service"
 // import {UniqueQuizNameDialogComponent} from "@app/components/unique-quiz-name-dialog/unique-quiz-name-dialog.component";
 import {AuthService} from "@app/services/auth.service/auth.service";
 import {QuizFormService} from "@app/services/quiz-form-service/quiz-form.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-games-list',
@@ -44,6 +44,7 @@ export class GamesListComponent implements OnInit {
         private dialog: MatDialog,
         private snackbar: SnackbarService,
         private authService: AuthService,
+        private translate: TranslateService
     ) {
     }
 
@@ -54,10 +55,10 @@ export class GamesListComponent implements OnInit {
         });
     }
 
-    refresh(event: any = {}) {
+    async refresh(event: any = {}) {
         this.selectedQuiz = null;
         this.populateGameList();
-        this.snackbar.show( 'Les quiz ont été actualisés.')
+        this.snackbar.show(await this.translate.get('GAME_ADMIN.REFRESH_FEEDBACK').toPromise())
     }
 
     populateGameList() {
@@ -113,7 +114,7 @@ export class GamesListComponent implements OnInit {
         this.fileReader.onload = (e) => this.extractQuizData(e);
     }
 
-    extractQuizData(event: ProgressEvent<FileReader>) {
+    async extractQuizData(event: ProgressEvent<FileReader>) {
         try {
             this.importedQuiz = JSON.parse(event.target?.result as string);
             this.importedQuiz.lastModification = getCurrentDateService();
@@ -121,9 +122,8 @@ export class GamesListComponent implements OnInit {
             if(this.importedQuiz.title) this.importedQuiz.title = this.importedQuiz.title.trim();
             if (this.importedQuiz.description) this.importedQuiz.description = this.importedQuiz.description.trim();
             this.resolveAsyncFileRead();
-
         } catch (error:any) {
-            this.snackbar.show(`Erreur : le fichier JSON est mal formaté.(${error.message})`)
+            this.snackbar.show(await this.translate.get('GAME_ADMIN.JSON_IMPORT_FORMAT_ERROR', { error: error.message }).toPromise());
             this.rejectAsyncFileRead(error);
         }
     }
@@ -147,12 +147,12 @@ export class GamesListComponent implements OnInit {
     }
 
     async validateFileData() {
-        const errors = this.quizValidator.validateQuiz(this.importedQuiz);
+        const errors = await this.quizValidator.validateQuiz(this.importedQuiz);
         if (errors.length === 0) {
             await this.addImportedQuiz();
         } else {
-            this.errors = this.setValidatorError(errors);
-            this.showErrorDialog(this.errors)
+            this.errors = await this.setValidatorError(errors);
+            this.showErrorDialog(this.errors as string)
             await this.addImportedQuiz();
         }
     }
@@ -163,15 +163,12 @@ export class GamesListComponent implements OnInit {
         });
     }
 
-    setValidatorError(errors: string[]) {
+    async setValidatorError(errors: string[]) {
         let index = 0;
-        const isPlural = errors.length > 1;
-        const endSentence = isPlural ? ErrorDictionary.ISSUES : ErrorDictionary.ISSUE;
-        let errorMessage = ErrorDictionary.FILE_CONTAINS + `${endSentence} :\n\n `;
+        let errorMessage = await this.translate.get('GAME_ADMIN.IMPORT_ERROR_HEADER_TEXT').toPromise();
         errors.forEach((error) => {
             errorMessage += `\n${(index += 1)}- ${error}\n`;
         });
-        errorMessage += ErrorDictionary.SOLUTION;
         return errorMessage;
     }
 
@@ -189,13 +186,13 @@ export class GamesListComponent implements OnInit {
 
         if (!this.selectedQuiz) return;
 
-        this.quizServices.basicGetById(this.selectedQuiz.id).subscribe((res) => {
+        this.quizServices.basicGetById(this.selectedQuiz.id).subscribe(async (res) => {
             this.selectedQuiz = null;
 
             if (res === null) {
-                this.showErrorDialog(ErrorDictionary.QUIZ_DELETED);
+                this.showErrorDialog(await this.translate.get('GAME_ADMIN.QUIZ_DELETED').toPromise());
             } else if (!res.visible && res.owner !== this.currentUserUid) {
-                this.showErrorDialog(ErrorDictionary.QUIZ_INVISIBLE);
+                this.showErrorDialog(await this.translate.get('GAME_ADMIN.QUIZ_INVISIBLE').toPromise());
             }
             else if (res.visible) {
                 this.router.navigate([route, res.id]);
