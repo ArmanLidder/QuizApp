@@ -60,11 +60,11 @@ export class RegisterPageComponent implements OnInit {
             const { username, email, password } = this.authForm.value;
             try {
                 await this.authService.register(username, email, password, this.selectedAvatar);
-                this.snackbarService.show('Compte créé');
+                this.snackbarService.show(this.translate.instant('REGISTER_PAGE.SUCCESS_REGISTER_POPUP'));
                 this.router.navigate(['/home']);
             } catch (error: any) {
                 console.log(error);
-                this.snackbarService.show(error.message || 'Une erreur est survenue');
+                this.snackbarService.show(error.message);
             }
         }
     }

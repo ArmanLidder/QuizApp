@@ -10,6 +10,7 @@ import {UsersService} from "@app/services/users.service/users.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
 import {first, switchMap} from "rxjs";
 import {map} from "rxjs/operators";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Injectable({
@@ -31,12 +32,13 @@ export class AuthService {
 
     constructor(private auth: Auth,
                 private usersService: UsersService,
-                private avatarService: AvatarService) {
+                private avatarService: AvatarService,
+                private translate: TranslateService) {
     }
 
     async register(username: string, email: string, password: string, selectedAvatar: string | File): Promise<void> {
         const isTaken = await this.usersService.isUsernameTaken(username);
-        if (isTaken) throw new Error(`Le nom "${username}" est déjà utilisé`);
+        if (isTaken) throw new Error(this.translate.instant('REGISTER_PAGE.THE_NAME_IS_ALREADY_USED',{name:username}));
         try {
             const {user} = await createUserWithEmailAndPassword(this.auth, email, password);
             await this.usersService.addUser({uid: user.uid, email, username});
@@ -57,7 +59,7 @@ export class AuthService {
     async login(email: string, password: string): Promise<void> {
         const existingUser = await this.usersService.getUserByEmail(email);
         if (existingUser?.isConnected) {
-            throw new Error('Cet utilisateur est déjà connecté.');
+            throw new Error(this.translate.instant('LOGIN_PAGE.USER_ALREADY_CONNECTED'));
         }
 
         try {
@@ -84,27 +86,27 @@ export class AuthService {
     private mapFirebaseAuthError(errorCode: string): string {
         switch (errorCode) {
             case 'auth/invalid-email':
-                return "L'adresse e-mail est invalide.";
+                return this.translate.instant('LOGIN_PAGE.INVALID_EMAIL');
             case 'auth/invalid-credential':
-                return "Courriel et/ou mot de passe incorrect";
+                return this.translate.instant('LOGIN_PAGE.INVALID_CREDENTIAL');
             case 'auth/user-disabled':
-                return "Le compte de cet utilisateur est désactivé.";
+                return this.translate.instant('LOGIN_PAGE.USER_DISABLED');
             case 'auth/user-not-found':
-                return "Aucun utilisateur trouvé avec cet e-mail.";
+                return this.translate.instant('LOGIN_PAGE.USER_NOT_FOUND');
             case 'auth/wrong-password':
-                return "Le mot de passe est incorrect.";
+                return this.translate.instant('LOGIN_PAGE.WRONG_PASSWORD');
             case 'auth/email-already-in-use':
-                return "Ce courriel est déjà utilisé par un autre compte.";
+                return this.translate.instant('LOGIN_PAGE.EMAIL_ALREADY_IN_USE');
             case 'auth/weak-password':
-                return "Le mot de passe est trop faible.";
+                return this.translate.instant('LOGIN_PAGE.WEAK_PASSWORD');
             case 'auth/operation-not-allowed':
-                return "Cette opération n'est pas autorisée.";
+                return this.translate.instant('LOGIN_PAGE.OPERATION_NOT_ALLOWED');
             case 'auth/network-request-failed':
-                return "La connexion au réseau a échoué.";
+                return this.translate.instant('LOGIN_PAGE.NETWORK_REQUEST_FAILED');
             case 'auth/requires-recent-login':
-                return "Veuillez vous reconnecter avant d'effectuer cette opération.";
+                return this.translate.instant('LOGIN_PAGE.REQUIRES_RECENT_LOGIN');
             default:
-                return "Une erreur inconnue s'est produite.";
+                return this.translate.instant('LOGIN_PAGE.UNKNOWN_ERROR');
         }
     }
 }

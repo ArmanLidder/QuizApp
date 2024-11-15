@@ -34,10 +34,10 @@ export class LoginPageComponent {
         if (this.authForm.valid) {
             try {
                 await this.authService.login(email, password);
-                this.snackbarService.show('Connexion réussie');
+                this.snackbarService.show(this.translate.instant('LOGIN_PAGE.SUCCESS_LOGIN_POPUP'));
                 this.router.navigate(['/home']);
             } catch (error:any) {
-                this.snackbarService.show(error.message || 'Erreur lors de la connexion');
+                this.snackbarService.show(error.message);
             }
         }
     }

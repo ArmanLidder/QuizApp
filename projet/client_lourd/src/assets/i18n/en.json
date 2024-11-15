@@ -13,7 +13,20 @@
     "PASSWORD_MIN_LENGTH": "Password must be at least 6 characters long.",
     "SUBMIT_BUTTON": "Log In",
     "NO_ACCOUNT": "Don't have an account?",
-    "REGISTER_LINK": "Sign Up"
+    "REGISTER_LINK": "Sign Up",
+    "SUCCESS_LOGIN_POPUP": "Login successful",
+    "USER_ALREADY_CONNECTED": "This user is already connected.",
+    "INVALID_EMAIL": "The email address is invalid.",
+    "INVALID_CREDENTIAL": "Incorrect email and/or password.",
+    "USER_DISABLED": "This user's account is disabled.",
+    "USER_NOT_FOUND": "No user found with this email.",
+    "WRONG_PASSWORD": "The password is incorrect.",
+    "EMAIL_ALREADY_IN_USE": "This email is already in use by another account.",
+    "WEAK_PASSWORD": "The password is too weak.",
+    "OPERATION_NOT_ALLOWED": "This operation is not allowed.",
+    "NETWORK_REQUEST_FAILED": "Network connection failed.",
+    "REQUIRES_RECENT_LOGIN": "Please log in again before performing this operation.",
+    "UNKNOWN_ERROR": "An unknown error occurred."
   },
   "REGISTER_PAGE": {
     "TITLE": "Sign Up",
@@ -33,7 +46,9 @@
     "PASSWORD_MIN_LENGTH": "Password must be at least 6 characters long.",
     "SUBMIT_BUTTON": "Sign Up",
     "ALREADY_HAVE_ACCOUNT": "Already have an account?",
-    "LOGIN_LINK": "Log In"
+    "LOGIN_LINK": "Log In",
+    "SUCCESS_REGISTER_POPUP": "Account created",
+    "THE_NAME_IS_ALREADY_USED": "The name \"{{name}}\" is already used"
   },
   "MAINPAGE": {
     "WELCOME": "Welcome",
@@ -93,7 +108,8 @@
     "NO_PENDING_REQUESTS": "You have not received any friend requests.",
     "REMOVE_FRIEND": "Remove Friend",
     "ACCEPT_REQUEST": "Accept",
-    "DECLINE_REQUEST": "Decline"
+    "DECLINE_REQUEST": "Decline",
+    "ALREADY_SENT_ERROR": "The friend request was already sent"
   },
   "AVATAR_MODIFICATION": {
     "TITLE": "Avatar Modification",
