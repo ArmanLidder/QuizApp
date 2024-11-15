@@ -133,6 +133,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
             label: currentValue.toString(),
             onChanged: (value) {
               setState(() {
+                if (isValidated) return;
                 currentValue = value.round();
               });
             },
