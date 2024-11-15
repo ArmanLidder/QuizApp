@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from "@app/services/auth.service/auth.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {Router} from "@angular/router";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -14,16 +15,18 @@ import {Router} from "@angular/router";
 export class LoginPageComponent {
     authForm: FormGroup;
     passwordVisible: boolean = false;
-
+    language: string;
     constructor(
         private fb: FormBuilder,
         private authService: AuthService,
         private snackbarService: SnackbarService,
-        private router: Router) {
+        private router: Router,
+        private translate: TranslateService) {
         this.authForm = this.fb.group({
             email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
             password: ['', [Validators.required,Validators.minLength(6)]]
         });
+        this.language = this.translate.currentLang;
     }
 
     async login() {
@@ -41,5 +44,10 @@ export class LoginPageComponent {
 
     togglePasswordVisibility() {
         this.passwordVisible = !this.passwordVisible;
+    }
+
+    switchLanguage(event: Event) {
+        const language = (event.target as HTMLSelectElement).value;
+        this.translate.use(language);
     }
 }
