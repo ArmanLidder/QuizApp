@@ -12,11 +12,12 @@ class UserIdsRow extends StatefulWidget {
 class _UserIdsRowState extends State<UserIdsRow> {
   List<Map<String, dynamic>>? cachedUserWidgets;  // Cache of username and corresponding widget
   String filterText = '';  // Text input for filtering
+  bool isLoading = true;  // Track if data is still loading
 
   // Fetch user data and create widgets. This should only be called once on initial load.
-  Future<List<Map<String, dynamic>>> fetchUserWidgets() async {
+  Future<void> fetchUserWidgets() async {
     // If widgets are already cached, return them directly
-    if (cachedUserWidgets != null) return cachedUserWidgets!;
+    if (cachedUserWidgets != null) return;
 
     try {
       final snapshot = await FirebaseFirestore.instance.collection('users').get();
@@ -39,30 +40,31 @@ class _UserIdsRowState extends State<UserIdsRow> {
         });
       }
 
-      cachedUserWidgets = userWidgets;
-      return cachedUserWidgets!;
+      setState(() {
+        cachedUserWidgets = userWidgets;
+        isLoading = false;  // Update loading state after fetching
+      });
     } catch (e) {
       print('Error fetching user IDs: $e');
-      return [];
+      setState(() {
+        isLoading = false;  // Stop loading on error
+      });
     }
   }
 
   // Filter widgets based on the entered filter text.
   List<Map<String, dynamic>> _filterUserWidgets(String filter) {
     if (cachedUserWidgets == null) return [];
-
     return cachedUserWidgets!
         .where((entry) {
       final username = entry['username'] as String;
       return username.toLowerCase().contains(filter.toLowerCase());
-    })
-        .toList();
+    }).toList();
   }
 
   @override
   void initState() {
     super.initState();
-    // Only fetch the data once when the widget is first initialized
     fetchUserWidgets();
   }
 
@@ -86,8 +88,8 @@ class _UserIdsRowState extends State<UserIdsRow> {
           ),
         ),
         // Display the cached widgets, with a scrollable list
-        cachedUserWidgets == null
-            ? const Center(child: CircularProgressIndicator()) // Show loading indicator while data is fetched
+        isLoading
+            ? Text("sdfasd") // Show loading indicator while data is fetched
             : Expanded( // Wrap the list with an Expanded widget to allow scrolling
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
