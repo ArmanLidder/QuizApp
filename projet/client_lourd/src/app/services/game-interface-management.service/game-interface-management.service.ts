@@ -228,7 +228,7 @@ export class GameInterfaceManagementService {
                     username: this.gameService.observerMode ? this.gameService.observedPlayerId : this.gameService.gameRealService.username,
                 },
                 (score: Score) => {
-                    this.gameService.gameRealService.validated = true;
+                    if (!this.gameService.observerMode) this.gameService.gameRealService.validated = true;
                     this.updateScore(score.points);
                     this.isBonus = score.isBonus;
                     console.log('Calling back socre from get score to see if qrl last score get updated')

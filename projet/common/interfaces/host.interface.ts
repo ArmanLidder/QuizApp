@@ -28,6 +28,7 @@ export interface HostCurrentGameInterface {
     roomId: number;
     timerText: string;
     isGameOver: boolean;
+    currentTime: number;
     leftPlayers: Player[];
     players: Player[];
     histogramDataChangingResponses: [number, number] | number[];

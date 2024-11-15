@@ -2,7 +2,12 @@ import {RoomManagingService} from '@app/services/room-managing.service/room-mana
 import {TRANSITION_QUESTIONS_DELAY} from '@common/constants/socket-manager.service.const';
 import {TimerService} from '@app/services/timer.service/timer.service';
 import {ErrorDictionary} from '@common/browser-message/error-message/error-message';
-import {JoinTeamData, NewObservedPlayer, PlayerUsername} from '@common/interfaces/socket-manager.interface';
+import {
+    JoinTeamData,
+    NewObservedPlayer,
+    PlayerSelection,
+    PlayerUsername
+} from '@common/interfaces/socket-manager.interface';
 import {HOST_USERNAME} from '@common/names/host-username';
 import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 import * as io from 'socket.io';
@@ -48,12 +53,12 @@ export class GameCreationService {
         this.handleObserverGetPlayerList(roomManager, socket, sio);
         this.handleChangeObservedPLayer(roomManager, socket, sio);
         this.handleGameStatusForObsReception(roomManager, socket, sio);
+        this.handleQCMAnswerReception(socket, sio);
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.CREATE_ROOM, async (data: { quizId: string, gameConfig: GameConfig }, callback) => {
             const userId = socket.handshake.auth.userId;
-            console.log(JSON.stringify(data.gameConfig));
             const roomCode = roomManager.addRoom(data.quizId, data.gameConfig);
             await this.fs.firestore.collection('canals').add(this.generateRoomCanal(roomCode, userId))
             roomManager.addUser(roomCode, HOST_USERNAME, socket.id);
@@ -123,7 +128,7 @@ export class GameCreationService {
                    players.push([username, score.points]);
                })
                const choicesStatsValues = Array.from(game.choicesStats.values());
-               const data : PlayerCurrentGameInterface = {
+               const player_data : PlayerCurrentGameInterface = {
                    roomId: roomId,
                    isBonus: playerScore.isBonus,
                    playerScore: playerScore.points,
@@ -132,9 +137,19 @@ export class GameCreationService {
                    qrlAnswer: String(qrlAnswer),
                    choicesStatsValues: choicesStatsValues,
                }
-               console.log(data);
-               sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, data);
+               sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
+               if(game.currentQuizQuestion.type === QuestionType.QCM) {
+                   console.log("emitting choices response request")
+                   sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
+               }
            }
+        });
+    }
+
+    private handleQCMAnswerReception(socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, (data: PlayerSelection) => {
+            console.log("emitting OBS QCM interaction", data);
+            sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, data);
         });
     }
 
@@ -310,14 +325,11 @@ export class GameCreationService {
     }
 
     private sendPlayerListToObserver(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
-        console.log('ISSUE HERE');
         try {
             sio.emit(SocketEvent.SENDING_OBSERVER_PLAYER_LIST, roomManager.getUsernamesArray(roomId))
         } catch(e) {
-            console.log(e);
             console.log(roomId)
         }
-        // sio.emit(SocketEvent.SENDING_OBSERVER_PLAYER_LIST, players)
     }
 
     private generateRoomCanal(roomId: number, userId: string, teamId?: number): Canal {
@@ -586,16 +598,11 @@ export class GameCreationService {
     }
 
     private debug_teams(when: string, roomId: number, roomManager: RoomManagingService) {
-        console.log(`TEAMS debugging ${when}`);
         const room = roomManager.getRoomById(roomId)
         if (room) {
             const teams = room.teams
-            console.log(`Teams size = ${teams.size}`);
             if (teams) {
                 teams.forEach((team, id) => {
-                    console.log(`Team Id: ${id}`);
-                    console.log(`Team size = ${team.members.length}`)
-                    team.members.forEach((member) => console.log(member))
                 });
             }
         }

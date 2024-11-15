@@ -119,7 +119,8 @@ export class GameManagementService {
             const username = roomManager.getUsernameBySocketId(data.roomId, socket.id);
             const choicesStatsValues = Array.from(game.choicesStats.values());
             sio.to(hostSocketId).emit(SocketEvent.REFRESH_CHOICES_STATS, choicesStatsValues);
-            sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, [data.index, data.isSelected]);
+            console.log("emitting OBS QCM interaction", data);
+            sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, data);
             sio.to(hostSocketId).emit(SocketEvent.UPDATE_INTERACTION, username);
         });
     }
@@ -186,7 +187,6 @@ export class GameManagementService {
     private handleGetScore(roomManager: RoomManagingService, socket: io.Socket) {
         socket.on(SocketEvent.GET_SCORE, (data: PlayerUsername, callback) => {
             const playerScore = roomManager.getGameByRoomId(data.roomId).players.get(data.username);
-            console.log(playerScore);
             callback(playerScore);
         });
     }

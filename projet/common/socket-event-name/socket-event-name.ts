@@ -71,6 +71,9 @@ export namespace SocketEvent {
     export const SENDING_HOST_GAME_STATUS = "sending_host_game_status";
     export const OBS_QCM_INTERACTION = "obs_qcm_interaction";
     export const RECEIVE_PLAYER_GAME_STATUS = "receive_player_game_status";
+
+    export const REQUEST_PAYER_QCM_CHOICES = "request_player_qcm_choices";
+    export const RECEIVE_PLAYER_QCM_CHOICES = "receive_player_qcm_choices";
 }
 
 

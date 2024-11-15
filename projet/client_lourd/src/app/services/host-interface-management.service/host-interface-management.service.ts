@@ -318,13 +318,10 @@ export class HostInterfaceManagementService {
                 Number(this.histogramDataChangingResponses.get(ACTIVE)),
                 Number(this.histogramDataChangingResponses.get(INACTIVE))
             ]
-            console.log(this.interactiveListService.players);
-            console.log(this.leftPlayers)
-            console.log(histogramDataChangingResponses);
-            console.log(this.histogramDataValue)
             const gameStatus: HostCurrentGameInterface = {
                 roomId: this.roomId,
                 timerText: this.timerText,
+                currentTime: this.gameService.gameRealService.timer,
                 isGameOver: this.isGameOver,
                 leftPlayers: this.leftPlayers,
                 players: this.interactiveListService.players,

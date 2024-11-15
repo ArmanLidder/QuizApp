@@ -31,6 +31,7 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
 
     constructor(public gameService: GameService, private socketService: SocketClientService) {
         if (this.gameService.observerMode) this.handleSelection();
+        else this.handleRequestQCMStatus();
     }
 
     @HostListener('document:keydown', ['$event'])
@@ -42,6 +43,7 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     }
 
     ngOnChanges() {
+        console.log("ngOnChanges")
         if (this.gameService.validatedStatus) this.showResult();
     }
 
@@ -92,12 +94,29 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
 
     private handleSelection(){
         if (this.socketService.isSocketAlive()) {
-            console.log("handleSelection")
-            this.socketService.on(SocketEvent.OBS_QCM_INTERACTION, (choices: number[])=> {
-                const real_idx = this.index - 1;
-                if (choices[0] === real_idx) choices[1] ? this.showSelectionFeedback(): this.reset();
-                console.log(choices);
+            this.socketService.on(SocketEvent.OBS_QCM_INTERACTION, (data: { roomId: number, isSelected : boolean, index: number })=> {
+                console.log("receiving QCM to observer", data);
+                if (this.index == data.index + 1) {
+                    data.isSelected ? this.showSelectionFeedback() : this.reset();
+                    console.log('updating')
+                }
             })
         }
     }
+
+    private handleRequestQCMStatus() {
+        if (this.socketService.isSocketAlive()) {
+            this.socketService.on(SocketEvent.REQUEST_PAYER_QCM_CHOICES, ()=> {
+                const data = {
+                    roomId: this.gameService.gameRealService.roomId,
+                    isSelected : this.isSelected,
+                    index: this.index - 1
+                }
+                console.log("emiting QCM to observer", data);
+                this.socketService.send(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, data)
+            })
+        }
+    }
+
+
 }
