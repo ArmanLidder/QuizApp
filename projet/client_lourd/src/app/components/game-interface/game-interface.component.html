@@ -29,6 +29,7 @@
             <div>
                 <h2>Question {{ gameInterfaceManagementService.gameService.questionNumber }}</h2>
                 <h3>Valeur : {{ gameInterfaceManagementService.gameService.question?.points }} points</h3>
+                <h1>{{ gameInterfaceManagementService.gameService.question?.text }}</h1>
             </div>
         </section>
         <div class='points'>
@@ -36,7 +37,6 @@
             <p *ngIf = 'bonusStatus'> Vous avez recu des points Bonus! </p>
         </div>
     </div>
-    <h1>{{ gameInterfaceManagementService.gameService.question?.text }}</h1>
 
     <div *ngIf="gameInterfaceManagementService.gameService.question?.imageUrl" class="question-image-container">
         <img

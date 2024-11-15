@@ -2,8 +2,8 @@
     <h2>Question {{index + 1}}</h2>
     <p>{{question?.text}}</p>
     <div class="graph-title">
-        <button *ngIf="!isFirst()" class="arrow" (click)="previous()">Précédent</button>
-        <button *ngIf="!isEnd()" class="arrow" (click)="next()">Suivant</button>
+        <button *ngIf="!isFirst()" class="arrow" (click)="previous()">{{ 'GAME_INTERFACE.HISTOGRAM.PREVIOUS' | translate }}</button>
+        <button *ngIf="!isEnd()" class="arrow" (click)="next()">{{ 'GAME_INTERFACE.HISTOGRAM.NEXT' | translate }}</button>
     </div>
     <app-statistic-histogram
             [changingResponses]="responseNumber"

@@ -407,5 +407,73 @@
     "MAX_MARGIN_LIMIT": "la marge doit être au maximum",
     "INTERVAL_25_PERCENT_LIMIT": "(25% de l'intervalle)",
     "CHOICE_TEXT_MAX_LENGTH": "le texte du choix doit contenir au maximum 50 caractères"
+  },
+  "GAME_INTERFACE": {
+    "TIMER_TEXT": {
+      "TIME_LEFT": "Temps restant ",
+      "FINAL_RESULT": "Résultats finaux s'afficherons dans ",
+      "RESULT_AVAILABLE_IN":"Résultat dans ",
+      "NEXT":"Prochaine question dans "
+    },
+    "QRE_HISTOGRAM_X_VAL": {
+      "WITHIN_MARGIN": "Dans l'intervalle",
+      "EXACT_ANSWER": "Exacte",
+      "INCORRECT_ANSWER": "Incorrecte"
+    },
+    "TOOLTIP": {
+      "TOOLTIP_PLAY": "Lecture",
+      "TOOLTIP_PAUSE": "Pause",
+      "TOOLTIP_PANIC_MODE": "Activez le mode panique !",
+      "TOOLTIP_PANIC_MODE_DISABLED": "Vous ne pouvez plus activer le mode panique."
+    },
+    "QUESTION_INFO" : {
+      "VALUE": "Valeur"
+    },
+    "QRL_CORRECTION": {
+      "QUESTION_CORRECTION": "Correction de la question:",
+      "PLAYER": "Joueur :",
+      "ANSWER": "Réponse :",
+      "SELECT_SCORE": "Veuillez sélectionner une note",
+      "SCORES_TITLE": "Notes des joueurs:",
+      "NAME": "Nom",
+      "SCORE": "Note",
+      "VALIDATE": "Valider"
+    },
+    "HISTOGRAM":{
+      "LEGEND_HEADER" : "Légende de l'histogramme:",
+      "CORRECT_ANSWERS": "Bonnes réponses",
+      "INCORRECT_ANSWERS": "Mauvaises réponses",
+      "INACTIVE": "Inactif",
+      "ACTIVE": "Actif",
+      "NEXT": "Suivant",
+      "PREVIOUS": "Précédent"
+    },
+    "PLAYER_LIST": {
+      "LEGEND_TITLE": "Légende de la liste des joueurs:",
+      "QUIT_TEAMMATE_LABEL": "Quitté",
+      "INACTIVE": "Inactif",
+      "INTERACTION": "Interaction",
+      "VALIDATION": "Validation",
+      "QUIT": "Quitter",
+      "GAME_END": "Fin de partie",
+      "SORT_BUTTONS": {
+        "SORT_BY_NAME": "Nom",
+        "SORT_BY_SCORE": "Point",
+        "SORT_BY_STATUS": "Statut",
+        "TOOLTIP_SORT_BY_NAME": "Trier par nom",
+        "TOOLTIP_SORT_BY_SCORE": "Trier par point",
+        "TOOLTIP_SORT_BY_STATUS": "Trier par statut",
+        "TOOLTIP_CHANGE_ORDER": "Changer l'ordre"
+      },
+      "COLUMN_TITLES": {
+        "NAME": "Nom",
+        "POINTS": "Points",
+        "BONUS": "Bonus",
+        "TEAM": "Équipe"
+      }
+    },
+    "NEXT_QUESTION": "Prochaine question",
+    "SHOW_RESULT": "Montrer résultat",
+    "GAME_FINISHED": "Partie terminée"
   }
 }

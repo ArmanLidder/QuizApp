@@ -407,5 +407,73 @@
     "MAX_MARGIN_LIMIT": "Margin must be at most",
     "INTERVAL_25_PERCENT_LIMIT": "(25% of the interval)",
     "CHOICE_TEXT_MAX_LENGTH": "Choice text must contain a maximum of 50 characters"
+  },
+  "GAME_INTERFACE": {
+    "TIMER_TEXT": {
+      "TIME_LEFT": "Time remaining",
+      "FINAL_RESULT": "Final results in ",
+      "RESULT_AVAILABLE_IN":"Result in ",
+      "NEXT":"Next question in "
+    },
+    "QRE_HISTOGRAM_X_VAL": {
+      "WITHIN_MARGIN": "Within margin",
+      "EXACT_ANSWER": "Exact",
+      "INCORRECT_ANSWER": "Incorrect"
+    },
+    "TOOLTIP": {
+      "TOOLTIP_PLAY": "Play",
+      "TOOLTIP_PAUSE": "Pause",
+      "TOOLTIP_PANIC_MODE": "Activate Panic Mode!",
+      "TOOLTIP_PANIC_MODE_DISABLED": "You can no longer activate the panic mode."
+    },
+    "QUESTION_INFO" : {
+      "VALUE": "Value"
+    },
+    "QRL_CORRECTION": {
+      "QUESTION_CORRECTION": "Question correction:",
+      "PLAYER": "Player:",
+      "ANSWER": "Answer:",
+      "SELECT_SCORE": "Please select a score",
+      "SCORES_TITLE": "Player scores:",
+      "NAME": "Name",
+      "SCORE": "Score",
+      "VALIDATE": "Validate"
+    },
+    "HISTOGRAM":{
+      "LEGEND_HEADER" : "Histogram legend:",
+      "CORRECT_ANSWERS": "Correct answers",
+      "INCORRECT_ANSWERS": "Incorrect answers",
+      "INACTIVE": "Inactive",
+      "ACTIVE": "Active",
+      "NEXT": "Next",
+      "PREVIOUS": "Previous"
+    },
+    "PLAYER_LIST": {
+      "LEGEND_TITLE": "Player List Legend:",
+      "QUIT_TEAMMATE_LABEL": "Left",
+      "INACTIVE": "Inactive",
+      "INTERACTION": "Interaction",
+      "VALIDATION": "Validation",
+      "QUIT": "Quit",
+      "GAME_END": "End of game",
+      "SORT_BUTTONS": {
+        "SORT_BY_NAME": "Name",
+        "SORT_BY_SCORE": "Score",
+        "SORT_BY_STATUS": "Status",
+        "TOOLTIP_SORT_BY_NAME": "Sort by name",
+        "TOOLTIP_SORT_BY_SCORE": "Sort by score",
+        "TOOLTIP_SORT_BY_STATUS": "Sort by status",
+        "TOOLTIP_CHANGE_ORDER": "Change order"
+      },
+      "COLUMN_TITLES": {
+        "NAME": "Name",
+        "POINTS": "Points",
+        "BONUS": "Bonus",
+        "TEAM": "Team"
+      }
+    },
+    "NEXT_QUESTION": "Next Question",
+    "SHOW_RESULT": "Show Result",
+    "GAME_FINISHED": "Game finished"
   }
 }
