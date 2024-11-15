@@ -101,7 +101,6 @@ class RewardImageStoreList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(rewardItems);
     List<Widget> items = [];
     rewardItems.forEach((item) {
       Widget widget = RewardImageItem(
@@ -125,4 +124,32 @@ class RewardImageStoreList extends StatelessWidget {
 }
 
 
+class RewardThemeStoreList extends StatelessWidget {
+  final List<Map<String, dynamic>> rewardItems;
+  final String userId;
+  final StoreService storeService = Get.find();
+
+  RewardThemeStoreList({required this.rewardItems, required this.userId});
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> items = [];
+    rewardItems.forEach((item) {
+      Widget widget = RewardThemeItem(
+        itemId: item["id"],
+        name: item["name"],
+        cost: item["cost"],
+        achievement : item["achievement"],
+        onBuy: () async =>  {await storeService.buy(userId, item["id"])},
+      );
+      items.add(widget);
+      items.add(SizedBox(
+        width: 5,
+      ));
+    });
+    return  Center(child:Wrap(
+      children: items,
+    ));
+  }
+}
 

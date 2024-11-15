@@ -80,26 +80,24 @@ class _BuyButtonState extends State<BuyButton> {
 }
 
 
-class RewardButton extends StatefulWidget {
+class ImageRewardButton extends StatefulWidget {
   final num cost;
   final Future<void> Function() onBuy; // Purchase callback
   final String itemId;
-  final num minPrestige;
   final num minLevel;
-  RewardButton({
+  ImageRewardButton({
     required this.cost,
     required this.onBuy,
     required this.itemId,
-    required this.minPrestige,
     required this.minLevel,
   });
 
   @override
-  _RewardButtonState createState() => _RewardButtonState();
+  _ImageRewardButtonState createState() => _ImageRewardButtonState();
 }
 
 
-class _RewardButtonState extends State<RewardButton> {
+class _ImageRewardButtonState extends State<ImageRewardButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
   bool alreadyOwns = false;
@@ -116,13 +114,12 @@ class _RewardButtonState extends State<RewardButton> {
     await loggedInUserService.reloadUser();
     num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
     bool ownsItem = await storeService.isOwned(loggedInUserService.getUid() ?? "noIdInButtonWidget", widget.itemId);
-    bool hasRequiredPrestige = (loggedInUserService.observablePrestige.value ?? 0) >= widget.minPrestige;
     bool hasRequiredLevel = (loggedInUserService.observableLevel.value ?? 0) >= widget.minLevel;
 
     setState(() {
       alreadyOwns = ownsItem;
       canAfford = availableFunds >= widget.cost;
-      meetsPrestigeLevel = hasRequiredPrestige && hasRequiredLevel;
+      meetsPrestigeLevel =  hasRequiredLevel;
     });
   }
 
@@ -148,8 +145,96 @@ class _RewardButtonState extends State<RewardButton> {
         };
       } else {
         buttonColor = Colors.grey;
-        buttonText = 'Débloqué au prestige ${widget.minPrestige} / niveau ${widget.minLevel}';
+        buttonText = 'Débloqué au niveau ${widget.minLevel}';
         buttonAction = _updateButtonStatus; // Disable button if requirements not met
+      }
+
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
+        onPressed: buttonAction,
+        child: Text(buttonText),
+      );
+    });
+  }
+}
+
+class RewardThemeButton extends StatefulWidget {
+  final num cost;
+  final Future<void> Function() onBuy; // Purchase callback
+  final String itemId;
+  final num achievement; // Achievement to check
+  final Future<void> Function()? onUnlock; // Callback for unlocking
+
+  RewardThemeButton({
+    required this.cost,
+    required this.onBuy,
+    required this.itemId,
+    required this.achievement,
+    this.onUnlock,
+  });
+
+  @override
+  _RewardThemeButtonState createState() => _RewardThemeButtonState();
+}
+
+class _RewardThemeButtonState extends State<RewardThemeButton> {
+  final LoggedInUserService loggedInUserService = Get.find();
+  final StoreService storeService = Get.find();
+
+  bool alreadyOwns = false;
+  bool canAfford = false;
+  bool hasAchievement = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateButtonStatus();
+  }
+
+  Future<void> _updateButtonStatus() async {
+    await loggedInUserService.reloadUser();
+    final user = loggedInUserService.getUser();
+    num availableFunds = user?.currency ?? 0;
+    bool ownsItem = await storeService.isOwned(user?.uid ?? "noIdInRewardButtonWidget", widget.itemId);
+    bool achievementUnlocked = user?.achievements.contains(widget.achievement) ?? false;
+
+    setState(() {
+      alreadyOwns = ownsItem;
+      canAfford = availableFunds >= widget.cost;
+      hasAchievement = achievementUnlocked;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      storeService.purchaseTrigger;
+      _updateButtonStatus(); // Update status on each change
+      Color buttonColor;
+      String buttonText;
+      VoidCallback? buttonAction;
+
+      if (alreadyOwns) {
+        buttonColor = Colors.grey;
+        buttonText = 'Déjà possédé';
+        buttonAction = null; // Disable button if already owned
+      } else if (hasAchievement) {
+        if (canAfford) {
+          buttonColor = Colors.green;
+          buttonText = 'Acheter (${widget.cost}) \$';
+          buttonAction = () async {
+            await widget.onBuy(); // Call the purchase function
+            _updateButtonStatus();
+          };
+        } else {
+          buttonColor = Colors.red;
+          buttonText = 'Pas assez de fonds (${widget.cost}) \$';
+          buttonAction = null; // Disable button if insufficient funds
+        }
+      } else {
+        buttonColor = Colors.grey;
+        buttonText = 'Débloqué à l\'exploit ${widget.achievement}';
+        buttonAction = null; // Disable button if achievement not met
       }
 
       return ElevatedButton(

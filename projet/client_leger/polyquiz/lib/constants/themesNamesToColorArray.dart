@@ -19,4 +19,10 @@ Map<String, List<Color>> themeColors = {
     Colors.black,   // secondaryBackground
     Colors.red[500]!,     // secondaryAccent
   ],
+  "blueGrey": [
+    Colors.blueGrey[900]!, // mainBackground:
+    Colors.blueGrey[50]!,  // mainAccent:
+    Colors.blueGrey[600]!, // secondaryBackground:
+    Colors.blueGrey[200]!, // secondaryAccent:
+  ],
 };

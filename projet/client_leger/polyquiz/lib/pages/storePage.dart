@@ -33,7 +33,6 @@ class _StorepageState extends State<Storepage> {
   void _fetchStoreItems() async {
     var items = await storeService.browseStoreItems();
     String? id = await loggedInUserService.getUid();
-    print(items); // Print the store browsing info
     setState(() {
       storeItems = items; // Update the state with fetched items
       uid = id!;
@@ -75,6 +74,9 @@ class _StorepageState extends State<Storepage> {
                         Text("Récompenses: "),
                         RewardImageStoreList(
                             rewardItems: storeItems!['rewardImages']!, userId: this.uid),
+                        SizedBox(height: 20),
+                        RewardThemeStoreList(
+                            rewardItems: storeItems!['rewardThemes']!, userId: this.uid),
                         SizedBox(height: 20),
 
                       ],

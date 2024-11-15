@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/constants/themesNamesToColorArray.dart';
 import 'BuyButton.dart';
 
 
@@ -18,6 +19,7 @@ class ThemeItem extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    print(themeColors[name]?[0]);
     return Column(
       children: [
         // Purple circle
@@ -25,7 +27,7 @@ class ThemeItem extends StatelessWidget {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: Colors.purple,
+            color: themeColors[name]?[0],
             shape: BoxShape.circle,
           ),
         ),
@@ -112,7 +114,6 @@ class RewardImageItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Circle with image inside
         ClipOval(
           child: Image.network(
             source,
@@ -128,8 +129,50 @@ class RewardImageItem extends StatelessWidget {
           style: TextStyle(color: Colors.black),
         ),
         SizedBox(height: 8),
+        ImageRewardButton(cost: cost, onBuy: onBuy, itemId: itemId, minLevel: this.minLevel),
+        SizedBox(height: 20),
+      ],
+    );
+  }
+}
+
+class RewardThemeItem extends StatelessWidget {
+  final String itemId;
+  final String name;
+  final num cost;
+  final num achievement;
+  final Future<void> Function() onBuy;
+
+  const RewardThemeItem({
+    Key? key,
+    required this.itemId,
+    required this.name,
+    required this.cost,
+    required this.onBuy,
+    required this.achievement,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Purple circle
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: themeColors[name]?[0],
+            shape: BoxShape.circle,
+          ),
+        ),
+        SizedBox(height: 8),
+        // Item name in white
+        Text(
+          name,
+          style: TextStyle(color: Colors.black),
+        ),
+        SizedBox(height: 8),
         // Buy button with cost
-        RewardButton(cost: cost, onBuy: onBuy, itemId: itemId, minLevel: this.minLevel, minPrestige: this.minPrestige,),
+        RewardThemeButton(cost: cost, onBuy: onBuy, itemId: itemId, achievement: 4,),
         SizedBox(height: 20),
       ],
     );

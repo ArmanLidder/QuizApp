@@ -105,6 +105,7 @@ class StoreService extends GetxController {
       List<Map<String, dynamic>> themes = [];
       List<Map<String, dynamic>> images = [];
       List<Map<String, dynamic>> rewardImages = [];
+      List<Map<String, dynamic>> rewardThemes = [];
 
       for (var doc in snapshot.docs) {
         Map<String, dynamic> item = doc.data() as Map<String, dynamic>;
@@ -117,13 +118,16 @@ class StoreService extends GetxController {
           images.add(item);
         } else if (itemType == 'rewardImage') {
           rewardImages.add(item);
-      }
+      }else if (itemType == 'rewardTheme') {
+          rewardThemes.add(item);
+        }
       }
 
       return {
         'themes': themes,
         'images': images,
         'rewardImages': rewardImages,
+        'rewardThemes': rewardThemes,
       };
     } catch (e) {
       print("Error browsing store items: $e");
