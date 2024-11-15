@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/theme_service.dart';
-
+import '../../../constants/themesNamesToColorArray.dart';
 import 'Theme Option.dart';
 
 class SettingsPopup extends StatefulWidget {
@@ -11,22 +12,45 @@ class SettingsPopup extends StatefulWidget {
 
 class _SettingsPopupState extends State<SettingsPopup> {
   late UserPageCustomisationService userPageCustomisationService;
-  late ThemeService themeService;  // Declare the variable
+  late ThemeService themeService;
   late String _selectedLanguage;
   late String _selectedTheme;
+  List<String> listOfThemeNames = []; // Initialize with an empty list
 
   @override
   void initState() {
     super.initState();
-    // Initialize themeService and _selectedTheme in initState
     themeService = ThemeService.instance;
     userPageCustomisationService = UserPageCustomisationService.instance;
     _selectedLanguage = 'Français';
     _selectedTheme = themeService.themeName.value; // Assuming themeName is a property in your ThemeService
+
+    // Load the list of themes asynchronously
+    _loadAvailableThemes();
   }
+
+  Future<void> _loadAvailableThemes() async {
+    List<String> themes = await userPageCustomisationService.availableThemes();
+    setState(() {
+      listOfThemeNames = themes;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    //print(userPage)
+    // Generate the theme options dynamically
+    final List<Widget> themeOptions = listOfThemeNames
+        .map((themeName) => Row(
+      children: [
+        ThemeColorOption(
+          color: themeColors[themeName]![0], // Placeholder color
+          themeName: themeName,
+        ),
+        SizedBox(width: 8),
+      ],
+    ))
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -67,24 +91,11 @@ class _SettingsPopupState extends State<SettingsPopup> {
                 'Theme',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Row(
-                children: [
-                  ThemeColorOption(
-                    color: Colors.grey,
-                    themeName:'default',
-                  )
-                  ,
-                  SizedBox(width: 8),
-                  ThemeColorOption(
-                     color: Colors.black,
-                    themeName:'dark',
-                  ),
-                  SizedBox(width: 8),
-                  ThemeColorOption(
-                    color: Colors.purple,
-                    themeName:'disco',
-                  )
-                ],
+              Flexible(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children: themeOptions),
+                ),
               ),
             ],
           ),

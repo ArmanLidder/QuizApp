@@ -4,9 +4,12 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
 
+import 'logged_in_user_service.dart';
+
 class UserPageCustomisationService extends GetxService {
   // Singleton instance
   static UserPageCustomisationService get instance => Get.find();
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -70,7 +73,7 @@ class UserPageCustomisationService extends GetxService {
       // For each item in `itemsOwned`, get the document in `storeItems` and check `itemType`
       for (var itemId in itemsOwned) {
         DocumentSnapshot itemDoc = await _firestore.collection('storeItems').doc(itemId).get();
-        if (itemDoc.exists && itemDoc.get('itemType') == 'theme') {
+        if (itemDoc.exists && itemDoc.get('itemType') == 'theme' || itemDoc.get('itemType') == 'rewardTheme') {
           var name = itemDoc.get('name');
           if (name is String) {
             themeNames.add(name);
@@ -79,5 +82,10 @@ class UserPageCustomisationService extends GetxService {
       }
     }
     return themeNames;
+  }
+  Future<List<String>> availableThemes() async {
+    String userId = loggedInUserService.getUid()!;
+    List<String> themeNames = await this.purchasedThemes(userId);
+    return ["dark", "default", ...themeNames];
   }
 }
