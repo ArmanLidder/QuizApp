@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/teams_models.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'socket_service.dart';
 import 'package:polyquiz/constants/socket-event.dart';
@@ -21,6 +22,8 @@ class WaitingRoomService extends ChangeNotifier {
   bool isTransition = false;
   List<String> players = [];
   num time = 0;
+  Map<String, Object> teams = {};
+  Object? teamsForInterface = null;
 
   WaitingRoomService._internal();
 
@@ -172,6 +175,16 @@ class WaitingRoomService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void sendCreateTeam() {
+    this._socketService.sendMessage(SocketEvent.CREATE_TEAM, this.roomId);
+  }
+
+  void joinTeam(int newTeamId) {
+    JoinTeamData joinTeamData =
+        JoinTeamData(roomId: roomId, newTeamId: newTeamId);
+    this._socketService.sendMessage(SocketEvent.JOIN_TEAM, joinTeamData);
+  }
+
   void removePlayer(String username) {
     players.remove(username);
     notifyListeners();
@@ -239,6 +252,13 @@ class WaitingRoomService extends ChangeNotifier {
       if (this.isTransition) {
         this._globalNavigationService.navigateTo('/home');
       }
+    });
+  }
+
+  void handleGetTeams() {
+    this._socketService.onMessage(SocketEvent.GET_TEAMS, (teams) {
+      this.teams = new Map.fromEntries(teams);
+      //this.teamsForInterface = List.from(this.teams.entries.map());
     });
   }
 }
