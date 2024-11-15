@@ -19,7 +19,7 @@
             <!-- Right Section: Owner -->
             <div class="ml-auto flex items-center space-x-3" *ngIf="owner | async as owner">
                 <span class="text-sm font-medium text-gray-700">{{ 'QUIZ_CREATION.CREATOR' | translate }}:</span>
-                <app-avatar-with-level [user]="owner" [hideLevel]="true"></app-avatar-with-level>
+                <app-avatar [uid]="owner.uid" [size]="'small'"></app-avatar>
                 <h3 class="text-sm font-medium text-gray-900">{{ owner.username }}</h3>
             </div>
         </div>
