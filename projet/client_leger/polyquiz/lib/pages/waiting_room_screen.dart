@@ -165,17 +165,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                           return Row(
                             children: [
                               SmartAvatar(
-                                userId: waitingRoomService.players[index],
-                                size: 60,
-                              ),
-                              SizedBox(
-                                  width: 16), // Space between avatar and text
-                              Expanded(
-                                child: Text(
-                                  "User Name", // Replace with the actual user name if available
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
+                                  userId: waitingRoomService.players[index],
+                                  size: 60,
+                                  hasName: true),
                               if (widget.isHost)
                                 IconButton(
                                     icon: Icon(

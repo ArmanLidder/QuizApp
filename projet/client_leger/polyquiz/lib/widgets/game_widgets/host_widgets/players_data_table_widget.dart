@@ -107,7 +107,11 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                       decorationThickness: 2);
                 }
                 return DataRow(color: WidgetStatePropertyAll(rowColor), cells: [
-                  DataCell(Center(child: SmartAvatar(userId: player.username))),
+                  DataCell(Center(
+                      child: SmartAvatar(
+                          userId: player.username,
+                          hasName: true,
+                          interactible: false))),
                   DataCell(Center(
                       child: Text(player.score.toString(),
                           style: playerTextStyle))),
