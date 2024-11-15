@@ -8,8 +8,7 @@
         <mat-form-field appearance="fill" class="w-full">
             <mat-label>Nom d'utilisateur</mat-label>
             <mat-icon matPrefix>person</mat-icon>
-            <input maxlength="10" matInput placeholder="Saisissez votre nom d'utilisateur" formControlName="username"
-                   class="custom-input">
+            <input maxlength="10" matInput placeholder="Saisissez votre nom d'utilisateur" formControlName="username">
         </mat-form-field>
         <div *ngIf="authForm.get('username')?.invalid && (authForm.get('username')?.touched || authForm.get('username')?.dirty)"
              class="text-red-600 text-sm">
@@ -21,7 +20,7 @@
         <mat-form-field appearance="fill" class="w-full">
             <mat-label>Courriel</mat-label>
             <mat-icon matPrefix>email</mat-icon>
-            <input maxlength="254" matInput placeholder="Saisissez votre adresse courriel" formControlName="email" class="custom-input">
+            <input maxlength="254" matInput placeholder="Saisissez votre adresse courriel" formControlName="email">
         </mat-form-field>
         <div *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched" class="text-red-600 text-sm">
             <p *ngIf="authForm.get('email')?.errors?.required">L'adresse courriel est requise.</p>

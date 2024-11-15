@@ -21,8 +21,8 @@ export class LoginPageComponent {
         private snackbarService: SnackbarService,
         private router: Router) {
         this.authForm = this.fb.group({
-            email: ['', Validators.required],
-            password: ['', Validators.required]
+            email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+            password: ['', [Validators.required,Validators.minLength(6)]]
         });
     }
 
