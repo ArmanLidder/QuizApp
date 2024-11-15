@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/theme_service.dart';
@@ -12,24 +13,28 @@ class SettingsPopup extends StatefulWidget {
 
 class _SettingsPopupState extends State<SettingsPopup> {
   late UserPageCustomisationService userPageCustomisationService;
+  final LanguageService languageService = LanguageService.instance;
+
   late ThemeService themeService;
   late String _selectedLanguage;
   late String _selectedTheme;
   List<String> listOfThemeNames = []; // Initialize with an empty list
 
   @override
-  void initState() {
+  Future<void> initState() async {
     super.initState();
     themeService = ThemeService.instance;
     userPageCustomisationService = UserPageCustomisationService.instance;
-    _selectedLanguage = 'Français';
+    _selectedLanguage = languageService.languageAbr.value;
     _selectedTheme = themeService.themeName.value; // Assuming themeName is a property in your ThemeService
 
     // Load the list of themes asynchronously
-    _loadAvailableThemes();
+    await _loadAvailableThemes();
   }
 
   Future<void> _loadAvailableThemes() async {
+    await languageService.loadLanguage();
+    _selectedLanguage = languageService.languageAbr.value;
     List<String> themes = await userPageCustomisationService.availableThemes();
     setState(() {
       listOfThemeNames = themes;
@@ -38,6 +43,7 @@ class _SettingsPopupState extends State<SettingsPopup> {
 
   @override
   Widget build(BuildContext context) {
+
     // Generate the theme options dynamically
     final List<Widget> themeOptions = listOfThemeNames
         .map((themeName) => Row(
@@ -50,13 +56,11 @@ class _SettingsPopupState extends State<SettingsPopup> {
       ],
     ))
         .toList();
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Language dropdown
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -65,9 +69,10 @@ class _SettingsPopupState extends State<SettingsPopup> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: _selectedLanguage,
+                value: abrToName[_selectedLanguage],
                 onChanged: (String? newValue) {
                   setState(() {
+                    LanguageService.instance.setLanguage(newValue!);
                     _selectedLanguage = newValue!;
                   });
                 },
