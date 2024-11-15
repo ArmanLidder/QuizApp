@@ -61,6 +61,9 @@ class UserService extends GetxController {
           'gamesWon': 0,
           'avgCorrectAnswers': 0,
           'avgGameTime': 0,
+          "correctAnswers": 0,
+          "gameTime": 0,
+
         },
         'loginHistory': [],
         'gameHistory': [],
