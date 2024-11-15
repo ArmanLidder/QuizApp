@@ -218,11 +218,14 @@ class HostMiddleSection extends StatelessWidget {
     QuestionType? type = gameService.question?.type ?? null;
     switch (type) {
       case QuestionType.QRL:
-        returnedWidget = Visibility(
-          visible: hostInterfaceManagementService.isHostEvaluating,
-          child: HostGrading(
-            gameStats: hostInterfaceManagementService.gameStats,
-            qrlAnswers: hostInterfaceManagementService.responsesQRL,
+        returnedWidget = AnimatedBuilder(
+          animation: hostInterfaceManagementService,
+          builder: (BuildContext context, Widget? snapshot) => Visibility(
+            visible: hostInterfaceManagementService.isHostEvaluating,
+            child: HostGrading(
+              gameStats: hostInterfaceManagementService.gameStats,
+              qrlAnswers: hostInterfaceManagementService.responsesQRL,
+            ),
           ),
         );
         break;

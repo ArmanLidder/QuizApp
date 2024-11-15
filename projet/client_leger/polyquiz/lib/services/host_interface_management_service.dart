@@ -33,10 +33,15 @@ class HostInterfaceManagementService extends ChangeNotifier {
   bool isAlreadyInit = false;
   bool isAlreadyCalled = false;
   bool NextQuestionBtnDisabled = true;
+  Function(Map<String, ResponseData>)? _qrlCallback;
 
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
+
+  void set qrlCallback(Function(Map<String, ResponseData>) callback) {
+    this._qrlCallback = callback;
+  }
 
   int get roomId {
     return gameService.realGameService.roomId;
@@ -308,8 +313,10 @@ class HostInterfaceManagementService extends ChangeNotifier {
         (playerAnswers) {
       List<dynamic> decodedAnswers = jsonDecode(playerAnswers);
       this.responsesQRL = transformIntoResponsesQrl(decodedAnswers);
+      print("Just received the user answers with a length of ${this.responsesQRL.length}");
+      if (_qrlCallback != null) _qrlCallback!(this.responsesQRL);
+      notifyListeners();
     });
-    notifyListeners();
   }
 
   void sendGameStats() {
