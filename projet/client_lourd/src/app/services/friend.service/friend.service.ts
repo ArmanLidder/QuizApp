@@ -10,13 +10,14 @@ import {
     arrayRemove,
     updateDoc,
 } from '@angular/fire/firestore';
+import {TranslateService} from "@ngx-translate/core";
 //TODO refactor other functions to be similar to the deleteFriends one at the bottom of this file
 @Injectable({
     providedIn: 'root'
 })
 export class FriendService {
 
-    constructor(private firestore: Firestore, private usersService: UsersService) {
+    constructor(private firestore: Firestore, private usersService: UsersService,private translate: TranslateService) {
     }
 
     get friends$(): Observable<User[]> {
@@ -88,7 +89,7 @@ export class FriendService {
                 const existingOutgoingRequest = friendRequests.find(
                     (req: any) => req.fromUserId === currentUser.uid
                 );
-                if (existingOutgoingRequest) throw new Error("La requête d'ami a déja été envoyée");
+                if (existingOutgoingRequest) throw new Error(this.translate.instant('FRIENDS.ALREADY_SENT_ERROR'));
 
                 transaction.update(userDocRef, {
                     friendRequests: [...friendRequests, friendRequest],

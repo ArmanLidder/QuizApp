@@ -39,13 +39,13 @@
     </div>
 
     <div class="flex justify-between text-xs mb-4 text-gray-500">
-        <span class="mx-auto font-bold">Tolérance: ±{{ margin.toLocaleString() }}</span>
+        <span class="mx-auto font-bold">{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.TOLERANCE' | translate }}: ±{{ margin.toLocaleString() }}</span>
     </div>
     <div class="mt-4 text-sm text-gray-700 text-center">
-        <p>Votre intervalle de réponse est: <strong>{{ responseInterval }}</strong></p>
-        <p *ngIf="gameService.validatedStatus">La bonne réponse était: {{gameService.question?.answer}}</p>
+        <p>{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.YOUR_ANSWER_INTERVAL' | translate }} <strong>{{ responseInterval }}</strong></p>
+        <p *ngIf="gameService.validatedStatus">{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.GOOD_ANSWER_WAS' | translate }} {{gameService.question?.answer}}</p>
         <div class='btn-container'>
-            <button class='enter' [disabled]='gameService.lockedStatus' (click)='validate()'>Valider</button>
+            <button class='enter' [disabled]='gameService.lockedStatus' (click)='validate()'>{{ 'GAME_INTERFACE.VALIDATE_BUTTON' | translate }}</button>
             <app-leave-boutton></app-leave-boutton>
         </div>
     </div>

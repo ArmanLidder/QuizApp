@@ -36,7 +36,7 @@
     <div *ngIf="imageItems$ | async as imageItems" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <ng-container *ngIf="imageItems.length; else noImagesMessage">
             <div *ngFor="let item of imageItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
-                <img [src]="item.source" alt="{{ item.name }}" class="w-24 h-24 rounded-full mb-4 object-cover" />
+                <img [src]="item.source" alt="{{ item.name }}" class="w-20 h-20 rounded-full mb-4 object-cover" />
                 <h3 class="text-lg font-medium">{{ item.name }}</h3>
                 <button
                         [ngClass]="{

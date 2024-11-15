@@ -120,10 +120,10 @@ export class GameService {
     }
 
     isPanicDisabled() {
-        if (this.question?.type) {
-            return this.timer > QLR_PANIC_MODE_ENABLED || this.gameRealService.inTimeTransition;
+        if (this.question?.type == QuestionType.QRL) {
+            return this.timer <= QLR_PANIC_MODE_ENABLED || this.gameRealService.inTimeTransition;
         } else {
-            return this.timer > QCM_PANIC_MODE_ENABLED || this.gameRealService.inTimeTransition;
+            return this.timer <= QCM_PANIC_MODE_ENABLED || this.gameRealService.inTimeTransition;
         }
     }
 

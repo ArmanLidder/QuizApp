@@ -8,7 +8,7 @@
                'w-20 h-20': size === 'medium',
                'w-28 h-28': size === 'large'
              }"
-             class="rounded-full border-2 border-white shadow cursor-pointer"
+             class="rounded-full border-2 border-white shadow cursor-pointer object-cover"
              [matMenuTriggerFor]="menu"
         />
         <img *ngIf="!showMenu"
@@ -19,7 +19,7 @@
                'w-20 h-20': size === 'medium',
                'w-28 h-28': size === 'large'
              }"
-             class="rounded-full border border-gray-300 shadow cursor-pointer"
+             class="rounded-full border-2 border-white shadow cursor-pointer object-cover"
              (click)="openProfileDialog()"
         />
 

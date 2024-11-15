@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, Validators, AbstractControl} from '@angular/form
 import {Router} from "@angular/router";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-register-page',
@@ -15,19 +16,27 @@ export class RegisterPageComponent implements OnInit {
     defaultAvatars: string[] = [];
     passwordVisible: boolean = false;
     selectedAvatar: string | File | null = null;
-
+    language: string;
 
     private authService = inject(AuthService);
     private snackbarService = inject(SnackbarService);
     private avatarService = inject(AvatarService)
     private fb = inject(FormBuilder);
     private router = inject(Router);
-
+    private translate = inject(TranslateService)
     constructor() {
         this.authForm = this.fb.group({
             username: ['', [Validators.required, this.usernameValidator]],
             email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
             password: ['', [Validators.required, Validators.minLength(6)]],
+        });
+        this.language = this.translate.currentLang;
+    }
+
+
+    ngOnInit(): void {
+        this.avatarService.getDefaultAvatarUrls().subscribe((urls: string[]) => {
+            this.defaultAvatars = urls;
         });
     }
 
@@ -45,24 +54,23 @@ export class RegisterPageComponent implements OnInit {
         this.selectedAvatar = avatar;
     }
 
-    ngOnInit(): void {
-        this.avatarService.getDefaultAvatarUrls().subscribe((urls: string[]) => {
-            this.defaultAvatars = urls;
-        });
-    }
 
     async register(): Promise<void> {
         if (this.authForm.valid && this.selectedAvatar !== null) {
             const { username, email, password } = this.authForm.value;
             try {
                 await this.authService.register(username, email, password, this.selectedAvatar);
-                this.snackbarService.show('Compte créé');
+                this.snackbarService.show(this.translate.instant('REGISTER_PAGE.SUCCESS_REGISTER_POPUP'));
                 this.router.navigate(['/home']);
             } catch (error: any) {
                 console.log(error);
-                this.snackbarService.show(error.message || 'Une erreur est survenue');
+                this.snackbarService.show(error.message);
             }
         }
     }
 
+    switchLanguage(event: Event) {
+        const language = (event.target as HTMLSelectElement).value;
+        this.translate.use(language);
+    }
 }
