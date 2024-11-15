@@ -33,9 +33,8 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         this.games$ = this.gameListService.games$;
     }
 
-    async ngOnInit() {
-        console.log('On init');
-        await this.gameListService.initialize();
+    ngOnInit() {
+        this.gameListService.initialize();
         this.prefetchQuizNames();
     }
 

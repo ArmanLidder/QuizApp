@@ -52,7 +52,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         this.waitingRoomManagementService.setUpService();
         if (!this.socketService.isSocketAlive()) {
-            await this.socketService.asyncConnect();
+            this.socketService.connect();
         }
         this.waitingRoomManagementService.configureBaseSocketFeatures();
         if (this.isHost) await this.setUpHost();

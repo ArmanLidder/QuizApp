@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {UsersService} from "@app/services/users.service/users.service";
 import {FriendsComponent} from "@app/components/friends/friends.component";
 import {MatDialog} from "@angular/material/dialog";
@@ -14,6 +14,7 @@ import {UserSettingsService} from "@app/services/user-settings.service/user-sett
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit{
+  @Input() showMenu = true;
   currentUser$: Observable<User | null>
   pendingRequests$: Observable<User[]>;
   currentLanguage: 'fr' | 'en';

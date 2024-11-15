@@ -13,10 +13,8 @@ export class GameListService {
 
   constructor(private socketService: SocketClientService) {}
 
-  async initialize() {
-    if (!this.socketService.isSocketAlive()) {
-      await this.socketService.asyncConnect();
-    }
+  initialize() {
+    if (!this.socketService.isSocketAlive()) this.socketService.connect()
     this.configureBaseSocket();
     this.fetchGameList();
   }

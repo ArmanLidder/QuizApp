@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import {UsersService} from "@app/services/users.service/users.service";
 import { Observable } from 'rxjs';
@@ -13,7 +13,7 @@ import {ProfileViewerComponent} from "@app/components/profile-viewer/profile-vie
   templateUrl: './avatar.component.html',
   styleUrls: ['./avatar.component.scss']
 })
-export class AvatarComponent {
+export class AvatarComponent implements OnInit{
   @Input() isChat: boolean = false;
   @Input() showProfileOnClick = true;
   @Input() showMoney: boolean = false;
@@ -60,13 +60,13 @@ export class AvatarComponent {
   }
 
 
-  goToProfile() {
-    this.router.navigate([`/profile`]);
+  async goToProfile() {
+    await this.router.navigate([`/profile`]);
   }
 
   async logout() {
     await this.authService.logout();
-    if (this.socketService.isSocketAlive()) this.socketService.disconnect();
     await this.router.navigate(['/login']);
+    if (this.socketService.isSocketAlive()) this.socketService.disconnect();
   }
 }

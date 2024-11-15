@@ -15,10 +15,16 @@
     </div>
 
     <div class="container mx-auto text-center">
-        <a [routerLink]="['/home']" class="text-4xl font-extrabold tracking-wide hover:underline">
+        <a
+                [routerLink]="showMenu ? ['/home'] : null"
+                [ngClass]="{ 'hover:underline': showMenu, 'no-underline': !showMenu }"
+                class="text-4xl font-extrabold tracking-wide"
+        >
             PolyQuiz
         </a>
     </div>
+
+
 
     <div class="absolute top-0 right-0 flex items-center justify-center h-full p-4">
         <select (change)="switchLanguage($event)" [(ngModel)]="currentLanguage" class="bg-white text-black rounded p-2 mr-4">
@@ -26,6 +32,6 @@
             <option value="en">English</option>
         </select>
 
-        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="true"></app-avatar>
+        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="showMenu"></app-avatar>
     </div>
 </header>
