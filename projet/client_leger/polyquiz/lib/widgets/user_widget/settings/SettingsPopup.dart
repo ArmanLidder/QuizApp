@@ -80,7 +80,7 @@ class _SettingsPopupState extends State<SettingsPopup> {
                     _selectedLanguage = newValue!;
                   });
                 },
-                items: <String>['Français', 'English']
+                items: <String>['Français', 'English', "Toki Pona"]
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,

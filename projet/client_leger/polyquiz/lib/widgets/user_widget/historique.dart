@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 
 import '../../services/theme_service.dart';
 import 'package:intl/intl.dart';
@@ -44,6 +46,7 @@ class Historique extends StatelessWidget {
   final List<GameHistory> gameHistory;
   final List<LoginHistory> loginHistory;
   final ThemeService themeService = ThemeService.instance;
+  final LanguageService ls = LanguageService.instance;
 
   Historique({required this.gameHistory, required this.loginHistory});
 
@@ -69,8 +72,8 @@ class Historique extends StatelessWidget {
 
       return allEvents.map((event) {
         String date = "${event.timestamp}".split(' ')[0];
-        String? label = eventMessage[event.eventType] ?? "nullEventMessage" ;
-        Color color = event.eventType == 'Login' ? Colors.blue : Colors.green;
+        String? label = ls.eventMessage[event.eventType] ?? "nullEventMessage" ;
+        Color color = event.eventType == 'logout' ||  event.eventType == 'loss' ? Colors.red : Colors.green;
 
         return EvenementRow(date: date, label: label, color: color);
       }).toList();
@@ -78,7 +81,8 @@ class Historique extends StatelessWidget {
 
     @override
     Widget build(BuildContext context) {
-      return Column(
+      return Obx(
+            () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -106,7 +110,7 @@ class Historique extends StatelessWidget {
             children: _generateEventRows(gameEvents()),
           ),
         ],
-      );
+      ));
     }
   }
 

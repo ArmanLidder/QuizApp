@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 
 import '../../services/theme_service.dart';
 
 class PrestigeIndicator extends StatelessWidget {
   final num? prestige;
   final ThemeService themeService = ThemeService.instance;
+  final LanguageService ls = LanguageService.instance;
 
   PrestigeIndicator({required this.prestige});
 
   @override
   Widget build(BuildContext context) {
-    String prestigeText = 'Aucun'; // Default text
+    String prestigeText = '🚫 ' + ls.medalLevels[0]; // Default text
 
     if (prestige! >= 200) {
-      prestigeText = '🏅Platine';
+      prestigeText = '🏅 '+ ls.medalLevels[4];
     } else if (prestige! >= 150) {
-      prestigeText = '🥇Or';
+      prestigeText = '🥇 '+ ls.medalLevels[3];
     } else if (prestige! >= 100) {
-      prestigeText = '🥈Argent';
+      prestigeText = '🥈 '+ ls.medalLevels[2];
     } else if (prestige! >= 50) {
-      prestigeText = '🥉Bronze';
+      prestigeText = '🥉 '+ ls.medalLevels[1];
     }
 
     return Chip(

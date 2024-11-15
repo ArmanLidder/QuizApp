@@ -4,6 +4,7 @@ import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
+import '../../../services/LanguageService.dart';
 import '../../../services/theme_service.dart';
 import 'friendsPopup.dart';
 
@@ -13,6 +14,7 @@ class FriendListDisplay extends StatefulWidget {
   final List<String> friends;
   final List<FriendRequest> pendingRequests;
   final ThemeService themeService = ThemeService.instance;
+  final LanguageService ls = LanguageService.instance;
 
   FriendListDisplay({required this.friends, required this.pendingRequests});
 
@@ -46,7 +48,7 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Amis",
+                widget.ls.friendsLabel,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -68,7 +70,7 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
               },
               icon: Icon(Icons.person_add, color: themeService.secondaryAccent.value),
               label: Text(
-                "Ajouter",
+                widget.ls.addLabel,
                 style: TextStyle(color: themeService.secondaryAccent.value),
               ),
               style: ElevatedButton.styleFrom(
@@ -103,8 +105,8 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
                 TabBar(
                   controller: _tabController,
                   tabs: [
-                    Tab(text: 'Friends'),
-                    Tab(text: 'Pending'),
+                    Tab(text: widget.ls.friendsLabel),
+                    Tab(text: widget.ls.pendingLabel),
                   ],
                   indicatorColor: themeService.secondaryBackground.value,
                   labelColor: themeService.secondaryBackground.value,
