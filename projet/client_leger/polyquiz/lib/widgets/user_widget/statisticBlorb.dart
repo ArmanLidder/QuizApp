@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 
@@ -19,6 +20,7 @@ class StatitisticsBlorb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Obx(() {
     return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,6 +55,7 @@ class StatitisticsBlorb extends StatelessWidget {
             ),)
           ],
         );
+    });
   }
 }
 

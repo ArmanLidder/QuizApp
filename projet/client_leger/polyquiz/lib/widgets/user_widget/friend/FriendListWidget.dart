@@ -47,15 +47,15 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                widget.ls.friendsLabel,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: themeService.mainAccent.value,
-                ),
-              ),
-            ),
+              child: Obx(()  {
+                return Text(
+                  widget.ls.friendsLabel,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: themeService.mainAccent.value,
+                  ),
+                );}),),
             ElevatedButton.icon(
               onPressed: () {
                 showModalBottomSheet(
@@ -85,7 +85,8 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
         ),
         SizedBox(
           height: 400,
-          child: Container(
+        child: Obx(() {
+          return Container(
             margin: EdgeInsets.all(16),
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -123,7 +124,7 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
                 ),
               ],
             ),
-          ),
+          );})
         ),
       ],
     );

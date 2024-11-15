@@ -86,7 +86,7 @@ class Historique extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Historique des connections",
+            ls.historiqueDesConnexionsText,
             style: TextStyle(
               color: themeService.mainAccent.value,
               fontWeight: FontWeight.bold,
@@ -98,7 +98,7 @@ class Historique extends StatelessWidget {
             children: _generateEventRows(loginEvents()),
           ),
           Text(
-            "Historique des parties",
+            ls.historiqueDesPartiesText,
             style: TextStyle(
               color: themeService.mainAccent.value,
               fontWeight: FontWeight.bold,
