@@ -267,3 +267,9 @@ enum Language {
   en,
   fr
 }
+
+
+Map<Language,String> languageToString = {
+  Language.en : "en",
+  Language.fr : "fr",
+};

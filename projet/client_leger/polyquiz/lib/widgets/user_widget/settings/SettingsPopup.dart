@@ -4,6 +4,7 @@ import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import '../../../constants/themesNamesToColorArray.dart';
+import '../../../models/user.dart';
 import 'Theme Option.dart';
 
 class SettingsPopup extends StatefulWidget {
@@ -21,15 +22,19 @@ class _SettingsPopupState extends State<SettingsPopup> {
   List<String> listOfThemeNames = []; // Initialize with an empty list
 
   @override
-  Future<void> initState() async {
+  void initState() {
     super.initState();
     themeService = ThemeService.instance;
     userPageCustomisationService = UserPageCustomisationService.instance;
     _selectedLanguage = languageService.languageAbr.value;
     _selectedTheme = themeService.themeName.value; // Assuming themeName is a property in your ThemeService
 
-    // Load the list of themes asynchronously
-    await _loadAvailableThemes();
+    // Trigger async initialization
+    _initializeSettings();
+  }
+
+  void _initializeSettings() {
+    _loadAvailableThemes();
   }
 
   Future<void> _loadAvailableThemes() async {
@@ -43,7 +48,6 @@ class _SettingsPopupState extends State<SettingsPopup> {
 
   @override
   Widget build(BuildContext context) {
-
     // Generate the theme options dynamically
     final List<Widget> themeOptions = listOfThemeNames
         .map((themeName) => Row(
@@ -69,7 +73,7 @@ class _SettingsPopupState extends State<SettingsPopup> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: abrToName[_selectedLanguage],
+                value: abrToName[languageService.languageAbr.value],
                 onChanged: (String? newValue) {
                   setState(() {
                     LanguageService.instance.setLanguage(newValue!);
