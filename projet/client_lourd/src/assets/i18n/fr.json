@@ -16,8 +16,6 @@
     "REGISTER_LINK": "S'inscrire"
   },
   "REGISTER_PAGE": {
-    "LANGUAGE_SELECT_FR": "Français",
-    "LANGUAGE_SELECT_EN": "Anglais",
     "TITLE": "S'inscrire",
     "SUBTITLE": "Créez un compte",
     "USERNAME_LABEL": "Nom d'utilisateur",
@@ -154,7 +152,6 @@
     "IMPORT_ERROR_HEADER_TEXT": "Le fichier que vous tenter d'importer contient le(s) problème(s) suivant(s):",
     "QUIZ_DELETED": "Ce quiz a été supprimé, veuillez choisir un autre.",
     "QUIZ_INVISIBLE": "Ce quiz est maintenant caché, veuillez choisir un autre."
-
   },
   "QUIZ_SELECTION": {
     "PAGE_TITLE": "Sélectionnez un des jeux disponibles :",
@@ -240,7 +237,7 @@
       "TOLERANCE_MARGIN_REQUIRED": "La marge de tolérance est requise.",
       "TOLERANCE_MARGIN_MIN_ERROR": "La marge doit être un nombre entier supérieure ou égale à 0.",
       "VALID_INTERVAL_MESSAGE": "L'intervalle de bonne réponse est :",
-      "CHOICE":{
+      "CHOICE": {
         "CHOICE": "Choix",
         "MOVE_DOWN": "Déplacer le choix vers le bas",
         "MOVE_UP": "Déplacer le choix vers le haut",
@@ -406,7 +403,7 @@
     "ROOM_IN_NAME_UNALLOWED": "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom.",
     "ROOM_NAME_ALREADY_USED": "Le nom {{canalName}} est déjà utilisé. Veuillez choisir un autre nom."
   },
-  "AVATAR_CLICK_MENU" : {
+  "AVATAR_CLICK_MENU": {
     "PROFIL": "Profil",
     "DISCONNECT": "Déconnexion"
   },
@@ -450,8 +447,8 @@
     "TIMER_TEXT": {
       "TIME_LEFT": "Temps restant ",
       "FINAL_RESULT": "Résultats finaux s'afficherons dans ",
-      "RESULT_AVAILABLE_IN":"Résultat dans ",
-      "NEXT":"Prochaine question dans "
+      "RESULT_AVAILABLE_IN": "Résultat dans ",
+      "NEXT": "Prochaine question dans "
     },
     "QRE_HISTOGRAM_X_VAL": {
       "WITHIN_MARGIN": "Dans l'intervalle",
@@ -459,12 +456,12 @@
       "INCORRECT_ANSWER": "Incorrecte"
     },
     "TOOLTIP": {
-      "TOOLTIP_PLAY": "Lecture",
+      "TOOLTIP_PLAY": "Jouer",
       "TOOLTIP_PAUSE": "Pause",
       "TOOLTIP_PANIC_MODE": "Activez le mode panique !",
       "TOOLTIP_PANIC_MODE_DISABLED": "Vous ne pouvez plus activer le mode panique."
     },
-    "QUESTION_INFO" : {
+    "QUESTION_INFO": {
       "VALUE": "Valeur"
     },
     "QRL_CORRECTION": {
@@ -477,8 +474,8 @@
       "SCORE": "Note",
       "VALIDATE": "Valider"
     },
-    "HISTOGRAM":{
-      "LEGEND_HEADER" : "Légende de l'histogramme:",
+    "HISTOGRAM": {
+      "LEGEND_HEADER": "Légende de l'histogramme:",
       "CORRECT_ANSWERS": "Bonnes réponses",
       "INCORRECT_ANSWERS": "Mauvaises réponses",
       "INACTIVE": "Inactif",
@@ -510,8 +507,25 @@
         "TEAM": "Équipe"
       }
     },
+    "PLAYER_QRL_INTERFACE": {
+      "CHARACTERS_REMAINING": "Caractères restants: ",
+      "ZERO_POINTS": "Vous avez eu aucun point pour votre réponse : ",
+      "HALF_POINTS": "Vous avez eu la moitié des points pour votre réponse : ",
+      "FULL_POINTS": "Félicitations, vous avez eu tout les points de la question pour votre réponse : ",
+      "AWAITING_EVALUATION": "L'organisateur est en train d'évaluer votre réponse"
+    },
+    "PLAYER_QRE_INTERFACE": {
+      "TOLERANCE": "Tolérance",
+      "YOUR_ANSWER_INTERVAL": "Votre intervalle de réponse est:",
+      "GOOD_ANSWER_WAS": "La bonne réponse était:"
+    },
     "NEXT_QUESTION": "Prochaine question",
     "SHOW_RESULT": "Montrer résultat",
-    "GAME_FINISHED": "Partie terminée"
+    "GAME_FINISHED": "Partie terminée",
+    "FINAL_SCORE": "Votre score final :",
+    "PLAYERS_RESULT": "Résultats des joueurs:",
+    "CURRENT_POINTS": "Pointage",
+    "BONUS_RECEIVED_FEEDBACK": "Vous avez recu des points Bonus!",
+    "VALIDATE_BUTTON": "Valider"
   }
 }

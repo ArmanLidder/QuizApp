@@ -152,7 +152,6 @@
     "IMPORT_ERROR_HEADER_TEXT": "The file you are trying to import contains the following issue(s):",
     "QUIZ_DELETED": "This quiz has been deleted, please choose another one.",
     "QUIZ_INVISIBLE": "This quiz is now hidden, please choose another one."
-
   },
   "QUIZ_SELECTION": {
     "PAGE_TITLE": "Select one of the available games:",
@@ -404,7 +403,7 @@
     "ROOM_IN_NAME_UNALLOWED": "The channel name cannot contain: room. Please choose another name.",
     "ROOM_NAME_ALREADY_USED": "The name {{canalName}} is already in use. Please choose another name."
   },
-  "AVATAR_CLICK_MENU" : {
+  "AVATAR_CLICK_MENU": {
     "PROFIL": "Profile",
     "DISCONNECT": "Logout"
   },
@@ -448,8 +447,8 @@
     "TIMER_TEXT": {
       "TIME_LEFT": "Time remaining",
       "FINAL_RESULT": "Final results in ",
-      "RESULT_AVAILABLE_IN":"Result in ",
-      "NEXT":"Next question in "
+      "RESULT_AVAILABLE_IN": "Result in ",
+      "NEXT": "Next question in "
     },
     "QRE_HISTOGRAM_X_VAL": {
       "WITHIN_MARGIN": "Within margin",
@@ -462,7 +461,7 @@
       "TOOLTIP_PANIC_MODE": "Activate Panic Mode!",
       "TOOLTIP_PANIC_MODE_DISABLED": "You can no longer activate the panic mode."
     },
-    "QUESTION_INFO" : {
+    "QUESTION_INFO": {
       "VALUE": "Value"
     },
     "QRL_CORRECTION": {
@@ -475,8 +474,8 @@
       "SCORE": "Score",
       "VALIDATE": "Validate"
     },
-    "HISTOGRAM":{
-      "LEGEND_HEADER" : "Histogram legend:",
+    "HISTOGRAM": {
+      "LEGEND_HEADER": "Histogram legend:",
       "CORRECT_ANSWERS": "Correct answers",
       "INCORRECT_ANSWERS": "Incorrect answers",
       "INACTIVE": "Inactive",
@@ -508,8 +507,25 @@
         "TEAM": "Team"
       }
     },
+    "PLAYER_QRL_INTERFACE": {
+      "CHARACTERS_REMAINING": "Characters remaining: ",
+      "ZERO_POINTS": "You received no points for your answer: ",
+      "HALF_POINTS": "You received half of the points for your answer: ",
+      "FULL_POINTS": "Congratulations, you received all the points for your answer: ",
+      "AWAITING_EVALUATION": "The organizer is evaluating your answer"
+    },
+    "PLAYER_QRE_INTERFACE": {
+      "TOLERANCE": "Tolerance",
+      "YOUR_ANSWER_INTERVAL": "Your answer interval is:",
+      "GOOD_ANSWER_WAS": "The correct answer was:"
+    },
     "NEXT_QUESTION": "Next Question",
     "SHOW_RESULT": "Show Result",
-    "GAME_FINISHED": "Game finished"
+    "GAME_FINISHED": "Game finished",
+    "FINAL_SCORE": "Your final score :",
+    "PLAYERS_RESULT": "Player results:",
+    "CURRENT_POINTS": "Points",
+    "BONUS_RECEIVED_FEEDBACK": "You received Bonus points!!",
+    "VALIDATE_BUTTON": "Validate"
   }
 }
