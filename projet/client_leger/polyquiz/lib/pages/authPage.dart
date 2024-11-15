@@ -266,7 +266,9 @@ class _AuthPageState extends State<AuthPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[300],
                     padding: EdgeInsets.symmetric(vertical: 14),
-                    textStyle: TextStyle(fontSize: 16),
+                    textStyle: TextStyle(fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                   ),
                   child: Text(_isRegistering ? "S'inscrire" : 'Se connecter'),
                 ),
