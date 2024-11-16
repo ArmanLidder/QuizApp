@@ -21,7 +21,13 @@ import {
 //     HostCurrentGameInterface,
 //     InitialQuestionData,
 // } from "@common/interfaces/host.interface";
-import {ACTIVE, ACTIVE_STATUS, INACTIVE, INACTIVE_STATUS} from "@common/constants/host-interface.component.const";
+import {
+    ACTIVE,
+    ACTIVE_STATUS,
+    INACTIVE,
+    INACTIVE_STATUS,
+    TransportStatsFormat
+} from "@common/constants/host-interface.component.const";
 import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
 // import {ObsQuestionData} from "@common/interfaces/host.interface";
 
@@ -61,6 +67,7 @@ export class ObservationService {
         this.hostInterfaceManagementService.configureBaseSocketFeatures();
         this.handleGameStateReception();
         this.handlePlayerGameState();
+        this.handleGameStatusDistribution();
          console.log("Congfig on Observation-Service");
      }
 
@@ -111,6 +118,25 @@ export class ObservationService {
             const resetPlayerStatus = this.hostInterfaceManagementService.isGameOver
             console.log(this.hostInterfaceManagementService.leftPlayers)
             this.hostInterfaceManagementService['interactiveListService'].getPlayersList(this.gameService.gameRealService.roomId, this.hostInterfaceManagementService.leftPlayers, resetPlayerStatus)
+        });
+    }
+
+    private handleGameStatusDistribution() {
+        this.socketService.on(SocketEvent.GAME_STATUS_DISTRIBUTION, (gameStats: string) => {
+            this.unpackStats(this.parseGameStats(gameStats));
+        });
+    }
+
+    private parseGameStats(stringifyStats: string) {
+        return JSON.parse(stringifyStats);
+    }
+
+    private unpackStats(stats: TransportStatsFormat) {
+        this.hostInterfaceManagementService.gameStats = [];
+        stats.forEach((stat) => {
+            const values = new Map<string, boolean>(stat[0]);
+            const responses = new Map<string, number>(stat[1]);
+            this.hostInterfaceManagementService.gameStats.push([values, responses, stat[2]]);
         });
     }
 
