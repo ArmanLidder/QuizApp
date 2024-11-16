@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
+import {Router} from "@angular/router";
 import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
 import {SocketEvent} from "@common/socket-event-name/socket-event-name";
 import {
     HostInterfaceManagementService
 } from "@app/services/host-interface-management.service/host-interface-management.service";
-// import {TimerMessage} from "@common/browser-message/displayable-message/timer-message";
 import {GameService} from "@app/services/game.service/game.service";
 import {GameListItem} from "@common/interfaces/room-interface";
 import {NewObservedPlayer} from "@common/interfaces/socket-manager.interface";
@@ -17,10 +17,6 @@ import {
     InitialQuestionData,
     PlayerCurrentGameInterface
 } from "@common/interfaces/host.interface";
-// import {
-//     HostCurrentGameInterface,
-//     InitialQuestionData,
-// } from "@common/interfaces/host.interface";
 import {
     ACTIVE,
     ACTIVE_STATUS,
@@ -29,7 +25,6 @@ import {
     TransportStatsFormat
 } from "@common/constants/host-interface.component.const";
 import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
-// import {ObsQuestionData} from "@common/interfaces/host.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -45,6 +40,7 @@ export class ObservationService {
         private gameService: GameService,
         private hostInterfaceManagementService: HostInterfaceManagementService,
         private gameInterfaceManagementService: GameInterfaceManagementService,
+        private router: Router,
     ) {
     }
 
@@ -68,6 +64,7 @@ export class ObservationService {
         this.handleGameStateReception();
         this.handlePlayerGameState();
         this.handleGameStatusDistribution();
+        this.handleHostLeft();
          console.log("Congfig on Observation-Service");
      }
 
@@ -85,6 +82,12 @@ export class ObservationService {
         if (this.gameService.observerMode) this.gameService.obs_qrl_Answer = "Le joueur est inactif ...";
         this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
         if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, this.gameConfigs.room);
+    }
+
+    private handleHostLeft() {
+        this.socketService.on(SocketEvent.REMOVED_FROM_GAME, () => {
+           this.router.navigate(['/']);
+        });
     }
 
     private handleGetQRLInteraction() {
