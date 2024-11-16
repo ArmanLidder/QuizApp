@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:polyquiz/constants/errorMessageTranslator.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/user_service.dart';
@@ -26,6 +27,12 @@ class _AuthPageState extends State<AuthPage> {
   final UserPageCustomisationService userPageCustomisationService =
       UserPageCustomisationService.instance;
   final ValidationService validationService = ValidationService.instance;
+  final TranslationService translationService = TranslationService.instance;
+
+  Map get text => translationService.text;
+  Map get registerPageText => this.text['REGISTER_PAGE'];
+  Map get loginPageText => this.text['LOGIN_PAGE'];
+
   bool _isRegistering = false;
   bool _obscurePassword = true;
   bool _isValidUsername = true;
@@ -117,14 +124,14 @@ class _AuthPageState extends State<AuthPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _isRegistering ? "Créer un compte" : "Connecter",
+                _isRegistering ? registerPageText['TITLE'] : loginPageText['TITLE'],
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
               Text(
                 _isRegistering
-                    ? "Créez un compte pour commencer"
-                    : "Connectez-vous à votre compte",
+                    ? registerPageText['TITLE']
+                    : loginPageText['SUBTITLE'],
                 style: TextStyle(fontSize: 16, color: Colors.grey[700]),
               ),
               SizedBox(height: 24),
@@ -133,10 +140,10 @@ class _AuthPageState extends State<AuthPage> {
                   controller: _usernameController,
                   decoration: InputDecoration(
                     errorText: !_isValidUsername
-                        ? "doit etre 1 a 10 charactères et chiffres"
+                        ? registerPageText['USERNAME_INVALID']
                         : null,
                     prefixIcon: Icon(Icons.person),
-                    labelText: "Nom d'utilisateur",
+                    labelText: registerPageText['USERNAME_LABEL'],
                     border: OutlineInputBorder(),
                   ),
                   onChanged: (e) async {
@@ -153,9 +160,9 @@ class _AuthPageState extends State<AuthPage> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   errorText:
-                      !_isValidEmail ? "doit etre une addresse valide" : null,
+                      !_isValidEmail ? registerPageText['EMAIL_INVALID'] : null,
                   prefixIcon: Icon(Icons.email),
-                  labelText: 'Courriel*',
+                  labelText: registerPageText['EMAIL_LABEL'],
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (e) async {
@@ -172,9 +179,9 @@ class _AuthPageState extends State<AuthPage> {
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.lock),
-                  labelText: 'Mot de passe*',
+                  labelText: registerPageText['PASSWORD_LABEL'],
                   errorText:
-                      !_isValidPassword ? "doit avoir une longeur de 6" : null,
+                      !_isValidPassword ? registerPageText['PASSWORD_MIN_LENGTH'] : null,
                   border: OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -199,7 +206,7 @@ class _AuthPageState extends State<AuthPage> {
               if (_isRegistering) ...[
                 SizedBox(height: 24),
                 Text(
-                  "Choisissez votre avatar",
+                  this.text['AVATAR_MODIFICATION']['CHOOSE_AVATAR'],
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -268,7 +275,7 @@ class _AuthPageState extends State<AuthPage> {
                     padding: EdgeInsets.symmetric(vertical: 14),
                     textStyle: TextStyle(fontSize: 16),
                   ),
-                  child: Text(_isRegistering ? "S'inscrire" : 'Se connecter'),
+                  child: Text(_isRegistering ? registerPageText['SUBMIT_BUTTON'] : loginPageText['SUBMIT_BUTTON']),
                 ),
               ),
               SizedBox(height: 16),
@@ -282,8 +289,8 @@ class _AuthPageState extends State<AuthPage> {
                   },
                   child: Text(
                     _isRegistering
-                        ? "Déjà un compte? Se connecter"
-                        : "Pas de compte? S'inscrire",
+                        ? registerPageText['ALREADY_HAVE_ACCOUNT'] + " " + registerPageText['LOGIN_LINK']
+                        : loginPageText["NO_ACCOUNT"] + " " + loginPageText["REGISTER_LINK"],
                     style: TextStyle(color: Colors.purple),
                   ),
                 ),
