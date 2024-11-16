@@ -16,14 +16,14 @@ class LanguageService extends GetxService {
 
   late RxString languageAbr = "".obs;
   Future<void> setLanguage(String newLanguageName) async {
-    languageAbr.value = nameToAbr[newLanguageName]!;
     ts.currentLanguageAbbr = nameToAbr[newLanguageName] ?? '';
+    languageAbr.value = nameToAbr[newLanguageName]!;
     await _updateLanguageInFirebase(nameToAbr[newLanguageName]!);
   }
 
   Future<void> loadLanguage() async {
-    languageAbr.value = languageToString[_loggedInUserService.user!.settings.language]!;
     ts.currentLanguage = _loggedInUserService.user!.settings.language;
+    languageAbr.value = languageToString[_loggedInUserService.user!.settings.language]!;
   }
 
   Future<void> _updateLanguageInFirebase(String newLanguage) async {
