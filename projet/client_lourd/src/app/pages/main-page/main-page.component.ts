@@ -11,6 +11,9 @@ import {
     GameInterfaceManagementService
 } from "@app/services/game-interface-management.service/game-interface-management.service";
 import {UsersService} from "@app/services/users.service/users.service";
+import {
+    InteractiveListSocketService
+} from "@app/services/interactive-list-socket.service/interactive-list-socket.service";
 
 @Component({
     selector: 'app-main-page',
@@ -29,6 +32,7 @@ export class MainPageComponent implements OnInit {
         private gameInterfaceService: GameInterfaceManagementService,
         private gameConfigService: GameConfigService,
         private observationServices: ObservationService,
+        private interactionService: InteractiveListSocketService,
         public usersService: UsersService, 
     ) {
         this.usersService.currentUserProfile$.subscribe((user)=>{
@@ -57,6 +61,7 @@ export class MainPageComponent implements OnInit {
         this.observationServices.reset();
         this.gameConfigService.reset();
         this.activeGameListService.cleanup();
+        this.interactionService['reset']();
         if (this.socketService.isSocketAlive()) this.socketService.disconnect();
     }
 }
