@@ -8,6 +8,7 @@ import 'package:polyquiz/pages/waiting_room_screen.dart';
 import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userInfoValidation.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/background_notification_service.dart';
@@ -60,6 +61,7 @@ void main() async {
   Get.put(FriendService());
   Get.put(ValidationService());
   Get.put(LanguageService());
+  Get.put(TranslationService());
 
   runApp(
     MultiProvider(
