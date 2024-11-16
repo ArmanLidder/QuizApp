@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/logged_in_user_service.dart';
 
@@ -12,11 +13,13 @@ class ImageSelectionPopup extends StatelessWidget {
     required this.onPlusButtonPressed,
   });
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
+  Map get languageText => TranslationService.instance.text;
+  Map get avatarText => languageText['AVATAR_MODIFICATION'];
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Choose Profile Picture'),
+      title: Text(avatarText['CHOOSE_AVATAR']),
       content: SizedBox(
         width: double.maxFinite,
         height: 300,
