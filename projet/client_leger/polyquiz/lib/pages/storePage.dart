@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/StoreService.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:get/get.dart';
@@ -21,6 +22,7 @@ class _StorepageState extends State<Storepage> {
   final StoreService storeService = Get.find();
   late String uid;
   User? userData;
+  Map get shopText => TranslationService.instance.text['SHOPPING'];
 
   Map<String, List<Map<String, dynamic>>>? storeItems;
 
@@ -57,7 +59,7 @@ class _StorepageState extends State<Storepage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         MoneyCounter(),
-                        Text("Themes: "),
+                        Text(shopText['THEMES']),
                         Wrap(
                           spacing: 8.0, // Space between items horizontally
                           runSpacing: 8.0, // Space between items vertically
@@ -67,11 +69,11 @@ class _StorepageState extends State<Storepage> {
                           ],
                         ),
                         SizedBox(height: 20),
-                        Text("Images: "),
+                        Text(shopText['IMAGES']),
                             ImageStoreList(
                                 themes: storeItems!['images']!, userId: this.uid),
                         SizedBox(height: 20),
-                        Text("Récompenses: "),
+                        Text(TranslationService.instance.languageValue.value == Language.fr ? "Récompenses: " : "Prizes: "),
                         RewardImageStoreList(
                             rewardItems: storeItems!['rewardImages']!, userId: this.uid),
                         SizedBox(height: 20),
