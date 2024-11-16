@@ -11,7 +11,7 @@
 
         <mat-form-field appearance="fill" class="w-full">
             <mat-label>{{ 'LOGIN_PAGE.EMAIL_LABEL' | translate }}</mat-label>
-            <mat-icon matPrefix>person</mat-icon>
+            <mat-icon matPrefix>email</mat-icon>
             <input maxlength="254" matInput [placeholder]="'LOGIN_PAGE.EMAIL_PLACEHOLDER' | translate" formControlName="email">
         </mat-form-field>
         <div *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched" class="text-red-600 text-sm">
