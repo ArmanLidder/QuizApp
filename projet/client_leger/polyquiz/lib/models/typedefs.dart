@@ -6,6 +6,15 @@ class TransportStats {
   final QuizQuestion question;
 
   TransportStats(this.values, this.responses, this.question);
+
+  List<dynamic> toJson() => [
+    // Convert values to [key, value] array pairs
+    values.map((entry) => [entry.key, entry.value]).toList(),
+    // Convert responses to [key, value] array pairs
+    responses.map((entry) => [entry.key, entry.value]).toList(),
+    // Keep question as is since its format matches
+    question.toJson(),
+  ];
 }
 
 typedef TransportStatsFormat = List<TransportStats>;
