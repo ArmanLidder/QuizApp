@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/LanguageService.dart';
 
@@ -55,6 +56,8 @@ class StarCard extends StatelessWidget {
 
 class StarCardGrid extends StatelessWidget {
   final LanguageService ls = LanguageService.instance;
+  Map get text => TranslationService.instance.text;
+  Map get profileText => text['PROFILE'];
 
   final List<num> achievementsList;
 
@@ -64,7 +67,8 @@ class StarCardGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
             () {
-              final List<String> labels = ls.achievementsList;
+              final List<String> labels = profileText['ALL_ACHIEVEMENTS'] as List<String>;
+              print('${TranslationService.instance.languageValue}');
 
               // Determine how many cards can fit in a row
               final double screenWidth = MediaQuery
@@ -74,7 +78,6 @@ class StarCardGrid extends StatelessWidget {
               final double cardWidth = 100;
               final double horizontalMargin = 4.0;
               final double verticalMargin = 4.0;
-              //L'algo qui suit a ete fait a 75% avec chatgpt et est donc pas tres lisible
               // si ca casse pinguez Maxime
               final int cardsPerRow = ((screenWidth - (horizontalMargin * 4)) /
                   (cardWidth + horizontalMargin))
