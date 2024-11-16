@@ -147,7 +147,6 @@ export class HostInterfaceManagementService {
                 this.resetInterface();
                 if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
                     this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
-                    console.log("handling end question like normal");
                 } else {
                     this.sendQrlAnswer();
                     this.isHostEvaluating = true;
@@ -169,7 +168,6 @@ export class HostInterfaceManagementService {
         if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
             if (this.gameService.observingHost) {
                 this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
-                console.log("receiving from host interface end question");
             }
         } else {
             this.isHostEvaluating = true;
@@ -202,8 +200,6 @@ export class HostInterfaceManagementService {
             this.interactiveListService.isFinal = true;
             if (this.gameService.observingHost) this.gameService.audio.pause();
             this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
-            console.log("receiving from host interface final transition");
-
         }
     }
 

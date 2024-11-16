@@ -33,7 +33,6 @@ export class ObservationService {
     observedPlayerId: string;
     gameConfigs: GameListItem;
     playersList: string[];
-    qrlActivity: boolean = false;
 
     constructor(
         private socketService: SocketClientService,
