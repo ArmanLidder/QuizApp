@@ -39,7 +39,7 @@
     </div>
 
     <div class="flex justify-between text-xs mb-4 text-gray-500">
-        <span class="mx-auto font-bold">{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.TOLERANCE' | translate }}: ±{{ margin.toLocaleString() }}</span>
+        <span class="mx-auto font-bold">{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.TOLERANCE' | translate }}: ±{{ gameService.question!.margin! }}</span>
     </div>
     <div class="mt-4 text-sm text-gray-700 text-center">
         <p>{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.YOUR_ANSWER_INTERVAL' | translate }} <strong>{{ responseInterval }}</strong></p>

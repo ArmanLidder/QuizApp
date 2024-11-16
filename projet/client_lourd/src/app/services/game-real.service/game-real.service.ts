@@ -7,6 +7,7 @@ import { InitialQuestionData, NextQuestionData } from '@common/interfaces/host.i
 import { QuizQuestion } from '@common/interfaces/quiz.interface';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { Player } from '@app/services/game-test.service/game-test.service.const';
+import {BehaviorSubject} from "rxjs";
 
 @Injectable({
     providedIn: 'root',
@@ -18,7 +19,6 @@ export class GameRealService implements GameServiceInterface {
     answers: Map<number, string | null> = new Map();
     questionNumber: number = 1;
     timer: number = 0;
-    question: QuizQuestion | null = null;
     isLast: boolean = false;
     locked: boolean = false;
     validated: boolean = false;
@@ -28,6 +28,17 @@ export class GameRealService implements GameServiceInterface {
     inTimeTransition: boolean = false;
     qreAnswer: number | null = null;
     gameType: 'classic' | 'equipe' = 'classic';
+
+    private questionSubject = new BehaviorSubject<QuizQuestion | null>(null);
+    question$ = this.questionSubject.asObservable();
+    private _question: QuizQuestion | null = null;
+    get question(): QuizQuestion | null {
+        return this._question;
+    }
+    set question(value: QuizQuestion | null) {
+        this._question = value;
+        this.questionSubject.next(value);
+    }
 
     constructor(public socketService: SocketClientService) {
         if (this.socketService.isSocketAlive()) {
