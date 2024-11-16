@@ -120,7 +120,8 @@ export class GameCreationService {
                const room = roomManager.getRoomById(roomId);
                const game = room.game;
                const playerScore = game.players.get(newObservedPlayerId);
-               const playerQREAnswer =  game.currentQuizQuestion.type === QuestionType.QRE ? game.playerQREAnswer.get(newObservedPlayerId)[1] : 0;
+               // If QRE we check if QRE Answer has been registered => true = sending qre answer else sending 0. If not qre send 0;
+               const playerQREAnswer =  game.currentQuizQuestion.type === QuestionType.QRE ? game.playerQREAnswer.get(newObservedPlayerId) ? game.playerQREAnswer.get(newObservedPlayerId)[1] : 0 : 0;
                const answers = game.playersAnswers.get(newObservedPlayerId)?.answers ?? "";
                const qrlAnswer = answers && game.currentQuizQuestion.type === QuestionType.QRL ? answers : "";
                let players: [string, number][] = [];
