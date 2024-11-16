@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 const Map <String,String> nameToAbr = {"English":"en","Français":"fr", "Toki Pona": "tp"};
 const Map <String,String> abrToName = {"en":"English","fr":"Français", "tp":"Toki Pona"};
@@ -9,12 +10,14 @@ const Map <String,String> abrToName = {"en":"English","fr":"Français", "tp":"To
 class LanguageService extends GetxService {
   static LanguageService get instance => Get.find<LanguageService>();
 
+  final TranslationService ts = TranslationService.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final LoggedInUserService _loggedInUserService = Get.find<LoggedInUserService>();
 
   late RxString languageAbr = "".obs;
   Future<void> setLanguage(String newLanguageName) async {
     languageAbr.value = nameToAbr[newLanguageName]!;
+    ts.currentLanguageAbbr = nameToAbr[newLanguageName] ?? '';
     await _updateLanguageInFirebase(nameToAbr[newLanguageName]!);
   }
 
