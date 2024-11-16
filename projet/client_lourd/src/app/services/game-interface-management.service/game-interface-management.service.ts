@@ -109,6 +109,7 @@ export class GameInterfaceManagementService {
         this.inPanicMode = false;
         if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
             this.getScore();
+            this.gameService.gameRealService.validated = true;
         } else {
             if (!this.gameService.observingHost) {
                 this.gameService.qrlAnswer = '';

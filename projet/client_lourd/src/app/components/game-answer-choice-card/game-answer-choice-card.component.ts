@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, HostListener } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, HostListener} from '@angular/core';
 import { QuizChoice } from '@common/interfaces/quiz.interface';
 import { GameService } from '@app/services/game.service/game.service';
 import {
@@ -6,7 +6,7 @@ import {
     BAD_ANSWER_DISPLAY,
     GOOD_ANSWER_DISPLAY,
     NO_EFFECT_DISPLAY,
-    NORMAL_DISPLAY,
+    NORMAL_DISPLAY, OBSERVER_DISPLAY,
     SELECTED_DISPLAY,
 } from '@common/constants/game-answer-choice-card.component.const';
 import { ENTER_KEY } from '@common/shortcuts/shortcuts';
@@ -43,13 +43,13 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     }
 
     ngOnChanges() {
-        console.log("ngOnChanges")
         if (this.gameService.validatedStatus) this.showResult();
     }
 
     handleHoverEffect() {
-        if (this.gameService.observerMode) return NO_EFFECT_DISPLAY;
-        return this.gameService.lockedStatus ? NO_EFFECT_DISPLAY : ACTIVE_DISPLAY;
+        const value = this.gameService.lockedStatus ? NO_EFFECT_DISPLAY : this.gameService.observerMode ? OBSERVER_DISPLAY : ACTIVE_DISPLAY;
+        console.log(value, this.gameService.observerMode)
+        return value
     }
 
     // ToggleSelect() has a debounce method to make sure that user selected the component
@@ -81,7 +81,8 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     }
 
     private reset() {
-        this.feedbackDisplay = ACTIVE_DISPLAY;
+        if (!this.gameService.observerMode) this.feedbackDisplay = ACTIVE_DISPLAY;
+        else this.feedbackDisplay = OBSERVER_DISPLAY;
     }
 
     private showGoodAnswerFeedBack() {
@@ -95,10 +96,8 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     private handleSelection(){
         if (this.socketService.isSocketAlive()) {
             this.socketService.on(SocketEvent.OBS_QCM_INTERACTION, (data: { roomId: number, isSelected : boolean, index: number })=> {
-                console.log("receiving QCM to observer", data);
                 if (this.index == data.index + 1) {
                     data.isSelected ? this.showSelectionFeedback() : this.reset();
-                    console.log('updating')
                 }
             })
         }
@@ -112,11 +111,8 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
                     isSelected : this.isSelected,
                     index: this.index - 1
                 }
-                console.log("emiting QCM to observer", data);
                 this.socketService.send(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, data)
             })
         }
     }
-
-
 }

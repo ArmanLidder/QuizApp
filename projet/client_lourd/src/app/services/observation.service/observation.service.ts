@@ -125,9 +125,7 @@ export class ObservationService {
             this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
             this.gameService.obs_qre_Answer = data.qreAnswer;
             this.gameService.obs_qrl_Answer = data.qrlAnswer;
-            const oldGameStatus = this.gameService.gameRealService.validated
             this.gameInterfaceManagementService['getScore']();
-            this.gameService.gameRealService.validated = oldGameStatus;
         });
     }
 
