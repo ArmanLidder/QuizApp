@@ -60,8 +60,8 @@ void main() async {
   Get.put(ThemeService());
   Get.put(FriendService());
   Get.put(ValidationService());
-  Get.put(LanguageService());
   Get.put(TranslationService());
+  Get.put(LanguageService());
 
   runApp(
     MultiProvider(
