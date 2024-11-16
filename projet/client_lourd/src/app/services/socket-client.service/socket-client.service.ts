@@ -8,6 +8,8 @@ import {Auth} from "@angular/fire/auth";
 })
 export class SocketClientService {
     socket: Socket;
+    private isConnecting: boolean = false;
+
     constructor(private auth: Auth) {}
 
     isSocketAlive() {
@@ -15,6 +17,8 @@ export class SocketClientService {
     }
 
     connect() {
+        if (this.isConnecting) return;
+        this.isConnecting = true;
         const serverUrlWithoutApi = environment.serverUrl.replace('/api', '');
         console.log(`UserId: ${this.auth.currentUser?.uid}`)
         this.socket = io(serverUrlWithoutApi, {
@@ -25,7 +29,10 @@ export class SocketClientService {
             },
         });
         this.socket.on('connect', () => {
-            this.socket.connected = true;
+            this.isConnecting = false;
+        });
+        this.socket.on('connect_error', (error) => {
+            this.isConnecting = false;
         });
     }
 
