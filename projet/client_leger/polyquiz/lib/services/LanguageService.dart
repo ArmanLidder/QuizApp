@@ -23,7 +23,8 @@ class LanguageService extends GetxService {
 
   Future<void> loadLanguage() async {
     languageAbr.value = languageToString[_loggedInUserService.user!.settings.language]!;
-    }
+    ts.currentLanguage = _loggedInUserService.user!.settings.language;
+  }
 
   Future<void> _updateLanguageInFirebase(String newLanguage) async {
     final userId = _loggedInUserService.getUid();
