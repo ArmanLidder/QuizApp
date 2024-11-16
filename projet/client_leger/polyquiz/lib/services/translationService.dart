@@ -8,6 +8,22 @@ class TranslationService extends GetxController {
   final frenchText = frenchTextValues;
   final englishText = englishTextValues;
 
+  Language getEnumFromAbbreviation(String abbr) {
+    switch (abbr) {
+      case 'en':
+        return Language.en;
+      case 'tp':
+        return Language.tp;
+      case 'fr':
+      default:
+        return Language.fr;
+    }
+  }
+
+  void set currentLanguageAbbr(String abbr) {
+    _currentLanguage = getEnumFromAbbreviation(abbr);
+  }
+
   void set currentLanguage(Language language) {
     _currentLanguage = language;
   }
