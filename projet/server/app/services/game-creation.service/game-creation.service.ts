@@ -250,12 +250,15 @@ export class GameCreationService {
         const username = res[0];
         const roomId = res[1];
         if (username === 'Organisateur') {
+            //This is the exact same code used in HOST_LEFT socket event above in the file
             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             await this.deleteRoomCanal(roomId, roomManager);
             roomManager.deleteRoom(roomId);
             this.sendUpdateGameList(roomManager, sio);
             sio.to(String(roomId)).disconnectSockets(true);
+            console.log(`Handled Host_left socket disconnection for room ${roomId}`)
         } else {
+            //This is the same code used in PLAYER_LEFT socket event above in the file
             await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             this.debug_teams("PLayer Left", roomId, roomManager);
@@ -282,6 +285,7 @@ export class GameCreationService {
                 }
                 sio.to(String(roomId)).emit(SocketEvent.REMOVED_PLAYER, userInfo.username);
             }
+            console.log(`Handled player_left socket disconnection for room ${roomId}`)
         }
     }
 
