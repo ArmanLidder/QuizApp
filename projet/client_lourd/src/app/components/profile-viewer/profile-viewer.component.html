@@ -41,19 +41,19 @@
         <div class="mt-3 text-sm text-gray-600">
             <div class="flex justify-between py-1">
                 <span>{{ 'PROFILE_POPUP.GAMES_PLAYED' | translate }}:</span>
-                <span class="font-medium">{{ user.stats.gamesPlayed }}</span>
+                <span class="font-medium">{{ user.stats.gamesPlayed || 0}}</span>
             </div>
             <div class="flex justify-between py-1">
                 <span>{{ 'PROFILE_POPUP.GAMES_WON' | translate }}:</span>
-                <span class="font-medium">{{ user.stats.gamesWon }}</span>
+                <span class="font-medium">{{ user.stats.gamesWon || 0}}</span>
             </div>
             <div class="flex justify-between py-1">
                 <span>{{ 'PROFILE_POPUP.AVG_CORRECT_ANSWERS' | translate }}:</span>
-                <span class="font-medium">{{ user.stats.avgCorrectAnswers }}</span>
+                <span class="font-medium">{{ user.stats.avgCorrectAnswers || 0}}</span>
             </div>
             <div class="flex justify-between py-1">
                 <span>{{ 'PROFILE_POPUP.AVG_GAME_TIME' | translate }}:</span>
-                <span class="font-medium">{{ user.stats.avgGameTime }} {{ 'PROFILE_POPUP.SECONDS' | translate }}</span>
+                <span class="font-medium">{{ user.stats.avgGameTime || 0}} {{ 'PROFILE_POPUP.SECONDS' | translate }}</span>
             </div>
         </div>
         <div class="mt-4">

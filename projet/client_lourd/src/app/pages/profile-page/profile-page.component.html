@@ -44,19 +44,19 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="font-semibold">{{ 'PROFILE.GAMES_PLAYED' | translate }}</p>
-                            <p class="text-2xl">{{ user.stats.gamesPlayed }}</p>
+                            <p class="text-2xl">{{ user.stats.gamesPlayed || 0 }}</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="font-semibold">{{ 'PROFILE.GAMES_WON' | translate }}</p>
-                            <p class="text-2xl">{{ user.stats.gamesWon }}</p>
+                            <p class="text-2xl">{{ user.stats.gamesWon || 0}}</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="font-semibold">{{ 'PROFILE.AVG_CORRECT_ANSWERS' | translate }}</p>
-                            <p class="text-2xl">{{ user.stats.avgCorrectAnswers }}</p>
+                            <p class="text-2xl">{{ user.stats.avgCorrectAnswers || 0}}</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="font-semibold">{{ 'PROFILE.AVG_GAME_TIME' | translate }}</p>
-                            <p class="text-2xl">{{ user.stats.avgGameTime }} {{ 'PROFILE.SECONDS' | translate }}</p>
+                            <p class="text-2xl">{{ user.stats.avgGameTime || 0}} {{ 'PROFILE.SECONDS' | translate }}</p>
                         </div>
                     </div>
                 </div>
