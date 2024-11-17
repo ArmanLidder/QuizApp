@@ -31,6 +31,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   Map get text => TranslationService.instance.text;
   Map get activeText => text['ACTIVE_GAME_LIST'];
 
+
   @override
   void initState() {
     super.initState();
@@ -119,7 +120,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     if(!dataOfRoomValidation['isRoom']){
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Le code ne correspond a aucune partie en cours. Veuillez réessayer')),
+              content: Text(activeText['NO_GAMES_AVAILABLE'])),
         );
       setState(() {
           _isJoining = false;
@@ -130,7 +131,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('La partie est vérouillée. Veuillez réessayer.')),
+              content: Text(activeText['ROOM_LOCKED'])),
         );
         setState(() {
           _isJoining = false;
@@ -140,7 +141,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
       if (game.friendsOnly && !isHostFriend) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text("Cette partie est exclusive aux amis de l'hôte.")),
+              content: Text(activeText['EXCLUSIVE_FRIENDS_GAME'])),
         );
       } else {
         final isPrestigeValid = await _validatePrestige(game.prestige);
@@ -148,18 +149,18 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text(
-                    "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
+                    activeText['INSUFFICIENT_PRESTIGE'])),
           );
         } else {
           await roomValidationService.verifyUsername();
           if (!roomValidationService.isUsernameValid) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Vous avez été banni de cette partie.")),
+              SnackBar(content: Text(activeText['USER_BANNED'])),
             );
           } else {
             if (roomValidationService.isLocked) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("La partie est actuellement verouillez.")),
+                SnackBar(content: Text(activeText['ROOM_LOCKED'])),
               );
             }
             if (!roomValidationService.isLocked &&

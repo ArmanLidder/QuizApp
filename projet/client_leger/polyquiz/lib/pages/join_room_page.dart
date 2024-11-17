@@ -84,7 +84,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
     if(!dataOfRoomValidation['isRoom']){
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Le code ne correspond a aucune partie en cours. Veuillez réessayer')),
+              content: Text(roomErrorText['GAME_NOT_FOUND'])),
         );
       setState(() {
           _isJoining = false;
@@ -95,7 +95,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
         print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('La partie est vérouillée. Veuillez réessayer.')),
+              content: Text(roomErrorText['ROOM_LOCKED'])),
         );
         setState(() {
           _isJoining = false;
@@ -105,7 +105,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
           if (game.friendsOnly && !isHostFriend) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text("Cette partie est exclusive aux amis de l'hôte.")),
+                  content: Text(roomErrorText['FRIENDS_ONLY'])),
             );
             setState(() {
               _isJoining = false;
@@ -116,7 +116,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                     content: Text(
-                        "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
+                        roomErrorText['INSUFFICIENT_PRESTIGE'])),
               );
               setState(() {
                 _isJoining = false;
@@ -125,7 +125,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
               await roomValidationService.verifyUsername();
               if (!roomValidationService.isUsernameValid) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Vous avez été banni de cette partie.")),
+                  SnackBar(content: Text(roomErrorText['BANNED_USER'])),
                 );
                 setState(() {
                   _isJoining = false;
@@ -133,7 +133,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
               } else {
                 if (roomValidationService.isLocked) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("La partie est actuellement verouillez.")),
+                    SnackBar(content: Text(roomErrorText['ROOM_LOCKED'])),
                   );
                   setState(() {
                     _isJoining = false;
