@@ -6,6 +6,7 @@ import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class QuitBtn extends StatelessWidget {
   final bool isHost;
@@ -63,7 +64,7 @@ class QuitBtn extends StatelessWidget {
         _globalNavigationService.navigateTo('/home');
       },
       child: Text(
-        'Quitter',
+        TranslationService.instance.text['BUTTON']['QUIT'],
         style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
       ),
       style: TextButton.styleFrom(
