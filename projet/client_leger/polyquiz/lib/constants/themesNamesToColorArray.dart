@@ -22,7 +22,7 @@ Map<String, List<Color>> themeColors = {
   "blueGrey": [
     Colors.blueGrey[900]!, // mainBackground:
     Colors.blueGrey[50]!,  // mainAccent:
-    Colors.blueGrey[600]!, // secondaryBackground:
-    Colors.blueGrey[200]!, // secondaryAccent:
+    Colors.purple[600]!, // secondaryBackground:
+    Colors.purple[200]!, // secondaryAccent:
   ],
 };

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/constants/AchievementsNames.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:polyquiz/services/translationService.dart';
+
+import '../../services/LanguageService.dart';
 
 class StarCard extends StatelessWidget {
   final String label;
@@ -52,53 +55,65 @@ class StarCard extends StatelessWidget {
 }
 
 class StarCardGrid extends StatelessWidget {
-  final List<String> labels = AchievementsName;
+  final LanguageService ls = LanguageService.instance;
+  Map get text => TranslationService.instance.text;
+  Map get profileText => text['PROFILE'];
+
   final List<num> achievementsList;
 
   StarCardGrid({ required this.achievementsList});
 
   @override
   Widget build(BuildContext context) {
-    // Determine how many cards can fit in a row
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double cardWidth = 100;
-    final double horizontalMargin = 4.0;
-    final double verticalMargin = 4.0;
-    //L'algo qui suit a ete fait a 75% avec chatgpt et est donc pas tres lisible
-    // si ca casse pinguez Maxime
-    final int cardsPerRow = ((screenWidth - (horizontalMargin * 4)) /
-            (cardWidth + horizontalMargin))
-        .floor();
+    return Obx(
+            () {
+              final List<String> labels = profileText['ALL_ACHIEVEMENTS'] as List<String>;
+              print('${TranslationService.instance.languageValue}');
 
-    List<Widget> rows = [];
-    for (int i = 0; i < labels.length; i += cardsPerRow) {
-      List<Widget> starCards = [];
-      for (int j = 0; j < cardsPerRow; j++) {
-        if (i + j < labels.length) {
-          bool isDone = achievementsList.contains(i + j);
-          starCards.add(
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalMargin),
-              child: StarCard(
-                label: labels[i + j],
-                isDone: isDone,
-              ),
-            ),
-          );
-        }
-      }
-      rows.add(Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: starCards,
-      ));
-      rows.add(
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: verticalMargin),
-        ),
-      );
-    }
-    return Column(
-      children: [...rows],
-    );
-  }
+              // Determine how many cards can fit in a row
+              final double screenWidth = MediaQuery
+                  .of(context)
+                  .size
+                  .width;
+              final double cardWidth = 100;
+              final double horizontalMargin = 4.0;
+              final double verticalMargin = 4.0;
+              // si ca casse pinguez Maxime
+              final int cardsPerRow = ((screenWidth - (horizontalMargin * 4)) /
+                  (cardWidth + horizontalMargin))
+                  .floor();
+
+              List<Widget> rows = [];
+              for (int i = 0; i < labels.length; i += cardsPerRow) {
+                List<Widget> starCards = [];
+                for (int j = 0; j < cardsPerRow; j++) {
+                  if (i + j < labels.length) {
+                    bool isDone = achievementsList.contains(i + j);
+                    starCards.add(
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: horizontalMargin),
+                        child: StarCard(
+                          label: labels[i + j],
+                          isDone: isDone,
+                        ),
+                      ),
+                    );
+                  }
+                }
+                rows.add(Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: starCards,
+                ));
+                rows.add(
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: verticalMargin),
+                  ),
+                );
+              }
+              return Column(
+                children: [...rows],
+              );
+            });
+            }
 }

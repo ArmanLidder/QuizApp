@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/friendService.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
+import '../../../services/LanguageService.dart';
 import '../../../services/theme_service.dart';
 import 'friendsPopup.dart';
 
@@ -13,6 +15,7 @@ class FriendListDisplay extends StatefulWidget {
   final List<String> friends;
   final List<FriendRequest> pendingRequests;
   final ThemeService themeService = ThemeService.instance;
+  final LanguageService ls = LanguageService.instance;
 
   FriendListDisplay({required this.friends, required this.pendingRequests});
 
@@ -23,6 +26,8 @@ class FriendListDisplay extends StatefulWidget {
 class _FriendListDisplayState extends State<FriendListDisplay> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ThemeService themeService = ThemeService.instance;
+  Map get friendText => TranslationService.instance.text['FRIENDS'];
+
 
   @override
   void initState() {
@@ -46,7 +51,7 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Amis",
+                friendText['TITLE'],
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -68,7 +73,7 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
               },
               icon: Icon(Icons.person_add, color: themeService.secondaryAccent.value),
               label: Text(
-                "Ajouter",
+                friendText['ADD_FRIEND'],
                 style: TextStyle(color: themeService.secondaryAccent.value),
               ),
               style: ElevatedButton.styleFrom(
@@ -103,8 +108,8 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
                 TabBar(
                   controller: _tabController,
                   tabs: [
-                    Tab(text: 'Friends'),
-                    Tab(text: 'Pending'),
+                    Tab(text: friendText['FRIENDS_TAB']),
+                    Tab(text: friendText['PENDING_REQUESTS_TAB']),
                   ],
                   indicatorColor: themeService.secondaryBackground.value,
                   labelColor: themeService.secondaryBackground.value,
@@ -146,7 +151,7 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
     return Obx(() {
       // If the pending requests list is empty or null, show a message
       if (widget.friendService.friendRequests.isEmpty) {
-        return Center(child: Text('No pending requests'));
+        return Center(child: Text(friendText['NO_PENDING_REQUESTS']));
       }
 
       return ListView.builder(

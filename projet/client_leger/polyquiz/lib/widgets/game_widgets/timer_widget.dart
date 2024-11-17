@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 class TimerWidget extends StatefulWidget {
   final bool isHost;
   final String timeTxt;
@@ -22,6 +23,9 @@ class _TimerWidgetState extends State<TimerWidget> {
   IconData timerIcon = Icons.pause_circle_outline;
   IconData panicModeIcon =
       Icons.fireplace_outlined; // Changer pour coherence avec client lourd
+  Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
+  Map get timerText => gameText['TIMER_TEXT'];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -68,7 +72,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                         
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Vous ne pouvez pas encore activer le mode panique'),
+                            content: Text(gameText['TOOLTIP']['TOOLTIP_PANIC_MODE_DISABLED']),
                           ),
                         );
                       }

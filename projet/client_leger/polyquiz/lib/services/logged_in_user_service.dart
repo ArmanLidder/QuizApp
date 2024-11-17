@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/animation.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'user_service.dart';
@@ -65,7 +66,6 @@ class LoggedInUserService extends GetxController {
           .doc(currentUser.uid)
           .update({'isConnected': true});
 
-      // Retrieve current loginHistory, add new event, and update in Firebase
       DocumentReference userDocRef = _firestore.collection('users').doc(currentUser.uid);
       DocumentSnapshot userSnapshot = await userDocRef.get();
 
@@ -77,6 +77,7 @@ class LoggedInUserService extends GetxController {
       });
       await userDocRef.update({'loginHistory': loginHistory});
       await reloadUser();
+      await LanguageService.instance.loadLanguage();
     } else {
       print('Login failed: user not found with email $email');
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/quiz_file_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 import '../models/quiz.dart';
@@ -21,6 +22,8 @@ class _QuizListPageState extends State<QuizListPage> {
   bool isLoading = true;
   String errorMessage = '';
   Quiz? selectedQuiz = null;
+  Map get text => TranslationService.instance.text;
+  Map get quizSelectText => text['QUIZ_SELECTION'];
 
   @override
   void initState() {
@@ -74,7 +77,7 @@ class _QuizListPageState extends State<QuizListPage> {
               : Stack(children: [
                   Column(
                     children: [
-                      Text('Sélectionnez un des jeux disponibles :',
+                      Text(quizSelectText['PAGE_TITLE'],
                           style: TextStyle(fontSize: 16)),
                       Container(
                         width: double.infinity,
@@ -87,7 +90,7 @@ class _QuizListPageState extends State<QuizListPage> {
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text('Jeu',
+                            child: Text(text['GAME_ADMIN']['QUIZZES'],
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromRGBO(255, 255, 255, 1),
@@ -135,11 +138,24 @@ class _QuizListPageState extends State<QuizListPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            Text(quiz.title),
-                                            Text(
-                                                'Description: ${quiz.description}'),
-                                            Text('Durée: ${quiz.duration} s'),
-                                            Text('Questions:'),
+                                            Text(quiz.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                                            // Text('Description: ${quiz.description}'),
+                                            RichText(text: TextSpan(
+                                              style: DefaultTextStyle.of(context).style,
+                                              children: <TextSpan>[
+                                                TextSpan(text: "${quizSelectText['DESCRIPTION']}: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                                                TextSpan(text: quiz.description),
+                                              ]
+                                            )),
+                                            // Text('Durée: ${quiz.duration} s'),
+                                            RichText(text: TextSpan(
+                                                style: DefaultTextStyle.of(context).style,
+                                                children: <TextSpan>[
+                                                  TextSpan(text: "${quizSelectText['DURATION']}: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                                                  TextSpan(text: "${quiz.duration} ${quizSelectText['DURATION_SUFFIX']}"),
+                                                ]
+                                            )),
+                                            Text(quizSelectText['QUESTIONS']+":", style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold),),
                                             ListView.builder(
                                               shrinkWrap: true,
                                               physics:
@@ -147,7 +163,7 @@ class _QuizListPageState extends State<QuizListPage> {
                                               itemCount: quiz.questions.length,
                                               itemBuilder: (context, index) {
                                                 return Center(
-                                                  child: Text(quiz
+                                                  child: Text("•" + quiz
                                                       .questions[index].text),
                                                 );
                                               },
@@ -188,7 +204,7 @@ class _QuizListPageState extends State<QuizListPage> {
                                 );
                               }
                             },
-                            child: Text('Jouer',
+                            child: Text(text['GAME_ADMIN']['PLAY'],
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.normal,

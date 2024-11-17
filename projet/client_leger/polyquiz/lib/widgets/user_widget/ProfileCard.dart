@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/main.dart';
+import 'package:polyquiz/services/LanguageService.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userInfoValidation.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/user_service.dart';
@@ -22,7 +24,9 @@ class ProfileCard extends StatelessWidget {
   final ValidationService validationService = ValidationService.instance;
 
   final UserPageCustomisationService userPageCustomisationService = UserPageCustomisationService.instance;
-
+  final LanguageService ls = LanguageService.instance;
+  Map get profileText => TranslationService.instance.text['PROFILE'];
+  
   @override
   Widget build(BuildContext context) {
     return Obx(() {  // Use Obx to listen to Rx variables
@@ -140,7 +144,7 @@ class ProfileCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Profile of ' + loggedInUserService.observableUsername.value,
+                            loggedInUserService.observableUsername.value,
                             style: TextStyle(
                               color: themeService.mainBackground.value,
                               fontSize: 18.0,
@@ -195,7 +199,7 @@ class ProfileCard extends StatelessWidget {
                           PrestigeIndicator(prestige: prestige),
                           Chip(
                             label: Text(
-                              "argent: $argent",
+                              profileText['CURRENCY'] + ": "+  argent.toString(),
                               style: TextStyle(color: themeService.mainAccent.value),
                             ),
                             backgroundColor: themeService.mainBackground.value.withOpacity(0.5),

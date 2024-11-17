@@ -5,8 +5,10 @@ import 'package:polyquiz/pages/login-page.dart';
 import 'package:polyquiz/pages/offline_game_page.dart';
 import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userInfoValidation.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/background_notification_service.dart';
@@ -58,6 +60,9 @@ void main() async {
   Get.put(ThemeService());
   Get.put(FriendService());
   Get.put(ValidationService());
+  Get.put(TranslationService());
+  Get.put(LanguageService());
+
   runApp(
     MultiProvider(
       providers: [

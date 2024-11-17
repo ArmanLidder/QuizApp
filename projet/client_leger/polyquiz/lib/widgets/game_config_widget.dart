@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/models/user.dart';
@@ -26,6 +27,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
   int _prestige = 0;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   User? userData;
+  Map get configText => TranslationService.instance.text['GAME_CONFIG_DIALOG'];
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Configurer la partie',
+            Text(configText['CONFIGURE_GAME'],
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -48,14 +50,14 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
             DropdownButtonFormField<String>(
               value: _gameType,
               decoration: InputDecoration(
-                  labelText: 'Type de partie',
+                  labelText: configText['GAME_TYPE_LABEL'],
                   labelStyle: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(69, 90, 100, 1)),
                   border: OutlineInputBorder()),
               items: [
-                DropdownMenuItem(value: 'classic', child: Text('Classique')),
-                DropdownMenuItem(value: 'equipe', child: Text('Équipe')),
+                DropdownMenuItem(value: 'classic', child: Text(configText['CLASSIC'])),
+                DropdownMenuItem(value: 'equipe', child: Text(configText['TEAM'])),
               ],
               onChanged: (value) {
                 setState(() {
@@ -64,7 +66,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Le type de partie est requis. Veuillez sélectionner un type.';
+                  return configText['GAME_TYPE_REQUIRED'];
                 }
                 return null;
               },
@@ -72,7 +74,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
             SizedBox(height: 16),
             TextFormField(
               decoration: InputDecoration(
-                  labelText: 'Prix', border: OutlineInputBorder()),
+                  labelText: configText['PRICE_LABEL'], border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
@@ -83,7 +85,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                 if (value == null ||
                     int.tryParse(value) == null ||
                     int.parse(value) < 0) {
-                  return 'Le prix doit être un entier supérieur ou égal à 0.';
+                  return configText['PRICE_INVALID'];
                 }
                 return null;
               },
@@ -95,7 +97,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                   child: Container(
                     color: Color.fromRGBO(240, 240, 240, 1),
                     child: CheckboxListTile(
-                      title: Text('Amis Seulement'),
+                      title: Text(configText['FRIENDS_ONLY_LABEL']),
                       controlAffinity: ListTileControlAffinity.leading,
                       activeColor: Color.fromRGBO(53, 121, 246, 1),
                       value: _friendsOnly,
@@ -112,7 +114,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                   child: Container(
                     color: Color.fromRGBO(240, 240, 240, 1),
                     child: CheckboxListTile(
-                      title: Text('Partie privée'),
+                      title: Text(configText['PRIVATE_GAME_LABEL']),
                       controlAffinity: ListTileControlAffinity.leading,
                       activeColor: Color.fromRGBO(53, 121, 246, 1),
                       value: _private,
@@ -130,17 +132,17 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
             DropdownButtonFormField<int>(
               value: _prestige,
               decoration: InputDecoration(
-                  labelText: 'Prestige minimum',
+                  labelText: configText['MIN_PRESTIGE_LABEL'],
                   labelStyle: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(69, 90, 100, 1)),
                   border: OutlineInputBorder()),
               items: [
-                DropdownMenuItem(value: 0, child: Text('Aucun')),
-                DropdownMenuItem(value: 50, child: Text('🥉Bronze')),
-                DropdownMenuItem(value: 100, child: Text('🥈Argent')),
-                DropdownMenuItem(value: 150, child: Text('🥇Or')),
-                DropdownMenuItem(value: 200, child: Text('🏅Platine')),
+                DropdownMenuItem(value: 0, child: Text(configText['NONE'])),
+                DropdownMenuItem(value: 50, child: Text(configText['BRONZE'])),
+                DropdownMenuItem(value: 100, child: Text(configText['SILVER'])),
+                DropdownMenuItem(value: 150, child: Text(configText['GOLD'])),
+                DropdownMenuItem(value: 200, child: Text(configText['PLATINUM'])),
               ],
               onChanged: (value) {
                 setState(() {
@@ -149,7 +151,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
               },
               validator: (value) {
                 if (value == null) {
-                  return 'Le prestige minimum est requis. Veuillez faire une sélection.';
+                  return configText['PRESTIGE_REQUIRED'];
                 }
                 return null;
               },
@@ -167,7 +169,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Annuler',
+                  child: Text(configText['CANCEL_BUTTON'],
                       style:
                           TextStyle(color: Color.fromRGBO(255, 255, 255, 1))),
                 ),
@@ -204,7 +206,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                     }
                   },
                   child: Text(
-                    'Créer partie',
+                    configText['CREATE_GAME_BUTTON'],
                     style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
                   ),
                 ),

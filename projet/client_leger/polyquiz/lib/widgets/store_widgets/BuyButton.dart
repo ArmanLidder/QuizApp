@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/services/StoreService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 import '../../models/user.dart';
 
@@ -25,6 +26,7 @@ class _BuyButtonState extends State<BuyButton> {
   final StoreService storeService = Get.find();
   bool alreadyOwns = false;
   bool canAfford = false;
+  Map get shopText => TranslationService.instance.text['SHOPPING'];
 
   @override
   void initState() {
@@ -54,18 +56,18 @@ class _BuyButtonState extends State<BuyButton> {
 
       if (alreadyOwns) {
         buttonColor = Colors.grey;
-        buttonText = 'Déjà possédé';
+        buttonText = shopText['OWNED'];
         buttonAction = _updateButtonStatus; // Disable button if already owned
       } else if (canAfford) {
         buttonColor = Colors.green;
-        buttonText = 'Acheter (${widget.cost}) \$';
+        buttonText = '${shopText['BUY']} (${widget.cost}) \$';
         buttonAction = () async {
           await widget.onBuy(); // Call the purchase function
           _updateButtonStatus();
         };
       } else {
         buttonColor = Colors.red;
-        buttonText = 'Pas assez de fonds (${widget.cost}) \$';
+        buttonText = '${shopText['NOT_ENOUGH_FUNDS']} (${widget.cost}) \$';
         buttonAction = _updateButtonStatus;
         ;
       }
@@ -103,6 +105,7 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
   bool alreadyOwns = false;
   bool canAfford = false;
   bool meetsPrestigeLevel = false;
+  Map get shopText => TranslationService.instance.text['SHOPPING'];
 
   @override
   void initState() {
@@ -134,18 +137,19 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
 
       if (alreadyOwns) {
         buttonColor = Colors.grey;
-        buttonText = 'Déjà possédé';
+        buttonText = shopText['OWNED'];
         buttonAction = _updateButtonStatus; // Disable button if already owned
       } else if (canAfford && meetsPrestigeLevel) {
         buttonColor = Colors.green;
-        buttonText = 'Acheter (${widget.cost}) \$';
+        buttonText = '${shopText['BUY']} (${widget.cost}) \$';
         buttonAction = () async {
           await widget.onBuy(); // Call the purchase function
           _updateButtonStatus();
         };
       } else {
         buttonColor = Colors.grey;
-        buttonText = 'Débloqué au niveau ${widget.minLevel}';
+        final content = TranslationService.instance.languageValue.value == Language.fr ? "Débloqué au niveau" : "Unlocked at level";
+        buttonText = '$content ${widget.minLevel}';
         buttonAction = _updateButtonStatus; // Disable button if requirements not met
       }
 
@@ -180,6 +184,7 @@ class RewardThemeButton extends StatefulWidget {
 class _RewardThemeButtonState extends State<RewardThemeButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
+  Map get shopText => TranslationService.instance.text['SHOPPING'];
 
   bool alreadyOwns = false;
   bool canAfford = false;
@@ -216,24 +221,26 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
 
       if (alreadyOwns) {
         buttonColor = Colors.grey;
-        buttonText = 'Déjà possédé';
+        buttonText = shopText['OWNED'];
         buttonAction = null; // Disable button if already owned
       } else if (hasAchievement) {
         if (canAfford) {
           buttonColor = Colors.green;
-          buttonText = 'Acheter (${widget.cost}) \$';
+          buttonText = '${shopText['BUY']} (${widget.cost}) \$';
           buttonAction = () async {
             await widget.onBuy(); // Call the purchase function
             _updateButtonStatus();
           };
         } else {
           buttonColor = Colors.red;
-          buttonText = 'Pas assez de fonds (${widget.cost}) \$';
+          // buttonText = 'Pas assez de fonds (${widget.cost}) \$';
+          buttonText = shopText['NOT_ENOUGH_FUNDS'] + " (${widget.cost}) \$";
           buttonAction = null; // Disable button if insufficient funds
         }
       } else {
         buttonColor = Colors.grey;
-        buttonText = 'Débloqué à l\'exploit ${widget.achievement}';
+        final content = TranslationService.instance.languageValue.value == Language.fr ? "Débloqué à l'exploit" : "Unlocked at exploit";
+        buttonText = '$content ${widget.achievement}';
         buttonAction = null; // Disable button if achievement not met
       }
 

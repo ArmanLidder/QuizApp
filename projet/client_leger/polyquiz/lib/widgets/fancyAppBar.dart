@@ -78,7 +78,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(Icons.logout), // Add an icon to the right
-                Text(" Déconnection"),
+                Text("Déconnection"),
                 Spacer()
               ],
             ),

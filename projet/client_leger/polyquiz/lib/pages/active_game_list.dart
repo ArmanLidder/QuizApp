@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/active_game_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,9 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   final UserService userService = UserService();
   bool _isJoining = false;
   late final GameListService gameListService;
+  Map get text => TranslationService.instance.text;
+  Map get activeText => text['ACTIVE_GAME_LIST'];
+
 
   @override
   void initState() {
@@ -112,54 +116,78 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         Provider.of<SnackbarService>(context, listen: false);
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
-    if (game.friendsOnly && !isHostFriend) {
+    dynamic dataOfRoomValidation = await roomValidationService.sendRoomId();
+    if(!dataOfRoomValidation['isRoom']){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text("Cette partie est exclusive aux amis de l'hôte.")),
-      );
-    } else {
-      final isPrestigeValid = await _validatePrestige(game.prestige);
-      if (!isPrestigeValid) {
+          SnackBar(
+              content: Text(activeText['NO_GAMES_AVAILABLE'])),
+        );
+      setState(() {
+          _isJoining = false;
+      });
+    }
+    else{
+      if(dataOfRoomValidation['isLocked']){
+        print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
+              content: Text(activeText['ROOM_LOCKED'])),
+        );
+        setState(() {
+          _isJoining = false;
+        });
+      }
+        else{
+      if (game.friendsOnly && !isHostFriend) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(activeText['EXCLUSIVE_FRIENDS_GAME'])),
         );
       } else {
-        await roomValidationService.verifyUsername();
-        if (!roomValidationService.isUsernameValid) {
+        final isPrestigeValid = await _validatePrestige(game.prestige);
+        if (!isPrestigeValid) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Vous avez été banni de cette partie.")),
+            SnackBar(
+                content: Text(
+                    activeText['INSUFFICIENT_PRESTIGE'])),
           );
         } else {
-          if (roomValidationService.isLocked) {
+          await roomValidationService.verifyUsername();
+          if (!roomValidationService.isUsernameValid) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("La partie est actuellement verouillez.")),
+              SnackBar(content: Text(activeText['USER_BANNED'])),
             );
-          }
-          if (!roomValidationService.isLocked &&
-              roomValidationService.isUsernameValid) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WaitingRoomScreen(
-                  quiz: Quiz(
-                    id: roomValidationService
-                        .roomId!, // Pass the room ID to the waiting room.
-                    title: 'Nothing', // Provide a sample title.
-                    description: 'Nothing', // Provide a sample description.
-                    duration: 0, // Provide a sample duration.
-                    questions: [], // Provide an empty list of questions.
+          } else {
+            if (roomValidationService.isLocked) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(activeText['ROOM_LOCKED'])),
+              );
+            }
+            if (!roomValidationService.isLocked &&
+                roomValidationService.isUsernameValid) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WaitingRoomScreen(
+                    quiz: Quiz(
+                      id: roomValidationService
+                          .roomId!, // Pass the room ID to the waiting room.
+                      title: 'Nothing', // Provide a sample title.
+                      description: 'Nothing', // Provide a sample description.
+                      duration: 0, // Provide a sample duration.
+                      questions: [], // Provide an empty list of questions.
+                    ),
+                    username: roomValidationService
+                        .userData!.uid, // Pass the username to the waiting room.
+                    isHost: false, // This user is not the host.
+                    isFromActiveList: true,
                   ),
-                  username: roomValidationService
-                      .userData!.uid, // Pass the username to the waiting room.
-                  isHost: false, // This user is not the host.
-                  isFromActiveList: true,
                 ),
-              ),
-            );
+              );
+            }
           }
         }
+      }
       }
     }
   }
@@ -223,7 +251,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
-          'Liste des Jeux Publics',
+          activeText['PUBLIC_GAME_LIST'],
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 24,
@@ -244,7 +272,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                       Navigator.pushReplacementNamed(context, '/join');
                     },
                     child: Text(
-                      'Rejoindre jeu privé',
+                      text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                       style: TextStyle(
                         color: Color.fromRGBO(255, 255, 255, 1),
                         fontSize: 20,
@@ -269,7 +297,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                       Navigator.pushReplacementNamed(context, '/join');
                     },
                     child: Text(
-                      'Rejoindre jeu privé',
+                      text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                       style: TextStyle(
                         color: Color.fromRGBO(255, 255, 255, 1),
                         fontSize: 20,
@@ -297,7 +325,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                             Navigator.pushReplacementNamed(context, '/join');
                           },
                           child: Text(
-                            'Rejoindre jeu privé',
+                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                             style: TextStyle(
                               color: Color.fromRGBO(255, 255, 255, 1),
                               fontSize: 20,
@@ -322,7 +350,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                             Navigator.pushReplacementNamed(context, '/join');
                           },
                           child: Text(
-                            'Rejoindre jeu privé',
+                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                             style: TextStyle(
                               color: Color.fromRGBO(255, 255, 255, 1),
                               fontSize: 20,
@@ -346,7 +374,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                             Navigator.pushReplacementNamed(context, '/join');
                           },
                           child: Text(
-                            'Rejoindre Jeu Privé',
+                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                             style: TextStyle(
                               color: Color.fromRGBO(255, 255, 255, 1),
                               fontSize: 20,
@@ -361,7 +389,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Aucune partie en cours'),
+                            Text(activeText['NO_GAMES_AVAILABLE']),
                             SizedBox(height: 100),
                             CancelBtn()
                           ],
@@ -380,7 +408,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                             Navigator.pushReplacementNamed(context, '/join');
                           },
                           child: Text(
-                            "Rejoindre Jeu Privé",
+                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                             style: TextStyle(
                               color: Color.fromRGBO(255, 255, 255, 1),
                               fontSize: 20,
@@ -405,12 +433,12 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                   quizTitle: _getQuizName(game.quizId),
                                   minRank: _minimumPrestige(game.prestige),
                                   allowedPlayers: game.friendsOnly
-                                      ? 'Amis seulement'
-                                      : 'Amis et autres',
+                                      ? activeText['FRIENDS_ONLY']
+                                      : activeText['FRIENDS_AND_OTHERS'],
                                   playerNum: game.numberOfPlayers.toString(),
                                   gameMode: game.gameType == 'classic'
-                                      ? 'Classique'
-                                      : 'Équipe',
+                                      ? activeText['CLASSIC']
+                                      : activeText['TEAM'],
                                   price: game.price.toString(),
                                 ),
                               );
@@ -434,7 +462,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 16)),
-                                              Text('Partie en cours')
+                                              Text(activeText['ONGOING_GAME'])
                                             ]),
                                         Divider()
                                       ],

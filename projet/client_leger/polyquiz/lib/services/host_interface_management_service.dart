@@ -33,6 +33,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   bool isAlreadyInit = false;
   bool isAlreadyCalled = false;
   bool NextQuestionBtnDisabled = true;
+  bool isResultPage = false;
   Function(Map<String, ResponseData>)? _qrlCallback;
 
   GameService gameService = GameService();
@@ -63,10 +64,15 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void saveStats() {
     QuizQuestion? question = this.gameService.realGameService.question;
     if (question != null) {
+      // Create deep copies of the maps
+      final valuesCopy = Map<String, bool>.from(this.histogramDataValue);
+      final responsesCopy = Map<String, int>.from(this.histogramDataChangingResponses);
+      
       QuestionStatistics savedStats = QuestionStatistics(
-          this.histogramDataValue,
-          this.histogramDataChangingResponses,
+          valuesCopy,
+          responsesCopy,
           question);
+      
       if (question.type != QuestionType.QRL) {
         this.gameStats.add(savedStats);
         notifyListeners();
@@ -164,6 +170,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.gameService.realGameService.timer = timeValue;
 
       if (this.gameService.timer == 0 && this.gameService.username == 'host') {
+        this.isResultPage = true;
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
@@ -321,7 +328,6 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void sendGameStats() {
     final gameStats = this.stringifyStats();
-    print(gameStats);
     this._socketService.sendMessage(SocketEvent.GAME_STATUS_DISTRIBUTION, {
       'roomId': this.gameService.realGameService.roomId,
       'stats': gameStats,
@@ -330,23 +336,21 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   String stringifyStats() {
     final stats = this.prepareStatsTransport();
-    print(stats.first);
-    return stats.toString();
-  }
+    return jsonEncode(stats.map((stat) => stat.toJson()).toList());
+}
 
-  TransportStatsFormat prepareStatsTransport() {
+
+TransportStatsFormat prepareStatsTransport() {
     final TransportStatsFormat data = [];
     this.gameStats.forEach((stats) {
       final values = stats.responsesValues;
       final responses = stats.responsesNumber;
-      print(stats.responsesValues);
-      print(stats.responsesNumber);
-      print(stats.question);
       data.add(TransportStats(values.entries.toList(),
           responses.entries.toList(), stats.question as QuizQuestion));
     });
     return data;
-  }
+}
+
 
   void reset(BuildContext context) {
     this.timerText = 'Temps restant: ';
@@ -356,6 +360,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.leftPlayers.clear();
     this.responsesQRL.clear();
     this.isHostEvaluating = false;
+    print('gameStats got cleared');
     this.gameStats.clear();
     this.isPaused = false;
     this.isPanicMode = false;

@@ -1,8 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/services/LanguageService.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/theme_service.dart';
 import 'package:intl/intl.dart';
@@ -44,6 +47,8 @@ class Historique extends StatelessWidget {
   final List<GameHistory> gameHistory;
   final List<LoginHistory> loginHistory;
   final ThemeService themeService = ThemeService.instance;
+  final LanguageService ls = LanguageService.instance;
+  Map get profileText => TranslationService.instance.text['PROFILE'];
 
   Historique({required this.gameHistory, required this.loginHistory});
 
@@ -69,20 +74,23 @@ class Historique extends StatelessWidget {
 
       return allEvents.map((event) {
         String date = "${event.timestamp}".split(' ')[0];
-        String? label = eventMessage[event.eventType] ?? "nullEventMessage" ;
-        Color color = event.eventType == 'Login' ? Colors.blue : Colors.green;
+        String? label = profileText[event.eventType.toUpperCase()] ?? "nullEventMessage" ;
+        Color color = event.eventType == 'logout' ||  event.eventType == 'loss' ? Colors.red : Colors.green;
 
-        return EvenementRow(date: date, label: label, color: color);
+        return EvenementRow(date: date, label: label!, color: color);
       }).toList();
     }
 
     @override
     Widget build(BuildContext context) {
-      return Column(
+      return Obx(
+            () {
+              print('${TranslationService.instance.languageValue}');
+              return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Historique des connections",
+            profileText['CONNECTION_HISTORY'],
             style: TextStyle(
               color: themeService.mainAccent.value,
               fontWeight: FontWeight.bold,
@@ -94,7 +102,7 @@ class Historique extends StatelessWidget {
             children: _generateEventRows(loginEvents()),
           ),
           Text(
-            "Historique des parties",
+            profileText['GAME_HISTORY'],
             style: TextStyle(
               color: themeService.mainAccent.value,
               fontWeight: FontWeight.bold,
@@ -106,7 +114,7 @@ class Historique extends StatelessWidget {
             children: _generateEventRows(gameEvents()),
           ),
         ],
-      );
+      );});
     }
   }
 

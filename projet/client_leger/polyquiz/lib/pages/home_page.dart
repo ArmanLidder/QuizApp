@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
@@ -16,6 +18,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ThemeService themeService = ThemeService.instance;
+  final LanguageService ls = LanguageService.instance;
+  final TranslationService transService = TranslationService.instance;
+
+  Map get text => transService.text;
+  Map get mainPageText => text['MAINPAGE'];
 
   final SocketService _socketService = SocketService();
   User? userData;
@@ -43,9 +50,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "Bienvenue " +
-                  this.loggedInUserService.getUser()!.username +
-                  " !",
+              mainPageText['WELCOME'] + " " + loggedInUserService.observableUsername.value,
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20.0,
@@ -59,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                 backgroundColor: this.themeService.secondaryBackground.value,
                 foregroundColor: this.themeService.secondaryAccent.value,
               ),
-              child: Text('Joindre une partie'),
+              child: Text(mainPageText['JOIN_GAME']),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -70,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                 backgroundColor: this.themeService.secondaryBackground.value,
                 foregroundColor: this.themeService.secondaryAccent.value,
               ),
-              child: Text('Créer une partie'),
+              child: Text(mainPageText['CREATE_GAME']),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -81,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                   backgroundColor: this.themeService.secondaryBackground.value,
                   foregroundColor: this.themeService.secondaryAccent.value,
                 ),
-                child: Text('Magasin')),
+                child: Text(mainPageText['SHOP'])),
             ChatPopup(),
           ],
         ),

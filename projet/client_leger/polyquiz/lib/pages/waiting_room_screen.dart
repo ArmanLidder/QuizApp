@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
@@ -34,12 +35,16 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   String username = "nothing";
   bool isRoomLocked = false;
   bool isGameStarting = false;
-  String roomState = "La salle est ouverte";
   String? newPlayerName;
   bool showPopup = false;
   String? currentUserId;
   WaitingRoomService waitingRoomService = WaitingRoomService();
   RealGameService realGameService = RealGameService();
+  Map get text => TranslationService.instance.text;
+  Map get waitRoomText => text['WAITING_ROOM_PAGE'];
+
+  String get roomState => waitRoomText['ROOM_STATUS'] + " " + roomStateSuffix;
+  String get roomStateSuffix => waitRoomText[isRoomLocked ? 'STATUS_LOCKED' : 'STATUS_UNLOCKED'];
 
   @override
   void initState() {
@@ -94,9 +99,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   void _toggleRoomLock() {
     setState(() {
       isRoomLocked = !isRoomLocked;
-      roomState = roomState == "La salle est ouverte"
-          ? "La salle est verrouillée"
-          : "La salle est ouverte";
       print(roomState);
     });
     waitingRoomService.toggleRoomLock();
@@ -146,7 +148,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Waiting Room'),
+        title: Text(waitRoomText['TITLE']),
         automaticallyImplyLeading: false,
       ),
       body: Stack(children: [
@@ -166,10 +168,10 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
               ]),
           child: Column(
             children: [
-              Text("Salle d'attente",
+              Text(waitRoomText['TITLE'],
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
               SizedBox(height: 20.0),
-              Text('Code : $roomId', style: TextStyle(fontSize: 18)),
+              Text('${waitRoomText['ROOM_CODE']}: $roomId', style: TextStyle(fontSize: 18)),
               if (widget.isHost)
                 SwitchListTile(
                   title: Text(roomState, style: TextStyle(fontSize: 18)),
@@ -184,7 +186,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                       : null,
                 ),
               SizedBox(height: 20.0),
-              Text('Joueurs:',
+              Text(waitRoomText['PLAYERS_TITLE'],
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               Expanded(
                 child: AnimatedBuilder(
@@ -239,7 +241,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                     waitingRoomService.sendStartSignals();
                                   })
                               : null,
-                      child: Text('Commencer',
+                      child: Text(waitRoomText['START_BUTTON'],
                           style: TextStyle(
                               color: Color.fromRGBO(255, 255, 255, 1),
                               fontSize: 20,

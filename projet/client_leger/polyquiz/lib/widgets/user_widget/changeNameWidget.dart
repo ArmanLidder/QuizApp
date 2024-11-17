@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userInfoValidation.dart';
 
 import '../../services/logged_in_user_service.dart';
@@ -17,6 +18,7 @@ class ChangeNamePopup extends StatefulWidget {
 class _ChangeNamePopupState extends State<ChangeNamePopup> {
   late TextEditingController _nameController;
   bool _isValidUsername = true;
+  Map get nameText => TranslationService.instance.text['USERNAME_MODIFICATION'];
 
   @override
   void initState() {
@@ -34,12 +36,12 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Change Name"),
+      title: nameText['TITLE'],
       content: TextField(
         controller: _nameController,
         decoration: InputDecoration(
-          labelText: 'New Name',
-          errorText: !_isValidUsername ? "username invalide" : null,
+          labelText: nameText['NEW_USERNAME'],
+          errorText: !_isValidUsername ? nameText['ERROR'] : null,
           border: OutlineInputBorder(),
         ),
         onChanged: (e) {
@@ -51,7 +53,7 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text("Cancel"),
+          child: nameText['CANCEL'],
         ),
         TextButton(
           onPressed: () {
@@ -60,7 +62,7 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
               Navigator.of(context).pop();
             }
           },
-          child: Text("Soumettre"),
+          child: nameText['CONFIRM'],
         ),
       ],
     );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 
+import '../../../services/LanguageService.dart';
+
 class UserIdsRow extends StatefulWidget {
   const UserIdsRow({Key? key}) : super(key: key);
 
@@ -13,6 +15,7 @@ class _UserIdsRowState extends State<UserIdsRow> {
   List<Map<String, dynamic>>? cachedUserWidgets;  // Cache of username and corresponding widget
   String filterText = '';  // Text input for filtering
   bool isLoading = true;  // Track if data is still loading
+  final LanguageService ls = LanguageService.instance;
 
   // Fetch user data and create widgets. This should only be called once on initial load.
   Future<void> fetchUserWidgets() async {
@@ -82,14 +85,14 @@ class _UserIdsRowState extends State<UserIdsRow> {
               });
             },
             decoration: InputDecoration(
-              labelText: 'Filter by username',
+              labelText: ls.filterByUsernameText,
               border: OutlineInputBorder(),
             ),
           ),
         ),
         // Display the cached widgets, with a scrollable list
         isLoading
-            ? Text("sdfasd") // Show loading indicator while data is fetched
+            ? Text("loading...")
             : Expanded( // Wrap the list with an Expanded widget to allow scrolling
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,

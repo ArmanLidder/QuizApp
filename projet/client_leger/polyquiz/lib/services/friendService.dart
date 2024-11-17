@@ -12,7 +12,7 @@ class FriendService extends GetxService {
 
   manuallyLoadFriends() {
     // Manually initialize the lists when the service is instantiated
-    print("loaded");
+    print("loaded friends");
     _loadFriends();
     _loadPendingRequests();
   }
@@ -22,7 +22,8 @@ class FriendService extends GetxService {
     try {
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
       List<dynamic> friendsList = userDoc['friends'] ?? [];
-      friends.assignAll(friendsList as List<String>);
+      // Convert each element to String explicitly
+      friends.assignAll(friendsList.map((friend) => friend.toString()).toList());
     } catch (e) {
       print('Error loading friends: $e');
     }

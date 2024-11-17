@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class StatitisticsBlorb extends StatelessWidget {
   final num nPlayedGames;
@@ -7,6 +9,9 @@ class StatitisticsBlorb extends StatelessWidget {
   final num avgGoodAnswers;
   final num avgGameTime;
   final ThemeService themeService = ThemeService.instance;
+  final LanguageService ls = LanguageService.instance;
+
+  Map get profileText => TranslationService.instance.text["PROFILE"];
 
   StatitisticsBlorb({
     required this.nPlayedGames,
@@ -24,7 +29,7 @@ class StatitisticsBlorb extends StatelessWidget {
           Align(
           alignment: Alignment.centerLeft,
             child: Text(
-                "Statistiques",
+                profileText['STATISTICS'],
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -43,10 +48,10 @@ class StatitisticsBlorb extends StatelessWidget {
                   mainAxisExtent: 70.0, // Ensures consistent row height
                 ),
                 children: [
-                  StatRow("Parties Jouées:", nPlayedGames),
-                  StatRow("Parties Gagnées:", nWonGames),
-                  StatRow("Bonnes réponses par partie:", avgGoodAnswers),
-                  StatRow("Temps moyen par partie:", avgGameTime, " secondes"),
+                  StatRow(profileText['GAMES_PLAYED'], nPlayedGames),
+                  StatRow(profileText['GAMES_WON'], nWonGames),
+                  StatRow(profileText['AVG_CORRECT_ANSWERS'], avgGoodAnswers),
+                  StatRow(profileText['AVG_GAME_TIME'], avgGameTime, " "+ profileText['SECONDS']),
                 ],
             ),)
           ],
