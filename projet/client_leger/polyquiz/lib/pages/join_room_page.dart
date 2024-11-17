@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 import '../models/quiz.dart';
 import 'waiting_room_screen.dart';
@@ -28,6 +29,10 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   final UserService userService = UserService();
   late final GameListService gameListService;
   Map<String, String> quizNameMap = {};
+  Map get text => TranslationService.instance.text;
+  Map get waitPageText => text['PLAYER_WAITING_PAGE'];
+  Map get roomPromptText => waitPageText['ROOM_CODE_PROMPT'];
+  Map get roomErrorText => waitPageText['ROOM_CODE_PROMPT_ERRORS'];
 
   @override
   void initState() {
@@ -78,7 +83,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
     if (game.friendsOnly && !isHostFriend) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text("Cette partie est exclusive aux amis de l'hôte.")),
+            content: Text(roomErrorText['FRIENDS_ONLY'])),
       );
     } else {
       final isPrestigeValid = await _validatePrestige(game.prestige);
@@ -86,18 +91,18 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(
-                  "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
+                  roomErrorText['INSUFFICIENT_PRESTIGE'])),
         );
       } else {
         await roomValidationService.verifyUsername();
         if (!roomValidationService.isUsernameValid) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Vous avez été banni de cette partie.")),
+            SnackBar(content: Text(roomErrorText['BANNED_USER'])),
           );
         } else {
           if (roomValidationService.isLocked) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("La partie est actuellement verouillez.")),
+              SnackBar(content: Text(roomErrorText['ROOM_LOCKED'])),
             );
           }
           if (!roomValidationService.isLocked &&
@@ -176,7 +181,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
           _isJoining = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Room not found')),
+          SnackBar(content: Text(roomErrorText['GAME_NOT_FOUND'])),
         );
       }
     }
@@ -198,7 +203,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Join a Room'),
+        title: Text(TranslationService.instance.languageValue.value == Language.fr ? 'Joindre une salle' : "Join a room"),
         automaticallyImplyLeading: false,
       ),
       body: Column(
@@ -210,7 +215,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                 Navigator.pushReplacementNamed(context, '/roomList');
               },
               child: Text(
-                "Rejoindre Jeu Public",
+                waitPageText['JOIN_PUBLIC_GAME'],
                 style: TextStyle(
                   color: Color.fromRGBO(255, 255, 255, 1),
                   fontSize: 20,
@@ -229,13 +234,13 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                      "Veuillez saisir le code de 4 chiffre fourni par l'organisateur",
+                      roomPromptText['ENTER_CODE_MESSAGE'],
                       style: TextStyle(fontSize: 20)),
                   SizedBox(height: 16),
                   TextFormField(
                     controller: _roomIdController,
                     decoration: InputDecoration(
-                      labelText: 'Saisir le code',
+                      labelText: roomPromptText['ENTER_CODE_LABEL'],
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
@@ -253,7 +258,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                           children: [
                             TextButton(
                                 onPressed: _joinRoomField,
-                                child: Text('Valider',
+                                child: Text(roomPromptText['VALIDATE_BUTTON'],
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.normal,
