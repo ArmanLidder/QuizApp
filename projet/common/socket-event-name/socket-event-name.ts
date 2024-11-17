@@ -50,6 +50,8 @@ export namespace SocketEvent {
     export const GET_GAME_LIST = 'get_game_list';
     export const SAVE_FINAL_GAME_STATS = 'save_final_game_stats';
 
+    // ALL new feature socket Event
+
     export const GET_TEAMS = "get_teams";
     export const CREATE_TEAM = "create_team";
     export const JOIN_TEAM = "join_team";
@@ -78,6 +80,8 @@ export namespace SocketEvent {
     export const RECEIVE_PLAYER_QCM_CHOICES = "receive_player_qcm_choices";
 
     export const OBS_LEFT = "obs_left";
+    export const GET_OBS_COUNT = "get_obs_count";
+    export const UPDATE_OBS_COUNT = "update_obs_count";
 }
 
 
