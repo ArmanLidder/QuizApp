@@ -180,10 +180,13 @@ export class GameService {
     }
 
     private handleGetNextQuestion() {
-        if (this.socketService.isSocketAlive() && !this.observerMode) {
+        if (this.socketService.isSocketAlive()) {
             this.socketService.on(SocketEvent.GET_NEXT_QUESTION, (data: NextQuestionData) => {
-                this.qrlAnswer = "";
-                this.gameRealService.qrlAnswer = "";
+                if (!this.observerMode) {
+                    this.qrlAnswer = "";
+                    this.gameRealService.qrlAnswer = "";
+                }
+                if (this.observerMode) this.qrlAnswer = "Le joueur est inactif ...";
             });
         }
     }
