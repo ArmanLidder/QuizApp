@@ -325,6 +325,7 @@ export class HostInterfaceManagementService {
                 gameStats: this.stringifyStats(),
                 isPaused: this.isPaused,
                 isPanicMode: this.isPanicMode,
+                isValidated: this.gameService.gameRealService.validated
             }
             this.socketService.send(SocketEvent.SENDING_HOST_GAME_STATUS, gameStatus);
         });

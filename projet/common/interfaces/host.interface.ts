@@ -36,6 +36,7 @@ export interface HostCurrentGameInterface {
     gameStats: string;
     isPaused: boolean;
     isPanicMode: boolean;
+    isValidated: boolean;
 }
 
 

@@ -161,6 +161,7 @@ export class ObservationService {
     }
 
     private setUpGameState(data: HostCurrentGameInterface) {
+        this.gameService.gameRealService.validated = data.isValidated;
         this.gameService.gameRealService.timer = data.currentTime;
         this.hostInterfaceManagementService.timerText = data.timerText;
         this.hostInterfaceManagementService.isGameOver = data.isGameOver;
