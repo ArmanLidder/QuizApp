@@ -488,7 +488,8 @@
       "SCORES_TITLE": "Player scores:",
       "NAME": "Name",
       "SCORE": "Score",
-      "VALIDATE": "Validate"
+      "VALIDATE": "Validate",
+      "OBS_HOST_EVAL": "The host is currently evaluating..."
     },
     "HISTOGRAM": {
       "LEGEND_HEADER": "Histogram legend:",
@@ -525,10 +526,12 @@
     },
     "PLAYER_QRL_INTERFACE": {
       "CHARACTERS_REMAINING": "Characters remaining: ",
+      "CHARACTERS_REMAINING": "Characters remaining: ",
       "ZERO_POINTS": "You received no points for your answer: ",
       "HALF_POINTS": "You received half of the points for your answer: ",
       "FULL_POINTS": "Congratulations, you received all the points for your answer: ",
-      "AWAITING_EVALUATION": "The organizer is evaluating your answer"
+      "AWAITING_EVALUATION": "The organizer is evaluating your answer",
+      "OBS_PLAYER_RESPONSE": "Player answer:"
     },
     "PLAYER_QRE_INTERFACE": {
       "TOLERANCE": "Tolerance",
