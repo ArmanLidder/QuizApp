@@ -75,67 +75,103 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
         Provider.of<RoomValidationService>(context, listen: false);
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
-    if (game.friendsOnly && !isHostFriend) {
+    dynamic dataOfRoomValidation = await roomValidationService.sendRoomId();
+    if(!dataOfRoomValidation['isRoom']){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text("Cette partie est exclusive aux amis de l'hôte.")),
-      );
-    } else {
-      final isPrestigeValid = await _validatePrestige(game.prestige);
-      if (!isPrestigeValid) {
+          SnackBar(
+              content: Text('Le code ne correspond a aucune partie en cours. Veuillez réessayer')),
+        );
+      setState(() {
+          _isJoining = false;
+      });
+    }
+    else{
+      if(dataOfRoomValidation['isLocked']){
+        print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
+              content: Text('La partie est vérouillée. Veuillez réessayer.')),
         );
-      } else {
-        await roomValidationService.verifyUsername();
-        if (!roomValidationService.isUsernameValid) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Vous avez été banni de cette partie.")),
-          );
-        } else {
-          if (roomValidationService.isLocked) {
+        setState(() {
+          _isJoining = false;
+        });
+      }
+        else{
+          if (game.friendsOnly && !isHostFriend) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("La partie est actuellement verouillez.")),
+              SnackBar(
+                  content: Text("Cette partie est exclusive aux amis de l'hôte.")),
             );
-          }
-          if (!roomValidationService.isLocked &&
-              roomValidationService.isUsernameValid) {
-            try {
-              // Navigate to the WaitingRoomScreen
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WaitingRoomScreen(
-                    quiz: Quiz(
-                      id: roomValidationService
-                          .roomId!, // Pass the room ID to the waiting room.
-                      title: 'Nothing', // Provide a sample title.
-                      description: 'Nothing', // Provide a sample description.
-                      duration: 0, // Provide a sample duration.
-                      questions: [], // Provide an empty list of questions.
-                    ),
-                    username: this
-                        .userData!
-                        .uid, // Pass the username to the waiting room.
-                    isHost: false, // This user is not the host.
-                    isFromActiveList: true,
-                  ),
-                ),
+            setState(() {
+              _isJoining = false;
+            });
+          } else {
+            final isPrestigeValid = await _validatePrestige(game.prestige);
+            if (!isPrestigeValid) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(
+                        "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
               );
-            } catch (e) {
               setState(() {
                 _isJoining = false;
               });
+            } else {
+              await roomValidationService.verifyUsername();
+              if (!roomValidationService.isUsernameValid) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Vous avez été banni de cette partie.")),
+                );
+                setState(() {
+                  _isJoining = false;
+                });
+              } else {
+                if (roomValidationService.isLocked) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("La partie est actuellement verouillez.")),
+                  );
+                  setState(() {
+                    _isJoining = false;
+                  });
+                }
+                if (!roomValidationService.isLocked &&
+                    roomValidationService.isUsernameValid) {
+                  try {
+                    // Navigate to the WaitingRoomScreen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WaitingRoomScreen(
+                          quiz: Quiz(
+                            id: roomValidationService
+                                .roomId!, // Pass the room ID to the waiting room.
+                            title: 'Nothing', // Provide a sample title.
+                            description: 'Nothing', // Provide a sample description.
+                            duration: 0, // Provide a sample duration.
+                            questions: [], // Provide an empty list of questions.
+                          ),
+                          username: this
+                              .userData!
+                              .uid, // Pass the username to the waiting room.
+                          isHost: false, // This user is not the host.
+                          isFromActiveList: true,
+                        ),
+                      ),
+                    );
+                  } catch (e) {
+                    setState(() {
+                      _isJoining = false;
+                    });
 
-              // Display an error message if joining fails.
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to join room: $e')),
-              );
+                    // Display an error message if joining fails.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to join room: $e')),
+                    );
+                  }
+                }
+              }
             }
           }
-        }
       }
     }
   }
@@ -176,7 +212,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
           _isJoining = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Room not found')),
+          SnackBar(content: Text('Le code ne correspond a aucune partie en cours. Veuillez réessayer')),
         );
       }
     }

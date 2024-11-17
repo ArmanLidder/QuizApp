@@ -112,54 +112,78 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         Provider.of<SnackbarService>(context, listen: false);
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
-    if (game.friendsOnly && !isHostFriend) {
+    dynamic dataOfRoomValidation = await roomValidationService.sendRoomId();
+    if(!dataOfRoomValidation['isRoom']){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text("Cette partie est exclusive aux amis de l'hôte.")),
-      );
-    } else {
-      final isPrestigeValid = await _validatePrestige(game.prestige);
-      if (!isPrestigeValid) {
+          SnackBar(
+              content: Text('Le code ne correspond a aucune partie en cours. Veuillez réessayer')),
+        );
+      setState(() {
+          _isJoining = false;
+      });
+    }
+    else{
+      if(dataOfRoomValidation['isLocked']){
+        print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
+              content: Text('La partie est vérouillée. Veuillez réessayer.')),
+        );
+        setState(() {
+          _isJoining = false;
+        });
+      }
+        else{
+      if (game.friendsOnly && !isHostFriend) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Cette partie est exclusive aux amis de l'hôte.")),
         );
       } else {
-        await roomValidationService.verifyUsername();
-        if (!roomValidationService.isUsernameValid) {
+        final isPrestigeValid = await _validatePrestige(game.prestige);
+        if (!isPrestigeValid) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Vous avez été banni de cette partie.")),
+            SnackBar(
+                content: Text(
+                    "Vous n'avez pas le prestige minimum pour rejoindre cette partie.")),
           );
         } else {
-          if (roomValidationService.isLocked) {
+          await roomValidationService.verifyUsername();
+          if (!roomValidationService.isUsernameValid) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("La partie est actuellement verouillez.")),
+              SnackBar(content: Text("Vous avez été banni de cette partie.")),
             );
-          }
-          if (!roomValidationService.isLocked &&
-              roomValidationService.isUsernameValid) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WaitingRoomScreen(
-                  quiz: Quiz(
-                    id: roomValidationService
-                        .roomId!, // Pass the room ID to the waiting room.
-                    title: 'Nothing', // Provide a sample title.
-                    description: 'Nothing', // Provide a sample description.
-                    duration: 0, // Provide a sample duration.
-                    questions: [], // Provide an empty list of questions.
+          } else {
+            if (roomValidationService.isLocked) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("La partie est actuellement verouillez.")),
+              );
+            }
+            if (!roomValidationService.isLocked &&
+                roomValidationService.isUsernameValid) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WaitingRoomScreen(
+                    quiz: Quiz(
+                      id: roomValidationService
+                          .roomId!, // Pass the room ID to the waiting room.
+                      title: 'Nothing', // Provide a sample title.
+                      description: 'Nothing', // Provide a sample description.
+                      duration: 0, // Provide a sample duration.
+                      questions: [], // Provide an empty list of questions.
+                    ),
+                    username: roomValidationService
+                        .userData!.uid, // Pass the username to the waiting room.
+                    isHost: false, // This user is not the host.
+                    isFromActiveList: true,
                   ),
-                  username: roomValidationService
-                      .userData!.uid, // Pass the username to the waiting room.
-                  isHost: false, // This user is not the host.
-                  isFromActiveList: true,
                 ),
-              ),
-            );
+              );
+            }
           }
         }
+      }
       }
     }
   }
