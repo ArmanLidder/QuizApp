@@ -82,6 +82,7 @@ import { ShoppingPageComponent } from './pages/shopping-page/shopping-page.compo
 import {TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {LOCATION_INITIALIZED} from "@angular/common";
+import { SettingsDialogComponent } from './components/settings-dialog/settings-dialog.component';
 
 export const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
     new TranslateHttpLoader(http, "assets/i18n/", ".json");
@@ -162,6 +163,7 @@ export function appInitializerFactory(translate: TranslateService, injector: Inj
         UniqueQuizNameDialogComponent,
         ProfileViewerComponent,
         ShoppingPageComponent,
+        SettingsDialogComponent,
     ],
     imports: [
         AppMaterialModule,

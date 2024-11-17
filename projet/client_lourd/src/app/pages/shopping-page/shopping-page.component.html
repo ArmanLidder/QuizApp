@@ -5,26 +5,63 @@
         {{ 'SHOPPING.CURRENCY' | translate }} : {{ (userCurrency$ | async) || 0 }} {{ 'SHOPPING.COST_SUFFIX' | translate }}
     </div>
 
-    <!-- Section des Thèmes -->
     <h2 class="text-xl font-semibold mb-4">{{ 'SHOPPING.THEMES' | translate }}</h2>
-    <div *ngIf="themeItems$ | async as themeItems" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <ng-container *ngIf="themeItems.length; else noThemesMessage">
-            <div *ngFor="let item of themeItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
-                <h3 class="text-lg font-medium">{{ item.name }}</h3>
-                <button
-                        [ngClass]="{
+    <div *ngIf="themeItems$ | async as themeItems; else noThemesMessage" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <ng-container *ngIf="themeItems.length">
+            <!-- Regular Themes -->
+            <ng-container *ngFor="let item of themeItems">
+                <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+                    <h3 class="text-lg font-medium">{{ item.name }}</h3>
+                    <button
+                            [ngClass]="{
                         'bg-gray-400 cursor-not-allowed': item.isOwned,
-                        'bg-red-500 text-white cursor-not-allowed': !item.isOwned && ((userCurrency$ | async) || 0) < item.cost,
-                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && ((userCurrency$ | async) || 0) >= item.cost
+                        'bg-red-500 text-white cursor-not-allowed': !item.isOwned && !hasEnoughCurrency(item),
+                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && hasEnoughCurrency(item)
                     }"
-                        class="mt-4 px-4 py-2 rounded-full"
-                        [disabled]="item.isOwned || ((userCurrency$ | async) || 0) < item.cost"
-                        (click)="buyItem(item.id)">
-                    <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
-                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) < item.cost">{{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})</ng-container>
-                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) >= item.cost">{{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})</ng-container>
-                </button>
-            </div>
+                            class="mt-4 px-4 py-2 rounded-full"
+                            [disabled]="item.isOwned || !hasEnoughCurrency(item)"
+                            (click)="buyItem(item.id)">
+                        <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
+                        <ng-container *ngIf="!item.isOwned && !hasEnoughCurrency(item)">
+                            {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})
+                        </ng-container>
+                        <ng-container *ngIf="!item.isOwned && hasEnoughCurrency(item)">
+                            {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})
+                        </ng-container>
+                    </button>
+                </div>
+            </ng-container>
+
+            <!-- Reward Themes -->
+            <ng-container *ngIf="rewardThemeItems$ | async as rewardThemeItems">
+                <ng-container *ngFor="let item of rewardThemeItems">
+                    <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+                        <h3 class="text-lg font-medium">{{ item.name }}</h3>
+                        <h2 class="text-sm text-gray-500">Niveau minimum: {{ item.minLevel || 0 }}</h2>
+                        <h2 class="text-sm text-gray-500">Prestige minimum: {{ getPrestigeLabel(item.minPrestige || 0) }}</h2>
+                        <button
+                                [ngClass]="{
+                            'bg-gray-400 cursor-not-allowed': item.isOwned || !meetsRequirements(item),
+                            'bg-red-500 text-white cursor-not-allowed': !item.isOwned && meetsRequirements(item) && !hasEnoughCurrency(item),
+                            'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && canBuyRewardItem(item)
+                        }"
+                                class="mt-4 px-4 py-2 rounded-full"
+                                [disabled]="item.isOwned || !meetsRequirements(item) || !hasEnoughCurrency(item)"
+                                (click)="buyItem(item.id)">
+                            <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
+                            <ng-container *ngIf="!item.isOwned && !meetsRequirements(item)">
+                                Requirements not met
+                            </ng-container>
+                            <ng-container *ngIf="!item.isOwned && meetsRequirements(item) && !hasEnoughCurrency(item)">
+                                {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})
+                            </ng-container>
+                            <ng-container *ngIf="!item.isOwned && canBuyRewardItem(item)">
+                                {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})
+                            </ng-container>
+                        </button>
+                    </div>
+                </ng-container>
+            </ng-container>
         </ng-container>
     </div>
     <ng-template #noThemesMessage>
@@ -32,29 +69,68 @@
     </ng-template>
 
     <!-- Section des Images -->
+    <!-- Section des Images et Images de Récompense -->
     <h2 class="text-xl font-semibold mt-8 mb-4">{{ 'SHOPPING.IMAGES' | translate }}</h2>
-    <div *ngIf="imageItems$ | async as imageItems" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <ng-container *ngIf="imageItems.length; else noImagesMessage">
-            <div *ngFor="let item of imageItems" class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+    <div
+            *ngIf="(imageItems$ | async) as imageItems; else noImagesMessage"
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <ng-container *ngFor="let item of imageItems">
+            <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
                 <img [src]="item.source" alt="{{ item.name }}" class="w-20 h-20 rounded-full mb-4 object-cover" />
                 <h3 class="text-lg font-medium">{{ item.name }}</h3>
                 <button
                         [ngClass]="{
-                        'bg-gray-400 cursor-not-allowed': item.isOwned,
-                        'bg-red-500 text-white cursor-not-allowed': !item.isOwned && ((userCurrency$ | async) || 0) < item.cost,
-                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && ((userCurrency$ | async) || 0) >= item.cost
-                    }"
+          'bg-gray-400 cursor-not-allowed': item.isOwned,
+          'bg-red-500 text-white cursor-not-allowed': !item.isOwned && ((userCurrency$ | async) || 0) < item.cost,
+          'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && ((userCurrency$ | async) || 0) >= item.cost
+        }"
                         class="mt-4 px-4 py-2 rounded-full"
                         [disabled]="item.isOwned || ((userCurrency$ | async) || 0) < item.cost"
                         (click)="buyItem(item.id)">
                     <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
-                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) < item.cost">{{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})</ng-container>
-                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) >= item.cost">{{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})</ng-container>
+                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) < item.cost">
+                        {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})
+                    </ng-container>
+                    <ng-container *ngIf="!item.isOwned && ((userCurrency$ | async) || 0) >= item.cost">
+                        {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})
+                    </ng-container>
                 </button>
             </div>
+        </ng-container>
+        <ng-container *ngIf="(rewardImageItems$ | async) as rewardImageItems">
+            <ng-container *ngFor="let item of rewardImageItems">
+                <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
+                    <img [src]="item.source" alt="{{ item.name }}" class="w-20 h-20 rounded-full mb-4 object-cover" />
+                    <h3 class="text-lg font-medium">{{ item.name }}</h3>
+                    <h2 class="text-sm text-gray-500">Niveau minimum: {{ item.minLevel || 0 }}</h2>
+                    <h2 class="text-sm text-gray-500">Prestige minimum: {{ getPrestigeLabel(item.minPrestige || 0) }}</h2>
+                    <button
+                            [ngClass]="{
+                    'bg-gray-400 cursor-not-allowed': item.isOwned || !meetsRequirements(item),
+                    'bg-red-500 text-white cursor-not-allowed': !item.isOwned && meetsRequirements(item) && !hasEnoughCurrency(item),
+                    'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && canBuyRewardItem(item)
+                }"
+                            class="mt-4 px-4 py-2 rounded-full"
+                            [disabled]="item.isOwned || !meetsRequirements(item) || !hasEnoughCurrency(item)"
+                            (click)="buyItem(item.id)">
+                        <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
+                        <ng-container *ngIf="!item.isOwned && !meetsRequirements(item)">
+                            Requirements not met
+                        </ng-container>
+                        <ng-container *ngIf="!item.isOwned && meetsRequirements(item) && !hasEnoughCurrency(item)">
+                            {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})
+                        </ng-container>
+                        <ng-container *ngIf="!item.isOwned && canBuyRewardItem(item)">
+                            {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} {{ 'SHOPPING.COST_SUFFIX' | translate }})
+                        </ng-container>
+                    </button>
+                </div>
+            </ng-container>
         </ng-container>
     </div>
     <ng-template #noImagesMessage>
         <p class="text-center text-gray-500">{{ 'SHOPPING.NO_IMAGES' | translate }}</p>
     </ng-template>
+
+
 </div>

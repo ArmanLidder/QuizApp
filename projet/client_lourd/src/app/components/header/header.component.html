@@ -31,7 +31,12 @@
             <option value="fr">Français</option>
             <option value="en">English</option>
         </select>
-
+        <button
+                mat-icon-button
+                class="icon-button-large"
+                (click)="openSettingsDialog()">
+            <mat-icon>settings</mat-icon>
+        </button>
         <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="showMenu"></app-avatar>
     </div>
 </header>

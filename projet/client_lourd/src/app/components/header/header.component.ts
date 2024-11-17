@@ -6,6 +6,7 @@ import {FriendService} from "@app/services/friend.service/friend.service";
 import {Observable} from "rxjs";
 import {User} from "@common/interfaces/user-data.interface";
 import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
+import {SettingsDialogComponent} from "@app/components/settings-dialog/settings-dialog.component";
 
 
 @Component({
@@ -45,5 +46,11 @@ export class HeaderComponent implements OnInit{
   async switchLanguage(event: Event) {
     const language = (event.target as HTMLSelectElement).value;
     await this.settings.switchLanguage(language as 'en'|'fr');
+  }
+
+  openSettingsDialog() {
+    this.dialog.open(SettingsDialogComponent, {
+      width: '300px', height: '250px',
+    });
   }
 }

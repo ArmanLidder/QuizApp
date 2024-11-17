@@ -8,7 +8,7 @@ import {
     query,
     collection,
     getDocs,
-    where, collectionData,
+    where, collectionData, getDoc,
 } from '@angular/fire/firestore';
 import {catchError, firstValueFrom, Observable, of, shareReplay, map, BehaviorSubject, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
@@ -16,6 +16,7 @@ import {Auth, authState} from "@angular/fire/auth";
 import {LoginHistory} from "@common/interfaces/user-data.interface";
 import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
 import {TranslateService} from "@ngx-translate/core";
+import {StoreItem} from "@common/interfaces/store.interface";
 
 
 const defaultUser: User = {
@@ -150,4 +151,33 @@ export class UsersService {
         } else return undefined;
     }
 
+    async getAvailableThemes(): Promise<string[]> {
+        const defaultThemes = ['light', 'dark'];
+        const currentUser = await firstValueFrom(this.currentUserProfile$);
+        if (!currentUser) return defaultThemes;
+
+        const storeProfileRef = doc(this.firestore, 'storeProfiles', currentUser.uid);
+        const storeProfileSnapshot = await getDoc(storeProfileRef);
+
+        if (!storeProfileSnapshot.exists()) return defaultThemes;
+
+        const storeProfileData = storeProfileSnapshot.data() as { ownedItems: string[] };
+        const ownedItemIds = storeProfileData.ownedItems || [];
+        if (ownedItemIds.length === 0) return defaultThemes;
+
+        const storeItemsRef = collection(this.firestore, 'storeItems');
+        const querySnapshot = await getDocs(storeItemsRef);
+
+        const ownedThemes = querySnapshot.docs
+            .filter(doc => ownedItemIds.includes(doc.id))
+            .map(doc => {
+                const data = doc.data() as StoreItem;
+                console.log('Matched Item:', { _id: doc.id, ...data });
+                return data;
+            })
+            .filter(item => item.itemType === 'theme' || item.itemType === 'rewardTheme')
+            .map(item => item.name);
+
+        return Array.from(new Set([...defaultThemes, ...ownedThemes]));
+    }
 }
