@@ -33,7 +33,6 @@ class WaitingRoomScreen extends StatefulWidget {
 class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   String roomId = "nothing";
   String username = "nothing";
-  bool isRoomLocked = false;
   bool isGameStarting = false;
   String? newPlayerName;
   bool showPopup = false;
@@ -44,7 +43,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   String get roomState => waitRoomText['ROOM_STATUS'] + " " + roomStateSuffix;
   String get roomStateSuffix =>
-      waitRoomText[isRoomLocked ? 'STATUS_LOCKED' : 'STATUS_UNLOCKED'];
+      waitRoomText[this.waitingRoomService.isRoomLocked
+          ? 'STATUS_LOCKED'
+          : 'STATUS_UNLOCKED'];
 
   @override
   void initState() {
@@ -71,6 +72,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             widget.quiz.id, widget.gameConfigService!.getGameConfig());
         realGameService.username = 'host';
         realGameService.roomId = waitingRoomService.roomId;
+        waitingRoomService.getGameType();
       } else {
         roomId = widget.quiz.id;
         username = widget.username ?? 'nothing';
@@ -98,7 +100,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   void _toggleRoomLock() {
     setState(() {
-      isRoomLocked = !isRoomLocked;
+      this.waitingRoomService.isRoomLocked =
+          !this.waitingRoomService.isRoomLocked;
       print(roomState);
     });
     waitingRoomService.toggleRoomLock();
@@ -121,7 +124,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         result = true;
       }
     });
-    print('RESULT IN ONLY ONE MEMBER: ${result}');
     return result;
   }
 
@@ -176,7 +178,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
               if (widget.isHost)
                 SwitchListTile(
                   title: Text(roomState, style: TextStyle(fontSize: 18)),
-                  value: isRoomLocked,
+                  value: this.waitingRoomService.isRoomLocked,
                   contentPadding: EdgeInsets.symmetric(horizontal: 220),
                   activeColor: Color.fromRGBO(255, 255, 255, 1),
                   inactiveThumbColor: Color.fromRGBO(255, 255, 255, 1),
@@ -188,10 +190,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                 ),
               SizedBox(height: 20.0),
               Text(
-                  waitingRoomService.gameType =
-                      waitingRoomService.gameType == 'classic'
-                          ? waitRoomText['PLAYERS_TITLE']
-                          : waitRoomText['TEAMS_TITLE'],
+                  waitingRoomService.gameType == 'classic'
+                      ? waitRoomText['PLAYERS_TITLE']
+                      : waitRoomText['TEAMS_TITLE'],
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               SizedBox(height: 20),
               Expanded(
@@ -345,27 +346,29 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   if (widget.isHost && !waitingRoomService.isTransition)
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            (waitingRoomService.players.length >= 1 &&
-                                    isRoomLocked)
-                                ? Color.fromRGBO(53, 121, 246, 1)
-                                : Color.fromRGBO(200, 200, 200, 1),
-                      ),
-                      onPressed:
-                          waitingRoomService.players.length >= 1 && isRoomLocked
-                              ? () => setState(() {
-                                    this.waitingRoomService.isTransition = true;
-                                    waitingRoomService.sendStartSignals();
-                                  })
-                              : null,
-                      child: Text(waitRoomText['START_BUTTON'],
-                          style: TextStyle(
-                              color: Color.fromRGBO(255, 255, 255, 1),
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal)),
-                    ),
+                    AnimatedBuilder(
+                        animation: waitingRoomService,
+                        builder: (BuildContext context, Widget? snapshot) {
+                          return TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: (!this.validationBeforeEntry())
+                                  ? Color.fromRGBO(53, 121, 246, 1)
+                                  : Color.fromRGBO(200, 200, 200, 1),
+                            ),
+                            onPressed: !this.validationBeforeEntry()
+                                ? () => setState(() {
+                                      this.waitingRoomService.isTransition =
+                                          true;
+                                      waitingRoomService.sendStartSignals();
+                                    })
+                                : null,
+                            child: Text(waitRoomText['START_BUTTON'],
+                                style: TextStyle(
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal)),
+                          );
+                        }),
                   if (!widget.isHost &&
                       waitingRoomService.gameType != 'classic')
                     AnimatedBuilder(

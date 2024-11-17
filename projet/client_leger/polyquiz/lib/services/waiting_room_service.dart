@@ -42,6 +42,7 @@ class WaitingRoomService extends ChangeNotifier {
     this.time = 0;
     this.teams = {};
     this.teamsForInterface = [];
+    this.gameType = 'classic';
   }
 
   bool isSocketAlive() {
@@ -194,6 +195,11 @@ class WaitingRoomService extends ChangeNotifier {
   void removePlayer(String username) {
     players.remove(username);
     notifyListeners();
+  }
+
+  void getGameType() {
+    _socketService.sendMessageWithAck(SocketEvent.GET_GAME_TYPE, this.roomId,
+        (gameType) => {this.gameType = gameType});
   }
 
   void gatherPlayers() {
