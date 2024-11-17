@@ -76,6 +76,8 @@ export namespace SocketEvent {
 
     export const REQUEST_PAYER_QCM_CHOICES = "request_player_qcm_choices";
     export const RECEIVE_PLAYER_QCM_CHOICES = "receive_player_qcm_choices";
+
+    export const OBS_LEFT = "obs_left";
 }
 
 

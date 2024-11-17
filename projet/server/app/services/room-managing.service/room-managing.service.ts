@@ -66,6 +66,7 @@ export class RoomManagingService {
             teams: new Map<TeamId, Team>(),
             prestige: config.prestige,
             total_price: 0,
+            observersCounter: new Map<string, number>([[HOST_USERNAME, 0]]),
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -81,6 +82,16 @@ export class RoomManagingService {
         const game_price = this.getRoomById(roomId).price
         if (this.getRoomById(roomId).gameType !== 'classic' && HOST_USERNAME !== username) this.addNewUserInTeam(roomId, username)
         if (HOST_USERNAME !== username && game_price > 0) this.getRoomById(roomId).total_price += game_price
+        if (HOST_USERNAME !== username) this.getRoomById(roomId).observersCounter.set(username, 0);
+        console.log(this.getRoomById(roomId).observersCounter);
+    }
+
+    updateObserverCounter(roomId: number, userId: string, decrement: boolean) {
+        const roomObserverCounter = this.getRoomById(roomId).observersCounter
+        const currentObserverValue = roomObserverCounter.get(userId);
+        if (decrement) roomObserverCounter.set(userId, currentObserverValue - 1);
+        else roomObserverCounter.set(userId, currentObserverValue + 1);
+        console.log(decrement, roomObserverCounter)
     }
 
     getSocketIdByUsername(roomId: number, username: string): string {
@@ -141,6 +152,8 @@ export class RoomManagingService {
     removeUserFromRoom(roomId: number, name: string): void {
         const playerMap = this.getRoomById(roomId).players;
         playerMap.delete(name);
+        this.getRoomById(roomId).observersCounter.delete(name);
+        console.log(name, this.getRoomById(roomId).observersCounter)
         // new code
         if (this.getRoomById(roomId).gameType !== 'classic') this.removeUserInTeam(roomId, name);
     }

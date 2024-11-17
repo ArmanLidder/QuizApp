@@ -55,6 +55,7 @@ export class GameCreationService {
         this.handleGameStatusForObsReception(roomManager, socket, sio);
         this.handleQCMAnswerReception(socket, sio);
         this.handleObsLastQRLAnswer(socket, sio);
+        this.handleObsLeft(roomManager, socket, sio);
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
@@ -88,11 +89,14 @@ export class GameCreationService {
     }
 
     private handleNewObserver(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.NEW_OBSERVER_GAME, async (roomId: number) => {
-            const hostId = roomManager.getSocketIdByUsername(roomId, HOST_USERNAME);
+        socket.on(SocketEvent.NEW_OBSERVER_GAME, async (data: {roomId:number; isFirst: boolean}) => {
+            const hostId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
             const observerId = socket.handshake.auth.userId;
-            await this.addUserToRoomCanal(roomId, observerId);
-            socket.join(String(roomId));
+            await this.addUserToRoomCanal(data.roomId, observerId);
+            if (data.isFirst) {
+                roomManager.updateObserverCounter(data.roomId, HOST_USERNAME, false);
+                socket.join(String(data.roomId));
+            }
             socket.join(String(hostId));
             sio.to(String(hostId)).emit(SocketEvent.REQUEST_HOST_GAME_STATUS);
         });
@@ -110,48 +114,67 @@ export class GameCreationService {
 
     private handleChangeObservedPLayer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.CHANGE_OBSERVED_PLAYER, (data: NewObservedPlayer) => {
-           const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
-           const newObservedPlayerId = data.newUserId === roomManager.getRoomById(data.roomId).hostUserId ? HOST_USERNAME : data.newUserId;
-           const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
-           const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, newObservedPlayerId);
-           socket.leave(String(observedPlayerSocketId));
-           socket.join(String(newObservedPlayerSocketId));
-           const roomId = data.roomId;
-           if (newObservedPlayerId !== HOST_USERNAME) {
-               const room = roomManager.getRoomById(roomId);
-               const game = room.game;
-               const playerScore = game.players.get(newObservedPlayerId);
-               // If QRE we check if QRE Answer has been registered => true = sending qre answer else sending 0. If not qre send 0;
-               const playerQREAnswer =  game.currentQuizQuestion.type === QuestionType.QRE ? game.playerQREAnswer.get(newObservedPlayerId) ? game.playerQREAnswer.get(newObservedPlayerId)[1] : 0 : 0;
-               const answers = game.playersAnswers.get(newObservedPlayerId)?.answers ?? "";
-               const qrlAnswer = answers && game.currentQuizQuestion.type === QuestionType.QRL ? answers : "";
-               let players: [string, number][] = [];
-               game.players.forEach((score, username) => {
-                   players.push([username, score.points]);
-               })
-               const choicesStatsValues = Array.from(game.choicesStats.values());
-               const player_data : PlayerCurrentGameInterface = {
-                   roomId: roomId,
-                   isBonus: playerScore.isBonus,
-                   playerScore: playerScore.points,
-                   players: players,
-                   qreAnswer: playerQREAnswer,
-                   qrlAnswer: String(qrlAnswer),
-                   choicesStatsValues: choicesStatsValues,
-               }
-               sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
-               if (game.currentQuizQuestion.type === QuestionType.QCM) {
-                   sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
-               }
-               if (game.currentQuizQuestion.type === QuestionType.QRL) {
-                   sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
-               }
-           }
+            const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
+            const newObservedPlayerId = data.newUserId === roomManager.getRoomById(data.roomId).hostUserId ? HOST_USERNAME : data.newUserId;
+            const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
+            const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, newObservedPlayerId);
+            roomManager.updateObserverCounter(data.roomId, observedPlayerId, true);
+            roomManager.updateObserverCounter(data.roomId, newObservedPlayerId, false);
+            socket.leave(String(observedPlayerSocketId));
+            socket.join(String(newObservedPlayerSocketId));
+            const roomId = data.roomId;
+            if (newObservedPlayerId !== HOST_USERNAME) {
+                const room = roomManager.getRoomById(roomId);
+                const game = room.game;
+                const playerScore = game.players.get(newObservedPlayerId);
+                // If QRE we check if QRE Answer has been registered => true = sending qre answer else sending 0. If not qre send 0;
+                const playerQREAnswer = game.currentQuizQuestion.type === QuestionType.QRE ? game.playerQREAnswer.get(newObservedPlayerId) ? game.playerQREAnswer.get(newObservedPlayerId)[1] : 0 : 0;
+                const answers = game.playersAnswers.get(newObservedPlayerId)?.answers ?? "";
+                const qrlAnswer = answers && game.currentQuizQuestion.type === QuestionType.QRL ? answers : "";
+                let players: [string, number][] = [];
+                game.players.forEach((score, username) => {
+                    players.push([username, score.points]);
+                })
+                const choicesStatsValues = Array.from(game.choicesStats.values());
+                const player_data: PlayerCurrentGameInterface = {
+                    roomId: roomId,
+                    isBonus: playerScore.isBonus,
+                    playerScore: playerScore.points,
+                    players: players,
+                    qreAnswer: playerQREAnswer,
+                    qrlAnswer: String(qrlAnswer),
+                    choicesStatsValues: choicesStatsValues,
+                }
+                sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
+                if (game.currentQuizQuestion.type === QuestionType.QCM) {
+                    sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
+                }
+                if (game.currentQuizQuestion.type === QuestionType.QRL) {
+                    sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
+                }
+            }
+        });
+    }
+
+    private handleObsLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.OBS_LEFT, (data: {roomId: number; observedId: string}) => {
+            const userId = socket.handshake.auth.userId;
+            if (roomManager.getRoomById(data.roomId)) {
+                const ObservedUserId = data.observedId === roomManager.getRoomById(data.roomId).hostUserId ? HOST_USERNAME : data.observedId;
+                if (roomManager.getRoomById(data.roomId).observersCounter.get(ObservedUserId)) roomManager.updateObserverCounter(data.roomId, ObservedUserId, true);
+                this.removeUserFromRoomCanal(data.roomId, userId, roomManager);
+                console.log(data, userId);
+            }
         });
     }
 
     private handleObsLastQRLAnswer(socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.GET_LAST_QRL_STATUS, (data: { roomId: number; lastQRLScore: number | undefined, qrlAnswer: string | undefined, userId: string}) => {
+        socket.on(SocketEvent.GET_LAST_QRL_STATUS, (data: {
+            roomId: number;
+            lastQRLScore: number | undefined,
+            qrlAnswer: string | undefined,
+            userId: string
+        }) => {
             sio.to(String(data.roomId)).emit(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, data);
         });
     }
@@ -172,7 +195,7 @@ export class GameCreationService {
             sio.to(bannedID).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(data.roomId)).emit(SocketEvent.REMOVED_PLAYER, data.username);
             this.sendUpdateGameList(roomManager, sio)
-            this.sendTeams(data.roomId,roomManager, sio);
+            this.sendTeams(data.roomId, roomManager, sio);
         });
     }
 
@@ -219,6 +242,7 @@ export class GameCreationService {
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             this.debug_teams("PLayer Left", roomId, roomManager);
             this.sendUpdateGameList(roomManager, sio);
+            roomManager.getRoomById(roomId).observersCounter.delete(socket.handshake.auth.userId);
             sio.to(String(socket.id)).emit(SocketEvent.REMOVED_FROM_GAME);
             this.sendPlayerListToObserver(roomId, roomManager, sio);
             this.sendTeams(roomId, roomManager, sio);
@@ -271,8 +295,12 @@ export class GameCreationService {
             const gameType = roomManager.getRoomById(roomId).gameType;
             const roomData = roomManager.getRoomById(roomId);
             const onlyOnePlayer = roomData.players.size === 2; // including host
-            const { highestScorers,nonExtremes, lowestScorers} = gameType === 'classic' ? this.getExtremeScoresClassicGame(game.players): this.getExtremeScoresTeamGame(this.calculateTeamsFinalScore(roomId, roomManager, game.players))
-            const winnerMoney = this.calculateMoney(highestScorers, roomData.players.size - 1 , roomData.total_price, onlyOnePlayer, "winner", gameType, roomId, roomManager);
+            const {
+                highestScorers,
+                nonExtremes,
+                lowestScorers
+            } = gameType === 'classic' ? this.getExtremeScoresClassicGame(game.players) : this.getExtremeScoresTeamGame(this.calculateTeamsFinalScore(roomId, roomManager, game.players))
+            const winnerMoney = this.calculateMoney(highestScorers, roomData.players.size - 1, roomData.total_price, onlyOnePlayer, "winner", gameType, roomId, roomManager);
             const loserMoney = this.calculateMoney(highestScorers, roomData.players.size - 1, roomData.total_price, onlyOnePlayer, "loser", gameType, roomId, roomManager);
             for (let winner of highestScorers) await this.dispatchUpdateStats(winner, game, gameType, 'winner', roomId, roomManager, winnerMoney);
             for (let loser of lowestScorers) await this.dispatchUpdateStats(loser, game, gameType, 'loser', roomId, roomManager, loserMoney);
@@ -282,14 +310,14 @@ export class GameCreationService {
 
     // Money is first divided in two lot if more than 1 player: winner 2/3 of lot and loser 1/3 of lot
     // Than winner lot is divided amongst number of active winner the same applies for losers
-    private calculateMoney(winners: string[] | number[], players_qty: number, amount: number, isOnlyOnePlayer: boolean, type: string, gameType: string, roomId: number, roomManager: RoomManagingService ) {
+    private calculateMoney(winners: string[] | number[], players_qty: number, amount: number, isOnlyOnePlayer: boolean, type: string, gameType: string, roomId: number, roomManager: RoomManagingService) {
         let teamSize = 0;
         if (isOnlyOnePlayer || amount === 0) return amount;
         if (gameType !== "classic") for (let team of winners) teamSize += roomManager.getRoomById(roomId).teams.get(Number(team)).members.length
-        const length = teamSize !== 0 ? teamSize: winners.length
+        const length = teamSize !== 0 ? teamSize : winners.length
         const player_qty = type === "winner" ? length : (players_qty - length)
         const fraction = player_qty > 0 ? player_qty : 1;
-        const multiplier = type === "winner" ? (2/3) : (1/3);
+        const multiplier = type === "winner" ? (2 / 3) : (1 / 3);
         return Math.floor(((amount * multiplier) / fraction));
     }
 
@@ -304,7 +332,7 @@ export class GameCreationService {
         socket.on(SocketEvent.CREATE_TEAM, (roomId: number) => {
             const userId = socket.handshake.auth.userId;
             roomManager.createNewTeam(roomId, userId);
-            this.debug_teams('Team Creation',roomId, roomManager)
+            this.debug_teams('Team Creation', roomId, roomManager)
             this.sendTeams(roomId, roomManager, sio);
         });
     }
@@ -313,14 +341,14 @@ export class GameCreationService {
         socket.on(SocketEvent.JOIN_TEAM, ({roomId, newTeamId}: JoinTeamData) => {
             const userId = socket.handshake.auth.userId;
             roomManager.joinTeam(roomId, userId, newTeamId);
-            this.debug_teams('Team JOIN',roomId, roomManager)
+            this.debug_teams('Team JOIN', roomId, roomManager)
             this.sendTeams(roomId, roomManager, sio);
         });
     }
 
     private handleObserverGetPlayerList(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.GET_OBSERVER_PLAYER_LIST, (roomId: number) => {
-           this.sendPlayerListToObserver(roomId, roomManager, sio);
+            this.sendPlayerListToObserver(roomId, roomManager, sio);
         });
     }
 
@@ -338,21 +366,21 @@ export class GameCreationService {
     private sendPlayerListToObserver(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
         try {
             sio.emit(SocketEvent.SENDING_OBSERVER_PLAYER_LIST, roomManager.getUsernamesArray(roomId))
-        } catch(e) {
+        } catch (e) {
             console.log(roomId)
         }
     }
 
     private generateRoomCanal(roomId: number, userId: string, teamId?: number): Canal {
         return {
-            name: teamId ? `${roomId} #${teamId}`:`room ${roomId}`,
+            name: teamId ? `${roomId} #${teamId}` : `room ${roomId}`,
             isPrivate: false,
             permittedUsers: [userId],
             messages: []
         } as Canal;
     }
 
-    public async handleUserDisconnection(roomManager: RoomManagingService, socketId:string,socket: io.Socket, sio: io.Server){
+    public async handleUserDisconnection(roomManager: RoomManagingService, socketId: string, socket: io.Socket, sio: io.Server) {
         let res = roomManager.getUsernameAndRoomBySocketId(socketId);
         if (!res) return;
         const username = res[0];
@@ -428,7 +456,7 @@ export class GameCreationService {
         }
     }
 
-    private async dispatchUpdateStats(userIdOrTeamId: string | number, game: Game, gameType: string, type: string, roomId:number, roomManager: RoomManagingService, amount: number) {
+    private async dispatchUpdateStats(userIdOrTeamId: string | number, game: Game, gameType: string, type: string, roomId: number, roomManager: RoomManagingService, amount: number) {
         if (gameType === "classic") {
             await this.updateStats(userIdOrTeamId.toString(), game, gameType, type, amount);
         } else {
@@ -445,7 +473,7 @@ export class GameCreationService {
     // with a price
     private async updateStats(userId: string, game: Game, gameType: string, type: string, amount: number) {
         const score = game.players.get(userId);
-        const finalResult = type === 'winner' ? 'win': 'loss';
+        const finalResult = type === 'winner' ? 'win' : 'loss';
         const money = amount === 0 ? (type === 'winner' ? 10 : 1) : amount;
         let prestige = type === 'winner' ? 10 : type === 'loser' ? -10 : 0;
         const history = {
@@ -464,7 +492,7 @@ export class GameCreationService {
             const newStats = this.calculateNewStats(user.stats, score, timeDifferenceInSeconds, type);
             const achievements = this.checkAchievements(newStats, prestige, user, gameType);
             user.achievements.forEach((value) => {
-               if (!achievements.includes(value)) achievements.push(value)
+                if (!achievements.includes(value)) achievements.push(value)
                 achievements.sort((a, b) => a - b)
             });
             await docRef.update({
@@ -526,11 +554,11 @@ export class GameCreationService {
     private calculateNewStats(oldStats: UserStats, score: Score, timeDifferenceInSeconds: number, type: string) {
         return {
             gamesPlayed: oldStats.gamesPlayed + 1,
-            gamesWon: type === 'winner' ? oldStats.gamesWon + 1: oldStats.gamesWon,
+            gamesWon: type === 'winner' ? oldStats.gamesWon + 1 : oldStats.gamesWon,
             correctAnswers: oldStats.correctAnswers + score.goodAnswerCounter,
             gameTime: oldStats.gameTime + timeDifferenceInSeconds,
-            avgCorrectAnswers: parseFloat(((oldStats.correctAnswers + score.goodAnswerCounter)/(oldStats.gamesPlayed + 1)).toFixed(2)),
-            avgGameTime: parseFloat(((oldStats.gameTime + timeDifferenceInSeconds)/(oldStats.gamesPlayed + 1)).toFixed(2)),
+            avgCorrectAnswers: parseFloat(((oldStats.correctAnswers + score.goodAnswerCounter) / (oldStats.gamesPlayed + 1)).toFixed(2)),
+            avgGameTime: parseFloat(((oldStats.gameTime + timeDifferenceInSeconds) / (oldStats.gamesPlayed + 1)).toFixed(2)),
         } as UserStats
     }
 
@@ -636,7 +664,7 @@ export class GameCreationService {
                 teamsScore.set(teamId, total);
             });
         }
-        return teamsScore ? teamsScore : new Map<number,number>();
+        return teamsScore ? teamsScore : new Map<number, number>();
     }
 
     // Two game types equipe or classic

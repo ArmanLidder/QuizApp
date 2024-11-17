@@ -50,7 +50,7 @@ export class ObservationService {
         this.gameService.observingHost = true;
         this.gameService.observedPlayerId = this.observedPlayerId;
         this.configureBaseSocketFeatures()
-        this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, game.room);
+        this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, {roomId: game.room, isFirst: true});
         this.isHost = true;
     }
 
@@ -84,12 +84,13 @@ export class ObservationService {
             this.gameService.obs_qrl_Answer = "Le joueur est inactif ...";
         }
         this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
-        if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, this.gameConfigs.room);
+        if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, {roomId: this.gameConfigs.room, isFirst: false});
     }
 
     private handleHostLeft() {
         this.socketService.on(SocketEvent.REMOVED_FROM_GAME, () => {
-           this.router.navigate(['/']);
+            this.socketService.send(SocketEvent.OBS_LEFT, {roomId: this.gameConfigs.room, observedId: this.gameService.observedPlayerId})
+            this.router.navigate(['/']);
         });
     }
 
