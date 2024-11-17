@@ -34,7 +34,6 @@ class InteractiveListService extends ChangeNotifier {
         RoomSettings(resetPlayerStatus: resetPlayerStatus, roomId: roomId),
         completer.complete,
         leftPlayers);
-  
     return completer.future;
   }
 
@@ -104,7 +103,7 @@ class InteractiveListService extends ChangeNotifier {
         bonus: score.bonusCount,
         status: status,
         canChat: canChat));
-    // notifyListeners();
+    notifyListeners();
   }
 
   bool canPlayerChat(String username, List<Player> actualStatus) {

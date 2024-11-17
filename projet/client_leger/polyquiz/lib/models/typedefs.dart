@@ -6,7 +6,13 @@ class TransportStats {
   final QuizQuestion question;
 
   TransportStats(this.values, this.responses, this.question);
-
+  factory TransportStats.fromJson(List<dynamic> json) {
+    return TransportStats(
+      (json[0] as List).map((entry) => MapEntry(entry[0] as String, entry[1] as bool)).toList(),
+      (json[1] as List).map((entry) => MapEntry(entry[0] as String, entry[1] as num)).toList(),
+      QuizQuestion.fromJson(json[2]),
+    );
+  }
   List<dynamic> toJson() => [
     // Convert values to [key, value] array pairs
     values.map((entry) => [entry.key, entry.value]).toList(),

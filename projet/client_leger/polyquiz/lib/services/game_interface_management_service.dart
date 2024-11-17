@@ -125,9 +125,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
       if (this.gameService.timer == 0) {
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
-        this
-            ._interactiveListService
-            .getPlayersList(this.gameService.realGameService.roomId);
+        final numberOfPlayers = this._interactiveListService.getPlayersList(this.gameService.realGameService.roomId);
         this.isResultPage = true;
       }
       notifyListeners();
@@ -180,8 +178,13 @@ class GameInterfaceManagementService extends ChangeNotifier {
     });
   }
 
-  parseGameStats(stringifyStats) {
-    return json.decode(stringifyStats);
+  // parseGameStats(stringifyStats) {
+  //   return stringifyStats;
+  // }
+  
+  TransportStatsFormat parseGameStats(dynamic stringifyStats) {
+    final List<dynamic> jsonList = jsonDecode(stringifyStats);
+    return jsonList.map((json) => TransportStats.fromJson(json)).toList();
   }
 
   void unpackStats(TransportStatsFormat stats) {
@@ -191,6 +194,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
       final responses = new Map<String, num>();
       responses.addEntries(stat.responses);
       this.gameStats.add([values, responses, stat.question]);
+      // print(this.gameStats);
     });
   }
 
