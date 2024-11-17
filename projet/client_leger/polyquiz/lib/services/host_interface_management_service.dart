@@ -33,6 +33,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   bool isAlreadyInit = false;
   bool isAlreadyCalled = false;
   bool NextQuestionBtnDisabled = true;
+  bool isResultPage = false;
   Function(Map<String, ResponseData>)? _qrlCallback;
 
   GameService gameService = GameService();
@@ -169,6 +170,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.gameService.realGameService.timer = timeValue;
 
       if (this.gameService.timer == 0 && this.gameService.username == 'host') {
+        this.isResultPage = true;
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();

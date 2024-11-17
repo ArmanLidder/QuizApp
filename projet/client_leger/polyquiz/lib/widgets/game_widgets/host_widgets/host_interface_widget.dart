@@ -59,6 +59,7 @@ class _HostInterfaceState extends State<HostInterface> {
 
   void _handleNextQuestion() {
     hostInterfaceManagementService.saveStats();
+    this.hostInterfaceManagementService.NextQuestionBtnDisabled = true;
     if (gameService.realGameService.isLast) {
       _handleLastQuestion();
     } else {
@@ -84,7 +85,7 @@ class _HostInterfaceState extends State<HostInterface> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             );
-          } else if (isResultPage) {
+          } else if (isResultPage || hostInterfaceManagementService.isResultPage) {
             return ResultPage(
               gameService: gameService,
               hostInterfaceManagementService: hostInterfaceManagementService,
