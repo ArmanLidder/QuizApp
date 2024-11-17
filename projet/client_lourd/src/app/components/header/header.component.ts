@@ -16,6 +16,7 @@ import {SettingsDialogComponent} from "@app/components/settings-dialog/settings-
 })
 export class HeaderComponent implements OnInit{
   @Input() showMenu = true;
+  @Input() observerMode = false;
   currentUser$: Observable<User | null>
   pendingRequests$: Observable<User[]>;
   currentLanguage: 'fr' | 'en';

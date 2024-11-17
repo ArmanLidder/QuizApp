@@ -1,6 +1,5 @@
 <div class="grid-container" *ngIf='hostInterfaceManagerService.isGameOver'>
     <h2>{{'GAME_INTERFACE.GAME_FINISHED'| translate}}</h2>
-    <app-observation-selector *ngIf="hostInterfaceManagerService.gameService.observerMode"></app-observation-selector>
     <app-leave-boutton></app-leave-boutton>
 </div>
 <div class="grid-container" *ngIf='!hostInterfaceManagerService.isGameOver'>
@@ -40,7 +39,6 @@
         </button>
         <app-leave-boutton></app-leave-boutton>
     </div>
-    <app-observation-selector *ngIf="gameService.observerMode"></app-observation-selector>
 </div>
 <app-correction-qrl *ngIf='!hostInterfaceManagerService.isGameOver' [gameStats] ='hostInterfaceManagerService.gameStats' [qrlAnswers]='hostInterfaceManagerService.responsesQRL' [isHostEvaluating]='hostInterfaceManagerService.isHostEvaluating'></app-correction-qrl>
 <div class="result-container">
