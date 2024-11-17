@@ -14,6 +14,7 @@ import {UsersService} from "@app/services/users.service/users.service";
 import {
     InteractiveListSocketService
 } from "@app/services/interactive-list-socket.service/interactive-list-socket.service";
+import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
 
 @Component({
     selector: 'app-main-page',
@@ -33,15 +34,18 @@ export class MainPageComponent implements OnInit {
         private gameConfigService: GameConfigService,
         private observationServices: ObservationService,
         private interactionService: InteractiveListSocketService,
-        public usersService: UsersService, 
+        public usersService: UsersService,
+        private settings: UserSettingsService
     ) {
         this.usersService.currentUserProfile$.subscribe((user)=>{
             this.username = user?.username!;
         })
         window.onload = () => {
             localStorage.removeItem('token');
-            this.socketService.disconnect();
+            if (this.socketService.isSocketAlive()) this.socketService.disconnect();
         }
+
+        this.settings.setTranslationListener();
     }
 
     @HostListener('window:beforeunload')

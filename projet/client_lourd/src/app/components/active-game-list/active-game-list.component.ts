@@ -12,6 +12,7 @@ import {Router} from "@angular/router";
 import {GameService} from "@app/services/game.service/game.service";
 import {ObservationService} from "@app/services/observation.service/observation.service";
 import {HOST_USERNAME} from "@common/names/host-username";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-active-game-list',
@@ -34,6 +35,7 @@ export class ActiveGameListComponent implements OnInit {
         private userService: UsersService,
         private router: Router,
         private observationService: ObservationService,
+        private translate: TranslateService,
     ) {}
 
     async ngOnInit() {
@@ -88,19 +90,22 @@ export class ActiveGameListComponent implements OnInit {
         this.roomValidationService.roomId = game.room as unknown as string;
         const isHostFriend = await this.validateFriendship(game);
         if (game.friendsOnly && !isHostFriend)  {
-            this.snackbarService.show("Cette partie est exclusive aux amis de l'hôte.")
+            this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.EXCLUSIVE_FRIENDS_GAME").toPromise());
         } else {
             const isPrestigeValid = await this.validatePrestige(game.prestige);
             const enoughMoney = await this.validateMoney(game.price);
             if (!isPrestigeValid) {
-                this.snackbarService.show("Vous n'avez pas le prestige minimum pour rejoindre cette partie.")
+                this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.INSUFFICIENT_PRESTIGE").toPromise());
             } else if (!enoughMoney){
-                this.snackbarService.show("Vous n'avez pas assez d'argent pour rejoindre cette partie.")
+                this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.INSUFFICIENT_FUNDS").toPromise());
             } else {
                 await this.roomValidationService.verifyUsername();
-                if (!this.roomValidationService.isUsernameValid) this.snackbarService.show("Vous avez été banni de cette partie.")
-                else await this.roomValidationService.sendJoinRoomRequest();
-                if (this.roomValidationService.isLocked) this.snackbarService.show("La partie est actuellement verouillez.")
+                if (!this.roomValidationService.isUsernameValid) {
+                    this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.USER_BANNED").toPromise());
+                } else await this.roomValidationService.sendJoinRoomRequest();
+                if (this.roomValidationService.isLocked) {
+                    this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.ROOM_LOCKED").toPromise());
+                }
                 const isValid = !this.roomValidationService.isLocked && this.roomValidationService.isUsernameValid;
                 if (isValid) this.sendAllDataToWaitingRoom();
             }

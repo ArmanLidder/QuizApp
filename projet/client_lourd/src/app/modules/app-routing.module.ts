@@ -11,6 +11,7 @@ import { WaitingRoomHostPageComponent } from '@app/pages/waiting-room-host-page/
 import {LoginPageComponent} from "@app/pages/login-page/login-page.component";
 import {RegisterPageComponent} from "@app/pages/register-page/register-page.component";
 import {ProfilePageComponent} from "@app/pages/profile-page/profile-page.component";
+import {ShoppingPageComponent} from "@app/pages/shopping-page/shopping-page.component";
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
@@ -28,6 +29,7 @@ const routes: Routes = [
     { path: 'waiting-room-host-page/:id', component: WaitingRoomHostPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
     { path: 'waiting-room-player-page', component: WaitingRoomPlayerPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
     { path: 'game-admin-page', component: GameAdministrationPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
+    { path: 'shopping-page', component: ShoppingPageComponent, canActivate: [AuthGuard], data: {authGuardPipe: redirectUnauthorizedToLogin} },
     { path: '**', redirectTo: '/login' },
 ];
 

@@ -7,12 +7,10 @@ import {
 } from '@app/services/host-interface-management.service/host-interface-management.service';
 import {QrlEvaluationService} from '@app/services/qrl-evaluation.service/qrl-evaluation.service';
 import {TimerMessage} from '@common/browser-message/displayable-message/timer-message';
-import {NEXT_QUESTION, SHOW_RESULT} from '@common/constants/host-interface.component.const';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
-    selector: 'app-host-interface',
-    templateUrl: './host-interface.component.html',
-    styleUrls: ['./host-interface.component.scss'],
+    selector: 'app-host-interface', templateUrl: './host-interface.component.html', styleUrls: ['./host-interface.component.scss'],
 })
 export class HostInterfaceComponent {
     qrlEvaluationService: QrlEvaluationService = inject(QrlEvaluationService);
@@ -24,6 +22,7 @@ export class HostInterfaceComponent {
         public gameService: GameService,
         public hostInterfaceManagerService: HostInterfaceManagementService,
         private readonly socketService: SocketClientService,
+        private translate: TranslateService,
     ) {
         if (!this.gameService.observerMode) {
             if (this.socketService.isSocketAlive()) {
@@ -39,7 +38,7 @@ export class HostInterfaceComponent {
     }
 
     updateHostCommand() {
-        return this.gameService.gameRealService.isLast ? SHOW_RESULT : NEXT_QUESTION;
+        return this.gameService.gameRealService.isLast ? this.translate.instant('GAME_INTERFACE.SHOW_RESULT') : this.translate.instant('GAME_INTERFACE.NEXT_QUESTION');
     }
 
     handleHostCommand() {
@@ -50,5 +49,9 @@ export class HostInterfaceComponent {
         } else {
             this.hostInterfaceManagerService.requestNextQuestion();
         }
+    }
+
+    isTimerStateResultAvailableIn() {
+        return this.hostInterfaceManagerService.timerText === this.translate.instant('GAME_INTERFACE.TIMER_TEXT.RESULT_AVAILABLE_IN');
     }
 }

@@ -10,6 +10,7 @@ import {
     uploadBytes,
 } from '@angular/fire/storage';
 import {UsersService} from "@app/services/users.service/users.service";
+import {StoreItem} from "@common/interfaces/store.interface";
 
 @Injectable({
     providedIn: 'root',
@@ -72,4 +73,29 @@ export class AvatarService {
             })
         );
     }
+
+    async getBoughtAvatars(): Promise<string[]> {
+        const currentUser = await firstValueFrom(this.usersService.user$);
+        const uid = currentUser?.uid;
+        if (!uid) return [];
+
+        const userDocRef = doc(this.firestore, `storeProfiles/${uid}`);
+        const userProfile = await getDoc(userDocRef);
+        const ownedItems = userProfile.exists() ? userProfile.data().ownedItems || [] : [];
+
+        const avatarUrls: string[] = [];
+        for (const itemId of ownedItems) {
+            const itemDocRef = doc(this.firestore, `storeItems/${itemId}`);
+            const itemDoc = await getDoc(itemDocRef);
+
+            if (itemDoc.exists()) {
+                const itemData = itemDoc.data() as StoreItem;
+                if (itemData.itemType === 'image' && itemData.source) {
+                    avatarUrls.push(itemData.source);
+                }
+            }
+        }
+        return avatarUrls;
+    }
+
 }

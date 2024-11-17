@@ -1,5 +1,5 @@
 <div class="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-6">
-    <h3 class="text-2xl font-bold text-center text-red-600 mb-4">Erreurs détectées</h3>
+    <h3 class="text-2xl font-bold text-center text-red-600 mb-4">{{ 'POP_UP_MESSAGE.ERRORS_DETECTED' | translate }}</h3>
 
     <!-- Display the full formatted error message -->
     <div class="space-y-4">
@@ -12,7 +12,7 @@
                 (click)="onCloseClick()"
                 class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out"
         >
-            Fermer
+            {{ 'POP_UP_MESSAGE.CLOSE' | translate }}
         </button>
     </div>
 </div>

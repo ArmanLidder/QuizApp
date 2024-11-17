@@ -2,7 +2,7 @@
     <table class="games-table">
         <thead>
         <tr>
-            <th colspan="2">Liste des Jeux Publics</th>
+            <th colspan="2">{{ 'ACTIVE_GAME_LIST.PUBLIC_GAME_LIST' | translate }}</th>
         </tr>
         </thead>
         <tbody class="tbody-container">
@@ -14,15 +14,21 @@
                             <span class="quiz-title">{{ getQuizName(game.quizId) }}</span>
                             <ng-container *ngIf="!game.onGoing">
                                 <span class="prestige-info">
-                                    <span>Prestige minimum: {{minimumPrestige(game.prestige)}}</span>
+                                    <span>{{ 'ACTIVE_GAME_LIST.MINIMUM_PRESTIGE' | translate }}: {{minimumPrestige(game.prestige)}}</span>
                                 </span>
-                                <span class="friends-only">{{game.friendsOnly ? "Amis seulement": "Amis et autres"}}</span>
+                                <span class="friends-only">
+                                    {{ game.friendsOnly ? ('ACTIVE_GAME_LIST.FRIENDS_ONLY' | translate) : ('ACTIVE_GAME_LIST.FRIENDS_AND_OTHERS' | translate) }}
+                                </span>
                                 <span class="players">{{ game.numberOfPlayers }} <i class="bi bi-people"></i></span>
-                                <span class="game-type">Mode de jeu : {{ game.gameType == 'classic' ? 'Classique' : 'Équipe' }}</span>
-                                <span class="price">{{ game.price == 0 ? "Gratuit " : game.price }} <i class="bi bi-cash-coin"></i></span>
+                                <span class="game-type">
+                                    {{ 'ACTIVE_GAME_LIST.GAME_MODE' | translate }}: {{ game.gameType == 'classic' ? ('ACTIVE_GAME_LIST.CLASSIC' | translate) : ('ACTIVE_GAME_LIST.TEAM' | translate) }}
+                                </span>
+                                <span class="price">
+                                    {{ game.price == 0 ? ('ACTIVE_GAME_LIST.FREE' | translate) : game.price }} <i class="bi bi-cash-coin"></i>
+                                </span>
                             </ng-container>
                             <ng-container *ngIf="game.onGoing">
-                                <span class="players">Partie en cours</span>
+                                <span class="players">{{ 'ACTIVE_GAME_LIST.ONGOING_GAME' | translate }}</span>
                             </ng-container>
                         </div>
                     </td>
@@ -31,7 +37,7 @@
             <tr *ngIf="!games.length">
                 <td>
                     <div class="game-item">
-                        <span class="no-game">Aucune partie présentement</span>
+                        <span class="no-game">{{ 'ACTIVE_GAME_LIST.NO_GAMES_AVAILABLE' | translate }}</span>
                     </div>
                 </td>
             </tr>
@@ -40,7 +46,7 @@
         <tfoot>
         <tr>
             <td colspan="2" class="button-container">
-                <button routerLink="/home" class="cancel">Annuler</button>
+                <button routerLink="/home" class="cancel">{{ 'ACTIVE_GAME_LIST.CANCEL' | translate }}</button>
             </td>
         </tr>
         </tfoot>

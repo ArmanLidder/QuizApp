@@ -1,27 +1,99 @@
 import 'package:flutter/material.dart';
-import 'pages/login-page.dart';
-import 'pages/auth_screen.dart';
-import 'pages/room_list_page.dart';
+import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/pages/game_page.dart';
+import 'package:polyquiz/pages/login-page.dart';
+import 'package:polyquiz/pages/offline_game_page.dart';
+import 'package:polyquiz/pages/offline_quiz_list_page.dart';
+import 'package:polyquiz/pages/waiting_room_screen.dart';
+import 'package:polyquiz/services/background_notification_service.dart';
+import 'package:polyquiz/services/channelService.dart';
+import 'package:polyquiz/services/global_navigation_service.dart';
+import 'package:polyquiz/services/imageStorageService.dart';
+import 'package:polyquiz/services/notification_service.dart';
+import 'pages/authPage.dart';
+import 'pages/quiz_list_page.dart';
+import 'pages/join_room_page.dart';
+import 'pages/home_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:get/get.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/pages/userPage.dart';
+import 'package:polyquiz/pages/storePage.dart';
+import 'package:polyquiz/services/StoreService.dart';
+import 'package:provider/provider.dart';
+import 'package:polyquiz/services/game_config_service.dart';
+import 'package:polyquiz/services/game_list_item.dart';
+import 'package:polyquiz/pages/active_game_list.dart';
+import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/pages/active_game_list.dart';
+import 'package:polyquiz/services/quiz_service.dart';
+import 'package:polyquiz/services/room_validation_service.dart';
+import 'package:polyquiz/services/snack_bar_service.dart';
 
-void main() {
-  runApp(const MyApp());
+final socketService = SocketService();
+final userService = UserService();
+final quizService = QuizService();
+final snackbarService = SnackbarService();
+// final roomValidationService = RoomValidationService(socketService: socketService);
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  Get.put(LoggedInUserService());
+  Get.put(ChannelService());
+  Get.put(UserService());
+  Get.put(ImageStorageService());
+  Get.put(NotificationService());
+  Get.put(BackgroundNotificationService());
+  Get.put(StoreService());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GameConfigService()),
+        ChangeNotifierProvider(
+            create: (_) => GameListService(socketService: socketService)),
+        ChangeNotifierProvider(
+            create: (_) => RoomValidationService(socketService: socketService)),
+        Provider(create: (_) => socketService),
+        Provider(create: (_) => userService),
+        Provider(create: (_) => quizService),
+        Provider(create: (_) => snackbarService),
+        // Provider(create: (_) => roomValidationService),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Polyquiz',
-      initialRoute: '/',
+      navigatorKey: GlobalNavigationService.navigatorKey,
+      home: AuthPage(), // The starting page is set to LoginPage.
       routes: {
-        '/auth': (context) => AuthScreen(),
-        '/': (context) => LoginPage(),
-        '/room': (context) => RoomListPage(),
+        '/home': (context) => HomePage(),
+        '/auth': (context) => AuthPage(),
+        '/login': (context) => LoginPage(),
+        '/quizz': (context) => QuizListPage(),
+        '/offline': (context) => OfflineQuizListPage(),
+        '/offlinegame': (context) => OfflineGamePage(),
+        '/join': (context) => JoinRoomPage(),
+        '/roomList': (context) => ActiveGameListComponent(),
+        '/game': (context) => GamePage(),
+        '/user': (context) => Userpage(),
+        '/store': (context) => Storepage(),
+        '/waitingRoom': (context) => WaitingRoomScreen(
+            quiz: ModalRoute.of(context)!.settings.arguments as Quiz,
+            isHost: true),
       },
     );
   }
 }
-

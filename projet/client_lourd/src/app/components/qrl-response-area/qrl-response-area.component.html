@@ -5,21 +5,21 @@
                   rows="4" cols="50">
         </textarea>
         <div class='text-container py-4 m-0' *ngIf="!gameService.observerMode">
-            <small>Caractères restants: {{ maxResponseCharacters - this.gameService.qrlAnswer.length }}/200</small>
+            <small>{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.CHARACTERS_REMAINING' | translate }}{{ maxResponseCharacters - this.gameService.qrlAnswer.length }}/200</small>
         </div>
     </div>
     <div *ngIf='gameService.gameRealService.validated && !gameService.isTestMode'>
-        <h3 *ngIf="gameService.observerMode && gameService.obs_qrl_Answer">Réponse du joueur: {{gameService.obs_qrl_Answer}}</h3>
+        <h3 *ngIf="gameService.observerMode && gameService.obs_qrl_Answer">{{'GAME_INTERFACE.PLAYER_QRL_INTERFACE.OBS_PLAYER_RESPONSE' | translate}} {{gameService.obs_qrl_Answer}}</h3>
         <div [ngSwitch]="gameService.lastQrlScore">
-            <h3 *ngSwitchCase="0">Vous avez eu aucun point pour votre réponse : {{obtainedPoints()}} points</h3>
-            <h3 *ngSwitchCase="50">Vous avez eu la moitié des points pour votre réponse : {{obtainedPoints()}} points</h3>
-            <h3 *ngSwitchCase="100">Félicitations, vous avez eu tout les points de la question pour votre réponse : {{obtainedPoints()}} points</h3>
-            <h3 *ngSwitchDefault>L'organisateur est en train d'évaluer votre réponse</h3>
+            <h3 *ngSwitchCase="0">{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.ZERO_POINTS' | translate }} {{obtainedPoints()}} points</h3>
+            <h3 *ngSwitchCase="50">{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.HALF_POINTS' | translate }} {{obtainedPoints()}} points</h3>
+            <h3 *ngSwitchCase="100">{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.FULL_POINTS' | translate }} {{obtainedPoints()}} points</h3>
+            <h3 *ngSwitchDefault>{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.AWAITING_EVALUATION' | translate }}</h3>
         </div>
     </div>
     <div class='btn-container'>
         <button *ngIf='!gameService.gameRealService.validated && !gameService.observerMode' class='enter'
-                [disabled]='gameService.lockedStatus' (click)='validate()'>Valider</button>
+                [disabled]='gameService.lockedStatus' (click)='validate()'>{{ 'GAME_INTERFACE.VALIDATE_BUTTON' | translate }}</button>
         <app-leave-boutton></app-leave-boutton>
     </div>
 </div>

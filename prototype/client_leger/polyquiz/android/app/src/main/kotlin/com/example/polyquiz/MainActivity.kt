@@ -1,4 +1,4 @@
-package com.example.polyquiz
+package com.polyquiz.app
 
 import io.flutter.embedding.android.FlutterActivity
 

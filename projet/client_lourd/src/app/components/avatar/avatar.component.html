@@ -8,7 +8,7 @@
                'w-20 h-20': size === 'medium',
                'w-28 h-28': size === 'large'
              }"
-             class="rounded-full border-2 border-white shadow cursor-pointer"
+             class="rounded-full border-2 border-white shadow cursor-pointer object-cover"
              [matMenuTriggerFor]="menu"
         />
         <img *ngIf="!showMenu"
@@ -19,7 +19,7 @@
                'w-20 h-20': size === 'medium',
                'w-28 h-28': size === 'large'
              }"
-             class="rounded-full border border-gray-300 shadow cursor-pointer"
+             class="rounded-full border-2 border-white shadow object-cover"
              (click)="openProfileDialog()"
         />
 
@@ -36,15 +36,15 @@
         <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="goToProfile()">
                 <mat-icon class="text-gray-500" aria-hidden="true">account_circle</mat-icon>
-                <span>Profil</span>
+                <span>{{'AVATAR_CLICK_MENU.PROFIL' | translate}}</span>
             </button>
             <button mat-menu-item (click)="logout()">
                 <mat-icon class="text-red-500" aria-hidden="true">logout</mat-icon>
-                <span>Déconnexion</span>
+                <span>{{'AVATAR_CLICK_MENU.DISCONNECT' | translate}}</span>
             </button>
         </mat-menu>
     </div>
 
     <p *ngIf="isChat" class="text-center mt-1 p-0">{{ (currentUser$ | async)?.username }}</p>
-    <p *ngIf="showMoney" class="text-center">Argent: {{ (currentUser$ | async)?.currency }}</p>
+    <p *ngIf="showMoney" class="text-center">{{'PROFILE.CURRENCY' | translate}}: {{ (currentUser$ | async)?.currency }}</p>
 </div>

@@ -13,11 +13,9 @@ export class GameListService {
 
   constructor(private socketService: SocketClientService) {}
 
-  async initialize() {
+  initialize() {
     this.gamesSubject.next([]);
-    if (!this.socketService.isSocketAlive()) {
-      await this.socketService.asyncConnect();
-    }
+    if (!this.socketService.isSocketAlive()) this.socketService.connect()
     this.configureBaseSocket();
     this.fetchGameList();
   }

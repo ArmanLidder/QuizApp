@@ -7,6 +7,7 @@ import {UsersService} from "@app/services/users.service/users.service";
 import {GameListItem} from "@common/interfaces/room-interface";
 import {firstValueFrom} from "rxjs";
 import {User} from "@common/interfaces/user-data.interface";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-room-code-prompt',
@@ -26,6 +27,7 @@ export class RoomCodePromptComponent implements OnInit {
         // private socketService: SocketClientService,
         private gameListService: GameListService,
         private userService: UsersService,
+        private translate: TranslateService,
     ) {
     }
 
@@ -52,27 +54,29 @@ export class RoomCodePromptComponent implements OnInit {
     }
 
     async validateRoomId() {
+        this.error = '';
         const game = (await this.getGame()) as GameListItem;
-        const isHostFriend = await this.validateFriendship(game);
-        if (game.friendsOnly && !isHostFriend) {
-            this.error = "Cette partie est exclusive aux amis de l'hôte."
-            this.handleError();
-        } else {
-            const isPrestigeValid = await this.validatePrestige(game.prestige);
-            const enoughMoney = await this.validateMoney(game.price);
-            if (!isPrestigeValid) {
-                this.error = "Vous n'avez pas le prestige minimum pour rejoindre cette partie.";
-                this.handleError();
-            } else if (!enoughMoney) {
-                this.error = "Vous n'avez pas assez d'argent pour rejoindre cette partie.";
-                this.handleError();
+        const isHostFriend = game && await this.validateFriendship(game);
+
+        if (game) {
+            if (game.friendsOnly && !isHostFriend) {
+                this.error = await this.translate.get('PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT_ERRORS.FRIENDS_ONLY').toPromise();
+            } else if (!(await this.validatePrestige(game.prestige))) {
+                this.error = await this.translate.get('PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT_ERRORS.INSUFFICIENT_PRESTIGE').toPromise();
+            } else if (!(await this.validateMoney(game.price))) {
+                this.error = await this.translate.get('PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT_ERRORS.INSUFFICIENT_FUNDS').toPromise();
             } else {
                 this.error = await this.roomValidationService.verifyRoomId();
-                this.handleError();
                 if (!this.error) await this.validateUsername();
             }
+        } else {
+            this.error = await this.roomValidationService.verifyRoomId();
+            if (!this.error) await this.validateUsername();
         }
+
+        this.handleError();
     }
+
 
     async validateUsername() {
         this.error = await this.roomValidationService.verifyUsername();

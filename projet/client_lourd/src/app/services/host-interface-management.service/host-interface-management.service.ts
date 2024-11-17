@@ -15,24 +15,21 @@ import {
     InteractiveListSocketService
 } from '@app/services/interactive-list-socket.service/interactive-list-socket.service';
 import {SocketClientService} from '@app/services/socket-client.service/socket-client.service';
-import {TimerMessage} from '@common/browser-message/displayable-message/timer-message';
 import {QuestionType} from '@common/enums/question-type.enum';
 import {HostCurrentGameInterface, InitialQuestionData, NextQuestionData} from '@common/interfaces/host.interface';
 import {QuizChoice, QuizQuestion} from '@common/interfaces/quiz.interface';
 import {HOST_USERNAME} from '@common/names/host-username';
 import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 import {
-    EXACT_ANSWER,
-    INCORRECT_ANSWER,
     QuestionStatistics,
-    WITHIN_MARGIN
 } from '@common/constants/statistic-zone.component.const';
+import {TranslateService} from "@ngx-translate/core";
 
 @Injectable({
     providedIn: 'root',
 })
 export class HostInterfaceManagementService {
-    timerText: string = TimerMessage.TIME_LEFT;
+    timerText: string = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.TIME_LEFT');
     isGameOver: boolean = false;
     histogramDataChangingResponses = new Map<string, number>();
     histogramDataValue = new Map<string, boolean>();
@@ -42,11 +39,15 @@ export class HostInterfaceManagementService {
     gameStats: QuestionStatistics[] = [];
     isPaused: boolean = false;
     isPanicMode: boolean = false;
+    WITHIN_MARGIN = this.translate.instant('GAME_INTERFACE.QRE_HISTOGRAM_X_VAL.WITHIN_MARGIN');
+    EXACT_ANSWER = this.translate.instant('GAME_INTERFACE.QRE_HISTOGRAM_X_VAL.EXACT_ANSWER');
+    INCORRECT_ANSWER = this.translate.instant('GAME_INTERFACE.QRE_HISTOGRAM_X_VAL.INCORRECT_ANSWER');
 
     constructor(
         public gameService: GameService,
         private readonly socketService: SocketClientService,
         private interactiveListService: InteractiveListSocketService,
+        private translate: TranslateService
     ) {}
 
     private get roomId() {
@@ -110,13 +111,13 @@ export class HostInterfaceManagementService {
     private handleTimeTransition() {
         this.socketService.on(SocketEvent.TIME_TRANSITION, (timeValue: number) => {
             if (!this.gameService.observerMode) {
-                this.timerText = TimerMessage.NEXT;
+                this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.NEXT');
                 this.gameService.gameRealService.timer = timeValue;
                 if (this.gameService.timer === 0) {
                     this.gameService.gameRealService.inTimeTransition = false;
                     this.resetInterface();
                     this.socketService.send(SocketEvent.NEXT_QUESTION, this.gameService.gameRealService.roomId);
-                    this.timerText = TimerMessage.TIME_LEFT;
+                    this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.TIME_LEFT');
                 }
             } else {
                 this.obsHandleTimeTransition(timeValue);
@@ -125,14 +126,14 @@ export class HostInterfaceManagementService {
     }
 
     private obsHandleTimeTransition(timeValue: number){
-        this.timerText = TimerMessage.NEXT;
+        this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.NEXT');
         if (this.gameService.observingHost) this.gameService.gameRealService.timer = timeValue;
         if (this.gameService.timer === 0) {
             if (this.gameService.observingHost) {
                 this.gameService.gameRealService.inTimeTransition = false;
                 this.resetInterface();
             }
-            this.timerText = TimerMessage.TIME_LEFT;
+            this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.TIME_LEFT');
         }
     }
 
@@ -176,7 +177,7 @@ export class HostInterfaceManagementService {
     private handleFinalTimeTransition() {
         this.socketService.on(SocketEvent.FINAL_TIME_TRANSITION, (timeValue: number) => {
             if (!this.gameService.observerMode) {
-                this.timerText = TimerMessage.RESULT_AVAILABLE_IN;
+                this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.RESULT_AVAILABLE_IN');
                 this.gameService.gameRealService.timer = timeValue;
                 if (this.gameService.timer === 0 && this.gameService.username === HOST_USERNAME) {
                     this.isGameOver = true;
@@ -192,7 +193,7 @@ export class HostInterfaceManagementService {
     }
 
     private obsHandleFinalTimeTransition(timeValue: number){
-        this.timerText = TimerMessage.RESULT_AVAILABLE_IN;
+        this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.RESULT_AVAILABLE_IN');
         if (this.gameService.observingHost) this.gameService.gameRealService.timer = timeValue;
         if (this.gameService.timer === 0) {
             this.isGameOver = true;
@@ -211,9 +212,9 @@ export class HostInterfaceManagementService {
     private handleRefreshQREStats() {
         this.socketService.on(SocketEvent.REFRESH_QRE_STATS, (qreStatsValue: number[]) => {
             this.histogramDataChangingResponses = new Map([
-                [WITHIN_MARGIN, qreStatsValue[0]],
-                [EXACT_ANSWER, qreStatsValue[1]],
-                [INCORRECT_ANSWER, qreStatsValue[2]]
+                [this.WITHIN_MARGIN, qreStatsValue[0]],
+                [this.EXACT_ANSWER, qreStatsValue[1]],
+                [this.INCORRECT_ANSWER, qreStatsValue[2]]
             ]);
         });
     }
@@ -304,9 +305,9 @@ export class HostInterfaceManagementService {
             let histogramDataChangingResponses: [number, number] | number[];
             if (this.gameService.gameRealService.question?.type === QuestionType.QRE)
                 histogramDataChangingResponses = [
-                    Number(this.histogramDataChangingResponses.get(WITHIN_MARGIN)),
-                    Number(this.histogramDataChangingResponses.get(EXACT_ANSWER)),
-                    Number(this.histogramDataChangingResponses.get(INCORRECT_ANSWER)),
+                    Number(this.histogramDataChangingResponses.get(this.WITHIN_MARGIN)),
+                    Number(this.histogramDataChangingResponses.get(this.EXACT_ANSWER)),
+                    Number(this.histogramDataChangingResponses.get(this.INCORRECT_ANSWER)),
                 ]
             else histogramDataChangingResponses = [
                 Number(this.histogramDataChangingResponses.get(ACTIVE)),
@@ -343,9 +344,9 @@ export class HostInterfaceManagementService {
                 this.histogramDataValue.set(choice.text, choice.isCorrect as boolean);
             });
         } else if (this.gameService.question?.type === QuestionType.QRE) {
-            this.histogramDataValue.set(WITHIN_MARGIN, true);
-            this.histogramDataValue.set(EXACT_ANSWER, true);
-            this.histogramDataValue.set(INCORRECT_ANSWER, false);
+            this.histogramDataValue.set(this.WITHIN_MARGIN, true);
+            this.histogramDataValue.set(this.EXACT_ANSWER, true);
+            this.histogramDataValue.set(this.INCORRECT_ANSWER, false);
         } else {
             this.histogramDataChangingResponses = new Map([
                 [ACTIVE, 0],
@@ -395,7 +396,7 @@ export class HostInterfaceManagementService {
     }
 
     reset() {
-        this.timerText = TimerMessage.TIME_LEFT;
+        this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.TIME_LEFT');
         this.isGameOver = false;
         this.histogramDataChangingResponses = new Map<string, number>();
         this.histogramDataValue = new Map<string, boolean>();

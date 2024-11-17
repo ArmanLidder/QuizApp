@@ -1,17 +1,36 @@
 <div *ngIf='isHost' class='sort-buttons'>
-    <button (click)="this.sort(sortType.SORT_BY_NAME)" [class]='(optionSelections.get(sortType.SORT_BY_NAME)) ? "selected": "add"' matTooltip="Trier par nom">Nom</button>
-    <button (click)="this.sort(sortType.SORT_BY_SCORE)" [class]='(optionSelections.get(sortType.SORT_BY_SCORE)) ? "selected": "add"' matTooltip="Trier par point">Point</button>
-    <button (click)="this.sort(sortType.SORT_BY_STATUS)" [class]='(optionSelections.get(sortType.SORT_BY_STATUS)) ? "selected": "add"' matTooltip="Trier par statut">Statut</button>
-    <button (click)="this.changeOrder()"  class='add' matTooltip="Changer l'ordre"><i [class]='orderIcon'></i></button>
+    <button (click)="this.sort(sortType.SORT_BY_NAME)"
+            [class]='(optionSelections.get(sortType.SORT_BY_NAME)) ? "selected": "add"'
+            matTooltip="{{ 'GAME_INTERFACE.PLAYER_LIST.SORT_BUTTONS.TOOLTIP_SORT_BY_NAME' | translate }}">
+        {{ 'GAME_INTERFACE.PLAYER_LIST.SORT_BUTTONS.SORT_BY_NAME' | translate }}
+    </button>
+    <button (click)="this.sort(sortType.SORT_BY_SCORE)"
+            [class]='(optionSelections.get(sortType.SORT_BY_SCORE)) ? "selected": "add"'
+            matTooltip="{{ 'GAME_INTERFACE.PLAYER_LIST.SORT_BUTTONS.TOOLTIP_SORT_BY_SCORE' | translate }}">
+        {{ 'GAME_INTERFACE.PLAYER_LIST.SORT_BUTTONS.SORT_BY_SCORE' | translate }}
+    </button>
+    <button (click)="this.sort(sortType.SORT_BY_STATUS)"
+            [class]='(optionSelections.get(sortType.SORT_BY_STATUS)) ? "selected": "add"'
+            matTooltip="{{ 'GAME_INTERFACE.PLAYER_LIST.SORT_BUTTONS.TOOLTIP_SORT_BY_STATUS' | translate }}">
+        {{ 'GAME_INTERFACE.PLAYER_LIST.SORT_BUTTONS.SORT_BY_STATUS' | translate }}
+    </button>
+    <button (click)="this.changeOrder()"
+            class='add'
+            matTooltip="{{ 'GAME_INTERFACE.PLAYER_LIST.SORT_BUTTONS.TOOLTIP_CHANGE_ORDER' | translate }}">
+        <i [class]='orderIcon'></i>
+    </button>
 </div>
+
 <div class="players-container">
     <table>
         <thead>
         <tr>
-            <th>Nom</th>
-            <th>Points</th>
-            <th>Bonus</th>
-            <th *ngIf='waitingRoomService.gameType === "equipe"'>Équipe</th>
+            <th>{{ 'GAME_INTERFACE.PLAYER_LIST.COLUMN_TITLES.NAME' | translate }}</th>
+            <th>{{ 'GAME_INTERFACE.PLAYER_LIST.COLUMN_TITLES.POINTS' | translate }}</th>
+            <th>{{ 'GAME_INTERFACE.PLAYER_LIST.COLUMN_TITLES.BONUS' | translate }}</th>
+            <th *ngIf='waitingRoomService.gameType === "equipe"'>
+                {{ 'GAME_INTERFACE.PLAYER_LIST.COLUMN_TITLES.TEAM' | translate }}
+            </th>
         </tr>
         </thead>
         <tbody>
