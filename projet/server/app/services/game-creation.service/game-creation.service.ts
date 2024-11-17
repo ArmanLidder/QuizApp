@@ -219,6 +219,7 @@ export class GameCreationService {
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             this.debug_teams("PLayer Left", roomId, roomManager);
             this.sendUpdateGameList(roomManager, sio);
+            sio.to(String(socket.id)).emit(SocketEvent.REMOVED_FROM_GAME);
             this.sendPlayerListToObserver(roomId, roomManager, sio);
             this.sendTeams(roomId, roomManager, sio);
             if (userInfo) {
