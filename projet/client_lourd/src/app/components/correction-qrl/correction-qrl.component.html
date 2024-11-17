@@ -1,7 +1,6 @@
-<div *ngIf='isHostEvaluating'>
+<div *ngIf='isHostEvaluating && !gameService.observerMode'>
     <div *ngIf="!qrlEvaluationService.isCorrectionFinished" class="correction-qrl-container">
         <h3> {{ 'GAME_INTERFACE.QRL_CORRECTION.QUESTION_CORRECTION' | translate }} </h3>
-        <p> {{ 'GAME_INTERFACE.QRL_CORRECTION.PLAYER' | translate }} {{ qrlEvaluationService.currentUsername }} </p>
         <p> {{ 'GAME_INTERFACE.QRL_CORRECTION.ANSWER' | translate }} {{ qrlEvaluationService.currentAnswer }} </p>
         <select [(ngModel)]="qrlEvaluationService.inputPoint">
             <option *ngFor="let score of qrlEvaluationService.scores" [value]="score">{{ score }}</option>
@@ -23,7 +22,7 @@
                 </thead>
                 <tbody>
                 <tr *ngFor="let score of qrlEvaluationService.points; let i = index">
-                    <td> {{qrlEvaluationService.usernames[i]}} </td>
+                    <td><app-avatar [size]="'medium'" [uid]="qrlEvaluationService.usernames[i]" [isChat]="true"></app-avatar></td>
                     <td> {{score}} </td>
                 </tr>
                 </tbody>
@@ -31,3 +30,5 @@
         </div>
     </div>
 </div>
+<div class="correction-qrl-container" *ngIf='isHostEvaluating && gameService.observerMode'> {{'GAME_INTERFACE.QRL_CORRECTION.OBS_HOST_EVAL' | translate}}</div>
+

@@ -1,6 +1,7 @@
 <div class="grid-container mt-6" *ngIf='gameInterfaceManagementService.isGameOver'>
     <h2>{{'GAME_INTERFACE.GAME_FINISHED'| translate}}!</h2>
     <p>{{'GAME_INTERFACE.FINAL_SCORE'| translate}} {{ score }}</p>
+    <app-observation-selector *ngIf="gameInterfaceManagementService.gameService.observerMode"></app-observation-selector>
     <app-leave-boutton></app-leave-boutton>
 </div>
 <div class="result-container" *ngIf="gameInterfaceManagementService.isGameOver">
@@ -32,6 +33,7 @@
                 <h1>{{ gameInterfaceManagementService.gameService.question?.text }}</h1>
             </div>
         </section>
+        <app-observation-selector *ngIf="gameInterfaceManagementService.gameService.observerMode"></app-observation-selector>
         <div class='points'>
             <p>{{ 'GAME_INTERFACE.CURRENT_POINTS' | translate }}: {{ score }}</p>
             <p *ngIf = 'bonusStatus'> {{ 'GAME_INTERFACE.BONUS_RECEIVED_FEEDBACK' | translate }} </p>

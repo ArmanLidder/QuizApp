@@ -19,7 +19,6 @@ export class AppComponent implements OnDestroy {
     removeToken() {
         if (this.socketService.isSocketAlive()) this.socketService.disconnect();
         this.authService.logout();
-        console.log('app disonnect')
     }
 
     async ngOnDestroy() {

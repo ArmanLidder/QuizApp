@@ -68,7 +68,6 @@ export class AvatarService {
                 if (docSnap.exists()) {
                     return docSnap.data()['avatarURLS'];
                 } else {
-                    console.log("No such document!");
                     return [];
                 }
             })

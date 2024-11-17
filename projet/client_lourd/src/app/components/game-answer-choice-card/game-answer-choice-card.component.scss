@@ -4,6 +4,10 @@
     cursor: pointer;
 }
 
+.observer {
+    cursor: not-allowed;
+}
+
 .selected {
     background-color: #007bff;
     color: #FFFFFF

@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 import {GameListService} from "@app/services/game-list.service/game-list.service";
 import {GameListItem} from "@common/interfaces/room-interface";
 import {Observable, of, firstValueFrom} from 'rxjs';
@@ -8,6 +8,10 @@ import {RoomValidationService} from "@app/services/room-validation.service/room-
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
 import {User} from "@common/interfaces/user-data.interface";
 import {UsersService} from "@app/services/users.service/users.service";
+import {Router} from "@angular/router";
+import {GameService} from "@app/services/game.service/game.service";
+import {ObservationService} from "@app/services/observation.service/observation.service";
+import {HOST_USERNAME} from "@common/names/host-username";
 import {TranslateService} from "@ngx-translate/core";
 
 @Component({
@@ -15,7 +19,7 @@ import {TranslateService} from "@ngx-translate/core";
     templateUrl: './active-game-list.component.html',
     styleUrls: ['./active-game-list.component.scss']
 })
-export class ActiveGameListComponent implements OnInit, OnDestroy {
+export class ActiveGameListComponent implements OnInit {
     @Output() sendRoomData: EventEmitter<number> = new EventEmitter<number>();
     @Output() sendUsernameData: EventEmitter<string> = new EventEmitter<string>();
     @Output() validationDone: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -24,17 +28,19 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
 
     constructor(
         private gameListService: GameListService,
+        private gameService: GameService,
         private quizService: QuizService,
         private roomValidationService: RoomValidationService,
         private snackbarService: SnackbarService,
         private userService: UsersService,
+        private router: Router,
+        private observationService: ObservationService,
         private translate: TranslateService,
-    ) {
-        this.games$ = this.gameListService.games$;
-    }
+    ) {}
 
-    ngOnInit() {
-        this.gameListService.initialize();
+    async ngOnInit() {
+        this.games$ = this.gameListService.games$;
+        await this.gameListService.initialize();
         this.prefetchQuizNames();
     }
 
@@ -78,12 +84,9 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         return this.quizNameMap.get(id) || 'Chargement...';
     }
 
-    ngOnDestroy() {
-        console.log('On destroy')
-        // this.gameListService.cleanup();
-    }
 
     async joinRoom(game: GameListItem) {
+        this.gameService.observerMode = false;
         this.roomValidationService.roomId = game.room as unknown as string;
         const isHostFriend = await this.validateFriendship(game);
         if (game.friendsOnly && !isHostFriend)  {
@@ -109,6 +112,12 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
         }
     }
 
+    observeGame(game: GameListItem) {
+        this.gameService.init(String(game.room), true);
+        this.gameService.gameRealService.username = HOST_USERNAME;
+        this.observationService.observeGame(game);
+        setTimeout(() => {this.router.navigate([`game/${game.room}`]);}, 500);
+    }
 
     private sendAllDataToWaitingRoom() {
         this.sendRoomIdToWaitingRoom();
@@ -131,7 +140,6 @@ export class ActiveGameListComponent implements OnInit, OnDestroy {
     private async validateMoney(money: number) {
         const currentUserMoney = (await firstValueFrom(this.roomValidationService.user$) as User)?.currency;
         const isValid = currentUserMoney >= money;
-        console.log(currentUserMoney, money, isValid)
         if (isValid) await this.userService.updateUser({currency: (currentUserMoney - money)});
         return isValid;
     }

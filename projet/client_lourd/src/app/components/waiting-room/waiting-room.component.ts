@@ -27,7 +27,6 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     currentUser$: Observable<User | null> ;
     currentUserId : string;
     private readonly route: ActivatedRoute = inject(ActivatedRoute);
-    // private router: Router = inject(Router);
 
     constructor(
         public waitingRoomManagementService: WaitingRoomManagementService,
@@ -37,7 +36,6 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         private gameConfigService: GameConfigService,
         private translate: TranslateService
     ) {
-        // this.connect();
         this.currentUser$ = this.usersService.currentUserProfile$;
     }
 
@@ -69,12 +67,6 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         }
         this.socketService.socket.removeAllListeners();
     }
-
-    // async connect() {
-    //     if (!this.socketService.isSocketAlive()) {
-    //          this.socketService.asyncConnect();
-    //     }
-    // }
 
     banPlayer(username: string) {
         this.waitingRoomManagementService.sendBanPlayer(username);

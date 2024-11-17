@@ -18,9 +18,18 @@ export class HostInterfaceComponent {
     private isLastButton: boolean = false;
     private route: ActivatedRoute = inject(ActivatedRoute);
 
-    constructor(public gameService: GameService, public hostInterfaceManagerService: HostInterfaceManagementService, private readonly socketService: SocketClientService, private translate: TranslateService) {
-        if (this.socketService.isSocketAlive()) this.hostInterfaceManagerService.configureBaseSocketFeatures();
-        this.gameService.init(this.route.snapshot.paramMap.get('id') as string);
+    constructor(
+        public gameService: GameService,
+        public hostInterfaceManagerService: HostInterfaceManagementService,
+        private readonly socketService: SocketClientService,
+        private translate: TranslateService,
+    ) {
+        if (!this.gameService.observerMode) {
+            if (this.socketService.isSocketAlive()) {
+                this.hostInterfaceManagerService.configureBaseSocketFeatures();
+            }
+            this.gameService.init(this.route.snapshot.paramMap.get('id') as string);
+        }
     }
 
     isDisabled() {

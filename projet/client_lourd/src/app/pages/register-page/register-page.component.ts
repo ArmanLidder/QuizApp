@@ -63,7 +63,6 @@ export class RegisterPageComponent implements OnInit {
                 this.snackbarService.show(this.translate.instant('REGISTER_PAGE.SUCCESS_REGISTER_POPUP'));
                 this.router.navigate(['/home']);
             } catch (error: any) {
-                console.log(error);
                 this.snackbarService.show(error.message);
             }
         }

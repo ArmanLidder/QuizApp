@@ -10,7 +10,7 @@
             <tr *ngFor="let game of games$ | async as games" class="hover">
                 <ng-container *ngIf="!game.private">
                     <td>
-                        <div [class]="game.onGoing ? 'on-going-game' : 'game-item'" (click)="joinRoom(game)">
+                        <div [class]="game.onGoing ? 'on-going-game' : 'game-item'" (click)="!game.onGoing ? joinRoom(game) : observeGame(game)">
                             <span class="quiz-title">{{ getQuizName(game.quizId) }}</span>
                             <ng-container *ngIf="!game.onGoing">
                                 <span class="prestige-info">

@@ -1,5 +1,6 @@
 <div class="grid-container" *ngIf='hostInterfaceManagerService.isGameOver'>
     <h2>{{'GAME_INTERFACE.GAME_FINISHED'| translate}}</h2>
+    <app-observation-selector *ngIf="hostInterfaceManagerService.gameService.observerMode"></app-observation-selector>
     <app-leave-boutton></app-leave-boutton>
 </div>
 <div class="grid-container" *ngIf='!hostInterfaceManagerService.isGameOver'>
@@ -7,7 +8,7 @@
         <div class="circle">
             <span>{{hostInterfaceManagerService.timerText}}</span>
             <span>{{gameService.timer}}</span>
-            <div class="button-container">
+            <div *ngIf="!gameService.observerMode" class="button-container">
                 <mat-icon
                         matTooltip="{{ (hostInterfaceManagerService.isPaused ? 'GAME_INTERFACE.TOOLTIP.TOOLTIP_PLAY' : 'GAME_INTERFACE.TOOLTIP.TOOLTIP_PAUSE') | translate }}"
                         (click)="hostInterfaceManagerService.sendPauseTimer()">
@@ -32,13 +33,14 @@
         </section>
     </div>
     <div class='btn-container'>
-        <button class='enter'
+        <button *ngIf="!gameService.observerMode" class='enter'
                 [disabled]='isDisabled() || isTimerStateResultAvailableIn()'
                 (click)='handleHostCommand()'>
                 {{updateHostCommand()}}
         </button>
         <app-leave-boutton></app-leave-boutton>
     </div>
+    <app-observation-selector *ngIf="gameService.observerMode"></app-observation-selector>
 </div>
 <app-correction-qrl *ngIf='!hostInterfaceManagerService.isGameOver' [gameStats] ='hostInterfaceManagerService.gameStats' [qrlAnswers]='hostInterfaceManagerService.responsesQRL' [isHostEvaluating]='hostInterfaceManagerService.isHostEvaluating'></app-correction-qrl>
 <div class="result-container">

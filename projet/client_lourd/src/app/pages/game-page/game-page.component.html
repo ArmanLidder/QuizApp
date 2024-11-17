@@ -1,3 +1,5 @@
 <app-header [showMenu]="false"></app-header>
-<app-host-interface *ngIf='isHost'></app-host-interface>
-<app-game-interface *ngIf='!isHost'></app-game-interface>
+<app-host-interface *ngIf='(gameService.observerMode && observationService.isHost) || (!gameService.observerMode && isHost)'></app-host-interface>
+<app-game-interface *ngIf='(gameService.observerMode && !observationService.isHost) || (!gameService.observerMode && !isHost)'></app-game-interface>
+
+

@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class='btn-container'>
-        <button class='enter' [disabled]='gameService.lockedStatus' (click)='validate()'>{{ 'GAME_INTERFACE.VALIDATE_BUTTON' | translate }}</button>
+        <button *ngIf="!gameService.observerMode" class='enter' [disabled]='gameService.lockedStatus' (click)='validate()'>{{ 'GAME_INTERFACE.VALIDATE_BUTTON' | translate }}</button>
         <app-leave-boutton></app-leave-boutton>
     </div>
 </div>

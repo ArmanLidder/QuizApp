@@ -2,6 +2,7 @@
 
     <div class="flex items-center space-x-2">
         <button
+                *ngIf="!gameService.observerMode"
                 class="w-10 h-10 rounded-full flex items-center justify-center
                 bg-gray-200 text-gray-700 hover:bg-gray-300
                 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
@@ -11,7 +12,7 @@
             -
         </button>
 
-        <ng-container *ngIf="!gameService.lockedStatus; else lockedSlider">
+        <ng-container *ngIf="!gameService.lockedStatus && !gameService.observerMode; else lockedSlider">
             <ngx-slider
                     [(value)]="selectedValue"
                     [options]="options"
@@ -21,13 +22,14 @@
 
         <ng-template #lockedSlider>
             <ngx-slider
-                    [(value)]="selectedValue"
+                    [(value)]="gameService.observerMode ? gameService.obs_qre_Answer === 0 ? selectedValue : gameService.obs_qre_Answer : selectedValue"
                     [options]="optionsDisabled"
                     (userChangeEnd)="onSliderChange()"
             ></ngx-slider>
         </ng-template>
 
         <button
+                *ngIf="!gameService.observerMode"
                 class="w-10 h-10 rounded-full flex items-center justify-center
                 bg-gray-200 text-gray-700 hover:bg-gray-300
                 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
@@ -45,7 +47,7 @@
         <p>{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.YOUR_ANSWER_INTERVAL' | translate }} <strong>{{ responseInterval }}</strong></p>
         <p *ngIf="gameService.validatedStatus">{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.GOOD_ANSWER_WAS' | translate }} {{gameService.question?.answer}}</p>
         <div class='btn-container'>
-            <button class='enter' [disabled]='gameService.lockedStatus' (click)='validate()'>{{ 'GAME_INTERFACE.VALIDATE_BUTTON' | translate }}</button>
+            <button *ngIf="!gameService.observerMode" class='enter' [disabled]='gameService.lockedStatus' (click)='validate()'>{{ 'GAME_INTERFACE.VALIDATE_BUTTON' | translate }}</button>
             <app-leave-boutton></app-leave-boutton>
         </div>
     </div>

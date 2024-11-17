@@ -1,14 +1,15 @@
 <div class="container">
     <div *ngIf='!gameService.gameRealService.validated || gameService.isTestMode' class="flex flex-col justify-center items-center w-4/5">
-        <textarea id="responseInput" maxlength='200' [disabled]='gameService.lockedStatus'
+        <textarea id="responseInput" maxlength='200' [disabled]='gameService.lockedStatus || gameService.observerMode'
                   [(ngModel)]="gameService.qrlAnswer" (input)="handleActiveUser()"
                   rows="4" cols="50">
         </textarea>
-        <div class='text-container py-4 m-0'>
+        <div class='text-container py-4 m-0' *ngIf="!gameService.observerMode">
             <small>{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.CHARACTERS_REMAINING' | translate }}{{ maxResponseCharacters - this.gameService.qrlAnswer.length }}/200</small>
         </div>
     </div>
     <div *ngIf='gameService.gameRealService.validated && !gameService.isTestMode'>
+        <h3 *ngIf="gameService.observerMode && gameService.obs_qrl_Answer">{{'GAME_INTERFACE.PLAYER_QRL_INTERFACE.OBS_PLAYER_RESPONSE' | translate}} {{gameService.obs_qrl_Answer}}</h3>
         <div [ngSwitch]="gameService.lastQrlScore">
             <h3 *ngSwitchCase="0">{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.ZERO_POINTS' | translate }} {{obtainedPoints()}} points</h3>
             <h3 *ngSwitchCase="50">{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.HALF_POINTS' | translate }} {{obtainedPoints()}} points</h3>
@@ -17,7 +18,7 @@
         </div>
     </div>
     <div class='btn-container'>
-        <button *ngIf='!gameService.gameRealService.validated' class='enter'
+        <button *ngIf='!gameService.gameRealService.validated && !gameService.observerMode' class='enter'
                 [disabled]='gameService.lockedStatus' (click)='validate()'>{{ 'GAME_INTERFACE.VALIDATE_BUTTON' | translate }}</button>
         <app-leave-boutton></app-leave-boutton>
     </div>

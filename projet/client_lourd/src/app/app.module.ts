@@ -78,6 +78,8 @@ import { UniqueQuizNameDialogComponent } from './components/unique-quiz-name-dia
 import {MatMenuModule} from "@angular/material/menu";
 import { ProfileViewerComponent } from './components/profile-viewer/profile-viewer.component';
 import {MatBadgeModule} from "@angular/material/badge";
+import { ObservationSelectorComponent } from './components/observation-selector/observation-selector.component';
+import { ObservationSelectorDialogComponent } from './components/observation-selector-dialog/observation-selector-dialog.component';
 import { ShoppingPageComponent } from './pages/shopping-page/shopping-page.component';
 import {TranslateLoader, TranslateModule, TranslateService} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
@@ -162,6 +164,8 @@ export function appInitializerFactory(translate: TranslateService, injector: Inj
         QreResponseAreaComponent,
         UniqueQuizNameDialogComponent,
         ProfileViewerComponent,
+        ObservationSelectorComponent,
+        ObservationSelectorDialogComponent,
         ShoppingPageComponent,
         SettingsDialogComponent,
     ],

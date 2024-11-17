@@ -2,7 +2,12 @@ import {RoomManagingService} from '@app/services/room-managing.service/room-mana
 import {TRANSITION_QUESTIONS_DELAY} from '@common/constants/socket-manager.service.const';
 import {TimerService} from '@app/services/timer.service/timer.service';
 import {ErrorDictionary} from '@common/browser-message/error-message/error-message';
-import {JoinTeamData, PlayerUsername} from '@common/interfaces/socket-manager.interface';
+import {
+    JoinTeamData,
+    NewObservedPlayer,
+    PlayerSelection,
+    PlayerUsername
+} from '@common/interfaces/socket-manager.interface';
 import {HOST_USERNAME} from '@common/names/host-username';
 import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 import * as io from 'socket.io';
@@ -13,6 +18,11 @@ import {GameConfig} from "@common/interfaces/game-info.interface";
 import {Score} from "@common/interfaces/score.interface";
 import {Game} from "@app/classes/game/game";
 import {GameHistory, User, UserStats} from "@common/interfaces/user-data.interface";
+// import {HostCurrentGameInterface} from "@common/interfaces/host.interface";
+import {HostCurrentGameInterface, PlayerCurrentGameInterface} from "@common/interfaces/host.interface";
+import {QuestionType} from "@common/enums/question-type.enum";
+
+// import {InitialQuestionData, ObsQuestionData} from "@common/interfaces/host.interface";
 
 @Service()
 export class GameCreationService {
@@ -39,12 +49,17 @@ export class GameCreationService {
         this.handleJoinTeam(roomManager, socket, sio);
         this.handleCreateTeam(roomManager, socket, sio);
         this.handleGetGameType(roomManager, socket);
+        this.handleNewObserver(roomManager, socket, sio);
+        this.handleObserverGetPlayerList(roomManager, socket, sio);
+        this.handleChangeObservedPLayer(roomManager, socket, sio);
+        this.handleGameStatusForObsReception(roomManager, socket, sio);
+        this.handleQCMAnswerReception(socket, sio);
+        this.handleObsLastQRLAnswer(socket, sio);
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.CREATE_ROOM, async (data: { quizId: string, gameConfig: GameConfig }, callback) => {
             const userId = socket.handshake.auth.userId;
-            console.log(JSON.stringify(data.gameConfig));
             const roomCode = roomManager.addRoom(data.quizId, data.gameConfig);
             await this.fs.firestore.collection('canals').add(this.generateRoomCanal(roomCode, userId))
             roomManager.addUser(roomCode, HOST_USERNAME, socket.id);
@@ -69,6 +84,81 @@ export class GameCreationService {
                 this.sendUpdateGameList(roomManager, sio)
             }
             callback(isLocked);
+        });
+    }
+
+    private handleNewObserver(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.NEW_OBSERVER_GAME, async (roomId: number) => {
+            const hostId = roomManager.getSocketIdByUsername(roomId, HOST_USERNAME);
+            const observerId = socket.handshake.auth.userId;
+            await this.addUserToRoomCanal(roomId, observerId);
+            socket.join(String(roomId));
+            socket.join(String(hostId));
+            sio.to(String(hostId)).emit(SocketEvent.REQUEST_HOST_GAME_STATUS);
+        });
+    }
+
+    private handleGameStatusForObsReception(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.SENDING_HOST_GAME_STATUS, (data: HostCurrentGameInterface) => {
+            if (data.histogramDataChangingResponses[0] === 1000) { // To tell me it is QCM
+                const game = roomManager.getGameByRoomId(data.roomId)
+                data.histogramDataChangingResponses = Array.from(game.choicesStats.values());
+            }
+            sio.emit(SocketEvent.RECEIVING_HOST_GAME_STATUS, data);
+        });
+    }
+
+    private handleChangeObservedPLayer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.CHANGE_OBSERVED_PLAYER, (data: NewObservedPlayer) => {
+           const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
+           const newObservedPlayerId = data.newUserId === roomManager.getRoomById(data.roomId).hostUserId ? HOST_USERNAME : data.newUserId;
+           const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
+           const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, newObservedPlayerId);
+           socket.leave(String(observedPlayerSocketId));
+           socket.join(String(newObservedPlayerSocketId));
+           const roomId = data.roomId;
+           if (newObservedPlayerId !== HOST_USERNAME) {
+               const room = roomManager.getRoomById(roomId);
+               const game = room.game;
+               const playerScore = game.players.get(newObservedPlayerId);
+               // If QRE we check if QRE Answer has been registered => true = sending qre answer else sending 0. If not qre send 0;
+               const playerQREAnswer =  game.currentQuizQuestion.type === QuestionType.QRE ? game.playerQREAnswer.get(newObservedPlayerId) ? game.playerQREAnswer.get(newObservedPlayerId)[1] : 0 : 0;
+               const answers = game.playersAnswers.get(newObservedPlayerId)?.answers ?? "";
+               const qrlAnswer = answers && game.currentQuizQuestion.type === QuestionType.QRL ? answers : "";
+               let players: [string, number][] = [];
+               game.players.forEach((score, username) => {
+                   players.push([username, score.points]);
+               })
+               const choicesStatsValues = Array.from(game.choicesStats.values());
+               const player_data : PlayerCurrentGameInterface = {
+                   roomId: roomId,
+                   isBonus: playerScore.isBonus,
+                   playerScore: playerScore.points,
+                   players: players,
+                   qreAnswer: playerQREAnswer,
+                   qrlAnswer: String(qrlAnswer),
+                   choicesStatsValues: choicesStatsValues,
+               }
+               sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
+               if (game.currentQuizQuestion.type === QuestionType.QCM) {
+                   sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
+               }
+               if (game.currentQuizQuestion.type === QuestionType.QRL) {
+                   sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
+               }
+           }
+        });
+    }
+
+    private handleObsLastQRLAnswer(socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.GET_LAST_QRL_STATUS, (data: { roomId: number; lastQRLScore: number | undefined, qrlAnswer: string | undefined, userId: string}) => {
+            sio.to(String(data.roomId)).emit(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, data);
+        });
+    }
+
+    private handleQCMAnswerReception(socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, (data: PlayerSelection) => {
+            sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, data);
         });
     }
 
@@ -129,6 +219,8 @@ export class GameCreationService {
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             this.debug_teams("PLayer Left", roomId, roomManager);
             this.sendUpdateGameList(roomManager, sio);
+            sio.to(String(socket.id)).emit(SocketEvent.REMOVED_FROM_GAME);
+            this.sendPlayerListToObserver(roomId, roomManager, sio);
             this.sendTeams(roomId, roomManager, sio);
             if (userInfo) {
                 const game = roomManager.getGameByRoomId(roomId);
@@ -156,8 +248,10 @@ export class GameCreationService {
 
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
-            socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+            // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+            sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             await this.deleteRoomCanal(roomId, roomManager);
+            // this.sendPlayerListToObserver(roomId, roomManager, sio);
             roomManager.deleteRoom(roomId);
             this.sendUpdateGameList(roomManager, sio);
             sio.to(String(roomId)).disconnectSockets(true);
@@ -224,6 +318,12 @@ export class GameCreationService {
         });
     }
 
+    private handleObserverGetPlayerList(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.GET_OBSERVER_PLAYER_LIST, (roomId: number) => {
+           this.sendPlayerListToObserver(roomId, roomManager, sio);
+        });
+    }
+
     // Object from entries to send Map (Map is not directly convertable to JSON) on client new Map(Object.entries(teams))
     private sendTeams(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
         const teams = roomManager.getRoomById(roomId)?.teams;
@@ -233,6 +333,14 @@ export class GameCreationService {
 
     private sendUpdateGameList(roomManager: RoomManagingService, sio: io.Server) {
         sio.emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig())
+    }
+
+    private sendPlayerListToObserver(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
+        try {
+            sio.emit(SocketEvent.SENDING_OBSERVER_PLAYER_LIST, roomManager.getUsernamesArray(roomId))
+        } catch(e) {
+            console.log(roomId)
+        }
     }
 
     private generateRoomCanal(roomId: number, userId: string, teamId?: number): Canal {
@@ -546,19 +654,13 @@ export class GameCreationService {
     }
 
     private debug_teams(when: string, roomId: number, roomManager: RoomManagingService) {
-        console.log(`TEAMS debugging ${when}`);
         const room = roomManager.getRoomById(roomId)
         if (room) {
             const teams = room.teams
-            console.log(`Teams size = ${teams.size}`);
             if (teams) {
                 teams.forEach((team, id) => {
-                    console.log(`Team Id: ${id}`);
-                    console.log(`Team size = ${team.members.length}`)
-                    team.members.forEach((member) => console.log(member))
                 });
             }
         }
     }
-
 }

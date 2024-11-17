@@ -157,7 +157,6 @@ export class ChatComponent implements OnInit {
     async loadCanal(canalId: string) {
         this.toggleIsChat();
         const uid = (await firstValueFrom(this.user$)).uid;
-        console.log(uid);
         this.currentCanal$ = this.canalService.getCanal(canalId);
         this.canalId$.next(canalId);
         this.canalSubscription = this.canalId$

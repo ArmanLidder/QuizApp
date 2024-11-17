@@ -14,13 +14,15 @@ export class GameListService {
   constructor(private socketService: SocketClientService) {}
 
   initialize() {
+    this.gamesSubject.next([]);
     if (!this.socketService.isSocketAlive()) this.socketService.connect()
     this.configureBaseSocket();
     this.fetchGameList();
   }
 
   cleanup(): void {
-    this.socketService.socket.off(SocketEvent.UPDATE_GAME_LIST);
+    if(this.socketService.isSocketAlive()) this.socketService.socket.off(SocketEvent.UPDATE_GAME_LIST);
+    this.gamesSubject.next([]);
   }
 
   fetchGameList(): void {
@@ -29,7 +31,7 @@ export class GameListService {
 
   private configureBaseSocket(): void {
     this.socketService.on(SocketEvent.UPDATE_GAME_LIST, (games: GameListItem[]) => {
-      console.log('Received Update GameList:', games);
+      this.gamesSubject.next([]);
       this.gamesSubject.next(games);
     });
   }
