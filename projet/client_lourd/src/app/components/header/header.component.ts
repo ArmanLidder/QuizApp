@@ -43,11 +43,6 @@ export class HeaderComponent implements OnInit{
     });
   }
 
-  async switchLanguage(event: Event) {
-    const language = (event.target as HTMLSelectElement).value;
-    await this.settings.switchLanguage(language as 'en'|'fr');
-  }
-
   openSettingsDialog() {
     this.dialog.open(SettingsDialogComponent, {
       width: '300px', height: '250px',
