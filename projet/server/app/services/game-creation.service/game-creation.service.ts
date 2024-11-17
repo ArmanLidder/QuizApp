@@ -54,6 +54,7 @@ export class GameCreationService {
         this.handleChangeObservedPLayer(roomManager, socket, sio);
         this.handleGameStatusForObsReception(roomManager, socket, sio);
         this.handleQCMAnswerReception(socket, sio);
+        this.handleObsLastQRLAnswer(socket, sio);
     }
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
@@ -116,7 +117,7 @@ export class GameCreationService {
            socket.leave(String(observedPlayerSocketId));
            socket.join(String(newObservedPlayerSocketId));
            const roomId = data.roomId;
-           if (data.isHost) {
+           if (newObservedPlayerId !== HOST_USERNAME) {
                const room = roomManager.getRoomById(roomId);
                const game = room.game;
                const playerScore = game.players.get(newObservedPlayerId);
@@ -139,17 +140,27 @@ export class GameCreationService {
                    choicesStatsValues: choicesStatsValues,
                }
                sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
-               if(game.currentQuizQuestion.type === QuestionType.QCM) {
-                   console.log("emitting choices response request")
+               if (game.currentQuizQuestion.type === QuestionType.QCM) {
                    sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
+               }
+               if (game.currentQuizQuestion.type === QuestionType.QRL) {
+                   console.log("Send qrl request for interaction")
+                   sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
                }
            }
         });
     }
 
+    private handleObsLastQRLAnswer(socket: io.Socket, sio: io.Server) {
+        socket.on(SocketEvent.GET_LAST_QRL_STATUS, (data: { roomId: number; lastQRLScore: number | undefined, qrlAnswer: string | undefined, userId: string}) => {
+            console.log("sending data from client to observer");
+            console.log(data);
+            sio.to(String(data.roomId)).emit(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, data);
+        });
+    }
+
     private handleQCMAnswerReception(socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, (data: PlayerSelection) => {
-            console.log("emitting OBS QCM interaction", data);
             sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, data);
         });
     }

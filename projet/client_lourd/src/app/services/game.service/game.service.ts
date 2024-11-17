@@ -6,6 +6,8 @@ import {SocketClientService} from '@app/services/socket-client.service/socket-cl
 import {SocketEvent} from '@common/socket-event-name/socket-event-name';
 import {HOST_USERNAME} from '@common/names/host-username';
 import {QuestionType} from "@common/enums/question-type.enum";
+import {Auth} from "@angular/fire/auth";
+import {NextQuestionData} from "@common/interfaces/host.interface";
 // import {Score} from "@common/interfaces/score.interface";
 // import {QuestionStatistics} from "@common/constants/statistic-zone.component.const";
 
@@ -38,8 +40,8 @@ export class GameService {
         public gameTestService: GameTestService,
         public gameRealService: GameRealService,
         private socketService: SocketClientService,
-    ) {
-    }
+        private auth: Auth
+    ) {}
 
     get timer() {
         return this.isTestMode ? this.gameTestService.timer?.time : this.gameRealService.timer;
@@ -86,6 +88,7 @@ export class GameService {
         if (isObserver) this.observerMode = true;
         if (!this.isTestMode) {
             this.configureBaseSockets();
+            this.handleGetNextQuestion();
             this.gameRealService.roomId = Number(pathId);
             this.gameRealService.init(isObserver);
         } else {
@@ -131,6 +134,14 @@ export class GameService {
             this.gameTestService.sendAnswer();
         }
         this.lastQrlScore = undefined;
+        if (!this.observerMode) {
+            this.socketService.send(SocketEvent.GET_LAST_QRL_STATUS, {
+                roomId: this.gameRealService.roomId,
+                lastQRLScore: this.lastQrlScore,
+                qrlAnswer: this.qrlAnswer,
+                userId: this.auth.currentUser?.uid,
+            })
+        }
         this.answers.clear();
     }
 
@@ -166,6 +177,16 @@ export class GameService {
             if (this.question?.type === QuestionType.QRE && this.username !== HOST_USERNAME) this.selectQREAnswer(this.qreAnswer);
             this.gameRealService.locked = true;
             if (this.username !== HOST_USERNAME && !this.observerMode) this.sendAnswer();
+        }
+    }
+
+    private handleGetNextQuestion() {
+        if (this.socketService.isSocketAlive() && !this.observerMode) {
+            this.socketService.on(SocketEvent.GET_NEXT_QUESTION, (data: NextQuestionData) => {
+                console.log("GET NEXT QUESTION")
+                this.qrlAnswer = "";
+                this.gameRealService.qrlAnswer = "";
+            });
         }
     }
 }

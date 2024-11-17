@@ -13,6 +13,7 @@ import {QuestionType} from '@common/enums/question-type.enum';
 import {Score} from '@common/interfaces/score.interface';
 import {HOST_USERNAME} from '@common/names/host-username';
 import {SocketEvent} from '@common/socket-event-name/socket-event-name';
+import {Auth} from "@angular/fire/auth";
 
 type Player = [string, number];
 
@@ -33,6 +34,7 @@ export class GameInterfaceManagementService {
         public gameService: GameService,
         private socketService: SocketClientService,
         private interactiveListService: InteractiveListSocketService,
+        private auth: Auth,
     ) {
     }
 
@@ -90,7 +92,7 @@ export class GameInterfaceManagementService {
                 if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
                     this.getScore();
                 } else {
-                    this.gameService.qrlAnswer = '';
+                    // this.gameService.qrlAnswer = '';
                     this.gameService.gameRealService.validated = true;
                 }
             } else {
@@ -111,8 +113,8 @@ export class GameInterfaceManagementService {
             this.getScore();
             this.gameService.gameRealService.validated = true;
         } else {
+            this.gameService.qrlAnswer = "Le joueur est inactif ...";
             if (!this.gameService.observingHost) {
-                this.gameService.qrlAnswer = '';
                 this.gameService.gameRealService.validated = true;
             }
         }
@@ -155,6 +157,7 @@ export class GameInterfaceManagementService {
                 if (!this.gameService.observingHost) this.gameService.gameRealService.timer = timeValue;
                 if (this.gameService.timer === 0) {
                     this.isGameOver = true;
+                    this.interactiveListService.isFinal = true;
                 }
             }
         });
@@ -229,11 +232,9 @@ export class GameInterfaceManagementService {
                     username: this.gameService.observerMode ? this.gameService.observedPlayerId : this.gameService.gameRealService.username,
                 },
                 (score: Score) => {
-                    if (!this.gameService.observerMode) this.gameService.gameRealService.validated = true;
+                    if (!this.gameService.observerMode)  this.gameService.gameRealService.validated = true;
                     this.updateScore(score.points);
                     this.isBonus = score.isBonus;
-                    console.log('Calling back socre from get score to see if qrl last score get updated')
-                    console.log(this.gameService.lastQrlScore)
                 },
             );
         }
@@ -242,9 +243,15 @@ export class GameInterfaceManagementService {
     private updateScore(score: number) {
         const oldScore = this.playerScore;
         this.playerScore = score;
-        if (this.gameService.question?.type === QuestionType.QRL) {
+        if (this.gameService.question?.type === QuestionType.QRL && !this.gameService.observerMode) {
             this.gameService.lastQrlScore =
                 ((this.playerScore - oldScore) / (this.gameService.gameRealService.question?.points as number)) * MAX_PERCENTAGE;
+            if (!this.gameService.observerMode) this.socketService.send(SocketEvent.GET_LAST_QRL_STATUS, {
+                roomId: this.gameService.gameRealService.roomId,
+                lastQRLScore: this.gameService.lastQrlScore,
+                qrlAnswer: this.gameService.qrlAnswer,
+                userId: this.auth.currentUser?.uid,
+            })
         }
     }
 }

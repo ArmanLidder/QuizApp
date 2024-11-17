@@ -5,6 +5,7 @@ import { SocketClientService } from '@app/services/socket-client.service/socket-
 import { MAX_PERCENTAGE } from '@common/constants/game-interface.component.const';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { ENTER_KEY } from '@common/shortcuts/shortcuts';
+import { Auth } from "@angular/fire/auth";
 
 @Component({
     selector: 'app-qrl-response-area',
@@ -19,7 +20,10 @@ export class QrlResponseAreaComponent implements OnDestroy {
     constructor(
         private socketClientService: SocketClientService,
         public gameService: GameService,
-    ) {}
+        private auth: Auth,
+    ) {
+        this.handleRequestActivityStatus();
+    }
 
     @HostListener('document:keydown', ['$event'])
     handleKeyboardEvent(event: KeyboardEvent) {
@@ -85,5 +89,22 @@ export class QrlResponseAreaComponent implements OnDestroy {
         clearTimeout(this.inputTimer);
         clearTimeout(this.inactiveTimeout);
         this.setupInputDebounce();
+    }
+
+    private handleRequestActivityStatus() {
+        if (this.socketClientService.isSocketAlive() && !this.gameService.observerMode) {
+            this.socketClientService.on(SocketEvent.REQUEST_QRL_INTERACTION, (userId: string) => {
+                if (userId === this.auth.currentUser?.uid) {
+                    console.log('Sending QRL infos')
+                    this.socketClientService.send(SocketEvent.SEND_ACTIVITY_STATUS, { roomId: this.gameService.gameRealService.roomId, isActive: this.gameService.isActive, forObs: true });
+                    this.socketClientService.send(SocketEvent.GET_LAST_QRL_STATUS, {
+                        roomId: this.gameService.gameRealService.roomId,
+                        lastQRLScore: this.gameService.lastQrlScore,
+                        qrlAnswer: this.gameService.qrlAnswer,
+                        userId: this.auth.currentUser?.uid,
+                    })
+                }
+            });
+        }
     }
 }

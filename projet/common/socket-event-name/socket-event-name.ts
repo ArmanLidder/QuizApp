@@ -62,8 +62,10 @@ export namespace SocketEvent {
     export const CHANGE_OBSERVED_PLAYER = "change_observed_player";
     export const GET_QRE_ANSWER_FOR_OBS = "get_qre_answer_obs";
     export const GET_QRL_INTERACTION = "get_qrl_interaction_obs";
+    export const REQUEST_QRL_INTERACTION = "request_qrl_interaction"
+    export const RECEIVE_LAST_QRL_INTERACTION = "receive_last_qrl_interaction";
     export const GET_QRL_ANSWER_FOR_OBS = "get_qrl_answer_obs";
-    export const INITIAL_HOST_DATA = "initial_host_data";
+    export const GET_LAST_QRL_STATUS = "get_last_qrl_status";
 
 
     export const REQUEST_HOST_GAME_STATUS = "request_host_game_stautus";

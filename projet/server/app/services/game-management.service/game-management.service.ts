@@ -143,11 +143,13 @@ export class GameManagementService {
     }
 
     private handleActivityStatus(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.SEND_ACTIVITY_STATUS, (data: { roomId: number; isActive: boolean }) => {
-            const game = roomManager.getGameByRoomId(data.roomId);
-            game.switchActivityStatus(data.isActive);
-            const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
-            sio.to(hostSocketId).emit(SocketEvent.REFRESH_ACTIVITY_STATS, game.activityStatusStats);
+        socket.on(SocketEvent.SEND_ACTIVITY_STATUS, (data: { roomId: number; isActive: boolean; forObs?: boolean }) => {
+            if (!data.forObs) {
+                const game = roomManager.getGameByRoomId(data.roomId);
+                game.switchActivityStatus(data.isActive);
+                const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
+                sio.to(hostSocketId).emit(SocketEvent.REFRESH_ACTIVITY_STATS, game.activityStatusStats);
+            }
             sio.to(socket.id).emit(SocketEvent.GET_QRL_INTERACTION, data.isActive);
         });
     }

@@ -65,7 +65,7 @@ export class ObservationService {
         this.handlePlayerGameState();
         this.handleGameStatusDistribution();
         this.handleHostLeft();
-         console.log("Congfig on Observation-Service");
+        this.handleLastQRLAnswerReception();
      }
 
     observeOtherPlayer(oldUserId: string, newUserId: string) {
@@ -78,8 +78,11 @@ export class ObservationService {
         this.isHost = newUserId === this.gameConfigs.hostUserId;
         this.gameService.observingHost = this.isHost;
         this.gameService.observedPlayerId = newUserId;
+        // this.observedPlayerId = newUserId;
         this.gameService.gameRealService.username = this.isHost ? HOST_USERNAME : newUserId;
-        if (this.gameService.observerMode) this.gameService.obs_qrl_Answer = "Le joueur est inactif ...";
+        if (this.gameService.observerMode) {
+            this.gameService.obs_qrl_Answer = "Le joueur est inactif ...";
+        }
         this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
         if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, this.gameConfigs.room);
     }
@@ -153,6 +156,7 @@ export class ObservationService {
             this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
             this.gameService.obs_qre_Answer = data.qreAnswer;
             this.gameService.obs_qrl_Answer = data.qrlAnswer;
+            this.gameService.qrlAnswer = data.qrlAnswer;
             this.gameInterfaceManagementService['getScore']();
         });
     }
@@ -184,6 +188,17 @@ export class ObservationService {
             else
                 this.hostInterfaceManagementService.histogramDataChangingResponses = this.hostInterfaceManagementService['createChoicesStatsMap'](data.histogramDataChangingResponses)
         }
+    }
+
+    private handleLastQRLAnswerReception() {
+        this.socketService.on(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, (data: { roomId: number; lastQRLScore: number | undefined; qrlAnswer: string | undefined, userId: string}) => {
+            console.log("received last qrl interaction", data.lastQRLScore, data.qrlAnswer)
+            if (this.gameService.observedPlayerId === data.userId) {
+                console.log("received last qrl interaction", data.lastQRLScore)
+                this.gameService.lastQrlScore = data.lastQRLScore;
+                this.gameService.obs_qrl_Answer = data.qrlAnswer ?? "";
+            }
+        });
     }
 
     reset() {

@@ -65,7 +65,7 @@ export class GameRealService implements GameServiceInterface {
         });
         this.locked = true;
         this.answers.clear();
-        this.qrlAnswer = '';
+        // this.qrlAnswer = '';
     }
 
     configureBaseSockets() {
@@ -83,6 +83,7 @@ export class GameRealService implements GameServiceInterface {
             this.isLast = data.isLast;
             this.validated = false;
             this.locked = false;
+            this.qrlAnswer = "";
         });
     }
 
