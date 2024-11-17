@@ -49,18 +49,21 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     }
     return TextButton(
       onPressed: () {
-        gameInterfaceManagementService.getQcmEnabled()
-            ? setState(() {
-                textBtnColor = changeColor(textBtnColor);
-                if (gameInterfaceManagementService.gameService.isOfflineMode) {
-                  gameInterfaceManagementService.gameService
-                      .selectChoiceOffline(widget.index);
-                } else {
-                  gameInterfaceManagementService.gameService
-                      .selectChoice(widget.index);
-                }
-              })
-            : () {};
+        if (!this.gameInterfaceManagementService.gameService.realGameService.isHostEvaluating &&
+            this.gameInterfaceManagementService.gameService.realGameService.isValidateActive){
+              gameInterfaceManagementService.getQcmEnabled()
+                  ? setState(() {
+                      textBtnColor = changeColor(textBtnColor);
+                      if (gameInterfaceManagementService.gameService.isOfflineMode) {
+                        gameInterfaceManagementService.gameService
+                            .selectChoiceOffline(widget.index);
+                      } else {
+                        gameInterfaceManagementService.gameService
+                            .selectChoice(widget.index);
+                      }
+                    })
+                  : () {};
+            }
       },
       style: TextButton.styleFrom(
           side: BorderSide(color: Color.fromRGBO(0, 0, 0, 1)),
