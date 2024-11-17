@@ -3,6 +3,7 @@ import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_interface_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
@@ -30,7 +31,9 @@ class _MyWidgetState extends State<GamePage> {
   int questionNum = 1;
   int questionPts = 50;
   String questionTxt = "Question par defaut ?";
-  String message = "Attendez pendant que l'hôte corrige les réponses...";
+  String _message = 'null';
+  String get message => _message;
+  void set message(String value) => _message = value;
   bool isQuitBtn = false;
   GameService _gameService = GameService();
   SocketService _socketService = SocketService();
@@ -38,9 +41,13 @@ class _MyWidgetState extends State<GamePage> {
   GameInterfaceManagementService _gameInterfaceManagementService =
       GameInterfaceManagementService();
 
+  Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
+  Map get timerText => gameText['TIMER_TEXT'];
+
   @override
   void initState() {
     super.initState();
+    message = gameText['PLAYER_QRL_INTERFACE']['AWAITING_EVALUATION'];
     this.isHost = this._gameService.realGameService.username == 'host';
     print(
         'isAlreadyInit interactive service: ${_interactiveListService.isAlreadyInit}');
@@ -90,7 +97,7 @@ class _MyWidgetState extends State<GamePage> {
       questionNum = 1;
       questionPts = 50;
       questionTxt = "Question par defaut ?";
-      message = "Attendez pendant que l'hôte corrige les réponses...";
+      message = gameText['PLAYER_QRL_INTERFACE']['AWAITING_EVALUATION'];
       isQuitBtn = false;
     }
     super.dispose();
@@ -114,7 +121,8 @@ class _MyWidgetState extends State<GamePage> {
     }
     return Visibility(
         visible: !this._gameService.realGameService.isHostEvaluating,
-        child: questionWidget);
+        child: questionWidget
+    );
   }
 
   @override
@@ -243,14 +251,13 @@ class _MyWidgetState extends State<GamePage> {
                                               child: Column(
                                                 children: [
                                                   Text(
-                                                    'Pointage: ${_gameInterfaceManagementService.playerScore}',
+                                                    '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
                                                     style:
                                                         TextStyle(fontSize: 20),
                                                   ),
                                                   _gameInterfaceManagementService
                                                           .isBonus
-                                                      ? Text(
-                                                          'Vous avez reçu le bonus!')
+                                                      ? Text(gameText['BONUS_RECEIVED_FEEDBACK'])
                                                       : SizedBox()
                                                 ],
                                               ),
@@ -332,7 +339,7 @@ class _MyWidgetState extends State<GamePage> {
               onPressed: isValidateButtonActive ? onValidate : null,
               style: validateButtonStyle,
               child: Text(
-                "Valider",
+                gameText['VALIDATE_BUTTON'],
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,

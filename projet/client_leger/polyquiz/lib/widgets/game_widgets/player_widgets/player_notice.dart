@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class PlayerNotice extends StatelessWidget {
   final message;
@@ -23,7 +25,9 @@ class PlayerNotice extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
-                      'Vous avez recu ${gameInterfaceManagementService?.gameService.lastQrlScore}% des points',
+                      TranslationService.instance.languageValue.value == Language.fr?
+                      'Vous avez recu ${gameInterfaceManagementService?.gameService.lastQrlScore}% des points':
+                      "You've received ${gameInterfaceManagementService?.gameService.lastQrlScore}% of the points",
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
