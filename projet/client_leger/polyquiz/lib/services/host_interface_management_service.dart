@@ -10,6 +10,8 @@ import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'dart:convert';
 
+import 'package:polyquiz/services/translationService.dart';
+
 class HostInterfaceManagementService extends ChangeNotifier {
   static final HostInterfaceManagementService _instance =
       HostInterfaceManagementService._internal();
@@ -20,7 +22,13 @@ class HostInterfaceManagementService extends ChangeNotifier {
     return _instance;
   }
 
-  String timerText = TimerMessage.TIME_LEFT;
+  String? _timerText = null;
+  String get timerText {
+    if (_timerText == null) _timerText = timerTransText['TIME_LEFT'];
+    return _timerText!;
+  }
+  void set timerText(String value) => _timerText = value;
+  Map get timerTransText => TranslationService.instance.text['GAME_INTERFACE']['TIMER_TEXT'];
   bool isGameOver = false;
   Map<String, int> histogramDataChangingResponses = {};
   Map<String, bool> histogramDataValue = {};
@@ -111,7 +119,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleTimeTransition() {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
-      this.timerText = 'Prochaine question dans: ';
+      this.timerText = timerTransText['NEXT'];
       this.gameService.realGameService.timer = timeValue;
       notifyListeners();
       if (this.gameService.realGameService.timer == 0) {
@@ -120,7 +128,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
         this.resetInterface();
         this._socketService.sendMessage(
             SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
-        this.timerText = 'Temps restant: ';
+        this.timerText = timerTransText['TIME_LEFT'];
       }
     });
   }
@@ -166,7 +174,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void handleFinalTimeTransition() {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION,
         (timeValue) {
-      this.timerText = 'Résultats disponibles dans: ';
+      this.timerText = timerTransText['RESULT_AVAILABLE_IN'];
       this.gameService.realGameService.timer = timeValue;
 
       if (this.gameService.timer == 0 && this.gameService.username == 'host') {
@@ -353,7 +361,7 @@ TransportStatsFormat prepareStatsTransport() {
 
 
   void reset(BuildContext context) {
-    this.timerText = 'Temps restant: ';
+    this.timerText = timerTransText['TIME_LEFT'];
     this.isGameOver = false;
     this.histogramDataChangingResponses.clear();
     this.histogramDataValue.clear();

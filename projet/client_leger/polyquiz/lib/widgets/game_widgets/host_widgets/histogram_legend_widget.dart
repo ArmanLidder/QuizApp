@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class HistogramLegend extends StatelessWidget {
   const HistogramLegend({super.key});
+  Map get text => TranslationService.instance.text;
+  Map get gameText => text['GAME_INTERFACE'];
+  Map get histogram => gameText['HISTOGRAM'];
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +20,7 @@ class HistogramLegend extends StatelessWidget {
             color: Color.fromRGBO(123, 229, 117, 1),
           )),
           TextSpan(
-              text: 'Bonnes réponses', style: TextStyle(color: Colors.black))
+              text: histogram['CORRECT_ANSWERS'], style: TextStyle(color: Colors.black))
         ])),
         SizedBox(
           width: 30.0,
@@ -29,7 +33,7 @@ class HistogramLegend extends StatelessWidget {
             color: Color.fromRGBO(246, 53, 53, 1),
           )),
           TextSpan(
-              text: 'Mauvaises réponses', style: TextStyle(color: Colors.black))
+              text: histogram['INCORRECT_ANSWERS'], style: TextStyle(color: Colors.black))
         ]))
       ],
     );

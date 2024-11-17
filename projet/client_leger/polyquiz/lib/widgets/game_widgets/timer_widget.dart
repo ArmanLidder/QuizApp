@@ -69,7 +69,6 @@ class _TimerWidgetState extends State<TimerWidget> {
                       if (widget.hostInterfaceManagementService?.gameService?.isPanicDisabled() == false) {
                         widget.hostInterfaceManagementService?.startPanicMode();
                       } else {
-                        
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(gameText['TOOLTIP']['TOOLTIP_PANIC_MODE_DISABLED']),
