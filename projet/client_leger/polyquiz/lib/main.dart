@@ -60,7 +60,7 @@ void main() async {
   Get.put(FriendService());
   Get.put(ValidationService());
   Get.put(LanguageService());
-
+  FriendService.instance.onInit();
   runApp(
     MultiProvider(
       providers: [

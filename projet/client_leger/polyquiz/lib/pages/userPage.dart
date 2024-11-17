@@ -60,8 +60,6 @@ class Userpage extends StatelessWidget {
                                     avgGameTime: userData?.stats.avgGameTime ?? 0,
                                   ),
                                   FriendListDisplay(
-                                    friends: userData?.friends ?? [],
-                                    pendingRequests: userData?.friendRequests ?? [],
                                   ),
                                   StarCardGrid(
                                     achievementsList: achievements,

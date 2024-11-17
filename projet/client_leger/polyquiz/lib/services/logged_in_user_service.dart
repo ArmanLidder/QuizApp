@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/animation.dart';
 import 'package:polyquiz/models/user.dart';
@@ -18,6 +20,11 @@ class LoggedInUserService extends GetxController {
   late var observableAvatar = ''.obs;
   User? user;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  RxList<String> friends = <String>[].obs;
+  RxList<String> friendRequests = <String>[].obs;
+
+  StreamSubscription<DocumentSnapshot>? _friendSubscription;
+  StreamSubscription<DocumentSnapshot>? _friendRequestSubscription;
 
   // Method to set user info
   void setUser(User? user) {
@@ -27,6 +34,9 @@ class LoggedInUserService extends GetxController {
     this.observableLevel.value = (this.user?.level ?? 0).round();
     this.observableUsername.value = this.user!.username;
     this.observableAvatar.value = (this.user?.avatar ?? "");
+    _subscribeToFriends();
+    _subscribeToFriendRequests();
+
   }
 
   Future<void> setUserByEmail(String email) async {
@@ -51,7 +61,6 @@ class LoggedInUserService extends GetxController {
 
     // Fetch and set the user by email
     await setUserByEmail(email);
-    FriendService.instance.manuallyLoadFriends();
     // Get the user object (assuming `userService.user` holds the current user)
     User? currentUser = this.user;
 
@@ -149,4 +158,61 @@ class LoggedInUserService extends GetxController {
         newAvatarUrl: this.forceToString(newProfileUrl));
     await this.reloadUser();
   }
+
+  @override
+  void onClose() {
+    _friendSubscription?.cancel();
+    _friendRequestSubscription?.cancel();
+    super.onClose();
+  }
+
+  void _subscribeToFriends() {
+    String? userId = LoggedInUserService.instance.getUid();
+    if (userId == null) return;
+
+    _friendSubscription = _firestore
+        .collection('users')
+        .doc(userId)
+        .snapshots()
+        .listen((snapshot) {
+      print("update friends");
+      if (snapshot.exists) {
+        List<dynamic> friendsList = snapshot['friends'] ?? [];
+        friends.assignAll(friendsList.map((friend) => friend.toString()).toList());
+      }
+    }, onError: (e) {
+      print('Error listening to friends: $e');
+    });
+  }
+
+  void _subscribeToFriendRequests() {
+    String? currentUserId = LoggedInUserService.instance.getUid();
+    if (currentUserId == null) return;
+
+    _friendRequestSubscription = _firestore
+        .collection('users')
+        .doc(currentUserId)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        List<dynamic> friendRequestsList = snapshot['friendRequests'] ?? [];
+        List<String> pendingRequests = friendRequestsList.map<String>((request) {
+          if (request is Map<String, dynamic>) {
+            String userId;
+            if (request['fromUserId'] == currentUserId) {
+              userId = request['toUserId'] as String;
+            } else {
+              userId = request['fromUserId'] as String;
+            }
+            return userId;
+          }
+          return '';
+        }).where((id) => id.isNotEmpty).toList();
+        friendRequests.assignAll(pendingRequests);
+      }
+    }, onError: (e) {
+      print('Error listening to friend requests: $e');
+    });
+  }
+
 }

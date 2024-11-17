@@ -16,22 +16,12 @@ class MoneyCounter extends StatelessWidget {
       num prestige = user?.prestige ?? 0; // Default to 0 if prestige is null
       num level = user?.level ?? 0; // Default to 0 if level is null
 
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+      return Center(
+        child:
           Text(
             'Argent : ${loggedInUserService.observableCurrency.value} \$',
             style: TextStyle(fontSize: 20, color: Colors.black),
           ),
-          Text(
-            'Prestige : $prestige',
-            style: TextStyle(fontSize: 20, color: Colors.black),
-          ),
-          Text(
-            'Niveau : $level',
-            style: TextStyle(fontSize: 20, color: Colors.black),
-          ),
-        ],
       );
     });
   }
