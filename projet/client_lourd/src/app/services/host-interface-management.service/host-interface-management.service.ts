@@ -194,10 +194,10 @@ export class HostInterfaceManagementService {
     private obsHandleFinalTimeTransition(timeValue: number){
         this.timerText = TimerMessage.RESULT_AVAILABLE_IN;
         if (this.gameService.observingHost) this.gameService.gameRealService.timer = timeValue;
-        if (this.gameService.timer === 0 && this.gameService.username === HOST_USERNAME) {
+        if (this.gameService.timer === 0) {
             this.isGameOver = true;
             this.interactiveListService.isFinal = true;
-            if (this.gameService.observingHost) this.gameService.audio.pause();
+            this.gameService.audio.pause();
             this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
         }
     }
