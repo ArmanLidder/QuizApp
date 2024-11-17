@@ -42,7 +42,6 @@ class WaitingRoomService extends ChangeNotifier {
     this.time = 0;
     this.teams = {};
     this.teamsForInterface = [];
-    this.gameType = 'classic';
   }
 
   bool isSocketAlive() {
@@ -199,12 +198,12 @@ class WaitingRoomService extends ChangeNotifier {
 
   void getGameType() {
     _socketService.sendMessageWithAck(SocketEvent.GET_GAME_TYPE, this.roomId,
-        (gameType) => {this.gameType = gameType});
+        (gameType) => {this.gameType = gameType, notifyListeners()});
   }
 
   void gatherPlayers() {
     _socketService.sendMessageWithAck(SocketEvent.GET_GAME_TYPE, this.roomId,
-        (gameType) => {this.gameType = gameType});
+        (gameType) => {this.gameType = gameType, notifyListeners()});
 
     _socketService.sendMessageWithAck(
         SocketEvent.GATHER_PLAYERS_USERNAME, this.roomId, (dynamic players) {
@@ -232,6 +231,7 @@ class WaitingRoomService extends ChangeNotifier {
   void handleNewPlayer() {
     _socketService.onMessage(SocketEvent.NEW_PLAYER, (players) {
       this.players = List<String>.from(players);
+      print('NEW PLAYERS: ${this.players}');
       notifyListeners();
     });
   }

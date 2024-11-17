@@ -78,7 +78,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         username = widget.username ?? 'nothing';
         waitingRoomService.roomId = int.parse(roomId);
         realGameService.username = username;
-        waitingRoomService.gatherPlayers();
+
         realGameService.roomId = int.parse(roomId);
 
         print('Joining room $roomId as $username');
@@ -90,6 +90,10 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             isHost: widget.isHost,
             username: username,
             isFromActiveList: widget.isFromActiveList);
+
+        if (!widget.isHost) {
+          waitingRoomService.gatherPlayers();
+        }
       }
       waitingRoomService.configureBaseSocketFeatures();
       setState(() {});
