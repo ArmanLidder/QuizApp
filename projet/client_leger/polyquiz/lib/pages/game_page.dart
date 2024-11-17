@@ -183,7 +183,6 @@ class _MyWidgetState extends State<GamePage> {
                               backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                             ),
                             body: Material(
-                              // This ensures that DataTable has a Material ancestor.
                               child: ListView(
                                 children: [
                                   ResultPage(
