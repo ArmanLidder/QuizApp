@@ -59,7 +59,6 @@ export class RegisterPageComponent implements OnInit {
                 this.snackbarService.show('Compte créé');
                 this.router.navigate(['/home']);
             } catch (error: any) {
-                console.log(error);
                 this.snackbarService.show(error.message || 'Une erreur est survenue');
             }
         }

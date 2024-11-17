@@ -112,7 +112,6 @@ export class GameService {
 
     selectQREAnswer(selectedAnswer: number) {
         if (!this.lockedStatus) {
-            console.log(`sending ${selectedAnswer}`)
             this.qreAnswer = selectedAnswer;
             this.gameRealService.qreAnswer = selectedAnswer;
             if (!this.observerMode) this.gameRealService.sendQRESelection(selectedAnswer);
@@ -183,7 +182,6 @@ export class GameService {
     private handleGetNextQuestion() {
         if (this.socketService.isSocketAlive() && !this.observerMode) {
             this.socketService.on(SocketEvent.GET_NEXT_QUESTION, (data: NextQuestionData) => {
-                console.log("GET NEXT QUESTION")
                 this.qrlAnswer = "";
                 this.gameRealService.qrlAnswer = "";
             });

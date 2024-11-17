@@ -122,7 +122,6 @@ export class ObservationService {
         this.socketService.on(SocketEvent.RECEIVING_HOST_GAME_STATUS, (data: HostCurrentGameInterface) => {
             this.setUpGameState(data);
             const resetPlayerStatus = this.hostInterfaceManagementService.isGameOver
-            console.log(this.hostInterfaceManagementService.leftPlayers)
             this.hostInterfaceManagementService['interactiveListService'].getPlayersList(this.gameService.gameRealService.roomId, this.hostInterfaceManagementService.leftPlayers, resetPlayerStatus)
         });
     }
@@ -192,9 +191,7 @@ export class ObservationService {
 
     private handleLastQRLAnswerReception() {
         this.socketService.on(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, (data: { roomId: number; lastQRLScore: number | undefined; qrlAnswer: string | undefined, userId: string}) => {
-            console.log("received last qrl interaction", data.lastQRLScore, data.qrlAnswer)
             if (this.gameService.observedPlayerId === data.userId) {
-                console.log("received last qrl interaction", data.lastQRLScore)
                 this.gameService.lastQrlScore = data.lastQRLScore;
                 this.gameService.obs_qrl_Answer = data.qrlAnswer ?? "";
             }

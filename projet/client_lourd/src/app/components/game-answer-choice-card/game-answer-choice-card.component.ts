@@ -1,15 +1,16 @@
-import {Component, EventEmitter, Input, OnChanges, Output, HostListener} from '@angular/core';
-import { QuizChoice } from '@common/interfaces/quiz.interface';
-import { GameService } from '@app/services/game.service/game.service';
+import {Component, EventEmitter, HostListener, Input, OnChanges, Output} from '@angular/core';
+import {QuizChoice} from '@common/interfaces/quiz.interface';
+import {GameService} from '@app/services/game.service/game.service';
 import {
     ACTIVE_DISPLAY,
     BAD_ANSWER_DISPLAY,
     GOOD_ANSWER_DISPLAY,
     NO_EFFECT_DISPLAY,
-    NORMAL_DISPLAY, OBSERVER_DISPLAY,
+    NORMAL_DISPLAY,
+    OBSERVER_DISPLAY,
     SELECTED_DISPLAY,
 } from '@common/constants/game-answer-choice-card.component.const';
-import { ENTER_KEY } from '@common/shortcuts/shortcuts';
+import {ENTER_KEY} from '@common/shortcuts/shortcuts';
 import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
 import {SocketEvent} from "@common/socket-event-name/socket-event-name";
 
@@ -47,9 +48,7 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     }
 
     handleHoverEffect() {
-        const value = this.gameService.lockedStatus ? NO_EFFECT_DISPLAY : this.gameService.observerMode ? OBSERVER_DISPLAY : ACTIVE_DISPLAY;
-        console.log(value, this.gameService.observerMode)
-        return value
+        return this.gameService.lockedStatus ? NO_EFFECT_DISPLAY : this.gameService.observerMode ? OBSERVER_DISPLAY : ACTIVE_DISPLAY
     }
 
     // ToggleSelect() has a debounce method to make sure that user selected the component

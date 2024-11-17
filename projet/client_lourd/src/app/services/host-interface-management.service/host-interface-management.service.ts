@@ -87,7 +87,6 @@ export class HostInterfaceManagementService {
     }
 
     configureBaseSocketFeatures() {
-        console.log("configuring base socket for host")
         if (!this.gameService.observerMode) {
             this.reset();
             this.handleRequestHostGameStatus();
@@ -222,7 +221,6 @@ export class HostInterfaceManagementService {
     private handleGetInitialQuestion() {
         this.socketService.on(SocketEvent.GET_INITIAL_QUESTION, async (data: InitialQuestionData) => {
             const numberOfPlayers = await this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
-            console.log(numberOfPlayers)
             this.initGraph(data.question, numberOfPlayers);
         });
     }

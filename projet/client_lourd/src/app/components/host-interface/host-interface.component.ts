@@ -28,7 +28,6 @@ export class HostInterfaceComponent {
         if (!this.gameService.observerMode) {
             if (this.socketService.isSocketAlive()) {
                 this.hostInterfaceManagerService.configureBaseSocketFeatures();
-                console.log("Congfig on Host-Interface");
             }
             this.gameService.init(this.route.snapshot.paramMap.get('id') as string);
         }

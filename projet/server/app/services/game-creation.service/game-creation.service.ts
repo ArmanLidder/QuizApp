@@ -144,7 +144,6 @@ export class GameCreationService {
                    sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
                }
                if (game.currentQuizQuestion.type === QuestionType.QRL) {
-                   console.log("Send qrl request for interaction")
                    sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
                }
            }
@@ -153,8 +152,6 @@ export class GameCreationService {
 
     private handleObsLastQRLAnswer(socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.GET_LAST_QRL_STATUS, (data: { roomId: number; lastQRLScore: number | undefined, qrlAnswer: string | undefined, userId: string}) => {
-            console.log("sending data from client to observer");
-            console.log(data);
             sio.to(String(data.roomId)).emit(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, data);
         });
     }

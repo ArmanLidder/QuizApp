@@ -70,7 +70,6 @@ export class RoomManagingService {
         const game_price = this.getRoomById(roomId).price
         if (this.getRoomById(roomId).gameType !== 'classic' && HOST_USERNAME !== username) this.addNewUserInTeam(roomId, username)
         if (HOST_USERNAME !== username && game_price > 0) this.getRoomById(roomId).total_price += game_price
-        console.log( this.getRoomById(roomId).total_price)
     }
 
     getSocketIdByUsername(roomId: number, username: string): string {

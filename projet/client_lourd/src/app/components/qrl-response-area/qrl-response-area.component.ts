@@ -95,7 +95,6 @@ export class QrlResponseAreaComponent implements OnDestroy {
         if (this.socketClientService.isSocketAlive() && !this.gameService.observerMode) {
             this.socketClientService.on(SocketEvent.REQUEST_QRL_INTERACTION, (userId: string) => {
                 if (userId === this.auth.currentUser?.uid) {
-                    console.log('Sending QRL infos')
                     this.socketClientService.send(SocketEvent.SEND_ACTIVITY_STATUS, { roomId: this.gameService.gameRealService.roomId, isActive: this.gameService.isActive, forObs: true });
                     this.socketClientService.send(SocketEvent.GET_LAST_QRL_STATUS, {
                         roomId: this.gameService.gameRealService.roomId,
