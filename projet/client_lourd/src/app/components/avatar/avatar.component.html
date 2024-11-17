@@ -46,5 +46,5 @@
     </div>
 
     <p *ngIf="isChat" class="text-center mt-1 p-0">{{ (currentUser$ | async)?.username }}</p>
-    <p *ngIf="showMoney" class="text-center">{{'PROFILE.CURRENCY' | translate}}: {{ (currentUser$ | async)?.currency }}</p>
+    <p *ngIf="showMoney" class="text-center"><i class="bi bi-cash-coin"></i> {{ (currentUser$ | async)?.currency }}</p>
 </div>

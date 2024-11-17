@@ -526,7 +526,6 @@
     },
     "PLAYER_QRL_INTERFACE": {
       "CHARACTERS_REMAINING": "Characters remaining: ",
-      "CHARACTERS_REMAINING": "Characters remaining: ",
       "ZERO_POINTS": "You received no points for your answer: ",
       "HALF_POINTS": "You received half of the points for your answer: ",
       "FULL_POINTS": "Congratulations, you received all the points for your answer: ",

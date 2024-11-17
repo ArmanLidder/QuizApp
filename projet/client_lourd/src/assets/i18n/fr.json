@@ -529,13 +529,13 @@
       "ZERO_POINTS": "Vous avez eu aucun point pour votre réponse : ",
       "HALF_POINTS": "Vous avez eu la moitié des points pour votre réponse : ",
       "FULL_POINTS": "Félicitations, vous avez eu tout les points de la question pour votre réponse : ",
-      "AWAITING_EVALUATION": "L'organisateur est en train d'évaluer votre réponse"
+      "AWAITING_EVALUATION": "L'organisateur est en train d'évaluer votre réponse",
+      "OBS_PLAYER_RESPONSE": "Réponse du joueur:"
     },
     "PLAYER_QRE_INTERFACE": {
       "TOLERANCE": "Tolérance",
       "YOUR_ANSWER_INTERVAL": "Votre intervalle de réponse est:",
-      "GOOD_ANSWER_WAS": "La bonne réponse était:",
-      "OBS_PLAYER_RESPONSE": "Réponse du joueur:"
+      "GOOD_ANSWER_WAS": "La bonne réponse était:"
     },
     "NEXT_QUESTION": "Prochaine question",
     "SHOW_RESULT": "Montrer résultat",

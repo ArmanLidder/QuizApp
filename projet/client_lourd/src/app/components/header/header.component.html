@@ -32,6 +32,6 @@
             <option value="en">English</option>
         </select>
 
-        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="showMenu"></app-avatar>
+        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="showMenu" [showMoney]="true"></app-avatar>
     </div>
 </header>
