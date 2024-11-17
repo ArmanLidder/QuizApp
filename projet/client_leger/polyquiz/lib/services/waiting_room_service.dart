@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/teams.dart';
 import 'package:polyquiz/models/teams_models.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'socket_service.dart';
@@ -22,8 +23,9 @@ class WaitingRoomService extends ChangeNotifier {
   bool isTransition = false;
   List<String> players = [];
   num time = 0;
-  Map<String, Object> teams = {};
-  Object? teamsForInterface = null;
+  Map<int, List<String>> teams = {};
+  List<TeamsForInterface> teamsForInterface = [];
+  String gameType = 'classic';
 
   WaitingRoomService._internal();
 
@@ -38,6 +40,8 @@ class WaitingRoomService extends ChangeNotifier {
     this.isTransition = false;
     this.players = [];
     this.time = 0;
+    this.teams = {};
+    this.teamsForInterface = [];
   }
 
   bool isSocketAlive() {
@@ -191,6 +195,9 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   void gatherPlayers() {
+    _socketService.sendMessageWithAck(SocketEvent.GET_GAME_TYPE, this.roomId,
+        (gameType) => {this.gameType = gameType});
+
     _socketService.sendMessageWithAck(
         SocketEvent.GATHER_PLAYERS_USERNAME, this.roomId, (dynamic players) {
       this.players = List<String>.from(players);
@@ -211,6 +218,7 @@ class WaitingRoomService extends ChangeNotifier {
     handleRemovedPlayer();
     handleTime();
     handleFinalTransition();
+    handleGetTeams();
   }
 
   void handleNewPlayer() {
@@ -257,8 +265,10 @@ class WaitingRoomService extends ChangeNotifier {
 
   void handleGetTeams() {
     this._socketService.onMessage(SocketEvent.GET_TEAMS, (teams) {
-      this.teams = new Map.fromEntries(teams);
-      //this.teamsForInterface = List.from(this.teams.entries.map());
+      this.teams = Map<int, List<String>>.fromEntries(teams);
+      this.teamsForInterface = this.teams.entries.map((entry) {
+        return TeamsForInterface(entry.key, entry.value);
+      }).toList();
     });
   }
 }

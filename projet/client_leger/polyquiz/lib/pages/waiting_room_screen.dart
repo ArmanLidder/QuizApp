@@ -37,6 +37,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   String roomState = "La salle est ouverte";
   String? newPlayerName;
   bool showPopup = false;
+  String? currentUserId;
   WaitingRoomService waitingRoomService = WaitingRoomService();
   RealGameService realGameService = RealGameService();
 
@@ -109,6 +110,36 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       print('Player left');
       waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
     }
+  }
+
+  bool onlyOneMember() {
+    bool result = false;
+    this.waitingRoomService.teamsForInterface.forEach((team) {
+      if (team.userIds.contains(this.currentUserId) &&
+          team.userIds.length < 2) {
+        result = true;
+      }
+    });
+    return result;
+  }
+
+  bool validationBeforeEntry() {
+    if (this.waitingRoomService.gameType == 'classic') {
+      return this.waitingRoomService.players.length == 0 ||
+          !this.waitingRoomService.isRoomLocked;
+    }
+
+    int moreThanTwoMembers = 0;
+
+    this.waitingRoomService.teamsForInterface.forEach((team) {
+      if (team.userIds.length > 1) {
+        moreThanTwoMembers += 1;
+      }
+    });
+
+    return moreThanTwoMembers < 1 ||
+        this.waitingRoomService.teams.length < 1 ||
+        !this.waitingRoomService.isRoomLocked;
   }
 
   @override
