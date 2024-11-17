@@ -186,7 +186,9 @@ class WaitingRoomService extends ChangeNotifier {
   void joinTeam(int newTeamId) {
     JoinTeamData joinTeamData =
         JoinTeamData(roomId: roomId, newTeamId: newTeamId);
-    this._socketService.sendMessage(SocketEvent.JOIN_TEAM, joinTeamData);
+    this
+        ._socketService
+        .sendMessage(SocketEvent.JOIN_TEAM, joinTeamData.toJson());
   }
 
   void removePlayer(String username) {
@@ -265,10 +267,22 @@ class WaitingRoomService extends ChangeNotifier {
 
   void handleGetTeams() {
     this._socketService.onMessage(SocketEvent.GET_TEAMS, (teams) {
-      this.teams = Map<int, List<String>>.fromEntries(teams);
+      this.teams.clear();
+      teams.forEach((teamId, teamData) {
+        print('${teamId} ${teamData['members']}');
+        List<String> members = List<String>.from(teamData['members']);
+        this.teams[int.parse(teamId)] = members;
+      });
+      this.teamsForInterface.clear();
       this.teamsForInterface = this.teams.entries.map((entry) {
         return TeamsForInterface(entry.key, entry.value);
       }).toList();
+
+      print('\nTeams For Interface:');
+      for (var team in teamsForInterface) {
+        print('Team ${team.name}: ${team.userIds}');
+      }
+      notifyListeners();
     });
   }
 }

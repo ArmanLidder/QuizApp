@@ -3,4 +3,11 @@ class JoinTeamData {
   final int newTeamId;
 
   JoinTeamData({required this.roomId, required this.newTeamId});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'roomId': roomId,
+      'newTeamId': newTeamId,
+    };
+  }
 }
