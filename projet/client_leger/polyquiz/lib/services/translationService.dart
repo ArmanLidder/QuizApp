@@ -21,6 +21,18 @@ class TranslationService extends GetxController {
     }
   }
 
+  String get currentLanguageAbbr {
+    switch(this._currentLanguage) {
+      case Language.en:
+        return 'en';
+      case Language.fr:
+        return 'fr';
+      case Language.tp:
+        return 'tp';
+    }
+
+  }
+
   void set currentLanguageAbbr(String abbr) {
     final value = getEnumFromAbbreviation(abbr);
     _currentLanguage = value;

@@ -264,4 +264,29 @@ class LanguageService extends GetxService {
         };
     }
   }
+  String get historiqueDesConnexionsText {
+    switch (languageAbr.value) {
+      case 'fr':
+        return 'Historique des connexions';
+      case 'en':
+        return 'Login history';
+      case 'tp': // Toki Pona
+        return 'Historia tawa nimi pi użytkama';
+      default:
+        return 'Login history'; // Default to English if no language is set
+    }
+  }
+
+  String get historiqueDesPartiesText {
+    switch (languageAbr.value) {
+      case 'fr':
+        return 'Historique des parties';
+      case 'en':
+        return 'Game history';
+      case 'tp': // Toki Pona
+        return 'Historia pi musi';
+      default:
+        return 'Game history'; // Default to English if no language is set
+    }
+  }
 }

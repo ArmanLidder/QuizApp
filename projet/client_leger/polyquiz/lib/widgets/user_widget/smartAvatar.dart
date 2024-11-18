@@ -91,7 +91,9 @@ class SmartAvatar extends StatelessWidget {
                       fontWeight: FontWeight.bold, // Make the text bold
                       color: Colors.black, // Set the text color
                     ),
-                  ))
+                    maxLines: 1, // Ensure the text only takes one line
+                    overflow: TextOverflow.ellipsis, // Truncate with ellipsis if it overflows
+                  ),)
                       : SizedBox.shrink(), // Use SizedBox.shrink() for an empty widget when hasName is false
                 ),              ],
             );

@@ -5,10 +5,11 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/LanguageService.dart';
-import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/theme_service.dart';
 import 'package:intl/intl.dart';
+
+import '../../services/translationService.dart';
 class Event {
   final String eventType;
   final String timestamp;
@@ -74,19 +75,17 @@ class Historique extends StatelessWidget {
 
       return allEvents.map((event) {
         String date = "${event.timestamp}".split(' ')[0];
-        String? label = profileText[event.eventType.toUpperCase()] ?? "nullEventMessage" ;
+        String? label = ls.eventMessage[event.eventType] ?? "nullEventMessage" ;
         Color color = event.eventType == 'logout' ||  event.eventType == 'loss' ? Colors.red : Colors.green;
 
-        return EvenementRow(date: date, label: label!, color: color);
+        return EvenementRow(date: date, label: label, color: color);
       }).toList();
     }
 
     @override
     Widget build(BuildContext context) {
       return Obx(
-            () {
-              print('${TranslationService.instance.languageValue}');
-              return Column(
+            () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -114,7 +113,7 @@ class Historique extends StatelessWidget {
             children: _generateEventRows(gameEvents()),
           ),
         ],
-      );});
+      ));
     }
   }
 

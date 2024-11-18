@@ -56,8 +56,10 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       color: Color.fromRGBO(69, 90, 100, 1)),
                   border: OutlineInputBorder()),
               items: [
-                DropdownMenuItem(value: 'classic', child: Text(configText['CLASSIC'])),
-                DropdownMenuItem(value: 'equipe', child: Text(configText['TEAM'])),
+                DropdownMenuItem(
+                    value: 'classic', child: Text(configText['CLASSIC'])),
+                DropdownMenuItem(
+                    value: 'equipe', child: Text(configText['TEAM'])),
               ],
               onChanged: (value) {
                 setState(() {
@@ -73,8 +75,10 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
             ),
             SizedBox(height: 16),
             TextFormField(
+              initialValue: "0",
               decoration: InputDecoration(
-                  labelText: configText['PRICE_LABEL'], border: OutlineInputBorder()),
+                  labelText: configText['PRICE_LABEL'],
+                  border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 setState(() {
@@ -142,7 +146,8 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                 DropdownMenuItem(value: 50, child: Text(configText['BRONZE'])),
                 DropdownMenuItem(value: 100, child: Text(configText['SILVER'])),
                 DropdownMenuItem(value: 150, child: Text(configText['GOLD'])),
-                DropdownMenuItem(value: 200, child: Text(configText['PLATINUM'])),
+                DropdownMenuItem(
+                    value: 200, child: Text(configText['PLATINUM'])),
               ],
               onChanged: (value) {
                 setState(() {

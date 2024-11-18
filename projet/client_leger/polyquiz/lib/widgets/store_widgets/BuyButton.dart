@@ -75,7 +75,7 @@ class _BuyButtonState extends State<BuyButton> {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
         onPressed: buttonAction,
-        child: Text(buttonText),
+        child: Text(buttonText,textAlign: TextAlign.center),
       );
     });
   }
@@ -154,9 +154,11 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
       }
 
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
+        style: ElevatedButton.styleFrom(backgroundColor: buttonColor,
+          fixedSize: Size(200,60),
+        ),
         onPressed: buttonAction,
-        child: Text(buttonText),
+        child: Center(child:Text(buttonText,textAlign: TextAlign.center)),
       );
     });
   }
@@ -245,9 +247,95 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
       }
 
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
+        style: ElevatedButton.styleFrom(backgroundColor: buttonColor,
+          fixedSize: Size(200,60),
+        ),
         onPressed: buttonAction,
-        child: Text(buttonText),
+        child: Center(child:Text(buttonText)),
+      );
+    });
+  }
+}
+
+class RewardCashButton extends StatefulWidget {
+  final num cost;
+  final Future<void> Function() onClaim; // Claim callback
+  final String itemId;
+  final num achievement; // Achievement to check
+
+  RewardCashButton({
+    required this.cost,
+    required this.onClaim,
+    required this.itemId,
+    required this.achievement,
+  });
+
+  @override
+  _RewardCashButtonState createState() => _RewardCashButtonState();
+}
+
+class _RewardCashButtonState extends State<RewardCashButton> {
+  final LoggedInUserService loggedInUserService = Get.find();
+  final StoreService storeService = Get.find();
+  Map get shopText => TranslationService.instance.text['SHOPPING'];
+  List<String> get achievementText => TranslationService.instance.text['PROFILE']['ALL_ACHIEVEMENTS'];
+
+  bool alreadyClaimed = false;
+  bool hasAchievement = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateButtonStatus();
+  }
+
+  Future<void> _updateButtonStatus() async {
+    await loggedInUserService.reloadUser();
+    final user = loggedInUserService.getUser();
+    bool ownsItem = await storeService.isOwned(user?.uid ?? "noIdInRewardCashButtonWidget", widget.itemId);
+    bool achievementUnlocked = user?.achievements.contains(widget.achievement) ?? false;
+
+    setState(() {
+      alreadyClaimed = ownsItem;
+      hasAchievement = achievementUnlocked;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      storeService.purchaseTrigger;
+      _updateButtonStatus(); // Update status on each change
+      Color buttonColor;
+      String buttonText;
+      VoidCallback? buttonAction;
+
+      if (alreadyClaimed) {
+        buttonColor = Colors.grey;
+        buttonText = shopText['CLAIMED']; // "Réclamée"
+        buttonAction = null; // Disable button if already claimed
+      } else if (hasAchievement) {
+        buttonColor = Colors.green;
+        buttonText = shopText['CLAIM']; // "Réclamer"
+        buttonAction = () async {
+          await widget.onClaim(); // Call the claim function
+          _updateButtonStatus();
+        };
+      } else {
+        buttonColor = Colors.grey;
+        final content = TranslationService.instance.languageValue.value == Language.fr
+            ? "Débloqué à l'exploit  "
+            : "Unlocked at achievement ";
+        buttonText = '$content ${achievementText[(widget.achievement - 1) as int]}';
+        buttonAction = null; // Disable button if achievement not met
+      }
+
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: buttonColor,
+        fixedSize: Size(200,60),
+        ),
+        onPressed: buttonAction,
+        child:Center(child: Text(buttonText,textAlign: TextAlign.center)),
       );
     });
   }

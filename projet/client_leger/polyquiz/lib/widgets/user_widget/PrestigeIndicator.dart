@@ -29,7 +29,7 @@ class PrestigeIndicator extends StatelessWidget {
         mainAxisSize: MainAxisSize.min, // Only take up the space needed
         children: [
           SizedBox(width: 4), // Space between icon and text
-          Text(prestigeText, style: TextStyle(fontSize: 14)), // Adjust font size for better fit
+          Text("Prestige: "+ prestigeText, style: TextStyle(fontSize: 14)), // Adjust font size for better fit
         ],
       ),
 

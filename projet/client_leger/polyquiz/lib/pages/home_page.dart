@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
@@ -38,59 +39,63 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    this.userData = this.loggedInUserService.getUser();
-    return Scaffold(
-      backgroundColor:
-          this.themeService.mainBackground.value, // Set background color
-      appBar: FancyAppBar(
-        context: context,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              mainPageText['WELCOME'] + " " + loggedInUserService.observableUsername.value,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                  color: this.themeService.mainAccent.value),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/roomList');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: this.themeService.secondaryBackground.value,
-                foregroundColor: this.themeService.secondaryAccent.value,
+    return Obx(() {
+      this.userData = this.loggedInUserService.getUser();
+      return Scaffold(
+        backgroundColor:
+        this.themeService.mainBackground.value, // Set background color
+        appBar: FancyAppBar(
+          context: context,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                mainPageText['WELCOME'] +
+                    " " +
+                    loggedInUserService.observableUsername.value,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                    color: this.themeService.mainAccent.value),
               ),
-              child: Text(mainPageText['JOIN_GAME']),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/quizz');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: this.themeService.secondaryBackground.value,
-                foregroundColor: this.themeService.secondaryAccent.value,
-              ),
-              child: Text(mainPageText['CREATE_GAME']),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
+              ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/store');
+                  Navigator.pushReplacementNamed(context, '/roomList');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: this.themeService.secondaryBackground.value,
                   foregroundColor: this.themeService.secondaryAccent.value,
                 ),
-                child: Text(mainPageText['SHOP'])),
-            ChatPopup(),
-          ],
+                child: Text(mainPageText['JOIN_GAME']),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/quizz');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: this.themeService.secondaryBackground.value,
+                  foregroundColor: this.themeService.secondaryAccent.value,
+                ),
+                child: Text(mainPageText['CREATE_GAME']),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/store');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: this.themeService.secondaryBackground.value,
+                    foregroundColor: this.themeService.secondaryAccent.value,
+                  ),
+                  child: Text(mainPageText['SHOP'])),
+              ChatPopup(),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -2,22 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/friendService.dart';
-import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 import '../../../services/LanguageService.dart';
 import '../../../services/theme_service.dart';
 import 'friendsPopup.dart';
-
 class FriendListDisplay extends StatefulWidget {
-  final UserService userService = UserService.instance;
   final FriendService friendService = FriendService.instance;
-  final List<String> friends;
-  final List<FriendRequest> pendingRequests;
   final ThemeService themeService = ThemeService.instance;
   final LanguageService ls = LanguageService.instance;
-
-  FriendListDisplay({required this.friends, required this.pendingRequests});
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
 
   @override
   _FriendListDisplayState createState() => _FriendListDisplayState();
@@ -26,8 +21,6 @@ class FriendListDisplay extends StatefulWidget {
 class _FriendListDisplayState extends State<FriendListDisplay> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ThemeService themeService = ThemeService.instance;
-  Map get friendText => TranslationService.instance.text['FRIENDS'];
-
 
   @override
   void initState() {
@@ -50,14 +43,16 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                friendText['TITLE'],
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: themeService.mainAccent.value,
-                ),
-              ),
+              child: Obx(() {
+                return Text(
+                  widget.ls.friendsLabel,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: themeService.mainAccent.value,
+                  ),
+                );
+              }),
             ),
             ElevatedButton.icon(
               onPressed: () {
@@ -73,7 +68,7 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
               },
               icon: Icon(Icons.person_add, color: themeService.secondaryAccent.value),
               label: Text(
-                friendText['ADD_FRIEND'],
+                widget.ls.addLabel,
                 style: TextStyle(color: themeService.secondaryAccent.value),
               ),
               style: ElevatedButton.styleFrom(
@@ -88,45 +83,47 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
         ),
         SizedBox(
           height: 400,
-          child: Container(
-            margin: EdgeInsets.all(16),
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: themeService.mainBackground.value,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: themeService.mixedMain.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  tabs: [
-                    Tab(text: friendText['FRIENDS_TAB']),
-                    Tab(text: friendText['PENDING_REQUESTS_TAB']),
-                  ],
-                  indicatorColor: themeService.secondaryBackground.value,
-                  labelColor: themeService.secondaryBackground.value,
-                  unselectedLabelColor: themeService.mainAccent.value,
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildFriendsList(),
-                      _buildPendingRequestsList(),
-                    ],
+          child: Obx(() {
+            return Container(
+              margin: EdgeInsets.all(16),
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: themeService.mainBackground.value,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: themeService.mixedMain.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  TabBar(
+                    controller: _tabController,
+                    tabs: [
+                      Tab(text: widget.ls.friendsLabel),
+                      Tab(text: widget.ls.pendingLabel),
+                    ],
+                    indicatorColor: themeService.secondaryBackground.value,
+                    labelColor: themeService.secondaryBackground.value,
+                    unselectedLabelColor: themeService.mainAccent.value,
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildFriendsList(),
+                        _buildPendingRequestsList(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ),
       ],
     );
@@ -134,10 +131,14 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
 
   Widget _buildFriendsList() {
     return Obx(() {
+      if (widget.loggedInUserService.friends.isEmpty) {
+        return Center(child: Text('No friends found'));
+      }
+
       return ListView.builder(
-        itemCount: widget.friendService.friends.length,
+        itemCount: widget.loggedInUserService.friends.length,
         itemBuilder: (context, index) {
-          String friendId = widget.friendService.friends[index];
+          String friendId = widget.loggedInUserService.friends[index];
           return SingleFriendInteractable(
             userId: friendId,
           );
@@ -147,17 +148,15 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
   }
 
   Widget _buildPendingRequestsList() {
-    // You don't need FutureBuilder here since we're using Obx with RxList
     return Obx(() {
-      // If the pending requests list is empty or null, show a message
-      if (widget.friendService.friendRequests.isEmpty) {
-        return Center(child: Text(friendText['NO_PENDING_REQUESTS']));
+      if (widget.loggedInUserService.friendRequests.isEmpty) {
+        return Center(child: Text('No pending requests'));
       }
 
       return ListView.builder(
-        itemCount: widget.friendService.friendRequests.length,
+        itemCount: widget.loggedInUserService.friendRequests.length,
         itemBuilder: (context, index) {
-          String requestId = widget.friendService.friendRequests[index];
+          String requestId = widget.loggedInUserService.friendRequests[index];
           return SingleFriendInteractable(
             userId: requestId,
           );
@@ -165,5 +164,4 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
       );
     });
   }
-
 }
