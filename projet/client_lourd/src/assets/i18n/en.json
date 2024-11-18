@@ -551,5 +551,12 @@
     "CURRENT_POINTS": "Points",
     "BONUS_RECEIVED_FEEDBACK": "You received Bonus points!!",
     "VALIDATE_BUTTON": "Validate"
+  },
+  "OBSERVER": {
+    "CHOOSE_PLAYER": "Choose a player to observe",
+    "OBSERVE": "Observe",
+    "CANCEL": "Cancel",
+    "OBSERVATION_MENU": "Observation Menu",
+    "OBSERVING": "You are observing"
   }
 }

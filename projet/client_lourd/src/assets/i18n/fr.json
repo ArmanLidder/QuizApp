@@ -551,5 +551,12 @@
     "CURRENT_POINTS": "Pointage",
     "BONUS_RECEIVED_FEEDBACK": "Vous avez recu des points Bonus!",
     "VALIDATE_BUTTON": "Valider"
+  },
+  "OBSERVER": {
+    "CHOOSE_PLAYER": "Choisir un joueur à observer",
+    "OBSERVE": "Observer",
+    "CANCEL": "Annuler",
+    "OBSERVATION_MENU": "Menu Observation",
+    "OBSERVING": "Vous observer"
   }
 }
