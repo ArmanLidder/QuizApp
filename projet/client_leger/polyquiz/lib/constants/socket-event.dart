@@ -25,6 +25,7 @@ class SocketEvent {
   static const String SUBMIT_ANSWER = 'submitAnswer';
   static const String TIME = 'time';
   static const String UPDATE_SELECTION = 'updateSelection';
+  static const String UPDATE_QRE_SELECTION = 'updateQRESelection';
   static const String UPDATE_INTERACTION = 'updateInteraction';
   static const String NEW_PLAYER = 'newPlayer';
   static const String BAN_PLAYER = 'banPlayer';
@@ -50,4 +51,5 @@ class SocketEvent {
   static const String CREATE_TEAM = 'create_team';
   static const String JOIN_TEAM = 'join_team';
   static const String GET_GAME_TYPE = 'get_game_type';
+  static const String REFRESH_QRE_STATS = "refreshQREStats";
 }

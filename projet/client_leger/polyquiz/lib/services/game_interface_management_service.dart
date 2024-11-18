@@ -9,12 +9,15 @@ import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class GameInterfaceManagementService extends ChangeNotifier {
   static final GameInterfaceManagementService _instance =
       GameInterfaceManagementService._internal();
 
   GameInterfaceManagementService._internal();
+  Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
+  Map get timerTransText => gameText['TIMER_TEXT'];
 
   factory GameInterfaceManagementService() {
     return _instance;
@@ -27,7 +30,8 @@ class GameInterfaceManagementService extends ChangeNotifier {
   List<Player> players = [];
   bool inPanicMode = false;
   List<dynamic> gameStats = []; // Type a revoir
-  String timerText = 'Temps restant ';
+  String get timerText => timerTransText[isDefaultTimerMessage ? 'TIME_LEFT' : 'FINAL_RESULT'];
+  bool isDefaultTimerMessage = true;
   bool isNotified = false;
   bool isResultPage = false;
   GameService gameService = GameService();
@@ -53,7 +57,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.isBonus = false;
     this.playerScore = 0;
     this.gameStats = [];
-    this.timerText = 'Temps restant ';
+    this.isDefaultTimerMessage = true;
     this.inPanicMode = false;
     this._qcmEnabled = true;
     this.isResultPage = false;
@@ -78,7 +82,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.gameService.realGameService.locked = false;
     this.gameService.realGameService.validated = false;
     this.isBonus = false;
-    this.timerText = 'Temps restant ';
+    this.isDefaultTimerMessage = true;
   }
 
   void handleEndQuestion() {
@@ -121,13 +125,11 @@ class GameInterfaceManagementService extends ChangeNotifier {
         (timeValue) {
       //todo code pour afficher la transition aux resultats finaux
       this.gameService.realGameService.timer = timeValue;
-      this.timerText = "Les résultats finaux s'afficherons dans ";
+      this.isDefaultTimerMessage = false;
       if (this.gameService.timer == 0) {
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
-        this
-            ._interactiveListService
-            .getPlayersList(this.gameService.realGameService.roomId);
+        final numberOfPlayers = this._interactiveListService.getPlayersList(this.gameService.realGameService.roomId);
         this.isResultPage = true;
       }
       notifyListeners();
@@ -136,7 +138,9 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handleRemovedFromGame() {
     this._socketService.onMessage(SocketEvent.REMOVED_FROM_GAME, (_) {
-      print('GOT TO HERE...');
+      this.gameService.destroy();
+      this.reset();
+      this._interactiveListService.reset();
       this._globalNavigationService.navigateTo('/home');
     });
   }
@@ -178,8 +182,13 @@ class GameInterfaceManagementService extends ChangeNotifier {
     });
   }
 
-  parseGameStats(stringifyStats) {
-    return json.decode(stringifyStats);
+  // parseGameStats(stringifyStats) {
+  //   return stringifyStats;
+  // }
+  
+  TransportStatsFormat parseGameStats(dynamic stringifyStats) {
+    final List<dynamic> jsonList = jsonDecode(stringifyStats);
+    return jsonList.map((json) => TransportStats.fromJson(json)).toList();
   }
 
   void unpackStats(TransportStatsFormat stats) {
@@ -189,6 +198,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
       final responses = new Map<String, num>();
       responses.addEntries(stat.responses);
       this.gameStats.add([values, responses, stat.question]);
+      // print(this.gameStats);
     });
   }
 

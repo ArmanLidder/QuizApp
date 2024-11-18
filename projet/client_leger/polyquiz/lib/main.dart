@@ -5,6 +5,12 @@ import 'package:polyquiz/pages/login-page.dart';
 import 'package:polyquiz/pages/offline_game_page.dart';
 import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
+import 'package:polyquiz/services/LanguageService.dart';
+import 'package:polyquiz/services/friendService.dart';
+import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/services/userInfoValidation.dart';
+import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/background_notification_service.dart';
 import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
@@ -32,6 +38,7 @@ import 'package:polyquiz/pages/active_game_list.dart';
 import 'package:polyquiz/services/quiz_service.dart';
 import 'package:polyquiz/services/room_validation_service.dart';
 import 'package:polyquiz/services/snack_bar_service.dart';
+import 'services/theme_service.dart';
 
 final socketService = SocketService();
 final userService = UserService();
@@ -49,6 +56,12 @@ void main() async {
   Get.put(NotificationService());
   Get.put(BackgroundNotificationService());
   Get.put(StoreService());
+  Get.put(UserPageCustomisationService());
+  Get.put(ThemeService());
+  Get.put(FriendService());
+  Get.put(ValidationService());
+  Get.put(TranslationService());
+  Get.put(LanguageService());
 
   runApp(
     MultiProvider(
@@ -81,7 +94,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => HomePage(),
         '/auth': (context) => AuthPage(),
-        '/login': (context) => LoginPage(),
         '/quizz': (context) => QuizListPage(),
         '/offline': (context) => OfflineQuizListPage(),
         '/offlinegame': (context) => OfflineGamePage(),

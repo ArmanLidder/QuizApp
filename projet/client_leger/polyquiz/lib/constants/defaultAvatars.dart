@@ -1,0 +1,4 @@
+const constDefaultAvatars = ["https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_1.png?alt=media&token=fb150a6e-29e8-4469-b24c-e05a338ebc58",
+  "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_2.png?alt=media&token=533dbee5-bf2e-4462-9e52-d15f1ff74209",
+  "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_3.jpg?alt=media&token=aeaa6b57-758e-4f3d-bceb-9213d779aac7",
+  "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/default_avatars%2Fdefault_4.jpg?alt=media&token=1afb0329-38ef-4f38-bb72-b7b38184f892"];

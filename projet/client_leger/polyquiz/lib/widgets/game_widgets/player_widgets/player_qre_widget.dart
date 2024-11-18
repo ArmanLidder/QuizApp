@@ -4,6 +4,8 @@ import 'package:polyquiz/models/quiz.dart' as Quiz;
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'dart:math' as math;
 
+import 'package:polyquiz/services/translationService.dart';
+
 class PlayerQreWidget extends StatefulWidget {
   const PlayerQreWidget({super.key});
 
@@ -15,6 +17,8 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
   bool get isValidated => !gameInterfaceManagementService.gameService.realGameService.isValidateActive;
   int currentValue = 0;
+  Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
+  Map get qreText => gameText['PLAYER_QRE_INTERFACE'];
 
   @override
   void initState() {
@@ -65,6 +69,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 getMinMaxCard(),
+                // getIncrementalAdjustmentButtons(),
                 getSlider(),
                 getToleranceWidget(),
                 getIntervalWidget(),
@@ -78,29 +83,82 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   Widget getMinMaxCard() {
+    const numberPadding = 70.0;
     return Row(
       children: [
-        Text(this.min.toString()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: numberPadding),
+          child: Text(this.min.toString()),
+        ),
         Spacer(),
-        Text(this.max.toString())
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: numberPadding),
+          child: Text(this.max.toString()),
+        )
+      ],
+    );
+  }
+
+  Widget getIncrementalAdjustmentButtons() {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          onPressed: canDecrement ? decrementSlider : null,
+          icon: Icon(Icons.add),
+          color: canDecrement ? Colors.blueAccent : Colors.grey,
+        ),
+        Spacer(),
+        IconButton(
+          onPressed: canIncrement ? incrementSlider : null,
+          icon: Icon(Icons.remove),
+          color: canIncrement ? Colors.blueAccent : Colors.grey,
+        ),
       ],
     );
   }
 
   Widget getSlider() {
-    return Slider(
-      value: currentValue.toDouble(),
-      max: this.max.toDouble(),
-      min: this.min.toDouble(),
-      divisions: (this.max - this.min).toInt(),
-      label: currentValue.toString(),
-      onChanged: changeSliderValue,
+    return Row(
+      children: [
+        IconButton(
+          onPressed: canDecrement ? decrementSlider : null,
+          icon: Icon(Icons.remove),
+          color: Colors.black,
+          style: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(canDecrement ? Colors.blueAccent : Colors.grey)
+          ),
+        ),
+        Expanded(
+          child: Slider(
+            value: currentValue.toDouble(),
+            max: this.max.toDouble(),
+            min: this.min.toDouble(),
+            divisions: (this.max - this.min).toInt(),
+            label: currentValue.toString(),
+            onChanged: (value) {
+              setState(() {
+                if (isValidated) return;
+                currentValue = value.round();
+              });
+            },
+            onChangeEnd: changeSliderValue,
+          ),
+        ),
+        IconButton(
+          onPressed: canIncrement ? incrementSlider : null,
+          icon: Icon(Icons.add),
+          color: Colors.black,
+          style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(canIncrement ? Colors.blueAccent : Colors.grey)
+          ),
+        )
+      ],
     );
   }
 
   Widget getToleranceWidget() {
     return Center(
-      child: Text("Tolérance: ±${this.question?.margin ?? 0}"),
+      child: Text("${qreText['TOLERANCE']}: ±${this.question?.margin ?? 0}"),
     );
   }
 
@@ -109,7 +167,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     final maxValue = math.min(this.max, currentValue + margin);
     final minValue = math.max(this.min, currentValue - margin);
     return Center(
-      child: Text("Votre intervalle de réponse est: $minValue à $maxValue"),
+      child: Text("${qreText['YOUR_ANSWER_INTERVAL']} $minValue - $maxValue"),
     );
   }
 
@@ -145,6 +203,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     //   isValidated = true;
     // });
     gameInterfaceManagementService.gameService.qreAnswer = currentValue;
+    gameInterfaceManagementService.gameService.selectQREanswer(currentValue);
     gameInterfaceManagementService.gameService.sendAnswer();
   }
 
@@ -158,5 +217,22 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     setState(() {
       currentValue = value.round();
     });
+    gameInterfaceManagementService.gameService.selectQREanswer(currentValue);
+  }
+
+  bool get canIncrement {
+    return !(isValidated || (currentValue >= this.max));
+  }
+
+  bool get canDecrement {
+    return !(isValidated || (currentValue <= this.min));
+  }
+
+  void incrementSlider() {
+    if (canIncrement) changeSliderValue(currentValue + 1);
+  }
+
+  void decrementSlider() {
+    if (canDecrement) changeSliderValue(currentValue - 1);
   }
 }

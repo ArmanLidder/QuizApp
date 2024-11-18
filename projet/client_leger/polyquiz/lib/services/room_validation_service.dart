@@ -35,9 +35,9 @@ class RoomValidationService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> verifyRoomId() async {
-    return isOnlyDigit() ? await sendRoomId() : 'VALIDATION_CODE_ERROR';
-  }
+  // Future<String> verifyRoomId() async {
+  //   return isOnlyDigit() ? await sendRoomId() : 'VALIDATION_CODE_ERROR';
+  // }
 
   Future<User> getCurrentUser() async {
     return (await this.userData) as User;
@@ -73,12 +73,14 @@ class RoomValidationService with ChangeNotifier {
     return completer.future;
   }
 
-  Future<String> sendRoomId() async {
-    final completer = Completer<String>();
-    socketService.sendMessageWithAck(
-        SocketEvent.VALIDATE_ROOM_ID, int.parse(roomId!), (data) {
+  Future<Map<String, dynamic>> sendRoomId() async {
+    final completer = Completer<Map<String, dynamic>>();
+    socketService.sendMessageWithAck(SocketEvent.VALIDATE_ROOM_ID, int.parse(roomId!), (data) {
+      print('I am here 2303');
       if (data != null) {
-        completer.complete(handleRoomIdValidation(data));
+        print('I am here 030409');
+        completer.complete(data);
+        print(data);
       } else {
         print('Failed to validate roomID');
         completer.completeError('Failed to validate roomID');
@@ -100,9 +102,9 @@ class RoomValidationService with ChangeNotifier {
   String handleRoomIdValidation(dynamic data) {
     String error = '';
     if (!data['isRoom'])
-      error = handleErrors('ROOM_CODE_EXPIRED');
+      error = handleErrors('Le code ne correspond a aucune partie en cours. Veuillez réessayer');
     else if (data['isLocked'])
-      error = handleErrors('ROOM_LOCKED');
+      error = handleErrors('"La partie est vérouillée. Veuillez réessayer."');
     else
       isRoomIdValid = true;
     return error;

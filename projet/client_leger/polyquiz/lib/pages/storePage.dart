@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/StoreService.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:get/get.dart';
-import 'package:polyquiz/widgets/store_widgets/storeWidgets.dart';
+import 'package:polyquiz/widgets/store_widgets/storeLists.dart';
 
-import 'package:polyquiz/widgets/store_widgets/storeWidgets.dart';
+import 'package:polyquiz/widgets/store_widgets/storeLists.dart';
 //import 'package:polyquiz/widgets/store_widgets/themeWidget.dart';
 import '../models/user.dart';
-import '../widgets/user_widget/fancyAppBar.dart';
+import '../widgets/fancyAppBar.dart';
 
 class Storepage extends StatefulWidget {
   @override
@@ -21,6 +22,7 @@ class _StorepageState extends State<Storepage> {
   final StoreService storeService = Get.find();
   late String uid;
   User? userData;
+  Map get shopText => TranslationService.instance.text['SHOPPING'];
 
   Map<String, List<Map<String, dynamic>>>? storeItems;
 
@@ -33,7 +35,6 @@ class _StorepageState extends State<Storepage> {
   void _fetchStoreItems() async {
     var items = await storeService.browseStoreItems();
     String? id = await loggedInUserService.getUid();
-    print(items); // Print the store browsing info
     setState(() {
       storeItems = items; // Update the state with fetched items
       uid = id!;
@@ -47,37 +48,42 @@ class _StorepageState extends State<Storepage> {
     return MaterialApp(
       home: Scaffold(
         appBar: FancyAppBar(
-            context: context,
-            sourceImgUrl: this.userData?.avatar ?? "",
-            name: this.userData?.username ?? ""),
+            context: context,),
         body: storeItems == null
             ? Center(
                 child:
                     CircularProgressIndicator()) // Show loading indicator while fetching
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MoneyCounter(),
-                    Text("Themes: "),
-                    Row(
+            : SingleChildScrollView(child:
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ThemeStoreList(
-                            themes: storeItems!['themes']!, userId: this.uid)
+                        MoneyCounter(),
+                        Text(shopText['THEMES']),
+                        Wrap(
+                          spacing: 8.0, // Space between items horizontally
+                          runSpacing: 8.0, // Space between items vertically
+                          children: [
+                          ThemeStoreList(
+                                themes: storeItems!['themes']!, userId: this.uid)
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Text(shopText['IMAGES']),
+                            ImageStoreList(
+                                themes: storeItems!['images']!, userId: this.uid),
+                        SizedBox(height: 20),
+                        Text(TranslationService.instance.languageValue.value == Language.fr ? "Récompenses: " : "Prizes: "),
+                        RewardImageStoreList(
+                            rewardItems: storeItems!['rewardImages']!, userId: this.uid),
+                        SizedBox(height: 20),
+                        RewardThemeStoreList(
+                            rewardItems: storeItems!['rewardThemes']!, userId: this.uid),
+                        SizedBox(height: 20),
+
                       ],
                     ),
-                    SizedBox(height: 20),
-                    Text("Images: "),
-                    Row(
-                      children: [
-                        ImageStoreList(
-                            themes: storeItems!['images']!, userId: this.uid)
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                  ],
-                ),
-              ),
+                  ),)
       ),
     );
   }

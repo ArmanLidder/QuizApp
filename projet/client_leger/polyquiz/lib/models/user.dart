@@ -133,6 +133,7 @@ enum EventType {
   logout
 }
 
+
 class GameHistory {
   final Result result;
   final dynamic timestamp;
@@ -219,6 +220,8 @@ class UserSettings {
     Language language;
     if (languageValue == 'en') language = Language.en;
     else if (languageValue == 'fr') language = Language.fr;
+    else if (languageValue == 'tp') language = Language.tp;
+
     else language = Language.fr;
 
     return UserSettings(
@@ -245,6 +248,11 @@ class UserSettings {
         languageValue = 'en';
         break;
       case Language.fr:
+        languageValue='fr';
+        break;
+      case Language.tp:
+        languageValue = 'tp';
+        break;
       default:
         languageValue = 'fr';
     }
@@ -264,5 +272,13 @@ enum Theme {
 
 enum Language {
   en,
-  fr
+  fr,
+  tp
 }
+
+
+Map<Language,String> languageToString = {
+  Language.tp: "tp",
+  Language.en : "en",
+  Language.fr : "fr",
+};

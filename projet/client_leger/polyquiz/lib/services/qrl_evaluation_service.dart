@@ -12,6 +12,7 @@ class QrlEvaluationService extends ChangeNotifier {
       QrlEvaluationService._internal();
 
   QrlEvaluationService._internal();
+  HostInterfaceManagementService hostInterfaceManagementService = HostInterfaceManagementService();
 
   factory QrlEvaluationService() {
     return _instance;
@@ -42,6 +43,7 @@ class QrlEvaluationService extends ChangeNotifier {
   void initialize(Map<String, ResponseData> qrlAnswers) {
     this.indexPlayer = -1;
     this.isCorrectionFinished = false;
+    hostInterfaceManagementService.qrlCallback = this.initializePlayerAnswers;
     this.initializePlayerAnswers(qrlAnswers);
     this.nextAnswer();
   }
@@ -138,6 +140,10 @@ class QrlEvaluationService extends ChangeNotifier {
   }
 
   void initializePlayerAnswers(Map<String, ResponseData> qrlAnswers) {
+    usernames.clear();
+    answers.clear();
+    print("The length of qrlAnswers is ${qrlAnswers.length}\nAnd the values are\n");
+    qrlAnswers.forEach((key, value) => print("key: $key, value: $value"));
     var sortedEntries = qrlAnswers.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
 
@@ -151,5 +157,8 @@ class QrlEvaluationService extends ChangeNotifier {
       usernames.add(key);
       answers.add(value.answers);
     }
+    indexPlayer = -1;
+    nextAnswer();
+    notifyListeners();
   }
 }

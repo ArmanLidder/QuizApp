@@ -141,6 +141,14 @@ class RealGameService extends ChangeNotifier {
     }
   }
 
+  void sendQRESelection(int selectedAnswer) {
+    if (!_socketService.isSocketAlive()) return;
+    this._socketService.sendMessage(SocketEvent.UPDATE_QRE_SELECTION, {
+      'roomId': this.roomId,
+      'selectedAnswer': selectedAnswer,
+    });
+  }
+
   void reset() {
     this.username = '';
     this.roomId = 0;

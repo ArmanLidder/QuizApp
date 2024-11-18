@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class ActiveGameInfoWidget extends StatefulWidget {
   final String quizTitle;
@@ -22,6 +23,7 @@ class ActiveGameInfoWidget extends StatefulWidget {
 }
 
 class _ActiveGameInfoWidgetState extends State<ActiveGameInfoWidget> {
+  Map get activeText => TranslationService.instance.text['ACTIVE_GAME_LIST'];
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -39,7 +41,7 @@ class _ActiveGameInfoWidgetState extends State<ActiveGameInfoWidget> {
                 ),
               ),
               Expanded(
-                child: Text("Prestige minimum: ${widget.minRank}",
+                child: Text("${activeText['MINIMUM_PRESTIGE']}: ${widget.minRank}",
                     style: TextStyle(fontSize: 16)),
               ),
               Expanded(
@@ -56,7 +58,7 @@ class _ActiveGameInfoWidgetState extends State<ActiveGameInfoWidget> {
                 ])),
               ),
               Expanded(
-                child: Text("Mode de jeu: ${widget.gameMode}",
+                child: Text("${activeText['GAME_MODE']}: ${widget.gameMode}",
                     style: TextStyle(fontSize: 16)),
               ),
               Expanded(

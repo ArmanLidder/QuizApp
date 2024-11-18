@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/active_game_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,9 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   final UserService userService = UserService();
   bool _isJoining = false;
   late final GameListService gameListService;
+  Map get text => TranslationService.instance.text;
+  Map get activeText => text['ACTIVE_GAME_LIST'];
+
 
   @override
   void initState() {
@@ -112,46 +116,78 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         Provider.of<SnackbarService>(context, listen: false);
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
-    if (game.friendsOnly && !isHostFriend) {
-      snackbarService.show("Cette partie est exclusive aux amis de l'hôte.");
-    } else {
-      final isPrestigeValid = await _validatePrestige(game.prestige);
-      if (!isPrestigeValid) {
-        snackbarService.show(
-            "Vous n'avez pas le prestige minimum pour rejoindre cette partie.");
+    dynamic dataOfRoomValidation = await roomValidationService.sendRoomId();
+    if(!dataOfRoomValidation['isRoom']){
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(activeText['NO_GAMES_AVAILABLE'])),
+        );
+      setState(() {
+          _isJoining = false;
+      });
+    }
+    else{
+      if(dataOfRoomValidation['isLocked']){
+        print('I am here 2');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(activeText['ROOM_LOCKED'])),
+        );
+        setState(() {
+          _isJoining = false;
+        });
+      }
+        else{
+      if (game.friendsOnly && !isHostFriend) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(activeText['EXCLUSIVE_FRIENDS_GAME'])),
+        );
       } else {
-        await roomValidationService.verifyUsername();
-        if (!roomValidationService.isUsernameValid) {
-          snackbarService.show("Vous avez été banni de cette partie.");
+        final isPrestigeValid = await _validatePrestige(game.prestige);
+        if (!isPrestigeValid) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    activeText['INSUFFICIENT_PRESTIGE'])),
+          );
         } else {
-          if (roomValidationService.isLocked) {
-            snackbarService.show("La partie est actuellement verouillez.");
-          }
-          // _joinWaitingRoom(game.room.toString(), roomValidationService.userData!.username);
-          final isValid = !roomValidationService.isLocked &&
-              roomValidationService.isUsernameValid;
-          if (true) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WaitingRoomScreen(
-                  quiz: Quiz(
-                    id: roomValidationService
-                        .roomId!, // Pass the room ID to the waiting room.
-                    title: 'Nothing', // Provide a sample title.
-                    description: 'Nothing', // Provide a sample description.
-                    duration: 0, // Provide a sample duration.
-                    questions: [], // Provide an empty list of questions.
-                  ),
-                  username: roomValidationService
-                      .userData!.uid, // Pass the username to the waiting room.
-                  isHost: false, // This user is not the host.
-                  isFromActiveList: true,
-                ),
-              ),
+          await roomValidationService.verifyUsername();
+          if (!roomValidationService.isUsernameValid) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(activeText['USER_BANNED'])),
             );
+          } else {
+            if (roomValidationService.isLocked) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(activeText['ROOM_LOCKED'])),
+              );
+            }
+            if (!roomValidationService.isLocked &&
+                roomValidationService.isUsernameValid) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WaitingRoomScreen(
+                    quiz: Quiz(
+                      id: roomValidationService
+                          .roomId!, // Pass the room ID to the waiting room.
+                      title: 'Nothing', // Provide a sample title.
+                      description: 'Nothing', // Provide a sample description.
+                      duration: 0, // Provide a sample duration.
+                      questions: [], // Provide an empty list of questions.
+                    ),
+                    username: roomValidationService
+                        .userData!.uid, // Pass the username to the waiting room.
+                    isHost: false, // This user is not the host.
+                    isFromActiveList: true,
+                  ),
+                ),
+              );
+            }
           }
         }
+      }
       }
     }
   }
@@ -215,7 +251,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
-          'Liste des Jeux Publics',
+          activeText['PUBLIC_GAME_LIST'],
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 24,
@@ -227,40 +263,168 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         future: _initializeFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/join');
+                    },
+                    child: Text(
+                      text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
+                      style: TextStyle(
+                        color: Color.fromRGBO(255, 255, 255, 1),
+                        fontSize: 20,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                    ),
+                  ),
+                ),
+                Center(child: CircularProgressIndicator()),
+              ],
+            );
           } else if (snapshot.hasError) {
             print('Error: ${snapshot.error}');
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/join');
+                    },
+                    child: Text(
+                      text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
+                      style: TextStyle(
+                        color: Color.fromRGBO(255, 255, 255, 1),
+                        fontSize: 20,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                    ),
+                  ),
+                ),
+                Center(child: Text('Error: ${snapshot.error}')),
+              ],
+            );
           } else {
             return StreamBuilder<List<GameListItem>>(
               stream: gameListService.games$,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/join');
+                          },
+                          child: Text(
+                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
+                            style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
+                        ),
+                      ),
+                      Center(child: CircularProgressIndicator()),
+                    ],
+                  );
                 } else if (snapshot.hasError) {
                   print('Error: ${snapshot.error}');
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/join');
+                          },
+                          child: Text(
+                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
+                            style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
+                        ),
+                      ),
+                      Center(child: Text('Error: ${snapshot.error}')),
+                    ],
+                  );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Aucune partie en cours'),
-                        SizedBox(height: 100),
-                        CancelBtn()
-                      ],
-                    ),
+                  return Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/join');
+                          },
+                          child: Text(
+                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
+                            style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(activeText['NO_GAMES_AVAILABLE']),
+                            SizedBox(height: 100),
+                            CancelBtn()
+                          ],
+                        ),
+                      ),
+                    ],
                   );
                 } else {
                   final games = snapshot.data!;
                   return Column(
                     children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/join');
+                          },
+                          child: Text(
+                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
+                            style: TextStyle(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 20,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                          ),
+                        ),
+                      ),
                       Expanded(
                         child: ListView.builder(
                           itemCount: games.length,
                           itemBuilder: (context, index) {
                             final game = games[index];
-                            if (!game.onGoing)
+                            if (!game.onGoing && !game.private)
                               return GestureDetector(
                                 onTap: () {
                                   _joinRoom(game);
@@ -269,16 +433,16 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                   quizTitle: _getQuizName(game.quizId),
                                   minRank: _minimumPrestige(game.prestige),
                                   allowedPlayers: game.friendsOnly
-                                      ? 'Amis seulement'
-                                      : 'Amis et autres',
+                                      ? activeText['FRIENDS_ONLY']
+                                      : activeText['FRIENDS_AND_OTHERS'],
                                   playerNum: game.numberOfPlayers.toString(),
                                   gameMode: game.gameType == 'classic'
-                                      ? 'Classique'
-                                      : 'Équipe',
+                                      ? activeText['CLASSIC']
+                                      : activeText['TEAM'],
                                   price: game.price.toString(),
                                 ),
                               );
-                            if (game.onGoing)
+                            if (game.onGoing && !game.private)
                               return GestureDetector(
                                   onTap: () {
                                     // add method for observer
@@ -298,7 +462,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 16)),
-                                              Text('Partie en cours')
+                                              Text(activeText['ONGOING_GAME'])
                                             ]),
                                         Divider()
                                       ],
