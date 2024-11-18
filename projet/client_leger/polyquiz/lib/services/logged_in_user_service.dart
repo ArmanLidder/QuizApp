@@ -118,7 +118,6 @@ class LoggedInUserService extends GetxController {
       await FirebaseFirestore.instance.collection('users').doc(userId).update({
         'loginHistory': loginHistory,
       });
-      await reloadUser();
       print('Logout event added successfully');
     } else {
       print('User not found.');

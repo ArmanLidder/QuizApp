@@ -54,73 +54,76 @@ class _FancyAppBarState extends State<FancyAppBar> {
             icon: Icon(Icons.arrow_back, color: Colors.red),
             onPressed: () {
             Navigator.pushReplacementNamed(widget.context, '/home');   }),
-    actions: [
+        actions: [
           GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: SettingsPopup(), // Your custom settings popup widget
-            );
-          },
-        );
-      },
-      child: Icon(
-        Icons.settings, // Black line gear icon
-        color: themeService.mainAccent.value,
-        size: 32, // Adjust size as needed
-      ),
-    ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: SettingsPopup(), // Your custom settings popup widget
+                  );
+                },
+              );
+            },
+            child: Icon(
+              Icons.settings,
+              color: themeService.mainAccent.value,
+              size: 32,
+            ),
+          ),
           SizedBox(width: 5),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-      child: PopupMenuButton<int>(
-        onSelected: (value) {
-          // Handle the popup menu selection here
-        },
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Icon(Icons.person), // Add an icon to the right
-                Text(" Profil"),
-                Spacer()
+            child: PopupMenuButton<int>(
+              onSelected: (value) {},
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.person),
+                      Text(" Profil"),
+                      Spacer()
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.pushReplacementNamed(widget.context, '/user');
+                  },
+                ),
+                PopupMenuItem(
+                  value: 2,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.logout),
+                      Text("Déconnection"),
+                      Spacer()
+                    ],
+                  ),
+                  onTap: () async {
+                    await loggedInUserService.logout();
+                    Navigator.pushReplacementNamed(widget.context, '/auth');
+                  },
+                ),
               ],
-            ),
-            onTap: () {Navigator.pushReplacementNamed(widget.context, '/user');}, // Placeholder onPressed for "Profile"
-          ),
-          PopupMenuItem(
-            value: 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Icon(Icons.logout), // Add an icon to the right
-                Text("Déconnection"),
-                Spacer()
-              ],
-            ),
-            onTap: () async {
-              await loggedInUserService.logout();
-              Navigator.pushReplacementNamed(widget.context, '/auth');}, // Placeholder onPressed for "Log Out"
-          ),
-        ],
-            child:
-                Column(
+              child: Flexible( // Wrap with Flexible to prevent overflow
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      loggedInUserService.user!.username,
+                      loggedInUserService.observableUsername.value,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 10, // Adjust the size as needed
                         fontWeight: FontWeight.bold,
                       ),
+                      overflow: TextOverflow.ellipsis, // Ensure text does not overflow
+                      maxLines: 1,
                     ),
                     SizedBox(
                       height: 36,
@@ -130,9 +133,11 @@ class _FancyAppBarState extends State<FancyAppBar> {
                           Obx(() {
                             return CircleAvatar(
                               radius: 20,
-                              backgroundImage: NetworkImage(loggedInUserService.observableAvatar.value),
+                              backgroundImage:
+                              NetworkImage(loggedInUserService.observableAvatar.value),
                             );
-                          }),                          Positioned(
+                          }),
+                          Positioned(
                             bottom: 0,
                             right: 0,
                             child: Container(
@@ -144,7 +149,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
                               ),
                               child: Center(
                                 child: Text(
-                                  loggedInUserService.getUser()!.level.toString(),
+                                  loggedInUserService.observableLevel.toString(),
                                   style: TextStyle(
                                     fontSize: 8,
                                     fontWeight: FontWeight.bold,
@@ -156,14 +161,13 @@ class _FancyAppBarState extends State<FancyAppBar> {
                           ),
                         ],
                       ),
-
-                    )// Space between the text and the image
+                    )
                   ],
                 ),
+              ),
             ),
-          )
-        ],
-      ),
+          ),
+        ],      ),
     );
   }
 }

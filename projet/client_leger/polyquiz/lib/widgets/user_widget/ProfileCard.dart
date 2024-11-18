@@ -31,7 +31,7 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {  // Use Obx to listen to Rx variables
       String imageUrl = loggedInUserService.observableAvatar.value;
-      final String? username = loggedInUserService.user?.username;
+      final String? username = loggedInUserService.observableUsername.value;
       final num? prestige = loggedInUserService.observablePrestige.value;
       final num? argent = loggedInUserService.observableCurrency.value;
       Future<void> _imageChangeButton() async {
