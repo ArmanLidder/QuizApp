@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final BuildContext context;
@@ -17,7 +19,7 @@ class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _FancyAppBarState extends State<FancyAppBar> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   late String imageUrl; // Use late keyword to initialize later
-
+  final ThemeService themeService = ThemeService.instance;
   @override
   void initState() {
     super.initState();
@@ -38,7 +40,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
       child: AppBar(
         title: Center(
           child: Text(
-            "          PolyQuiz",
+            "PolyQuiz",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -53,6 +55,27 @@ class _FancyAppBarState extends State<FancyAppBar> {
             onPressed: () {
             Navigator.pushReplacementNamed(widget.context, '/home');   }),
     actions: [
+          GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: SettingsPopup(), // Your custom settings popup widget
+            );
+          },
+        );
+      },
+      child: Icon(
+        Icons.settings, // Black line gear icon
+        color: themeService.mainAccent.value,
+        size: 32, // Adjust size as needed
+      ),
+    ),
+          SizedBox(width: 5),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
       child: PopupMenuButton<int>(

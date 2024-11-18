@@ -66,11 +66,11 @@ class StarCardGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
             () {
+              print("starComponent build called");
+
               List achievementsList = LoggedInUserService.instance.observableAchievement.value;
 
               final List<String> labels = profileText['ALL_ACHIEVEMENTS'] as List<String>;
-              print('${TranslationService.instance.languageValue}');
-
               // Determine how many cards can fit in a row
               final double screenWidth = MediaQuery
                   .of(context)

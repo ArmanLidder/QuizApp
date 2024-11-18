@@ -216,30 +216,6 @@ class ProfileCard extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            top: 16,  // Add padding from the top
-            right: 16,
-            child: GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Dialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: SettingsPopup(), // Your custom settings popup widget
-                    );
-                  },
-                );
-              },
-              child: Icon(
-                Icons.settings, // Black line gear icon
-                color: themeService.mainAccent.value,
-                size: 32, // Adjust size as needed
-              ),
-            ),
-          ),
         ],
       );
     });

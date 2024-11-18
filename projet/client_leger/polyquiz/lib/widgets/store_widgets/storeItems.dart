@@ -96,7 +96,6 @@ class RewardImageItem extends StatelessWidget {
   final num cost;
   final String source; // New field for image source
   final Future<void> Function() onBuy;
-  final num minPrestige;
   final num minLevel;
 
   const RewardImageItem({
@@ -107,7 +106,6 @@ class RewardImageItem extends StatelessWidget {
     required this.source,
     required this.onBuy,
     required this.minLevel,
-    required this.minPrestige
   }) : super(key: key);
 
   @override
