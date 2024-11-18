@@ -68,7 +68,6 @@ class LoginEvenementRow extends StatelessWidget {
         Text(date, style: TextStyle(color: themeService.mainAccent.value)),
         Text(", Gamemode: "),
         Text(gameMode)
-
       ],
     );
   }
