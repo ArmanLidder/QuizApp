@@ -30,8 +30,8 @@ class _TimerWidgetState extends State<TimerWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(5.0),
-      height: 150,
-      width: 150,
+      height: 200,
+      width: 200,
       decoration: BoxDecoration(
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(100.0)),
@@ -69,7 +69,6 @@ class _TimerWidgetState extends State<TimerWidget> {
                       if (widget.hostInterfaceManagementService?.gameService?.isPanicDisabled() == false) {
                         widget.hostInterfaceManagementService?.startPanicMode();
                       } else {
-                        
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(gameText['TOOLTIP']['TOOLTIP_PANIC_MODE_DISABLED']),

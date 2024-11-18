@@ -103,6 +103,12 @@ export class StoreService {
             const storeItem: StoreItem | null = await firstValueFrom(this.getStoreItemById(id));
             if (!storeItem) throw new Error("Item n'existe pas.")
             if ((currentUser?.currency || 0) < storeItem.cost) throw new Error("Vous n'avez pas assez d'argent.")
+            if (storeItem.itemType === 'rewardTheme' || storeItem.itemType === 'rewardImage') {
+                if ((currentUser?.level||0) < (storeItem.minLevel||0)) throw new Error(`Vous n'avez pas le niveau requis pour ce item (${storeItem.minLevel!})}`);
+                if ((currentUser?.prestige||0) < (storeItem.minPrestige||0)) throw new Error(`Vous n'avez pas le prestige requis pour ce item (${storeItem.minPrestige!})}`);
+                const hasRequiredAchievement = !storeItem.achievement || (currentUser?.achievements || []).includes(storeItem.achievement);
+                if (!hasRequiredAchievement) throw new Error(`Vous n'avez pas le achievement requis pour ce item`);
+            }
             await this.addItemToUserProfile(id)
             await this.usersService.updateUser({currency: (currentUser?.currency || 0) - storeItem.cost});
         } catch (error: any) {

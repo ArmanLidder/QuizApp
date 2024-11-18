@@ -12,6 +12,7 @@ import { SortListService } from '@app/services/sort-list.service/sort-list.servi
 import {
     WaitingRoomManagementService
 } from "@app/services/waiting-room-management.service/waiting-room-management.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-player-list',
@@ -35,6 +36,7 @@ export class PlayerListComponent {
         public interactiveListService: InteractiveListSocketService,
         public waitingRoomService: WaitingRoomManagementService,
         private sortListService: SortListService,
+        private translate: TranslateService
     ) {
         if (!this.isHost) this.sortListService.sortByScore();
     }
@@ -50,7 +52,7 @@ export class PlayerListComponent {
         this.waitingRoomService.teams.forEach((team: any, teamId) => {
             if (team.members.includes(userId)) result = teamId;
         });
-        return result ? result : "Quitté";
+        return result ? result : this.translate.instant('GAME_INTERFACE.PLAYER_LIST.QUIT_TEAMMATE_LABEL');
     }
 
     sort(sortOption: SortType) {

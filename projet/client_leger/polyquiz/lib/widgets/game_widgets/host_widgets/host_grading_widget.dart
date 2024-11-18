@@ -44,8 +44,8 @@ class _HostGradingState extends State<HostGrading> {
                   Text('Correction de la réponse:',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text('Joueur: ${_qrlEvaluationService.currentUsername}',
-                      style: TextStyle(fontSize: 16)),
+                  // Text('Joueur: ${_qrlEvaluationService.currentUsername}',
+                  //     style: TextStyle(fontSize: 16)),
                   Text('Réponse: ${_qrlEvaluationService.currentAnswer}',
                       style: TextStyle(fontSize: 16)),
                   SizedBox(height: 20.0),
@@ -94,35 +94,37 @@ class _HostGradingState extends State<HostGrading> {
                 ],
               );
             } else {
-              return Column(
-                children: [
-                  DataTable(
-                      headingRowColor: WidgetStateProperty.all(
-                          Color.fromRGBO(53, 121, 246, 1)),
-                      headingTextStyle: TextStyle(
-                          color: Color.fromRGBO(255, 255, 255, 1),
-                          fontWeight: FontWeight.bold),
-                      border: TableBorder.all(),
-                      columns: [
-                        DataColumn(
-                          label: Expanded(child: Center(child: Text('Nom'))),
-                        ),
-                        DataColumn(
-                          label: Expanded(child: Center(child: Text('Note'))),
-                        ),
-                      ],
-                      rows: List<DataRow>.generate(
-                          _qrlEvaluationService.points.length, (index) {
-                        return DataRow(cells: [
-                          DataCell(
-                              Text(_qrlEvaluationService.usernames[index])),
-                          DataCell(Text(
-                              _qrlEvaluationService.points[index].toString()))
-                        ]);
-                      })),
-                  SizedBox(height: .0),
-                ],
-              );
+              return 
+              Container();
+              // Column(
+              //   children: [
+              //     DataTable(
+              //         headingRowColor: WidgetStateProperty.all(
+              //             Color.fromRGBO(53, 121, 246, 1)),
+              //         headingTextStyle: TextStyle(
+              //             color: Color.fromRGBO(255, 255, 255, 1),
+              //             fontWeight: FontWeight.bold),
+              //         border: TableBorder.all(),
+              //         columns: [
+              //           DataColumn(
+              //             label: Expanded(child: Center(child: Text('Nom'))),
+              //           ),
+              //           DataColumn(
+              //             label: Expanded(child: Center(child: Text('Note'))),
+              //           ),
+              //         ],
+              //         rows: List<DataRow>.generate(
+              //             _qrlEvaluationService.points.length, (index) {
+              //           return DataRow(cells: [
+              //             DataCell(
+              //                 Text(_qrlEvaluationService.usernames[index])),
+              //             DataCell(Text(
+              //                 _qrlEvaluationService.points[index].toString()))
+              //           ]);
+              //         })),
+              //     SizedBox(height: .0),
+              //   ],
+              // );
             }
           }),
     );

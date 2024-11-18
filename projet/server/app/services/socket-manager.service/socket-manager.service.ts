@@ -35,13 +35,14 @@ export class SocketManager {
     }
 
     handleSockets(): void {
-        this.sio.on(SocketEvent.CONNECTION, (socket) => {
+        this.sio.on(SocketEvent.CONNECTION, async (socket) => {
             const userId = socket.handshake.auth.userId;
             console.log(`New client socket connection: ${userId}`);
             this.gameCreationService.configureGameCreationSockets(this.roomManager, socket, this.sio);
             this.gameManagementService.configureGameManagingSockets(this.roomManager, socket, this.sio);
             socket.on('disconnect', async () => {
                 console.log('Client disconnected');
+                await this.gameCreationService.handleUserDisconnection(this.roomManager,socket.id,socket, this.sio);
             });
         });
     }

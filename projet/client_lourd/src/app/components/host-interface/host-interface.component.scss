@@ -83,14 +83,19 @@
 
 #question-field > div > h2 {
     font-weight: 600;
-    font-size: 2.5vw;
+    font-size: 32px; /* Retained font size */
 }
 
 #question-field > div > h3 {
     font-weight: 400;
-    font-size: 1vw;
+    font-size: 16px; /* Retained font size */
 }
-
+#question-field > div > h1 {
+    font-size: 32px; /* Maintained original font size */
+    font-weight: 600; /* Bold */
+    text-align: center;
+    margin: 10px 0;
+}
 #question-field > h4 {
     font-weight: 500;
     font-size: 2vw;

@@ -102,6 +102,7 @@ export class GameManagementService {
                 const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
                 sio.to(hostSocketId).emit(SocketEvent.SUBMIT_ANSWER, data.username);
             }
+            if (game.currentQuizQuestion.type === QuestionType.QRL) sio.to(socket.id).emit(SocketEvent.GET_QRL_ANSWER_FOR_OBS, data.answers)
             if (game.playersAnswers.size === game.players.size) {
                 if (game.currentQuizQuestion.type === QuestionType.QCM || game.currentQuizQuestion.type === QuestionType.QRE) roomManager.getGameByRoomId(data.roomId).updateScores();
                 roomManager.clearRoomTimer(data.roomId);
@@ -118,6 +119,7 @@ export class GameManagementService {
             const username = roomManager.getUsernameBySocketId(data.roomId, socket.id);
             const choicesStatsValues = Array.from(game.choicesStats.values());
             sio.to(hostSocketId).emit(SocketEvent.REFRESH_CHOICES_STATS, choicesStatsValues);
+            sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, data);
             sio.to(hostSocketId).emit(SocketEvent.UPDATE_INTERACTION, username);
         });
     }
@@ -135,15 +137,19 @@ export class GameManagementService {
             ];
             sio.to(hostSocketId).emit(SocketEvent.REFRESH_QRE_STATS, choicesStatsValues);
             sio.to(hostSocketId).emit(SocketEvent.UPDATE_INTERACTION, username);
+            sio.to(socket.id).emit(SocketEvent.GET_QRE_ANSWER_FOR_OBS, data.selectedAnswer);
         });
     }
 
     private handleActivityStatus(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
-        socket.on(SocketEvent.SEND_ACTIVITY_STATUS, (data: { roomId: number; isActive: boolean }) => {
-            const game = roomManager.getGameByRoomId(data.roomId);
-            game.switchActivityStatus(data.isActive);
-            const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
-            sio.to(hostSocketId).emit(SocketEvent.REFRESH_ACTIVITY_STATS, game.activityStatusStats);
+        socket.on(SocketEvent.SEND_ACTIVITY_STATUS, (data: { roomId: number; isActive: boolean; forObs?: boolean }) => {
+            if (!data.forObs) {
+                const game = roomManager.getGameByRoomId(data.roomId);
+                game.switchActivityStatus(data.isActive);
+                const hostSocketId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
+                sio.to(hostSocketId).emit(SocketEvent.REFRESH_ACTIVITY_STATS, game.activityStatusStats);
+            }
+            sio.to(socket.id).emit(SocketEvent.GET_QRL_INTERACTION, data.isActive);
         });
     }
 

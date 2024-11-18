@@ -1,55 +1,57 @@
 <div class="dialog-container">
-    <h2 class="dialog-title">Configurer la partie</h2>
+    <h2 class="dialog-title">{{ 'GAME_CONFIG_DIALOG.CONFIGURE_GAME' | translate }}</h2>
     <form class="form-container" [formGroup]="gameConfigForm" (ngSubmit)="saveConfig()">
         <div class="field-container">
-            <label for="gameType">Type de partie</label>
+            <label for="gameType">{{ 'GAME_CONFIG_DIALOG.GAME_TYPE_LABEL' | translate }}</label>
             <select formControlName="gameType" id="gameType" class="select-field">
-                <option value="classic">Classique</option>
-                <option value="equipe">Équipe</option>
+                <option value="classic">{{ 'GAME_CONFIG_DIALOG.CLASSIC' | translate }}</option>
+                <option value="equipe">{{ 'GAME_CONFIG_DIALOG.TEAM' | translate }}</option>
             </select>
             <div class="error-message" *ngIf="gameConfigForm.get('gameType')?.hasError('required')">
-                Le type de partie est requis. Veuillez sélectionné un type.
+                {{ 'GAME_CONFIG_DIALOG.GAME_TYPE_REQUIRED' | translate }}
             </div>
         </div>
 
         <div class="field-container">
-            <label for="price">Prix</label>
+            <label for="price">{{ 'GAME_CONFIG_DIALOG.PRICE_LABEL' | translate }}</label>
             <input id="price" class="number-input" matInput type="number" formControlName="price"/>
             <div class="error-message" *ngIf="gameConfigForm.controls['price'].invalid">
-                Le prix doit être un entier supérieur ou égal à 0.
+                {{ 'GAME_CONFIG_DIALOG.PRICE_INVALID' | translate }}
             </div>
         </div>
 
         <div class="checkbox-group">
             <label class="custom-checkbox">
                 <input type="checkbox" formControlName="friendsOnly"/>
-                <span>Amis Seulement</span>
+                <span>{{ 'GAME_CONFIG_DIALOG.FRIENDS_ONLY_LABEL' | translate }}</span>
             </label>
 
             <label class="custom-checkbox">
                 <input type="checkbox" formControlName="private"/>
-                <span>Partie privée</span>
+                <span>{{ 'GAME_CONFIG_DIALOG.PRIVATE_GAME_LABEL' | translate }}</span>
             </label>
         </div>
 
         <div class="field-container">
-            <label for="prestige">Prestige minimum</label>
+            <label for="prestige">{{ 'GAME_CONFIG_DIALOG.MIN_PRESTIGE_LABEL' | translate }}</label>
             <select formControlName="prestige" id="prestige" class="select-field">
-                <option value="0"> Aucun  </option>
-                <option value="50"> 🥉Bronze  </option>
-                <option value="100"> 🥈Argent </option>
-                <option value="150"> 🥇Or </option>
-                <option value="200" > 🏅Platine</option>
+                <option value="0">{{ 'GAME_CONFIG_DIALOG.NONE' | translate }}</option>
+                <option value="50">{{ 'GAME_CONFIG_DIALOG.BRONZE' | translate }}</option>
+                <option value="100">{{ 'GAME_CONFIG_DIALOG.SILVER' | translate }}</option>
+                <option value="150">{{ 'GAME_CONFIG_DIALOG.GOLD' | translate }}</option>
+                <option value="200">{{ 'GAME_CONFIG_DIALOG.PLATINUM' | translate }}</option>
             </select>
-            <div class="error-message" *ngIf="gameConfigForm.get('gameType')?.hasError('required')">
-                Le prestige minimum est requis. Veuillez sélectionné un prestige minimum.
+            <div class="error-message" *ngIf="gameConfigForm.get('prestige')?.hasError('required')">
+                {{ 'GAME_CONFIG_DIALOG.PRESTIGE_REQUIRED' | translate }}
             </div>
         </div>
 
         <div class="actions">
-            <button class="btn btn-cancel" type="button" (click)="closeDialog()">Annuler</button>
+            <button class="btn btn-cancel" type="button" (click)="closeDialog()">
+                {{ 'GAME_CONFIG_DIALOG.CANCEL_BUTTON' | translate }}
+            </button>
             <button class="btn btn-primary" type="submit" [disabled]="!gameConfigForm.valid">
-                Créer partie
+                {{ 'GAME_CONFIG_DIALOG.CREATE_GAME_BUTTON' | translate }}
             </button>
         </div>
     </form>

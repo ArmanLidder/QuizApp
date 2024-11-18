@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/player_status.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/waiting_room_service.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 
@@ -80,23 +81,27 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
     return result;
   }
 
+  Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
+  Map get columnText => gameText['PLAYER_LIST']['COLUMN_TITLES'];
+
   @override
   Widget build(BuildContext context) {
     List<DataColumn> columns = [
       DataColumn(
         onSort: (columnIndex, isAscending) => onSort(columnIndex, isAscending),
-        label: Expanded(child: Center(child: Text('Nom'))),
+        label: Expanded(child: Center(child: Text(columnText['NAME']))),
       ),
       DataColumn(
         onSort: (columnIndex, isAscending) => onSort(columnIndex, isAscending),
-        label: Expanded(child: Center(child: Text('Points'))),
+        label: Expanded(child: Center(child: Text(columnText['POINTS']))),
       ),
-      DataColumn(label: Expanded(child: Center(child: Text('Bonus')))),
+      DataColumn(
+          label: Expanded(child: Center(child: Text(columnText['BONUS'])))),
     ];
 
     if (_waitingRoomService.gameType == 'equipe') {
-      columns.add(
-          DataColumn(label: Expanded(child: Center(child: Text('Équipe')))));
+      columns.add(DataColumn(
+          label: Expanded(child: Center(child: Text(columnText['TEAM'])))));
     }
     return Container(
       width: 650.0,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 // to be removed once connected to database
 enum Page {
@@ -60,6 +62,8 @@ class ChannelSelectionWidget extends StatefulWidget {
 
 class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
   final channelService = ChannelService.instance;
+  Map get text => TranslationService.instance.text;
+  Map get chatText => text['CHAT_COMPONENT'];
 
   @override
   void initState() {
@@ -83,7 +87,7 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
                 onPressed: () {
                   widget.changePage(Page.create);
                 },
-                child: Text("Ajouter un Canal"),
+                child: Text(chatText['ADD_CHANNEL']),
               style: channelModificationStyle,
             )
         ),
@@ -93,7 +97,7 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
                 onPressed: () {
                   widget.changePage(Page.join);
                 },
-                child: Text("Joindre un Canal"),
+                child: Text(chatText['JOIN_CHANNEL']),
                 style: channelModificationStyle,
             )
         )
@@ -103,7 +107,7 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
         child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-                "Mes canaux",
+                chatText['MY_CHANNELS'],
                 style: TextStyle(
                   fontSize: 20,
                 ),
@@ -139,6 +143,8 @@ class ChannelSelectionButton extends StatelessWidget {
   final void Function() deleteChannelCallback;
   final String name;
   final String id;
+  Map get text => TranslationService.instance.text;
+  Map get chatText => text['CHAT_COMPONENT'];
 
   const ChannelSelectionButton({
     super.key,
@@ -232,21 +238,25 @@ class ChannelSelectionButton extends StatelessWidget {
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: Text("Attention !!!"),
+              title: Text(chatText['DELETE_WARNING']),
               content: Text(
-                  "Cette action est irreversible. Le canal ${name} sera effacé à jamais."),
+                chatText['DELETE_CONFIRMATION'].toString().replaceAll("{{channelName}}", name)
+              ),
               actions: <Widget>[
                 TextButton(
                     onPressed: () {
                       return Navigator.pop(context);
                     },
-                    child: Text("Annuler")),
+                    child: Text(TranslationService.instance.languageValue.value == Language.fr?
+                    "Annuler":
+                    "Cancel"
+                    )),
                 TextButton(
                     onPressed: () {
                       deleteChannelCallback();
                       Navigator.pop(context);
                     },
-                    child: Text("Supprimer"))
+                    child: Text(chatText['DELETE']))
               ],
             ));
   }
@@ -265,6 +275,8 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
   String _query = "";
 
   String get query => _query;
+  Map get text => TranslationService.instance.text;
+  Map get chatText => text['CHAT_COMPONENT'];
 
   void set query(String value) => setState(() {
     _query = value;
@@ -284,7 +296,7 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
                     icon: Icon(Icons.arrow_back)))),
         Expanded(
             child: Align(
-                alignment: Alignment.center, child: Text("Joindre Canal")))
+                alignment: Alignment.center, child: Text(chatText['JOIN_CHANNEL'])))
       ]),
       buildSearchBar(),
       Expanded(
@@ -313,7 +325,7 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
           query = value.trim(); // Update query and refresh the list
         },
         decoration: InputDecoration(
-          hintText: "Chercher un canal...",
+          hintText: chatText['SEARCH_CHANNEL'],
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
@@ -365,6 +377,8 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
   final channelService = ChannelService.instance;
   final loggedInService = LoggedInUserService.instance;
   bool _hasTyped = false;
+  Map get text => TranslationService.instance.text;
+  Map get chatText => text['CHAT_COMPONENT'];
   String _currentName = "";
 
   bool get hasTyped => _hasTyped;
@@ -387,7 +401,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
                     icon: Icon(Icons.arrow_back)))),
         Expanded(
             child: Align(
-                alignment: Alignment.center, child: Text("Création canal")))
+                alignment: Alignment.center, child: Text(chatText['CHANNEL_CREATION'])))
       ]),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -401,7 +415,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
             },
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              hintText: 'Saisir un nom de canal...',
+              hintText: chatText['ENTER_CHANNEL_NAME'],
             ),
           )),
       Column(children: channelErrorMessage(_currentName)),
@@ -413,7 +427,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
                   createChannel(context);
                 }
               : null,
-          child: Text("Créer"),
+          child: Text(chatText['CREATE']),
           style: TextButton.styleFrom(
               backgroundColor: isValidChannelName(_currentName)
                   ? Colors.blue
@@ -437,16 +451,16 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
     if (!alphanumeric.hasMatch(name) && name.isNotEmpty)
       errors.add(Text(
-          "Le nom du canal doit seulement contenir des caractères alphanumériques.",
+          chatText['CHANNEL_NAME_PATTERN'],
           style: errorStyle));
     if (name.length > 20)
       errors.add(Text(
-        "Le nom du canal doit contenir 20 caractères maximum.",
+        chatText['CHANNEL_NAME_MAX_LENGTH'],
         style: errorStyle,
       ));
     if (name.isEmpty && hasTyped)
       errors.add(Text(
-        "Le nom de canal est requis.",
+        chatText['CHANNEL_NAME_REQUIRED'],
         style: errorStyle,
       ));
 
@@ -457,7 +471,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: Text("Erreur"),
+              title: Text("Err${TranslationService.instance.languageValue.value == Language.fr?'eu':'o'}r"),
               content: Text(msg),
               actions: <Widget>[
                 TextButton(
@@ -487,7 +501,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     if (canalName.toLowerCase().contains("room")) {
       // Show feedback if the name contains "room"
       sameChannelNamePopup(context,
-          "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom.");
+          chatText['ROOM_IN_NAME_UNALLOWED']);
       return;
     }
 
@@ -503,7 +517,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
         } else {
           // Handle duplicate name case
           sameChannelNamePopup(context,
-              "Le nom $canalName est déjà utilisé. Veuillez choisir un autre nom.");
+              chatText['ROOM_NAME_ALREADY_USED'].toString().replaceAll("{{canalName}}", canalName));
         }
       } catch (error) {
         // Handle any other errors
