@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/LanguageService.dart';
@@ -59,14 +60,14 @@ class StarCardGrid extends StatelessWidget {
   Map get text => TranslationService.instance.text;
   Map get profileText => text['PROFILE'];
 
-  final List<num> achievementsList;
-
-  StarCardGrid({ required this.achievementsList});
+  StarCardGrid();
 
   @override
   Widget build(BuildContext context) {
     return Obx(
             () {
+              List achievementsList = LoggedInUserService.instance.observableAchievement.value;
+
               final List<String> labels = profileText['ALL_ACHIEVEMENTS'] as List<String>;
               print('${TranslationService.instance.languageValue}');
 
@@ -88,7 +89,7 @@ class StarCardGrid extends StatelessWidget {
                 List<Widget> starCards = [];
                 for (int j = 0; j < cardsPerRow; j++) {
                   if (i + j < labels.length) {
-                    bool isDone = achievementsList.contains(i + j);
+                    bool isDone = achievementsList.contains(i + j + 1);
                     starCards.add(
                       Padding(
                         padding: EdgeInsets.symmetric(

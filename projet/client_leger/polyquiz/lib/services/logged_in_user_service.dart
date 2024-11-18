@@ -18,27 +18,32 @@ class LoggedInUserService extends GetxController {
   late var observableLevel = 0.obs;
   late var observableUsername = "".obs;
   late var observableAvatar = ''.obs;
+  late var observableAchievement = [].obs;
+
   User? user;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   RxList<String> friends = <String>[].obs;
   RxList<String> friendRequests = <String>[].obs;
 
-  StreamSubscription<DocumentSnapshot>? _friendSubscription;
+  StreamSubscription<DocumentSnapshot>? _userSubscribtion;
   StreamSubscription<DocumentSnapshot>? _friendRequestSubscription;
 
   // Method to set user info
   void setUser(User? user) {
+    setObservable(user);
+    _subscribeToUser();
+    _subscribeToFriendRequests();
+  }
+  void setObservable(User? user){
     this.user = user;
     this.observableCurrency.value = (this.user?.currency ?? 0).round();
     this.observablePrestige.value = (this.user?.prestige ?? 0).round();
     this.observableLevel.value = (this.user?.level ?? 0).round();
     this.observableUsername.value = this.user!.username;
     this.observableAvatar.value = (this.user?.avatar ?? "");
-    _subscribeToFriends();
-    _subscribeToFriendRequests();
+    this.observableAchievement.value = (this.user?.achievements ?? []);
 
   }
-
   Future<void> setUserByEmail(String email) async {
     User? fetchedUser = await this.userService.getUserByEmail(email); // Fetch user by email
     if (fetchedUser != null) {
@@ -102,6 +107,7 @@ class LoggedInUserService extends GetxController {
         .update({'isConnected': false});
 
 
+
     if (userSnapshot.exists) {
       List<dynamic> loginHistory = userSnapshot.get('loginHistory') ?? [];
       Timestamp timestamp = Timestamp.fromDate(DateTime.now());
@@ -161,22 +167,23 @@ class LoggedInUserService extends GetxController {
 
   @override
   void onClose() {
-    _friendSubscription?.cancel();
+    _userSubscribtion?.cancel();
     _friendRequestSubscription?.cancel();
     super.onClose();
   }
 
-  void _subscribeToFriends() {
+  void _subscribeToUser() {
     String? userId = LoggedInUserService.instance.getUid();
     if (userId == null) return;
 
-    _friendSubscription = _firestore
+    _userSubscribtion = _firestore
         .collection('users')
         .doc(userId)
         .snapshots()
         .listen((snapshot) {
-      print("update friends");
       if (snapshot.exists) {
+        User user = User.fromJson(snapshot.data()!);
+        setObservable(user);
         List<dynamic> friendsList = snapshot['friends'] ?? [];
         friends.assignAll(friendsList.map((friend) => friend.toString()).toList());
       }

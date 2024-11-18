@@ -5,10 +5,11 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/LanguageService.dart';
-import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/theme_service.dart';
 import 'package:intl/intl.dart';
+
+import '../../services/translationService.dart';
 class Event {
   final String eventType;
   final String timestamp;
@@ -48,6 +49,7 @@ class Historique extends StatelessWidget {
   final List<LoginHistory> loginHistory;
   final ThemeService themeService = ThemeService.instance;
   final LanguageService ls = LanguageService.instance;
+  Map get profileText => TranslationService.instance.text['PROFILE'];
 
   Historique({required this.gameHistory, required this.loginHistory});
 

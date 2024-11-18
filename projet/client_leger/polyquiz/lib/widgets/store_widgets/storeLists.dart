@@ -25,22 +25,13 @@ class MoneyCounter extends StatelessWidget {
             '${shopText['CURRENCY']} : ${loggedInUserService.observableCurrency.value} \$',
             style: TextStyle(fontSize: 20, color: Colors.black),
           ),
-          Text(
-            '${profileText['PRESTIGE']} : $prestige',
-            style: TextStyle(fontSize: 20, color: Colors.black),
-          ),
-          Text(
-            '${profileText['LEVEL']} : $level',
-            style: TextStyle(fontSize: 20, color: Colors.black),
-          ),
-        ],
       );
     });
   }
 }
 
 class ThemeStoreList extends StatelessWidget {
-  final List<Map<String,  dynamic>> themes;
+  final List<Map<String, dynamic>> themes;
   final String userId;
   final StoreService storeService = Get.find();
 

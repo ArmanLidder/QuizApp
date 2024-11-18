@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
-
 import '../../../services/LanguageService.dart';
 
 class UserIdsRow extends StatefulWidget {
@@ -12,63 +11,18 @@ class UserIdsRow extends StatefulWidget {
 }
 
 class _UserIdsRowState extends State<UserIdsRow> {
-  List<Map<String, dynamic>>? cachedUserWidgets;  // Cache of username and corresponding widget
-  String filterText = '';  // Text input for filtering
-  bool isLoading = true;  // Track if data is still loading
+  String filterText = ''; // Text input for filtering
   final LanguageService ls = LanguageService.instance;
 
-  // Fetch user data and create widgets. This should only be called once on initial load.
-  Future<void> fetchUserWidgets() async {
-    // If widgets are already cached, return them directly
-    if (cachedUserWidgets != null) return;
-
-    try {
-      final snapshot = await FirebaseFirestore.instance.collection('users').get();
-      List<Map<String, dynamic>> userWidgets = [];
-
-      for (var doc in snapshot.docs) {
-        String username = doc['username'].toString();
-        String uid = doc['uid'].toString();
-
-        // Create a SingleFriendInteractable widget for each user
-        var widget = Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: SingleFriendInteractable(userId: uid),
-        );
-
-        // Store username and widget together in the cache
-        userWidgets.add({
-          'username': username,
-          'widget': widget,
-        });
-      }
-
-      setState(() {
-        cachedUserWidgets = userWidgets;
-        isLoading = false;  // Update loading state after fetching
-      });
-    } catch (e) {
-      print('Error fetching user IDs: $e');
-      setState(() {
-        isLoading = false;  // Stop loading on error
-      });
-    }
-  }
-
-  // Filter widgets based on the entered filter text.
-  List<Map<String, dynamic>> _filterUserWidgets(String filter) {
-    if (cachedUserWidgets == null) return [];
-    return cachedUserWidgets!
-        .where((entry) {
-      final username = entry['username'] as String;
+  // Filters the list of users based on the entered text.
+  List<QueryDocumentSnapshot> _filterUsers(
+      List<QueryDocumentSnapshot> users, String filter) {
+    return users
+        .where((doc) {
+      final username = doc['username'] as String? ?? '';
       return username.toLowerCase().contains(filter.toLowerCase());
-    }).toList();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchUserWidgets();
+    })
+        .toList();
   }
 
   @override
@@ -90,17 +44,38 @@ class _UserIdsRowState extends State<UserIdsRow> {
             ),
           ),
         ),
-        // Display the cached widgets, with a scrollable list
-        isLoading
-            ? Text("loading...")
-            : Expanded( // Wrap the list with an Expanded widget to allow scrolling
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              children: _filterUserWidgets(filterText).map((entry) {
-                return entry['widget'] as Widget;
-              }).toList(),
-            ),
+        // StreamBuilder to listen to the users collection
+        Expanded(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('users').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No users found.'));
+              }
+
+              // Filter users based on the entered text
+              final filteredUsers =
+              _filterUsers(snapshot.data!.docs, filterText);
+
+              // Build the widgets for each user
+              return ListView(
+                children: filteredUsers.map((doc) {
+                  final uid = doc['uid'] as String;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: SingleFriendInteractable(userId: uid),
+                  );
+                }).toList(),
+              );
+            },
           ),
         ),
       ],
