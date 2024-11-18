@@ -57,6 +57,13 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     //_leaveRoom();
     // waitingRoomService.cancelListeners();
     // waitingRoomService.disconnect();
+    if(!waitingRoomService.isTransition)
+      if (widget.isHost) {
+          this.waitingRoomService.userLeft(roomId, SocketEvent.HOST_LEFT);
+      }
+      else{
+          this.waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
+      }
     waitingRoomService.players = [];
     super.dispose();
   }
