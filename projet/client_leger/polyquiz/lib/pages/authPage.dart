@@ -26,13 +26,50 @@ class _AuthPageState extends State<AuthPage> {
   final UserPageCustomisationService userPageCustomisationService =
       UserPageCustomisationService.instance;
   final ValidationService validationService = ValidationService.instance;
+  final TranslationService translationService = TranslationService.instance;
+
+  Map get text => translationService.text;
+  Map get registerPageText => this.text['REGISTER_PAGE'];
+  Map get loginPageText => this.text['LOGIN_PAGE'];
+
   bool _isRegistering = false;
   bool _obscurePassword = true;
   bool _isValidUsername = true;
   bool _isValidEmail = true;
   bool _isValidPassword = true;
   String? _selectedAvatar;
+  Widget languageDropdown() {
+    return DropdownButton<String>(
+      value: translationService.currentLanguageAbbr,
+      onChanged: (String? newLanguage) {
+        if (newLanguage != null) {
+          setState(() {
+            translationService.currentLanguageAbbr = newLanguage; // Update language in TranslationService
+            // Re-fetch text values after changing the language
+            _refreshText();
+          });
+        }
+      },
+      items: [
+        DropdownMenuItem(
+          value: 'en',
+          child: Text('English'),
+        ),
+        DropdownMenuItem(
+          value: 'fr',
+          child: Text('Français'),
+        ),
+      ],
+    );
+  }
 
+// Helper function to refresh text values after language change
+  void _refreshText() {
+    setState(() {
+      // Re-fetch translation text after setting the language
+      // This triggers the UI to update
+    });
+  }
   Future<void> _login() async {
     try {
       await _auth.signInWithEmailAndPassword(
@@ -44,6 +81,8 @@ class _AuthPageState extends State<AuthPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Connexion réussie!')),
       );
+      await loggedInUserService.login(_emailController.text);
+      translationService.currentLanguage = loggedInUserService.user!.settings.language;
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       print(e);
@@ -97,139 +136,139 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     final List<String> defaultAvatars = constDefaultAvatars;
     return Scaffold(
-      body: SingleChildScrollView(
-        child:Center(
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            width: 320,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 10,
-                  offset: Offset(0, 5),
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          width: 320,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              languageDropdown(),
+              Text(
+                _isRegistering ? registerPageText['TITLE'] : loginPageText['TITLE'],
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                _isRegistering
+                    ? registerPageText['TITLE']
+                    : loginPageText['SUBTITLE'],
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+              ),
+              SizedBox(height: 24),
+              if (_isRegistering)
+                TextField(
+                  controller: _usernameController,
+                  decoration: InputDecoration(
+                    errorText: !_isValidUsername
+                        ? registerPageText['USERNAME_INVALID']
+                        : null,
+                    prefixIcon: Icon(Icons.person),
+                    labelText: registerPageText['USERNAME_LABEL'],
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (e) async {
+                    bool result = await validationService.isValidUsername(e);
+                    setState(() {
+                      _isValidUsername = result;
+                    });
+                    print(_isValidUsername); // You can print the result here
+                  },
                 ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _isRegistering ? "Créer un compte" : "Connecter",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              if (_isRegistering) SizedBox(height: 16),
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                controller: _emailController,
+                decoration: InputDecoration(
+                  errorText:
+                      !_isValidEmail ? registerPageText['EMAIL_INVALID'] : null,
+                  prefixIcon: Icon(Icons.email),
+                  labelText: registerPageText['EMAIL_LABEL'],
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  _isRegistering
-                      ? "Créez un compte pour commencer"
-                      : "Connectez-vous à votre compte",
-                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                ),
-                SizedBox(height: 24),
-                if (_isRegistering)
-                  TextField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      errorText: !_isValidUsername
-                          ? "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres."
-                          : null,
-                      prefixIcon: Icon(Icons.person),
-                      labelText: "Nom d'utilisateur",
-                      border: OutlineInputBorder(),
+                onChanged: (e) async {
+                  bool result = await validationService.isValidAddress(e);
+                  setState(() {
+                    _isValidEmail = result;
+                  });
+                  print(_isValidEmail); // You can print the result here
+                },
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.lock),
+                  labelText: registerPageText['PASSWORD_LABEL'],
+                  errorText:
+                      !_isValidPassword ? registerPageText['PASSWORD_MIN_LENGTH'] : null,
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
-                    onChanged: (e) async {
-                      bool result = await validationService.isValidUsername(e);
+                    onPressed: () {
                       setState(() {
-                        _isValidUsername = result;
+                        _obscurePassword = !_obscurePassword;
                       });
-                      print(_isValidUsername); // You can print the result here
                     },
                   ),
-                if (_isRegistering) SizedBox(height: 16),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    errorText:
-                    !_isValidEmail ? "doit etre une addresse valide" : null,
-                    prefixIcon: Icon(Icons.email),
-                    labelText: 'Courriel*',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (e) async {
-                    bool result = await validationService.isValidAddress(e);
-                    setState(() {
-                      _isValidEmail = result;
-                    });
-                    print(_isValidEmail); // You can print the result here
-                  },
                 ),
-                SizedBox(height: 16),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock),
-                    labelText: 'Mot de passe*',
-                    errorText:
-                    !_isValidPassword ? "doit avoir une longeur de 6" : null,
-                    border: OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                      ),
-                      onPressed: () {
+                onChanged: (e) async {
+                  bool result = await validationService.isValidPassword(e);
+                  setState(() {
+                    _isValidPassword = result;
+                  });
+                },
+              ),
+              if (_isRegistering) ...[
+                SizedBox(height: 24),
+                Text(
+                  this.text['AVATAR_MODIFICATION']['CHOOSE_AVATAR'],
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: defaultAvatars.map((avatarUrl) {
+                    return GestureDetector(
+                      onTap: () {
                         setState(() {
-                          _obscurePassword = !_obscurePassword;
+                          _selectedAvatar = avatarUrl;
                         });
                       },
-                    ),
-                  ),
-                  onChanged: (e) async {
-                    bool result = await validationService.isValidPassword(e);
-                    setState(() {
-                      _isValidPassword = result;
-                    });
-                  },
-                ),
-                if (_isRegistering) ...[
-                  SizedBox(height: 24),
-                  Text(
-                    "Choisissez votre avatar",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: defaultAvatars.map((avatarUrl) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedAvatar = avatarUrl;
-                          });
-                        },
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: _selectedAvatar == avatarUrl
-                                      ? Colors.blue
-                                      : Colors.transparent,
-                                  width: 3, // Border thickness
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(avatarUrl),
-                                radius: 30,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(avatarUrl),
+                            radius: 30,
+                          ),
+                          if (_selectedAvatar ==
+                              avatarUrl) // Show checkmark if selected
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                                size: 24,
                               ),
                             ),
                           ],
@@ -293,8 +332,6 @@ class _AuthPageState extends State<AuthPage> {
             ),
           ),
         ),
-      ),
-    );
   }
 
   @override
