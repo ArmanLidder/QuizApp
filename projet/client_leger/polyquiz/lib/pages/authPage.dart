@@ -39,7 +39,38 @@ class _AuthPageState extends State<AuthPage> {
   bool _isValidEmail = true;
   bool _isValidPassword = true;
   String? _selectedAvatar;
+  Widget languageDropdown() {
+    return DropdownButton<String>(
+      value: translationService.currentLanguageAbbr,
+      onChanged: (String? newLanguage) {
+        if (newLanguage != null) {
+          setState(() {
+            translationService.currentLanguageAbbr = newLanguage; // Update language in TranslationService
+            // Re-fetch text values after changing the language
+            _refreshText();
+          });
+        }
+      },
+      items: [
+        DropdownMenuItem(
+          value: 'en',
+          child: Text('English'),
+        ),
+        DropdownMenuItem(
+          value: 'fr',
+          child: Text('Français'),
+        ),
+      ],
+    );
+  }
 
+// Helper function to refresh text values after language change
+  void _refreshText() {
+    setState(() {
+      // Re-fetch translation text after setting the language
+      // This triggers the UI to update
+    });
+  }
   Future<void> _login() async {
     try {
       await _auth.signInWithEmailAndPassword(
@@ -123,6 +154,7 @@ class _AuthPageState extends State<AuthPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              languageDropdown(),
               Text(
                 _isRegistering ? registerPageText['TITLE'] : loginPageText['TITLE'],
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
