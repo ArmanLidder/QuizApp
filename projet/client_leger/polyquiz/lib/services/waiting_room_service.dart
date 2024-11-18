@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:polyquiz/models/teams.dart';
+import 'package:polyquiz/models/teams_models.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'socket_service.dart';
 import 'package:polyquiz/constants/socket-event.dart';
@@ -21,6 +23,9 @@ class WaitingRoomService extends ChangeNotifier {
   bool isTransition = false;
   List<String> players = [];
   num time = 0;
+  Map<int, List<String>> teams = {};
+  List<TeamsForInterface> teamsForInterface = [];
+  String gameType = 'classic';
 
   WaitingRoomService._internal();
 
@@ -35,6 +40,8 @@ class WaitingRoomService extends ChangeNotifier {
     this.isTransition = false;
     this.players = [];
     this.time = 0;
+    this.teams = {};
+    this.teamsForInterface = [];
   }
 
   bool isSocketAlive() {
@@ -172,12 +179,32 @@ class WaitingRoomService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void sendCreateTeam() {
+    this._socketService.sendMessage(SocketEvent.CREATE_TEAM, this.roomId);
+  }
+
+  void joinTeam(int newTeamId) {
+    JoinTeamData joinTeamData =
+        JoinTeamData(roomId: roomId, newTeamId: newTeamId);
+    this
+        ._socketService
+        .sendMessage(SocketEvent.JOIN_TEAM, joinTeamData.toJson());
+  }
+
   void removePlayer(String username) {
     players.remove(username);
     notifyListeners();
   }
 
+  void getGameType() {
+    _socketService.sendMessageWithAck(SocketEvent.GET_GAME_TYPE, this.roomId,
+        (gameType) => {this.gameType = gameType, notifyListeners()});
+  }
+
   void gatherPlayers() {
+    _socketService.sendMessageWithAck(SocketEvent.GET_GAME_TYPE, this.roomId,
+        (gameType) => {this.gameType = gameType, notifyListeners()});
+
     _socketService.sendMessageWithAck(
         SocketEvent.GATHER_PLAYERS_USERNAME, this.roomId, (dynamic players) {
       this.players = List<String>.from(players);
@@ -198,11 +225,13 @@ class WaitingRoomService extends ChangeNotifier {
     handleRemovedPlayer();
     handleTime();
     handleFinalTransition();
+    handleGetTeams();
   }
 
   void handleNewPlayer() {
     _socketService.onMessage(SocketEvent.NEW_PLAYER, (players) {
       this.players = List<String>.from(players);
+      print('NEW PLAYERS: ${this.players}');
       notifyListeners();
     });
   }
@@ -239,6 +268,27 @@ class WaitingRoomService extends ChangeNotifier {
       if (this.isTransition) {
         this._globalNavigationService.navigateTo('/home');
       }
+    });
+  }
+
+  void handleGetTeams() {
+    this._socketService.onMessage(SocketEvent.GET_TEAMS, (teams) {
+      this.teams.clear();
+      teams.forEach((teamId, teamData) {
+        print('${teamId} ${teamData['members']}');
+        List<String> members = List<String>.from(teamData['members']);
+        this.teams[int.parse(teamId)] = members;
+      });
+      this.teamsForInterface.clear();
+      this.teamsForInterface = this.teams.entries.map((entry) {
+        return TeamsForInterface(entry.key, entry.value);
+      }).toList();
+
+      print('\nTeams For Interface:');
+      for (var team in teamsForInterface) {
+        print('Team ${team.name}: ${team.userIds}');
+      }
+      notifyListeners();
     });
   }
 }

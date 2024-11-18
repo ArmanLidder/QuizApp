@@ -30,6 +30,7 @@ class TranslationService extends GetxController {
       case Language.tp:
         return 'tp';
     }
+    return 'fr';
 
   }
 
