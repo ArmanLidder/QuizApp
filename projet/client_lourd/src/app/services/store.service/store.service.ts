@@ -15,6 +15,29 @@ export class StoreService {
     constructor(private firestore: Firestore, private usersService: UsersService) {
     }
 
+    // async addStoreItems() {
+    //     const itemsCollectionRef = collection(this.firestore, 'storeItems');
+    //
+    //     for (let i = 1; i <= 8; i++) {
+    //         const itemData = {
+    //             achievement: i,
+    //             cost: -20 * i,
+    //             itemType: 'rewardCurrency',
+    //             name: `${20 * i} $`,
+    //             source: 'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/shopGIFS%2FmoneyBag.png?alt=media&token=a991db2c-7dff-435c-83bf-d8d6131e236b',
+    //         };
+    //
+    //         const itemDocRef = doc(itemsCollectionRef);
+    //         try {
+    //             await setDoc(itemDocRef, itemData);
+    //             console.log(`Item ${i} added successfully.`);
+    //         } catch (error) {
+    //             console.error(`Error adding item ${i}:`, error);
+    //         }
+    //     }
+    // }
+
+
     get allStoreItems(): Observable<StoreItem[]> {
         const itemsCollectionRef = collection(this.firestore, `storeItems`);
         return collectionData(itemsCollectionRef, {idField: 'id'}).pipe(map((data) => data as StoreItem[]), catchError((error) => {

@@ -151,7 +151,10 @@
     "COST_SUFFIX": "$",
     "REWARDS": "Récompenses",
     "UNLOCKED_AT_ACHIEVEMENT": "Débloqué à l'exploit : ",
-    "UNLOCKED_AT_LEVEL": "Débloqué au niveau "
+    "UNLOCKED_AT_LEVEL": "Débloqué au niveau ",
+    "CLAIM": "Réclamer",
+    "REWARD_CURRENCY": "Récompenses d'exploits",
+    "ALREADY_CLAIMED": "Réclamée"
   },
   "GAME_ADMIN": {
     "TITLE": "Panneau d'administration : gérer tous les jeux-questionnaires",

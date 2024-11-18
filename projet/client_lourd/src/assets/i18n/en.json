@@ -151,7 +151,10 @@
     "COST_SUFFIX": "$",
     "REWARDS": "Rewards",
     "UNLOCKED_AT_ACHIEVEMENT": "Unlocked at achievement : ",
-    "UNLOCKED_AT_LEVEL": "Unlocked at level "
+    "UNLOCKED_AT_LEVEL": "Unlocked at level ",
+    "CLAIM": "Claim",
+    "REWARD_CURRENCY": "Achievement rewards",
+    "ALREADY_CLAIMED": "Claimed"
   },
   "GAME_ADMIN": {
     "TITLE": "Admin Panel: Manage All Quiz Games",

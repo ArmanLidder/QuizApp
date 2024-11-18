@@ -19,6 +19,7 @@ export class ShoppingPageComponent implements OnInit {
   imageItems$: Observable<StoreItemWithOwnership[]>;
   themeItems$: Observable<StoreItemWithOwnership[]>;
   rewardItems$: Observable<StoreItemWithOwnership[]>;
+  rewardCurrencyItems$: Observable<StoreItemWithOwnership[]>;
   userCurrency$: Observable<number>;
   currentUser$: Observable<User | null>;
   currentUser: User | null = null;
@@ -26,7 +27,7 @@ export class ShoppingPageComponent implements OnInit {
   allAchievements: string[] = [];
 
   constructor(
-      private storeService: StoreService,
+      public storeService: StoreService,
       private usersService: UsersService,
       private snackbar: SnackbarService,
       private translate: TranslateService
@@ -48,6 +49,15 @@ export class ShoppingPageComponent implements OnInit {
             item.itemType === 'rewardImage' || item.itemType === 'rewardTheme'
         ))
     );
+
+    this.rewardCurrencyItems$ = allItems$.pipe(
+        map(items =>
+            items
+                .filter(item => item.itemType === 'rewardCurrency')
+                .sort((a, b) => (a.achievement || 0) - (b.achievement || 0)) // Sort by achievement field
+        )
+    );
+
 
     this.userCurrency$ = this.usersService.currentUserProfile$.pipe(
         map(user => user?.currency ?? 0)
@@ -94,10 +104,6 @@ export class ShoppingPageComponent implements OnInit {
 
   hasEnoughCurrency(item: StoreItemWithOwnership): boolean {
     return this.userCurrency >= item.cost;
-  }
-
-  canBuyRewardItem(item: StoreItemWithOwnership): boolean {
-    return this.meetsRequirements(item) && this.hasEnoughCurrency(item);
   }
 
   async buyItem(id: string) {
