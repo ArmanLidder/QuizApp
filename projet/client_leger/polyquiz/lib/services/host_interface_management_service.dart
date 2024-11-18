@@ -300,6 +300,16 @@ class HostInterfaceManagementService extends ChangeNotifier {
             .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
       }
     }
+    else{
+      this.histogramDataChangingResponses = {
+        'Actif': 0,
+        'Inactif': numberOfPlayers,
+      };
+      this.histogramDataValue = {
+        'Actif': true,
+        'Inactif': false,
+      };
+    }
     notifyListeners();
   }
 

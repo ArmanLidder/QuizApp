@@ -222,14 +222,27 @@ class HostMiddleSection extends StatelessWidget {
       case QuestionType.QRL:
         returnedWidget = AnimatedBuilder(
           animation: hostInterfaceManagementService,
-          builder: (BuildContext context, Widget? snapshot) => Visibility(
-            visible: hostInterfaceManagementService.isHostEvaluating,
-            child: HostGrading(
-              gameStats: hostInterfaceManagementService.gameStats,
-              qrlAnswers: hostInterfaceManagementService.responsesQRL,
-            ),
-          ),
+          builder: (context, child) {
+            return Column(
+              children: [
+                Visibility(
+                  visible: hostInterfaceManagementService.isHostEvaluating,
+                  child: HostGrading(
+                    gameStats: hostInterfaceManagementService.gameStats,
+                    qrlAnswers: hostInterfaceManagementService.responsesQRL,
+                  ),
+                ),
+                HistogramLegend(),
+                Histogram(),
+              ],
+            );
+          },
         );
+        // returnedWidget = Column(
+        //     children: [
+        //       HistogramLegend(), Histogram()
+        //     ],
+        // );
         break;
       case QuestionType.QRE:
       case QuestionType.QCM:

@@ -26,8 +26,8 @@ class _TimerWidgetState extends State<TimerWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(5.0),
-      height: 150,
-      width: 150,
+      height: 200,
+      width: 200,
       decoration: BoxDecoration(
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(100.0)),
