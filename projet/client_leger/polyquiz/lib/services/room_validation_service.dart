@@ -22,6 +22,12 @@ class RoomValidationService with ChangeNotifier {
   User? userData;
 
   RoomValidationService({required this.socketService}) {
+    this.loggedInUserService.reloadUser();
+    this.userData = this.loggedInUserService.getUser();
+  }
+
+  void reloadUserData(){
+    this.loggedInUserService.reloadUser();
     this.userData = this.loggedInUserService.getUser();
   }
 

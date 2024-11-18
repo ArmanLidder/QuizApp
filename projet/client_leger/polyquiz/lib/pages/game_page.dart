@@ -15,6 +15,7 @@ import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/question_result.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -391,6 +392,7 @@ class ResultPage extends StatelessWidget {
         PlayersDataTable(
           isHost: false,
         ),
+        StatisticZone(gameStats : this.gameInterfaceManagementService!.gameStats),
         QuitBtn(
           isHost: false,
           roomId: gameService.realGameService.roomId,

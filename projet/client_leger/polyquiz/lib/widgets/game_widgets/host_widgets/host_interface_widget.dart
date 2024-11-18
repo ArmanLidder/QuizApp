@@ -9,7 +9,8 @@ import 'package:polyquiz/widgets/game_widgets/host_widgets/host_grading_widget.d
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
-import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/timer_widget.dart'; 
+import 'package:polyquiz/widgets/game_widgets/question_result.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_legend_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
@@ -30,7 +31,6 @@ class HostInterface extends StatefulWidget {
 
 class _HostInterfaceState extends State<HostInterface> {
   bool isLastButton = false;
-  bool isResultPage = false;
 
   GameService gameService = GameService();
   HostInterfaceManagementService hostInterfaceManagementService =
@@ -52,7 +52,6 @@ class _HostInterfaceState extends State<HostInterface> {
 
   void _handleLastQuestion() {
     setState(() {
-      isResultPage = true;
       isLastButton = true;
     });
     hostInterfaceManagementService.handleLastQuestion();
@@ -86,7 +85,7 @@ class _HostInterfaceState extends State<HostInterface> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             );
-          } else if (isResultPage || hostInterfaceManagementService.isResultPage) {
+          } else if (hostInterfaceManagementService.isResultPage) {
             return ResultPage(
               gameService: gameService,
               hostInterfaceManagementService: hostInterfaceManagementService,
@@ -288,6 +287,7 @@ class ResultPage extends StatelessWidget {
           'Le jeux est terminé! voici les résultats.',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+        StatisticZone(gameStats : this.hostInterfaceManagementService.gameStats),
         PlayersDataTable(
           isHost: true,
         ),

@@ -31,6 +31,13 @@ class QuestionStatistics {
   final QuizQuestion? question;
 
   QuestionStatistics(this.responsesValues, this.responsesNumber, this.question);
+  factory QuestionStatistics.fromJson(Map<String, dynamic> json) {
+    return QuestionStatistics(
+      Map<String, bool>.from(json[0]),
+      Map<String, num>.from(json[1]),
+      json[2] != null ? QuizQuestion.fromJson(json[2]) : null,
+    );
+  }
 }
 
 class QrlAnswer {
