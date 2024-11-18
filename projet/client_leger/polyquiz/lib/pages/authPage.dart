@@ -134,7 +134,7 @@ class _AuthPageState extends State<AuthPage> {
                     controller: _usernameController,
                     decoration: InputDecoration(
                       errorText: !_isValidUsername
-                          ? "doit etre 1 a 10 charactères et chiffres"
+                          ? "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres."
                           : null,
                       prefixIcon: Icon(Icons.person),
                       labelText: "Nom d'utilisateur",
@@ -217,21 +217,21 @@ class _AuthPageState extends State<AuthPage> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(avatarUrl),
-                              radius: 30,
-                            ),
-                            if (_selectedAvatar ==
-                                avatarUrl) // Show checkmark if selected
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green,
-                                  size: 24,
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: _selectedAvatar == avatarUrl
+                                      ? Colors.blue
+                                      : Colors.transparent,
+                                  width: 3, // Border thickness
                                 ),
                               ),
+                              child: CircleAvatar(
+                                backgroundImage: NetworkImage(avatarUrl),
+                                radius: 30,
+                              ),
+                            ),
                           ],
                         ),
                       );
