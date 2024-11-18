@@ -13,44 +13,34 @@ class StarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 100,
-          height: 120, // Increased height to accommodate longer text
-          padding: const EdgeInsets.all(8.0), // Internal padding
-          decoration: BoxDecoration(
-            color: Colors.grey[300], // Light grey color for the background
-            borderRadius: BorderRadius.circular(16), // Rounded corners
+    return Container(
+      width: 100,
+      height: 120, // Height to accommodate longer text
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isDone ? Icons.star : Icons.star_border,
+            size: 48,
+            color: isDone ? Color(0xFFFCDB03) : Colors.black54,
           ),
-          child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center, // Center elements vertically
-            children: [
-              Icon(
-                isDone
-                    ? Icons.star
-                    : Icons
-                        .star_border, // Filled star if done, otherwise outline
-                size: 48,
-                color: isDone
-                    ? Color(0xFFFCDB03)
-                    : Colors.black54, // Yellow color if done
-              ),
-              SizedBox(height: 8), // Space between icon and text
-              Flexible(
-                child: Text(
-                  label,
-                  textAlign: TextAlign.center, // Center text
-                  style: TextStyle(fontSize: 12), // Adjust font size if needed
-                  overflow: TextOverflow.visible, // Allow text to wrap
-                  maxLines: 3, // Limit the number of lines to avoid overflow
-                ),
-              ),
-            ],
+          SizedBox(height: 8),
+          Flexible(
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12),
+              overflow: TextOverflow.visible,
+              maxLines: 3,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -64,57 +54,24 @@ class StarCardGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-            () {
-              print("starComponent build called");
+    return Obx(() {
+      print("starComponent build called");
 
-              List achievementsList = LoggedInUserService.instance.observableAchievement.value;
+      List achievementsList = LoggedInUserService.instance.observableAchievement.value;
+      final List<String> labels = profileText['ALL_ACHIEVEMENTS'] as List<String>;
 
-              final List<String> labels = profileText['ALL_ACHIEVEMENTS'] as List<String>;
-              // Determine how many cards can fit in a row
-              final double screenWidth = MediaQuery
-                  .of(context)
-                  .size
-                  .width;
-              final double cardWidth = 100;
-              final double horizontalMargin = 4.0;
-              final double verticalMargin = 4.0;
-              // si ca casse pinguez Maxime
-              final int cardsPerRow = ((screenWidth - (horizontalMargin * 4)) /
-                  (cardWidth + horizontalMargin))
-                  .floor();
-
-              List<Widget> rows = [];
-              for (int i = 0; i < labels.length; i += cardsPerRow) {
-                List<Widget> starCards = [];
-                for (int j = 0; j < cardsPerRow; j++) {
-                  if (i + j < labels.length) {
-                    bool isDone = achievementsList.contains(i + j + 1);
-                    starCards.add(
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: horizontalMargin),
-                        child: StarCard(
-                          label: labels[i + j],
-                          isDone: isDone,
-                        ),
-                      ),
-                    );
-                  }
-                }
-                rows.add(Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: starCards,
-                ));
-                rows.add(
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: verticalMargin),
-                  ),
-                );
-              }
-              return Column(
-                children: [...rows],
-              );
-            });
-            }
+      return Wrap(
+        spacing: 8.0, // Horizontal spacing between cards
+        runSpacing: 8.0, // Vertical spacing between rows
+        alignment: WrapAlignment.center, // Center-align the cards
+        children: List.generate(labels.length, (index) {
+          bool isDone = achievementsList.contains(index + 1);
+          return StarCard(
+            label: labels[index],
+            isDone: isDone,
+          );
+        }),
+      );
+    });
+  }
 }
