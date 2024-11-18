@@ -148,7 +148,9 @@ const frenchTextValues = {
     "OWNED": "Déjà possédé",
     "NOT_ENOUGH_FUNDS": "Pas assez de fonds",
     "BUY": "Acheter",
-    "COST_SUFFIX": "\$"
+    "COST_SUFFIX": "\$",
+    "CLAIM" : "réclamer",
+    "CLAIMED": "réclaméé",
   },
   "GAME_ADMIN": {
     "TITLE": "Panneau d'administration : gérer tous les jeux-questionnaires",
@@ -696,7 +698,9 @@ const englishTextValues = {
     "OWNED": "Already owned",
     "NOT_ENOUGH_FUNDS": "Not enough funds",
     "BUY": "Buy",
-    "COST_SUFFIX": "\$"
+    "COST_SUFFIX": "\$",
+    "CLAIM":"claim",
+    "CLAIMED":"claimed"
   },
   "GAME_ADMIN": {
     "TITLE": "Admin Panel: Manage All Quiz Games",

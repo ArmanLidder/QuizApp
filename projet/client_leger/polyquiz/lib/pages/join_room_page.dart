@@ -11,6 +11,7 @@ import 'package:polyquiz/models/game_list_item.dart';
 import 'package:polyquiz/services/game_list_item.dart';
 import 'package:polyquiz/services/quiz_service.dart';
 import 'package:polyquiz/services/user_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class JoinRoomPage extends StatefulWidget {
   const JoinRoomPage({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   final UserService userService = UserService();
   late final GameListService gameListService;
   Map<String, String> quizNameMap = {};
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map get text => TranslationService.instance.text;
   Map get waitPageText => text['PLAYER_WAITING_PAGE'];
   Map get roomPromptText => waitPageText['ROOM_CODE_PROMPT'];
@@ -78,6 +80,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   Future<void> _joinRoom(GameListItem game) async {
     final roomValidationService =
         Provider.of<RoomValidationService>(context, listen: false);
+    roomValidationService.reloadUserData();
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
     dynamic dataOfRoomValidation = await roomValidationService.sendRoomId();
@@ -139,39 +142,94 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                     _isJoining = false;
                   });
                 }
-                if (!roomValidationService.isLocked &&
-                    roomValidationService.isUsernameValid) {
-                  try {
-                    // Navigate to the WaitingRoomScreen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WaitingRoomScreen(
-                          quiz: Quiz(
-                            id: roomValidationService
-                                .roomId!, // Pass the room ID to the waiting room.
-                            title: 'Nothing', // Provide a sample title.
-                            description: 'Nothing', // Provide a sample description.
-                            duration: 0, // Provide a sample duration.
-                            questions: [], // Provide an empty list of questions.
-                          ),
-                          username: this
-                              .userData!
-                              .uid, // Pass the username to the waiting room.
-                          isHost: false, // This user is not the host.
-                          isFromActiveList: true,
-                        ),
-                      ),
-                    );
-                  } catch (e) {
-                    setState(() {
-                      _isJoining = false;
-                    });
+                else{
+                  if(game.price > 0){
+                    if(roomValidationService.userData!.currency < game.price){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(roomErrorText['INSUFFICIENT_FUNDS'])),
+                      );
+                      setState(() {
+                        _isJoining = false;
+                      });
+                    }
+                    else{
+                      final availableMoney = roomValidationService.userData!.currency;
+                      await _firestore.collection('users').doc(roomValidationService.userData!.uid).update({
+                        'currency': availableMoney - game.price,
+                      });
+                      if (!roomValidationService.isLocked &&
+                          roomValidationService.isUsernameValid) {
+                        try {
+                          // Navigate to the WaitingRoomScreen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WaitingRoomScreen(
+                                quiz: Quiz(
+                                  id: roomValidationService
+                                      .roomId!, // Pass the room ID to the waiting room.
+                                  title: 'Nothing', // Provide a sample title.
+                                  description: 'Nothing', // Provide a sample description.
+                                  duration: 0, // Provide a sample duration.
+                                  questions: [], // Provide an empty list of questions.
+                                ),
+                                username: this
+                                    .userData!
+                                    .uid, // Pass the username to the waiting room.
+                                isHost: false, // This user is not the host.
+                                isFromActiveList: true,
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          setState(() {
+                            _isJoining = false;
+                          });
 
-                    // Display an error message if joining fails.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to join room: $e')),
-                    );
+                          // Display an error message if joining fails.
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to join room: $e')),
+                          );
+                        }
+                      }
+                    }
+                  }
+                  else{
+                  if (!roomValidationService.isLocked &&
+                        roomValidationService.isUsernameValid) {
+                      try {
+                        // Navigate to the WaitingRoomScreen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WaitingRoomScreen(
+                              quiz: Quiz(
+                                id: roomValidationService
+                                    .roomId!, // Pass the room ID to the waiting room.
+                                title: 'Nothing', // Provide a sample title.
+                                description: 'Nothing', // Provide a sample description.
+                                duration: 0, // Provide a sample duration.
+                                questions: [], // Provide an empty list of questions.
+                              ),
+                              username: this
+                                  .userData!
+                                  .uid, // Pass the username to the waiting room.
+                              isHost: false, // This user is not the host.
+                              isFromActiveList: true,
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        setState(() {
+                          _isJoining = false;
+                        });
+
+                        // Display an error message if joining fails.
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to join room: $e')),
+                        );
+                      }
+                    }
                   }
                 }
               }

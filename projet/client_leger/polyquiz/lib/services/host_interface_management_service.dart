@@ -316,14 +316,6 @@ class HostInterfaceManagementService extends ChangeNotifier {
     print('question in init graph');
     print(question);
     this.isHostEvaluating = false;
-    // if (question.type == QuestionType.QCM) {
-    //   print('INIT GRAPH GOT INTO THE IF');
-    //   for (QuizChoice choice in question.choices!) {
-    //     this
-    //         .histogramDataValue
-    //         .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
-    //   }
-    // }
     switch (question.type) {
       case QuestionType.QCM:
         print('INIT GRAPH GOT INTO THE IF');
@@ -423,6 +415,7 @@ TransportStatsFormat prepareStatsTransport() {
     this.isAlreadyInit = false;
     this.isAlreadyCalled = false;
     this.NextQuestionBtnDisabled = true;
+    this.isResultPage = false;
     notifyListeners();
   }
 

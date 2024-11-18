@@ -31,9 +31,9 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {  // Use Obx to listen to Rx variables
       String imageUrl = loggedInUserService.observableAvatar.value;
-      final String? username = loggedInUserService.user?.username;
-      final num? prestige = loggedInUserService.user?.prestige;
-      final num? argent = loggedInUserService.user?.currency;
+      final String? username = loggedInUserService.observableUsername.value;
+      final num? prestige = loggedInUserService.observablePrestige.value;
+      final num? argent = loggedInUserService.observableCurrency.value;
       Future<void> _imageChangeButton() async {
         await loggedInUserService.uploadCustomProfilePicture();
       }
@@ -213,30 +213,6 @@ class ProfileCard extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 16,  // Add padding from the top
-            right: 16,
-            child: GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Dialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: SettingsPopup(), // Your custom settings popup widget
-                    );
-                  },
-                );
-              },
-              child: Icon(
-                Icons.settings, // Black line gear icon
-                color: themeService.mainAccent.value,
-                size: 32, // Adjust size as needed
               ),
             ),
           ),

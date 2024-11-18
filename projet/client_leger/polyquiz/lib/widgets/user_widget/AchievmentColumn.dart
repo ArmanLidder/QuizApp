@@ -15,7 +15,7 @@ class AchievementColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: List.generate(8, (index) {
-        bool isCompleted = completedAchievements.contains(index);
+        bool isCompleted = completedAchievements.contains(index+1);
         return Column(
           children: [
           AchievementBox(

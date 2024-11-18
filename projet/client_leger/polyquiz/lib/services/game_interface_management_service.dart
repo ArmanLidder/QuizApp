@@ -10,6 +10,7 @@ import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/models/quiz.dart';
 
 class GameInterfaceManagementService extends ChangeNotifier {
   static final GameInterfaceManagementService _instance =
@@ -29,7 +30,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
   int playerScore = 0;
   List<Player> players = [];
   bool inPanicMode = false;
-  List<dynamic> gameStats = []; // Type a revoir
+  List<QuestionStatistics> gameStats = []; // Type a revoir
   String get timerText => timerTransText[isDefaultTimerMessage ? 'TIME_LEFT' : 'FINAL_RESULT'];
   bool isDefaultTimerMessage = true;
   bool isNotified = false;
@@ -182,23 +183,29 @@ class GameInterfaceManagementService extends ChangeNotifier {
     });
   }
 
-  // parseGameStats(stringifyStats) {
-  //   return stringifyStats;
-  // }
   
-  TransportStatsFormat parseGameStats(dynamic stringifyStats) {
-    final List<dynamic> jsonList = jsonDecode(stringifyStats);
-    return jsonList.map((json) => TransportStats.fromJson(json)).toList();
-  }
 
-  void unpackStats(TransportStatsFormat stats) {
+  List<QuestionStatistics> parseGameStats(dynamic stringifyStats) {
+    final List<dynamic> jsonList = jsonDecode(stringifyStats);
+    return jsonList.map((questionData) {
+      final responseValues = Map<String, bool>.fromEntries(
+        (questionData[0] as List).map((e) => MapEntry(e[0] as String, e[1] as bool))
+      );
+      final responseNumbers = Map<String, num>.fromEntries(
+        (questionData[1] as List).map((e) => MapEntry(e[0] as String, e[1] as num))
+      );
+      final question = questionData[2] as Map<String, dynamic>;
+      return QuestionStatistics(responseValues, responseNumbers, QuizQuestion.fromJson(question));
+    }).toList();
+  }
+  
+  void unpackStats(List<QuestionStatistics> stats) {
     stats.forEach((stat) {
       final values = new Map<String, bool>();
-      values.addEntries(stat.values);
+      values.addEntries(stat.responsesValues.entries);
       final responses = new Map<String, num>();
-      responses.addEntries(stat.responses);
-      this.gameStats.add([values, responses, stat.question]);
-      // print(this.gameStats);
+      responses.addEntries(stat.responsesNumber.entries);
+      this.gameStats.add(QuestionStatistics(values, responses, stat.question));
     });
   }
 

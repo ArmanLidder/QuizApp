@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:polyquiz/constants/errorMessageTranslator.dart';
-import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/user_service.dart';
@@ -9,6 +8,7 @@ import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/constants/defaultAvatars.dart';
 import 'package:polyquiz/constants/errorMessageTranslator.dart';
 
+import '../services/translationService.dart';
 import '../services/userInfoValidation.dart';
 
 class AuthPage extends StatefulWidget {
@@ -39,7 +39,38 @@ class _AuthPageState extends State<AuthPage> {
   bool _isValidEmail = true;
   bool _isValidPassword = true;
   String? _selectedAvatar;
+  Widget languageDropdown() {
+    return DropdownButton<String>(
+      value: translationService.currentLanguageAbbr,
+      onChanged: (String? newLanguage) {
+        if (newLanguage != null) {
+          setState(() {
+            translationService.currentLanguageAbbr = newLanguage; // Update language in TranslationService
+            // Re-fetch text values after changing the language
+            _refreshText();
+          });
+        }
+      },
+      items: [
+        DropdownMenuItem(
+          value: 'en',
+          child: Text('English'),
+        ),
+        DropdownMenuItem(
+          value: 'fr',
+          child: Text('Français'),
+        ),
+      ],
+    );
+  }
 
+// Helper function to refresh text values after language change
+  void _refreshText() {
+    setState(() {
+      // Re-fetch translation text after setting the language
+      // This triggers the UI to update
+    });
+  }
   Future<void> _login() async {
     try {
       await _auth.signInWithEmailAndPassword(
@@ -51,6 +82,7 @@ class _AuthPageState extends State<AuthPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Connexion réussie!')),
       );
+      translationService.currentLanguage = loggedInUserService.user!.settings.language;
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       print(e);
@@ -104,7 +136,8 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     final List<String> defaultAvatars = constDefaultAvatars;
     return Scaffold(
-      body: Center(
+      body: SingleChildScrollView(
+          child:Center(
         child: Container(
           padding: EdgeInsets.all(16.0),
           width: 320,
@@ -123,6 +156,7 @@ class _AuthPageState extends State<AuthPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              languageDropdown(),
               Text(
                 _isRegistering ? registerPageText['TITLE'] : loginPageText['TITLE'],
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -160,7 +194,7 @@ class _AuthPageState extends State<AuthPage> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   errorText:
-                      !_isValidEmail ? registerPageText['EMAIL_INVALID'] : null,
+                  !_isValidEmail ? registerPageText['EMAIL_INVALID'] : null,
                   prefixIcon: Icon(Icons.email),
                   labelText: registerPageText['EMAIL_LABEL'],
                   border: OutlineInputBorder(),
@@ -181,7 +215,7 @@ class _AuthPageState extends State<AuthPage> {
                   prefixIcon: Icon(Icons.lock),
                   labelText: registerPageText['PASSWORD_LABEL'],
                   errorText:
-                      !_isValidPassword ? registerPageText['PASSWORD_MIN_LENGTH'] : null,
+                  !_isValidPassword ? registerPageText['PASSWORD_MIN_LENGTH'] : null,
                   border: OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -223,59 +257,47 @@ class _AuthPageState extends State<AuthPage> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(avatarUrl),
-                            radius: 30,
-                          ),
-                          if (_selectedAvatar ==
-                              avatarUrl) // Show checkmark if selected
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 24,
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: _selectedAvatar == avatarUrl
+                                    ? Colors.blue
+                                    : Colors.transparent,
+                                width: 3, // Border thickness
                               ),
                             ),
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(avatarUrl),
+                              radius: 30,
+                            ),
+                          ),
                         ],
                       ),
                     );
                   }).toList(),
                 ),
-                /*SizedBox(height: 12),
-                Text(
-                  "Ou téléchargez votre propre avatar",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-                SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    //_selectedAvatar = imageStorageService.pickAndUploadImage();
-                    // TODO: Implement file picker for custom avatar
-                  },
-                  child: Text("Choisir un fichier"),
-                ),*/
               ],
               SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: (_isRegistering &&
-                          _isValidUsername &&
-                          _isValidEmail &&
-                          _isValidPassword)
+                      _isValidUsername &&
+                      _isValidEmail &&
+                      _isValidPassword)
                       ? _register
                       : (_isValidUsername && _isValidEmail && _isValidPassword)
-                          ? _login
-                          : null, // Disable the button if conditions are not met
+                      ? _login
+                      : null, // Disable the button if conditions are not met
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[300],
                     padding: EdgeInsets.symmetric(vertical: 14),
-                    textStyle: TextStyle(fontSize: 16),
+                    textStyle: TextStyle(fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
-                  child: Text(_isRegistering ? registerPageText['SUBMIT_BUTTON'] : loginPageText['SUBMIT_BUTTON']),
+                  child: Text(_isRegistering ? "S'inscrire" : 'Se connecter'),
                 ),
               ),
               SizedBox(height: 16),
@@ -289,8 +311,8 @@ class _AuthPageState extends State<AuthPage> {
                   },
                   child: Text(
                     _isRegistering
-                        ? registerPageText['ALREADY_HAVE_ACCOUNT'] + " " + registerPageText['LOGIN_LINK']
-                        : loginPageText["NO_ACCOUNT"] + " " + loginPageText["REGISTER_LINK"],
+                        ? "Déjà un compte? Se connecter"
+                        : "Pas de compte? S'inscrire",
                     style: TextStyle(color: Colors.purple),
                   ),
                 ),
@@ -310,8 +332,7 @@ class _AuthPageState extends State<AuthPage> {
             ],
           ),
         ),
-      ),
-    );
+      )));
   }
 
   @override

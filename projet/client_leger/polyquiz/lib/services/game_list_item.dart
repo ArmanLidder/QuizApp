@@ -18,6 +18,7 @@ class GameListService with ChangeNotifier {
   GameListService({required this.socketService});
 
   Future<void> initialize() async {
+    this.loggedInUserService.reloadUser();
     this.userData = this.loggedInUserService.getUser();
     if (!socketService.isSocketAlive()) {
       socketService.connect(this.userData?.uid);

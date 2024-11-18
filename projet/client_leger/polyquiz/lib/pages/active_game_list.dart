@@ -12,6 +12,7 @@ import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/game_list_item.dart';
 import 'waiting_room_screen.dart';
 import '../models/quiz.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ActiveGameListComponent extends StatefulWidget {
   ActiveGameListComponent({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   bool _isJoining = false;
   late final GameListService gameListService;
   Map get text => TranslationService.instance.text;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map get activeText => text['ACTIVE_GAME_LIST'];
 
 
@@ -114,6 +116,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         Provider.of<RoomValidationService>(context, listen: false);
     final snackbarService =
         Provider.of<SnackbarService>(context, listen: false);
+    roomValidationService.reloadUserData();
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
     dynamic dataOfRoomValidation = await roomValidationService.sendRoomId();
@@ -163,27 +166,66 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                 SnackBar(content: Text(activeText['ROOM_LOCKED'])),
               );
             }
-            if (!roomValidationService.isLocked &&
-                roomValidationService.isUsernameValid) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WaitingRoomScreen(
-                    quiz: Quiz(
-                      id: roomValidationService
-                          .roomId!, // Pass the room ID to the waiting room.
-                      title: 'Nothing', // Provide a sample title.
-                      description: 'Nothing', // Provide a sample description.
-                      duration: 0, // Provide a sample duration.
-                      questions: [], // Provide an empty list of questions.
-                    ),
-                    username: roomValidationService
-                        .userData!.uid, // Pass the username to the waiting room.
-                    isHost: false, // This user is not the host.
-                    isFromActiveList: true,
-                  ),
-                ),
-              );
+            else{
+              if(game.price > 0){
+                if(roomValidationService.userData!.currency < game.price){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(activeText['INSUFFICIENT_FUNDS'])),
+                  );
+                }
+                else{
+                  final availableMoney = roomValidationService.userData!.currency;
+                  await _firestore.collection('users').doc(roomValidationService.userData!.uid).update({
+                    'currency': availableMoney - game.price,
+                  });
+                  if (!roomValidationService.isLocked &&
+                      roomValidationService.isUsernameValid) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WaitingRoomScreen(
+                          quiz: Quiz(
+                            id: roomValidationService
+                                .roomId!, // Pass the room ID to the waiting room.
+                            title: 'Nothing', // Provide a sample title.
+                            description: 'Nothing', // Provide a sample description.
+                            duration: 0, // Provide a sample duration.
+                            questions: [], // Provide an empty list of questions.
+                          ),
+                          username: roomValidationService
+                              .userData!.uid, // Pass the username to the waiting room.
+                          isHost: false, // This user is not the host.
+                          isFromActiveList: true,
+                        ),
+                      ),
+                    );
+                  }
+                }
+              }
+              else{
+                if (!roomValidationService.isLocked &&
+                      roomValidationService.isUsernameValid) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WaitingRoomScreen(
+                          quiz: Quiz(
+                            id: roomValidationService
+                                .roomId!, // Pass the room ID to the waiting room.
+                            title: 'Nothing', // Provide a sample title.
+                            description: 'Nothing', // Provide a sample description.
+                            duration: 0, // Provide a sample duration.
+                            questions: [], // Provide an empty list of questions.
+                          ),
+                          username: roomValidationService
+                              .userData!.uid, // Pass the username to the waiting room.
+                          isHost: false, // This user is not the host.
+                          isFromActiveList: true,
+                        ),
+                      ),
+                    );
+                  }
+              }
             }
           }
         }
