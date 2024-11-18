@@ -1,15 +1,18 @@
-import { Component, EventEmitter, Input, OnChanges, Output, HostListener } from '@angular/core';
-import { QuizChoice } from '@common/interfaces/quiz.interface';
-import { GameService } from '@app/services/game.service/game.service';
+import {Component, EventEmitter, HostListener, Input, OnChanges, Output} from '@angular/core';
+import {QuizChoice} from '@common/interfaces/quiz.interface';
+import {GameService} from '@app/services/game.service/game.service';
 import {
     ACTIVE_DISPLAY,
     BAD_ANSWER_DISPLAY,
     GOOD_ANSWER_DISPLAY,
     NO_EFFECT_DISPLAY,
     NORMAL_DISPLAY,
+    OBSERVER_DISPLAY,
     SELECTED_DISPLAY,
 } from '@common/constants/game-answer-choice-card.component.const';
-import { ENTER_KEY } from '@common/shortcuts/shortcuts';
+import {ENTER_KEY} from '@common/shortcuts/shortcuts';
+import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
+import {SocketEvent} from "@common/socket-event-name/socket-event-name";
 
 export const DEBOUNCE_TIMER = 10;
 
@@ -27,12 +30,17 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     feedbackDisplay: string = NORMAL_DISPLAY;
     private isSelected: boolean = false;
 
-    constructor(public gameService: GameService) {}
+    constructor(public gameService: GameService, private socketService: SocketClientService) {
+        if (this.gameService.observerMode) this.handleSelection();
+        else this.handleRequestQCMStatus();
+    }
 
     @HostListener('document:keydown', ['$event'])
     handleKeyboardEvent(event: KeyboardEvent) {
-        if (event.key === String(this.index)) this.toggleSelect();
-        else if (event.key === ENTER_KEY) this.enterPressed.emit();
+        if (!this.gameService.observerMode) {
+            if (event.key === String(this.index)) this.toggleSelect();
+            else if (event.key === ENTER_KEY) this.enterPressed.emit();
+        }
     }
 
     ngOnChanges() {
@@ -40,23 +48,25 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     }
 
     handleHoverEffect() {
-        return this.gameService.lockedStatus ? NO_EFFECT_DISPLAY : ACTIVE_DISPLAY;
+        return this.gameService.lockedStatus ? NO_EFFECT_DISPLAY : this.gameService.observerMode ? OBSERVER_DISPLAY : ACTIVE_DISPLAY
     }
 
     // ToggleSelect() has a debounce method to make sure that user selected the component
     // before sending an event to the game-answer-list. This is an added security on client
     // in order to send the right infos to server.
     toggleSelect() {
-        if (!this.gameService.lockedStatus && !this.gameService.isInputFocused) {
-            this.isSelected = !this.isSelected;
-            const isSelected = this.isSelected;
-            if (this.isSelected) this.showSelectionFeedback();
-            else this.reset();
-            setTimeout(() => {
-                if (isSelected === this.isSelected) {
-                    this.selectEvent.emit(this.index - 1);
-                }
-            }, DEBOUNCE_TIMER);
+        if (!this.gameService.observerMode) {
+            if (!this.gameService.lockedStatus && !this.gameService.isInputFocused) {
+                this.isSelected = !this.isSelected;
+                const isSelected = this.isSelected;
+                if (this.isSelected) this.showSelectionFeedback();
+                else this.reset();
+                setTimeout(() => {
+                    if (isSelected === this.isSelected) {
+                        this.selectEvent.emit(this.index - 1);
+                    }
+                }, DEBOUNCE_TIMER);
+            }
         }
     }
 
@@ -70,7 +80,8 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
     }
 
     private reset() {
-        this.feedbackDisplay = ACTIVE_DISPLAY;
+        if (!this.gameService.observerMode) this.feedbackDisplay = ACTIVE_DISPLAY;
+        else this.feedbackDisplay = OBSERVER_DISPLAY;
     }
 
     private showGoodAnswerFeedBack() {
@@ -79,5 +90,28 @@ export class GameAnswerChoiceCardComponent implements OnChanges {
 
     private showBadAnswerFeedBack() {
         this.feedbackDisplay = BAD_ANSWER_DISPLAY;
+    }
+
+    private handleSelection(){
+        if (this.socketService.isSocketAlive()) {
+            this.socketService.on(SocketEvent.OBS_QCM_INTERACTION, (data: { roomId: number, isSelected : boolean, index: number })=> {
+                if (this.index == data.index + 1) {
+                    data.isSelected ? this.showSelectionFeedback() : this.reset();
+                }
+            })
+        }
+    }
+
+    private handleRequestQCMStatus() {
+        if (this.socketService.isSocketAlive()) {
+            this.socketService.on(SocketEvent.REQUEST_PAYER_QCM_CHOICES, ()=> {
+                const data = {
+                    roomId: this.gameService.gameRealService.roomId,
+                    isSelected : this.isSelected,
+                    index: this.index - 1
+                }
+                this.socketService.send(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, data)
+            })
+        }
     }
 }

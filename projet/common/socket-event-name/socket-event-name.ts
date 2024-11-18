@@ -50,11 +50,38 @@ export namespace SocketEvent {
     export const GET_GAME_LIST = 'get_game_list';
     export const SAVE_FINAL_GAME_STATS = 'save_final_game_stats';
 
+    // ALL new feature socket Event
+
     export const GET_TEAMS = "get_teams";
     export const CREATE_TEAM = "create_team";
     export const JOIN_TEAM = "join_team";
 
     export const GET_GAME_TYPE = "get_game_type";
+
+    export const NEW_OBSERVER_GAME = "new_observer";
+    export const GET_OBSERVER_PLAYER_LIST = "get_observer_player_list";
+    export const SENDING_OBSERVER_PLAYER_LIST = "sending_observer_player_list";
+    export const CHANGE_OBSERVED_PLAYER = "change_observed_player";
+    export const GET_QRE_ANSWER_FOR_OBS = "get_qre_answer_obs";
+    export const GET_QRL_INTERACTION = "get_qrl_interaction_obs";
+    export const REQUEST_QRL_INTERACTION = "request_qrl_interaction"
+    export const RECEIVE_LAST_QRL_INTERACTION = "receive_last_qrl_interaction";
+    export const GET_QRL_ANSWER_FOR_OBS = "get_qrl_answer_obs";
+    export const GET_LAST_QRL_STATUS = "get_last_qrl_status";
+
+
+    export const REQUEST_HOST_GAME_STATUS = "request_host_game_stautus";
+    export const RECEIVING_HOST_GAME_STATUS = "receiving_game_status";
+    export const SENDING_HOST_GAME_STATUS = "sending_host_game_status";
+    export const OBS_QCM_INTERACTION = "obs_qcm_interaction";
+    export const RECEIVE_PLAYER_GAME_STATUS = "receive_player_game_status";
+
+    export const REQUEST_PAYER_QCM_CHOICES = "request_player_qcm_choices";
+    export const RECEIVE_PLAYER_QCM_CHOICES = "receive_player_qcm_choices";
+
+    export const OBS_LEFT = "obs_left";
+    export const GET_OBS_COUNT = "get_obs_count";
+    export const UPDATE_OBS_COUNT = "update_obs_count";
 }
 
 

@@ -30,7 +30,6 @@ export class GameConfigDialogComponent {
   saveConfig(): void {
     if (this.gameConfigForm.valid) {
       const { gameType, price, friendsOnly, private: isPrivate, prestige } = this.gameConfigForm.value;
-      console.log({ gameType, price, friendsOnly, private: isPrivate });
       this.gameConfigService.setGameType(gameType);
       this.gameConfigService.setPrice(price);
       this.gameConfigService.setFriendsOnly(friendsOnly);

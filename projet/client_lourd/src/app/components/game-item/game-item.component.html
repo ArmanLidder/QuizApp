@@ -2,13 +2,13 @@
     <span class="text-lg font-medium"> {{ quiz.title }} </span>
     <div class="button-container flex space-x-2" *ngIf="isAdmin">
         <button (click)="exportGame()" class="p-2 rounded hover:bg-green-100 transition">
-            <mat-icon class="text-green-600 hover:text-green-800" matTooltip="Exporter le questionnaire" matTooltipClass="custom-tooltip">get_app</mat-icon>
+            <mat-icon class="text-green-600 hover:text-green-800" [matTooltip]="'GAME_ADMIN.TOOLTIP_EXPORT' | translate" matTooltipClass="custom-tooltip">get_app</mat-icon>
         </button>
         <button (click)="updateGame()" class="p-2 rounded hover:bg-blue-100 transition">
-            <mat-icon class="text-blue-600 hover:text-blue-800" matTooltip="Modifier le questionnaire" matTooltipClass="custom-tooltip">edit</mat-icon>
+            <mat-icon class="text-blue-600 hover:text-blue-800" [matTooltip]="'GAME_ADMIN.TOOLTIP_EDIT' | translate" matTooltipClass="custom-tooltip">edit</mat-icon>
         </button>
         <button (click)="deleteGame()" class="p-2 rounded hover:bg-red-100 transition">
-            <mat-icon class="text-red-600 hover:text-red-800" matTooltip="Supprimer le questionnaire" matTooltipClass="custom-tooltip">delete</mat-icon>
+            <mat-icon class="text-red-600 hover:text-red-800" [matTooltip]="'GAME_ADMIN.TOOLTIP_DELETE' | translate" matTooltipClass="custom-tooltip">delete</mat-icon>
         </button>
     </div>
 </div>

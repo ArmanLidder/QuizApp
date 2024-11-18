@@ -15,10 +15,10 @@ export class QuestionService {
         private quizFormService: QuizFormService,
     ) {}
 
-    addQuestion(index: number, questionsFormArray?: FormArray) {
+    async addQuestion(index: number, questionsFormArray?: FormArray) {
         if (index === -1) this.modifiedQuestionIndex = -1;
         if (this.modifiedQuestionIndex !== NON_EXISTANT_INDEX) {
-            const validationErrors = this.saveQuestion(this.modifiedQuestionIndex, questionsFormArray);
+            const validationErrors = await this.saveQuestion(this.modifiedQuestionIndex, questionsFormArray);
             if (validationErrors.length !== 0) {
                 return validationErrors;
             }
@@ -38,9 +38,9 @@ export class QuestionService {
         questionsFormArray?.removeAt(index);
     }
 
-    modifyQuestion(index: number, questionFormArray?: FormArray) {
+    async modifyQuestion(index: number, questionFormArray?: FormArray) {
         if (this.modifiedQuestionIndex !== NON_EXISTANT_INDEX) {
-            const validationErrors = this.saveQuestion(this.modifiedQuestionIndex, questionFormArray);
+            const validationErrors = await this.saveQuestion(this.modifiedQuestionIndex, questionFormArray);
             if (validationErrors.length !== 0) {
                 return validationErrors;
             }
@@ -50,14 +50,14 @@ export class QuestionService {
         return [];
     }
 
-    saveQuestion(index: number, questionsFormArray?: FormArray): string[] {
+    async saveQuestion(index: number, questionsFormArray?: FormArray) {
         const questionToSave = questionsFormArray?.at(index);
         if (questionToSave?.valid) {
             questionsFormArray?.at(index).patchValue({ beingModified: false });
             return [];
         }
         const question = this.quizFormService.extractQuestion(questionToSave);
-        return this.validationService.validateQuestion(question, index);
+        return await this.validationService.validateQuestion(question, index);
     }
 
     moveQuestionUp(index: number, questionsFormArray?: FormArray) {

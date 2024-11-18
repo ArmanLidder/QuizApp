@@ -1,10 +1,11 @@
+<app-observation-selector *ngIf="observerMode"></app-observation-selector>
 <header class="bg-gradient-to-r from-purple-500 to-blue-600 text-white py-10 shadow-lg sticky top-0 z-50">
     <div class="absolute top-0 left-0 flex items-center justify-center h-full p-4">
         <button
                 mat-icon-button
                 class="icon-button-large"
                 (click)="openFriendsDialog()"
-                matTooltip="Amis"
+                [matTooltip]="'HEADER.TOOLTIP_FRIENDS' | translate"
                 [matBadge]="(pendingRequests$ | async)?.length"
                 [matBadgeHidden]="!(pendingRequests$ | async)?.length"
                 matBadgeOverlap="false"
@@ -12,15 +13,27 @@
                 disableRipple>
             <mat-icon>people</mat-icon>
         </button>
+        <app-observer-counter *ngIf="normalPlayer"></app-observer-counter>
     </div>
 
     <div class="container mx-auto text-center">
-        <a [routerLink]="['/home']" class="text-4xl font-extrabold tracking-wide hover:underline">
+        <a
+                [routerLink]="showMenu ? ['/home'] : null"
+                [ngClass]="{ 'hover:underline': showMenu, 'no-underline': !showMenu }"
+                class="text-4xl font-extrabold tracking-wide"
+        >
             PolyQuiz
         </a>
     </div>
 
+
     <div class="absolute top-0 right-0 flex items-center justify-center h-full p-4">
-        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="true"></app-avatar>
+        <button
+                mat-icon-button
+                class="icon-button-large"
+                (click)="openSettingsDialog()">
+            <mat-icon>settings</mat-icon>
+        </button>
+        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="showMenu" [showMoney]="true"></app-avatar>
     </div>
 </header>

@@ -2,14 +2,14 @@
     <table class="table-auto w-full">
         <thead>
         <tr>
-            <th class="w-1/2 px-4 py-2 text-left">Jeux</th>
-            <th *ngIf="isAdmin" class="w-1/4 px-4 py-2 text-left">Dernière Modification</th>
+            <th class="w-1/2 px-4 py-2 text-left">{{ 'GAME_ADMIN.QUIZZES' | translate }}</th>
+            <th *ngIf="isAdmin" class="w-1/4 px-4 py-2 text-left">{{ 'GAME_ADMIN.LAST_MODIFIED' | translate }}</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngIf="quizzes.length === 0">
             <td colspan="3" class="text-center text-gray-500 py-4">
-                Aucun jeu-questionnaire disponible pour le moment.
+                {{ 'GAME_ADMIN.NO_QUIZZES' | translate }}
             </td>
         </tr>
         <tr *ngFor="let quiz of quizzes" [class.selected]="!isAdmin && quiz === selectedQuiz" (click)="selectQuiz(quiz)">
@@ -26,30 +26,30 @@
                 <div class="flex justify-between space-x-4">
                     <button (click)="refresh()"
                             class="px-4 py-2 border border-gray-500 rounded bg-gray-500 text-white hover:bg-gray-600 transition">
-                        <i class="fas fa-sync mr-2"></i> Rafraîchir
+                        <i class="fas fa-sync mr-2"></i> {{ 'GAME_ADMIN.REFRESH' | translate }}
                     </button>
 
                     <div class="flex space-x-4">
                         <ng-container *ngIf="isAdmin; else nonAdminButtons">
                             <button routerLink="/quiz-creation"
                                     class="px-4 py-2 border border-blue-500 rounded bg-blue-600 text-white hover:bg-blue-700 transition">
-                                <i class="fas fa-plus mr-2"></i> Ajouter
+                                <i class="fas fa-plus mr-2"></i> {{ 'GAME_ADMIN.ADD' | translate }}
                             </button>
                             <input type="file" class="file-selector hidden" #fileInput accept="application/json" (change)="selectFile($event)" />
                             <button (click)="uploadFile()"
                                     class="px-4 py-2 border border-green-500 rounded bg-green-500 text-white hover:bg-green-600 transition">
-                                <i class="fas fa-file-import mr-2"></i> Importer
+                                <i class="fas fa-file-import mr-2"></i> {{ 'GAME_ADMIN.IMPORT' | translate }}
                             </button>
                         </ng-container>
                         <ng-template #nonAdminButtons>
-                            <button [matTooltip]="!selectedQuiz ? 'Veuillez sélectionner un quiz':''" (click)="playGame()"
+                            <button [matTooltip]="!selectedQuiz ? ('GAME_ADMIN.PLAY_TOOLTIP' | translate) : ''" (click)="playGame()"
                                     class="px-4 py-2 border rounded transition"
                                     [ngClass]="{
           'border-blue-500 bg-blue-600 text-white hover:bg-blue-700': selectedQuiz,
           'border-gray-300 bg-gray-300 text-gray-500 cursor-not-allowed': !selectedQuiz
         }"
                                     [disabled]="!selectedQuiz">
-                                Jouer
+                                {{ 'GAME_ADMIN.PLAY' | translate }}
                             </button>
 
                         </ng-template>

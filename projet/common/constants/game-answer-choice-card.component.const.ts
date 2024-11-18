@@ -4,3 +4,4 @@ export const SELECTED_DISPLAY = 'selected';
 export const GOOD_ANSWER_DISPLAY = 'good-answer';
 export const BAD_ANSWER_DISPLAY = 'bad-answer';
 export const NO_EFFECT_DISPLAY = '';
+export const OBSERVER_DISPLAY = 'observer';

@@ -105,20 +105,10 @@ export class WaitingRoomManagementService {
     private handleGetTeams() {
         this.socketService.on(SocketEvent.GET_TEAMS, (teams: Object) => {
             this.teams = new Map(Object.entries(teams));
-            console.log(`Teams size = ${this.teams.size}`);
-            if (this.teams) {
-                this.teams.forEach((team, id) => {
-                    console.log(`Team Id: ${id}`);
-                    console.log(`Team size = ${team?.members.length}`);
-                    team?.members.forEach((member: any) => console.log(member));
-                });
-            }
             this.teamsForInterface = Array.from(this.teams.entries()).map(([teamName, userIds]) => ({
                 name: teamName,
                 userIds: userIds,
             }));
-            console.log(this.teamsForInterface)
-
         });
     }
 

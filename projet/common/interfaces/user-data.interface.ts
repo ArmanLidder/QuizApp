@@ -43,7 +43,7 @@ export interface FriendRequest {
 }
 
 interface UserSettings {
-    theme: 'light' | 'dark';
+    theme: string;
     language: 'en' | 'fr';
     notificationsEnabled: boolean;
 }
