@@ -5,6 +5,7 @@ import { Score } from '@common/interfaces/score.interface';
 import { PlayerStatus } from '@common/player-status/player-status';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { UserData, RoomSettings } from '@common/constants/interactive-list-socket.service.const';
+import {GameService} from "@app/services/game.service/game.service";
 
 @Injectable({
     providedIn: 'root',
@@ -14,7 +15,9 @@ export class InteractiveListSocketService {
     isFinal: boolean = false;
     private actualStatus: Player[] = [];
 
-    constructor(private socketService: SocketClientService) {}
+    constructor(private socketService: SocketClientService, private gameService: GameService) {
+        this.reset();
+    }
 
     // getPlayerList Method as a parameter resetPlayerStatus which when set to true will reset the player status
     // color to red for all remaining players and if set to false the method will keep the real in game live status.
@@ -32,7 +35,7 @@ export class InteractiveListSocketService {
     }
 
     configureBaseSocketFeatures() {
-        this.reset();
+        if (!this.gameService.observerMode) this.reset();
         this.handleUpdateInteraction();
         this.handleSubmitAnswer();
     }

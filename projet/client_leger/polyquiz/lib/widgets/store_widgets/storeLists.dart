@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/StoreService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/store_widgets/storeItems.dart';
 
 import '../../models/user.dart';
 import 'BuyButton.dart';
 class MoneyCounter extends StatelessWidget {
   final LoggedInUserService loggedInUserService = Get.find();
+  Map get shopText => TranslationService.instance.text['SHOPPING'];
+  Map get profileText => TranslationService.instance.text['PROFILE'];
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +22,18 @@ class MoneyCounter extends StatelessWidget {
       return Center(
         child:
           Text(
-            'Argent : ${loggedInUserService.observableCurrency.value} \$',
+            '${shopText['CURRENCY']} : ${loggedInUserService.observableCurrency.value} \$',
             style: TextStyle(fontSize: 20, color: Colors.black),
           ),
+          Text(
+            '${profileText['PRESTIGE']} : $prestige',
+            style: TextStyle(fontSize: 20, color: Colors.black),
+          ),
+          Text(
+            '${profileText['LEVEL']} : $level',
+            style: TextStyle(fontSize: 20, color: Colors.black),
+          ),
+        ],
       );
     });
   }

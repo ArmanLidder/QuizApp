@@ -10,6 +10,8 @@ import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'dart:convert';
 
+import 'package:polyquiz/services/translationService.dart';
+
 class HostInterfaceManagementService extends ChangeNotifier {
   static final HostInterfaceManagementService _instance =
       HostInterfaceManagementService._internal();
@@ -20,7 +22,15 @@ class HostInterfaceManagementService extends ChangeNotifier {
     return _instance;
   }
 
-  String timerText = TimerMessage.TIME_LEFT;
+  String? _timerText = null;
+  String get timerText {
+    if (_timerText == null) _timerText = timerTransText['TIME_LEFT'];
+    return _timerText!;
+  }
+  void set timerText(String value) => _timerText = value;
+  Map get transText => TranslationService.instance.text['GAME_INTERFACE'];
+  Map get timerTransText => transText['TIMER_TEXT'];
+  Map get qreValueText => transText['QRE_HISTOGRAM_X_VAL'];
   bool isGameOver = false;
   Map<String, int> histogramDataChangingResponses = {};
   Map<String, bool> histogramDataValue = {};
@@ -33,6 +43,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   bool isAlreadyInit = false;
   bool isAlreadyCalled = false;
   bool NextQuestionBtnDisabled = true;
+  bool isResultPage = false;
   Function(Map<String, ResponseData>)? _qrlCallback;
 
   GameService gameService = GameService();
@@ -63,10 +74,15 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void saveStats() {
     QuizQuestion? question = this.gameService.realGameService.question;
     if (question != null) {
+      // Create deep copies of the maps
+      final valuesCopy = Map<String, bool>.from(this.histogramDataValue);
+      final responsesCopy = Map<String, int>.from(this.histogramDataChangingResponses);
+      
       QuestionStatistics savedStats = QuestionStatistics(
-          this.histogramDataValue,
-          this.histogramDataChangingResponses,
+          valuesCopy,
+          responsesCopy,
           question);
+      
       if (question.type != QuestionType.QRL) {
         this.gameStats.add(savedStats);
         notifyListeners();
@@ -92,6 +108,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.handleEndQuestion();
     this.handleFinalTimeTransition();
     this.handleRefreshChoicesStats();
+    this.handleQreRefresh();
     this.handleGetInitialQuestion();
     this.handleGetNextQuestion();
     this.handleRemovedPlayer();
@@ -105,7 +122,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleTimeTransition() {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
-      this.timerText = 'Prochaine question dans: ';
+      this.timerText = timerTransText['NEXT'];
       this.gameService.realGameService.timer = timeValue;
       notifyListeners();
       if (this.gameService.realGameService.timer == 0) {
@@ -114,7 +131,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
         this.resetInterface();
         this._socketService.sendMessage(
             SocketEvent.NEXT_QUESTION, this.gameService.realGameService.roomId);
-        this.timerText = 'Temps restant: ';
+        this.timerText = timerTransText['TIME_LEFT'];
       }
     });
   }
@@ -160,10 +177,11 @@ class HostInterfaceManagementService extends ChangeNotifier {
   void handleFinalTimeTransition() {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION,
         (timeValue) {
-      this.timerText = 'Résultats disponibles dans: ';
+      this.timerText = timerTransText['RESULT_AVAILABLE_IN'];
       this.gameService.realGameService.timer = timeValue;
 
       if (this.gameService.timer == 0 && this.gameService.username == 'host') {
+        this.isResultPage = true;
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
         this.gameService.audio.pause();
@@ -182,6 +200,19 @@ class HostInterfaceManagementService extends ChangeNotifier {
           createChoicesStatsMap(List<num>.from(choicesStatsValue));
       notifyListeners();
     });
+  }
+
+  void handleQreRefresh() {
+    this._socketService.onMessage(SocketEvent.REFRESH_QRE_STATS, (qreStatsValue) {
+      final values = (qreStatsValue as List).map((element) => element as int).toList();
+      print(values);
+      this.histogramDataChangingResponses = {
+            qreValueText['WITHIN_MARGIN']: values[0],
+            qreValueText['EXACT_ANSWER']: values[1],
+            qreValueText['INCORRECT_ANSWER']: values[2]
+          };
+          notifyListeners();
+        });
   }
 
   void handleGetInitialQuestion() {
@@ -285,13 +316,45 @@ class HostInterfaceManagementService extends ChangeNotifier {
     print('question in init graph');
     print(question);
     this.isHostEvaluating = false;
-    if (question.type == QuestionType.QCM && question.choices != null) {
-      print('INIT GRAPH GOT INTO THE IF');
-      for (QuizChoice choice in question.choices!) {
-        this
-            .histogramDataValue
-            .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
-      }
+    // if (question.type == QuestionType.QCM) {
+    //   print('INIT GRAPH GOT INTO THE IF');
+    //   for (QuizChoice choice in question.choices!) {
+    //     this
+    //         .histogramDataValue
+    //         .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
+    //   }
+    // }
+    switch (question.type) {
+      case QuestionType.QCM:
+        print('INIT GRAPH GOT INTO THE IF');
+        if (question.choices == null) {
+          notifyListeners();
+          return;
+        }
+        for (QuizChoice choice in question.choices!) {
+          this
+              .histogramDataValue
+              .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
+        }
+        break;
+      case QuestionType.QRL:
+        this.histogramDataChangingResponses = {
+            'Actif': 0,
+            'Inactif': numberOfPlayers,
+          };
+          this.histogramDataValue = {
+            'Actif': true,
+            'Inactif': false,
+        };
+        break;
+      case QuestionType.QRE:
+        this.histogramDataValue = {
+          qreValueText['WITHIN_MARGIN']: true,
+          qreValueText['EXACT_ANSWER']: true,
+          qreValueText['INCORRECT_ANSWER']: false,
+        };
+        break;
+      default:
     }
     notifyListeners();
   }
@@ -321,7 +384,6 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void sendGameStats() {
     final gameStats = this.stringifyStats();
-    print(gameStats);
     this._socketService.sendMessage(SocketEvent.GAME_STATUS_DISTRIBUTION, {
       'roomId': this.gameService.realGameService.roomId,
       'stats': gameStats,
@@ -330,32 +392,31 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   String stringifyStats() {
     final stats = this.prepareStatsTransport();
-    print(stats.first);
-    return stats.toString();
-  }
+    return jsonEncode(stats.map((stat) => stat.toJson()).toList());
+}
 
-  TransportStatsFormat prepareStatsTransport() {
+
+TransportStatsFormat prepareStatsTransport() {
     final TransportStatsFormat data = [];
     this.gameStats.forEach((stats) {
       final values = stats.responsesValues;
       final responses = stats.responsesNumber;
-      print(stats.responsesValues);
-      print(stats.responsesNumber);
-      print(stats.question);
       data.add(TransportStats(values.entries.toList(),
           responses.entries.toList(), stats.question as QuizQuestion));
     });
     return data;
-  }
+}
+
 
   void reset(BuildContext context) {
-    this.timerText = 'Temps restant: ';
+    this.timerText = timerTransText['TIME_LEFT'];
     this.isGameOver = false;
     this.histogramDataChangingResponses.clear();
     this.histogramDataValue.clear();
     this.leftPlayers.clear();
     this.responsesQRL.clear();
     this.isHostEvaluating = false;
+    print('gameStats got cleared');
     this.gameStats.clear();
     this.isPaused = false;
     this.isPanicMode = false;

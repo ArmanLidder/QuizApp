@@ -5,6 +5,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/LanguageService.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/theme_service.dart';
 import 'package:intl/intl.dart';
@@ -86,7 +87,7 @@ class Historique extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            ls.historiqueDesConnexionsText,
+            profileText['CONNECTION_HISTORY'],
             style: TextStyle(
               color: themeService.mainAccent.value,
               fontWeight: FontWeight.bold,
@@ -98,7 +99,7 @@ class Historique extends StatelessWidget {
             children: _generateEventRows(loginEvents()),
           ),
           Text(
-            ls.historiqueDesPartiesText,
+            profileText['GAME_HISTORY'],
             style: TextStyle(
               color: themeService.mainAccent.value,
               fontWeight: FontWeight.bold,

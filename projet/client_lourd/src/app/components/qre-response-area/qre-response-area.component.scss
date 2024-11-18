@@ -10,6 +10,9 @@
       display: none !important;
     }
   }
+  ngx-slider[disabled] .slider-pointer {
+    transition: none !important;
+  }
 
 }
 

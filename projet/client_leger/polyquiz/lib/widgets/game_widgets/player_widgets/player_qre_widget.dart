@@ -4,6 +4,8 @@ import 'package:polyquiz/models/quiz.dart' as Quiz;
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'dart:math' as math;
 
+import 'package:polyquiz/services/translationService.dart';
+
 class PlayerQreWidget extends StatefulWidget {
   const PlayerQreWidget({super.key});
 
@@ -15,6 +17,8 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
   bool get isValidated => !gameInterfaceManagementService.gameService.realGameService.isValidateActive;
   int currentValue = 0;
+  Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
+  Map get qreText => gameText['PLAYER_QRE_INTERFACE'];
 
   @override
   void initState() {
@@ -154,7 +158,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
 
   Widget getToleranceWidget() {
     return Center(
-      child: Text("Tolérance: ±${this.question?.margin ?? 0}"),
+      child: Text("${qreText['TOLERANCE']}: ±${this.question?.margin ?? 0}"),
     );
   }
 
@@ -163,7 +167,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     final maxValue = math.min(this.max, currentValue + margin);
     final minValue = math.max(this.min, currentValue - margin);
     return Center(
-      child: Text("Votre intervalle de réponse est: $minValue à $maxValue"),
+      child: Text("${qreText['YOUR_ANSWER_INTERVAL']} $minValue - $maxValue"),
     );
   }
 

@@ -1,0 +1,29 @@
+<div class="p-4 flex flex-col items-center justify-center h-full w-full">
+    <!-- Settings Header -->
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Settings</h2>
+
+    <!-- Language Selection -->
+    <div class="w-full flex items-center mb-4">
+        <label for="language-select" class="text-sm font-medium text-gray-700 w-1/4 text-right mr-4">Language</label>
+        <select
+                id="language-select"
+                (change)="switchLanguage($event)"
+                [(ngModel)]="currentLanguage"
+                class="bg-white text-black rounded p-2 w-1/2">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+
+    <!-- Theme Selection -->
+    <div class="w-full flex items-center">
+        <label for="theme-select" class="text-sm font-medium text-gray-700 w-1/4 text-right mr-4">Theme</label>
+        <select
+                id="theme-select"
+                (change)="switchTheme($event)"
+                [(ngModel)]="currentTheme"
+                class="bg-white text-black rounded p-2 w-1/2">
+            <option *ngFor="let theme of availableThemes" [value]="theme">{{ theme }}</option>
+        </select>
+    </div>
+</div>

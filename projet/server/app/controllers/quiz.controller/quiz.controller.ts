@@ -189,12 +189,13 @@ export class QuizController {
         this.router.post('/checkTitleUniqueness', async (req, res) => {
             const { title } = req.body;
             try {
-                const isUnique = await this.quizService.isTitleUnique(title);
-                res.json({ isUnique });
+                const { isUnique, id } = await this.quizService.isTitleUnique(title);
+                res.json({ isUnique, id });
             } catch (error) {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: SERVER_ERROR });
             }
         });
+
 
         /**
          * @swagger

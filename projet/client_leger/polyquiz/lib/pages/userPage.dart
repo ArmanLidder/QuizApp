@@ -27,7 +27,6 @@ class Userpage extends StatelessWidget {
     this.userData = this.loggedInUserService.getUser();
     print(this.userData);
     List<num> achievements = this.userData?.achievements ?? [];
-
     return Obx(() {
       return MaterialApp(
         home: Scaffold(
@@ -39,6 +38,12 @@ class Userpage extends StatelessWidget {
             children: [
               // Centered FractionallySizedBox with scrollable content
               Center(
+        home: Scaffold(
+            backgroundColor: themeService.mixedMain,
+            appBar: FancyAppBar(
+              context: context,
+            ),
+            body: Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10.0), // Shift down by 10px
                   child: FractionallySizedBox(

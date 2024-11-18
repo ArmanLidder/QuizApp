@@ -1,0 +1,16 @@
+<div class="dialog-container">
+    <h2 class="dialog-title">Choisir un joueur à observer</h2>
+    <div class="players-list">
+            <ul>
+                <li class="player-item" *ngFor="let player of observationService.playersList">
+                    <ng-container *ngIf="playerObserved !== player">
+                        <app-avatar class="player-name" [size]="'small'" [isChat]="true" [uid]="player"></app-avatar>
+                        <button class="btn btn-primary" (click)="observe(player)">Observer</button>
+                    </ng-container>
+                </li>
+            </ul>
+    </div>
+    <div class="actions">
+        <button class="btn btn-cancel" type="button" (click)="closeDialog()">Annuler</button>
+    </div>
+</div>
