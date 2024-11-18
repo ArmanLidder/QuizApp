@@ -78,7 +78,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         username = widget.username ?? 'nothing';
         waitingRoomService.roomId = int.parse(roomId);
         realGameService.username = username;
-
+        waitingRoomService.getGameType();
         realGameService.roomId = int.parse(roomId);
 
         print('Joining room $roomId as $username');
