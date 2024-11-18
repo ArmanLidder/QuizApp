@@ -16,6 +16,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {UsersService} from "@app/services/users.service/users.service";
 import {User} from "@app/interfaces/user/user-data.interface";
 import {PopoutWindowComponent} from "angular-popout-window";
+import {TranslateService} from "@ngx-translate/core";
 
 export enum State {
     closed,
@@ -33,7 +34,7 @@ export class ChatComponent implements OnInit {
     private fb: FormBuilder = inject(FormBuilder)
     private appRef: ApplicationRef = inject(ApplicationRef)
     public usersService: UsersService = inject(UsersService)
-
+    private translate: TranslateService = inject(TranslateService)
     @ViewChild('popupWindow') popWindow: PopoutWindowComponent;
     @ViewChild('chatscrollable') private scrollContainer!: ElementRef;
     messageForm: FormGroup;
@@ -134,20 +135,21 @@ export class ChatComponent implements OnInit {
     }
 
     async createCanal() {
+        this.feedback = '';
         const canalName = this.canalNameForm.get('canalName')?.value;
         const userId = (await firstValueFrom(this.usersService.currentUserProfile$) as User).uid;
         if (canalName.toLowerCase().includes("room")) {
-            this.feedback = "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom."
+            this.feedback = await this.translate.get('CHAT_COMPONENT.ROOM_IN_NAME_UNALLOWED').toPromise();
             return;
         }
         if (canalName) {
             try {
                 this.feedback = '';
                 const docRef: string = await this.canalService.createCanal(canalName, false, [userId]);
-                if (docRef === '') this.feedback = `Le nom ${canalName} est déjà utilisé. Veuillez choisir un autre nom.`;
+                if (docRef === '') this.feedback = this.translate.instant('CHAT_COMPONENT.ROOM_NAME_ALREADY_USED', {canalName:canalName});
                 else this.returnToMenu();
             } catch (error) {
-                this.feedback = `Le nom ${canalName} est déjà utilisé. Veuillez choisir un autre nom.`;
+                this.feedback = this.translate.instant('CHAT_COMPONENT.ROOM_NAME_ALREADY_USED', {canalName:canalName});
             }
         }
     }
@@ -155,7 +157,6 @@ export class ChatComponent implements OnInit {
     async loadCanal(canalId: string) {
         this.toggleIsChat();
         const uid = (await firstValueFrom(this.user$)).uid;
-        console.log(uid);
         this.currentCanal$ = this.canalService.getCanal(canalId);
         this.canalId$.next(canalId);
         this.canalSubscription = this.canalId$

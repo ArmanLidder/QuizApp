@@ -7,18 +7,20 @@ import { InitialQuestionData, NextQuestionData } from '@common/interfaces/host.i
 import { QuizQuestion } from '@common/interfaces/quiz.interface';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { Player } from '@app/services/game-test.service/game-test.service.const';
+import {BehaviorSubject} from "rxjs";
+import {HOST_USERNAME} from "@common/names/host-username";
 
 @Injectable({
     providedIn: 'root',
 })
 export class GameRealService implements GameServiceInterface {
+    observerMode: boolean = false;
     username: string = '';
     roomId: number = 0;
     players: Player[] = [];
     answers: Map<number, string | null> = new Map();
     questionNumber: number = 1;
     timer: number = 0;
-    question: QuizQuestion | null = null;
     isLast: boolean = false;
     locked: boolean = false;
     validated: boolean = false;
@@ -29,6 +31,17 @@ export class GameRealService implements GameServiceInterface {
     qreAnswer: number | null = null;
     gameType: 'classic' | 'equipe' = 'classic';
 
+    private questionSubject = new BehaviorSubject<QuizQuestion | null>(null);
+    question$ = this.questionSubject.asObservable();
+    private _question: QuizQuestion | null = null;
+    get question(): QuizQuestion | null {
+        return this._question;
+    }
+    set question(value: QuizQuestion | null) {
+        this._question = value;
+        this.questionSubject.next(value);
+    }
+
     constructor(public socketService: SocketClientService) {
         if (this.socketService.isSocketAlive()) {
             this.configureBaseSockets();
@@ -36,7 +49,11 @@ export class GameRealService implements GameServiceInterface {
         this.audio.volume = DEFAULT_VOLUME;
     }
 
-    init() {
+    init(isObserver?: boolean) {
+        if (isObserver) {
+            this.observerMode = true;
+            this.username = HOST_USERNAME;
+        }
         this.configureBaseSockets();
         this.socketService.send(SocketEvent.GET_QUESTION, this.roomId);
     }
@@ -59,13 +76,13 @@ export class GameRealService implements GameServiceInterface {
         });
         this.locked = true;
         this.answers.clear();
-        this.qrlAnswer = '';
+        // this.qrlAnswer = '';
     }
 
     configureBaseSockets() {
         this.socketService.on(SocketEvent.GET_INITIAL_QUESTION, (data: InitialQuestionData) => {
             this.question = data.question;
-            this.username = data.username;
+            if (!this.observerMode) this.username = data.username;
             if (data.numberOfQuestions === 1) {
                 this.isLast = true;
             }
@@ -77,6 +94,7 @@ export class GameRealService implements GameServiceInterface {
             this.isLast = data.isLast;
             this.validated = false;
             this.locked = false;
+            this.qrlAnswer = "";
         });
     }
 
@@ -89,6 +107,7 @@ export class GameRealService implements GameServiceInterface {
     }
 
     private reset() {
+        this.observerMode = false;
         this.username = '';
         this.roomId = 0;
         this.timer = 0;

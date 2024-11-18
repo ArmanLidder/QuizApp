@@ -1,1 +1,3 @@
-<button class='cancel button-width' (click)="openConfirmationDialog()">{{isGame ? 'Quitter' : 'Supprimer'}}</button>
+<button class="cancel button-width" (click)="openConfirmationDialog()">
+    {{ isGame ? ('BUTTON.QUIT' | translate) : ('BUTTON.DELETE' | translate) }}
+</button>

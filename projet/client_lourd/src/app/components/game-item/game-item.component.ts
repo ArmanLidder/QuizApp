@@ -9,6 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { ErrorDialogComponent } from '@app/components/error-dialog/error-dialog.component';
 import {ConfirmationDialogComponent} from "@app/components/confirmation-dialog/confirmation-dialog.component";
 import {PopUpMessage} from "@common/browser-message/displayable-message/pop-up-message";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-game-item',
@@ -27,7 +28,8 @@ export class GameItemComponent {
         private quizService: QuizService,
         private usersService: UsersService,
         private router: Router,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private translate: TranslateService
     ) {
         this.loadCurrentUser();
     }
@@ -38,14 +40,15 @@ export class GameItemComponent {
     }
 
     private checkOwnershipAndVisibility(callback: () => void): void {
-        this.quizService.basicGetById(this.quiz.id).subscribe((latestQuiz: Quiz) => {
+        this.quizService.basicGetById(this.quiz.id).subscribe(async (latestQuiz: Quiz) => {
             if(!latestQuiz) {
-                this.openErrorDialog('Ce jeu n\'existe plus');
+                this.openErrorDialog(await this.translate.get('QUIZ_CREATION.GAME_NO_LONGER_EXISTS').toPromise());
                 this.refresh.emit();
                 return;
             }
             if (!latestQuiz.visible && this.currentUid !== latestQuiz.owner) {
-                this.openErrorDialog('Ce jeu a été défini comme privé par le créateur et ne peut pas être modifié/exporté/supprimé');
+                this.openErrorDialog(await this.translate.get('QUIZ_CREATION.GAME_PRIVATED').toPromise());
+                this.refresh.emit();
                 return;
             } else {
                 callback();
@@ -53,9 +56,9 @@ export class GameItemComponent {
         });
     }
 
-    deleteGame(): void {
+    async deleteGame() {
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            data: {message: PopUpMessage.DELETE_QUIZ_MESSAGE},
+            data: {message: await this.translate.get(PopUpMessage.DELETE_QUIZ_MESSAGE).toPromise()},
         });
         dialogRef.afterClosed().subscribe(async (result) => {
             if (result) {

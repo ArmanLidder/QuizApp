@@ -1,0 +1,15 @@
+<div class="menu" [class.collapsed]="!isMenuOpen">
+    <div class="collapsed-content" *ngIf="!isMenuOpen">
+        <div class="header" (click)="toggleMenu()">
+            <p><i class="bi bi-chevron-compact-right"></i> Menu Observation</p>
+        </div>
+    </div>
+    <div class="expanded-content" *ngIf="isMenuOpen">
+        <div class="header" (click)="toggleMenu()">
+            <p><i class="bi bi-chevron-compact-down"></i>Menu Observation</p>
+        </div>
+        <p><i class="bi bi-eye"></i> Vous observer :</p>
+        <app-avatar [isChat]="true" [uid]='observationService.observedPlayerId'></app-avatar>
+        <button class="button" (click)="openSelectorDialog()">Choisir un joueur</button>
+    </div>
+</div>
