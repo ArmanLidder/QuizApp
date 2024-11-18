@@ -17,13 +17,13 @@ class Event {
   Event({required this.eventType, required this.timestamp});
 }
 
-class EvenementRow extends StatelessWidget {
+class LoginEvenementRow extends StatelessWidget {
   final String date;
   final String label;
   final Color color;
   final ThemeService themeService = ThemeService.instance;
 
-  EvenementRow({
+  LoginEvenementRow({
     required this.date,
     required this.label,
     this.color = Colors.black,
@@ -33,12 +33,43 @@ class EvenementRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(date, style: TextStyle(color: themeService.mainAccent.value)),
-        Text("   "),
         Text(
           label,
           style: TextStyle(color: this.color, fontWeight: FontWeight.bold),
         ),
+        Text("   "),
+        Text(date, style: TextStyle(color: themeService.mainAccent.value)),
+      ],
+    );
+  }
+
+}
+
+  class GameEvenementRow extends StatelessWidget {
+    final String date;
+    final String label;
+    final Color color;
+    final String gameMode;
+    final ThemeService themeService = ThemeService.instance;
+    GameEvenementRow({
+      required this.date,
+      required this.label,
+      required this.gameMode,
+      this.color = Colors.black,
+    });
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          label,
+          style: TextStyle(color: this.color, fontWeight: FontWeight.bold),
+        ),
+        Text(" - "),
+        Text(date, style: TextStyle(color: themeService.mainAccent.value)),
+        Text(", Gamemode: "),
+        Text(gameMode)
+
       ],
     );
   }
@@ -56,9 +87,6 @@ class Historique extends StatelessWidget {
     List<Event> gameEvents(){
       return gameHistory.map((game) {
         String result = resultTypeToString[game.result]!;
-        //DateTime dateTime =  game.timestamp.toDate();
-
-
         return Event(eventType: result, timestamp: game.timestamp);
       }).toList();
     }
@@ -66,22 +94,38 @@ class Historique extends StatelessWidget {
         return loginHistory.map((login) {
           DateTime dateTime =  login.timestamp.toDate();
         String eventType = loginEventTypeToString[login.eventType]!;
-        return Event(eventType: eventType, timestamp: DateFormat('yyyy-MM-dd-hh:mm').format(dateTime));
+        return Event(eventType: eventType, timestamp: DateFormat('yyyy-MM dd-hh:mm').format(dateTime));
       }).toList();}
 
-    List<EvenementRow> _generateEventRows(List<Event> allEvents) {
-      // Sort events by timestamp
-      allEvents.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-      return allEvents.map((event) {
-        String date = "${event.timestamp}".split(' ')[0];
-        String? label = ls.eventMessage[event.eventType] ?? "nullEventMessage" ;
-        Color color = event.eventType == 'logout' ||  event.eventType == 'loss' ? Colors.red : Colors.green;
+  List<Widget> _generateLoginRows(List<Event> events) {
+    return events.map((event) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: LoginEvenementRow(
+          date: event.timestamp,
+          label: event.eventType,
+          color: Colors.black,
+        )
+      );
+    }).toList();
+  }
 
-        return EvenementRow(date: date, label: label, color: color);
-      }).toList();
-    }
-
+  List<Widget> _generateGameRows(List<Event> events) {
+    return events.map((event) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: GameEvenementRow(
+          date: event.timestamp,
+          label: event.eventType,
+          gameMode: "Classic", // Replace with actual game mode if available
+          color: Colors.black,
+        )
+      );
+    }).toList();
+  }
+  
+  
     @override
     Widget build(BuildContext context) {
       return Obx(
@@ -98,7 +142,7 @@ class Historique extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Column(
-            children: _generateEventRows(loginEvents()),
+            children: _generateLoginRows(loginEvents()),
           ),
           Text(
             profileText['GAME_HISTORY'],
@@ -110,7 +154,7 @@ class Historique extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Column(
-            children: _generateEventRows(gameEvents()),
+            children: _generateGameRows(gameEvents()),
           ),
         ],
       ));
