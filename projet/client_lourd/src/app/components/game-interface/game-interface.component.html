@@ -34,7 +34,7 @@
         </section>
         <div class='points'>
             <p>{{ 'GAME_INTERFACE.CURRENT_POINTS' | translate }}: {{ score }}</p>
-            <p *ngIf = 'bonusStatus'> {{ 'GAME_INTERFACE.BONUS_RECEIVED_FEEDBACK' | translate }} </p>
+            <p *ngIf = 'bonusStatus && !gameInterfaceManagementService.gameService.observerMode'> {{ 'GAME_INTERFACE.BONUS_RECEIVED_FEEDBACK' | translate }} </p>
         </div>
     </div>
 
