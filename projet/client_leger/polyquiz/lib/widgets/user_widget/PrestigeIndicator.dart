@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:polyquiz/services/LanguageService.dart';
 
+import '../../services/LanguageService.dart';
 import '../../services/theme_service.dart';
 
 class PrestigeIndicator extends StatelessWidget {

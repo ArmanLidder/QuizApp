@@ -20,22 +20,21 @@ class Event {
 class LoginEvenementRow extends StatelessWidget {
   final String date;
   final String label;
-  final Color color;
   final ThemeService themeService = ThemeService.instance;
 
   LoginEvenementRow({
     required this.date,
     required this.label,
-    this.color = Colors.black,
   });
 
   @override
   Widget build(BuildContext context) {
+    print(this.label);
     return Row(
       children: [
         Text(
           label,
-          style: TextStyle(color: this.color, fontWeight: FontWeight.bold),
+          style: TextStyle(color: this.label == 'login'? Colors.green: Colors.red, fontWeight: FontWeight.bold),
         ),
         Text("   "),
         Text(date, style: TextStyle(color: themeService.mainAccent.value)),
@@ -63,7 +62,7 @@ class LoginEvenementRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: this.color, fontWeight: FontWeight.bold),
+          style: TextStyle(color: this.label == 'game'? Colors.green: Colors.red, fontWeight: FontWeight.bold),
         ),
         Text(" - "),
         Text(date, style: TextStyle(color: themeService.mainAccent.value)),
@@ -105,7 +104,6 @@ class Historique extends StatelessWidget {
         child: LoginEvenementRow(
           date: event.timestamp,
           label: event.eventType,
-          color: Colors.black,
         )
       );
     }).toList();
@@ -119,7 +117,6 @@ class Historique extends StatelessWidget {
           date: event.timestamp,
           label: event.eventType,
           gameMode: "Classic", // Replace with actual game mode if available
-          color: Colors.black,
         )
       );
     }).toList();
