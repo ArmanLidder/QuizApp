@@ -77,11 +77,12 @@ class _AuthPageState extends State<AuthPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      await loggedInUserService.login(_emailController.text);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Connexion réussie!')),
       );
+      await loggedInUserService.login(_emailController.text);
+      translationService.currentLanguage = loggedInUserService.user!.settings.language;
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       print(e);
