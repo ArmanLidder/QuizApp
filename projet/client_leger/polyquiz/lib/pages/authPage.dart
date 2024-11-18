@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:polyquiz/constants/errorMessageTranslator.dart';
+import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/constants/defaultAvatars.dart';
+import 'package:polyquiz/constants/errorMessageTranslator.dart';
+
+import '../services/userInfoValidation.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -14,11 +21,24 @@ class _AuthPageState extends State<AuthPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final UserService userService = UserService();
+  final UserService userService = UserService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
+  final UserPageCustomisationService userPageCustomisationService =
+      UserPageCustomisationService.instance;
+  final ValidationService validationService = ValidationService.instance;
+  final TranslationService translationService = TranslationService.instance;
+
+  Map get text => translationService.text;
+  Map get registerPageText => this.text['REGISTER_PAGE'];
+  Map get loginPageText => this.text['LOGIN_PAGE'];
 
   bool _isRegistering = false;
+  bool _obscurePassword = true;
+  bool _isValidUsername = true;
+  bool _isValidEmail = true;
+  bool _isValidPassword = true;
+  String? _selectedAvatar;
 
   Future<void> _login() async {
     try {
@@ -26,15 +46,28 @@ class _AuthPageState extends State<AuthPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
+      await loggedInUserService.login(_emailController.text);
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Connection réussie!')),
+        SnackBar(content: Text('Connexion réussie!')),
       );
-      await this.loggedInUserService.setUserByEmail(_emailController.text);
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Connection échouée: $e')),
-      );
+      print(e);
+      if (e == "USER ALREADY CONNECTED") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Connexion échouée: ce compte est deja connecte')),
+        );
+      } else {
+        print(e);
+        FirebaseAuthException? error = e as FirebaseAuthException?;
+        String? errorCode = error?.code;
+        String? cleanErrorCode = firebaseAuthErrors[errorCode];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Connexion échouée: $cleanErrorCode')),
+        );
+      }
     }
   }
 
@@ -44,81 +77,238 @@ class _AuthPageState extends State<AuthPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      // Here, you could save the username to a user profile or database.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Inscription réussie!')),
       );
 
-      await this.userService.createUser(
-          _emailController.text,
-           _usernameController.text);
+      await userService.createUser(
+        _selectedAvatar!,
+        _emailController.text,
+        _usernameController.text,
+      );
       setState(() {
-        _isRegistering =
-            false; // Return to login mode after successful registration.
+        _isRegistering = false;
       });
+      _login();
     } catch (e) {
+      FirebaseAuthException? error = e as FirebaseAuthException?;
+      String? errorCode = error?.code;
+      String? cleanErrorCode = firebaseAuthErrors[errorCode];
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Inscription échouée: $e')),
+        SnackBar(content: Text('Inscription échouée: $cleanErrorCode')),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<String> defaultAvatars = constDefaultAvatars;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isRegistering ? "S'enregistrer" : 'Se connecter'),
-        automaticallyImplyLeading: false,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_isRegistering)
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          width: 320,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _isRegistering ? registerPageText['TITLE'] : loginPageText['TITLE'],
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                _isRegistering
+                    ? registerPageText['TITLE']
+                    : loginPageText['SUBTITLE'],
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+              ),
+              SizedBox(height: 24),
+              if (_isRegistering)
+                TextField(
+                  controller: _usernameController,
+                  decoration: InputDecoration(
+                    errorText: !_isValidUsername
+                        ? registerPageText['USERNAME_INVALID']
+                        : null,
+                    prefixIcon: Icon(Icons.person),
+                    labelText: registerPageText['USERNAME_LABEL'],
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (e) async {
+                    bool result = await validationService.isValidUsername(e);
+                    setState(() {
+                      _isValidUsername = result;
+                    });
+                    print(_isValidUsername); // You can print the result here
+                  },
+                ),
+              if (_isRegistering) SizedBox(height: 16),
               TextField(
-                controller: _usernameController,
+                keyboardType: TextInputType.emailAddress,
+                controller: _emailController,
                 decoration: InputDecoration(
-                  labelText: "nom d'utilisateur",
+                  errorText:
+                      !_isValidEmail ? registerPageText['EMAIL_INVALID'] : null,
+                  prefixIcon: Icon(Icons.email),
+                  labelText: registerPageText['EMAIL_LABEL'],
                   border: OutlineInputBorder(),
                 ),
+                onChanged: (e) async {
+                  bool result = await validationService.isValidAddress(e);
+                  setState(() {
+                    _isValidEmail = result;
+                  });
+                  print(_isValidEmail); // You can print the result here
+                },
               ),
-            if (_isRegistering) SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Adresse mail',
-                border: OutlineInputBorder(),
+              SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.lock),
+                  labelText: registerPageText['PASSWORD_LABEL'],
+                  errorText:
+                      !_isValidPassword ? registerPageText['PASSWORD_MIN_LENGTH'] : null,
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                ),
+                onChanged: (e) async {
+                  bool result = await validationService.isValidPassword(e);
+                  setState(() {
+                    _isValidPassword = result;
+                  });
+                },
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Mot de passe',
-                border: OutlineInputBorder(),
+              if (_isRegistering) ...[
+                SizedBox(height: 24),
+                Text(
+                  this.text['AVATAR_MODIFICATION']['CHOOSE_AVATAR'],
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: defaultAvatars.map((avatarUrl) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedAvatar = avatarUrl;
+                        });
+                      },
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(avatarUrl),
+                            radius: 30,
+                          ),
+                          if (_selectedAvatar ==
+                              avatarUrl) // Show checkmark if selected
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                                size: 24,
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+                /*SizedBox(height: 12),
+                Text(
+                  "Ou téléchargez votre propre avatar",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    //_selectedAvatar = imageStorageService.pickAndUploadImage();
+                    // TODO: Implement file picker for custom avatar
+                  },
+                  child: Text("Choisir un fichier"),
+                ),*/
+              ],
+              SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: (_isRegistering &&
+                          _isValidUsername &&
+                          _isValidEmail &&
+                          _isValidPassword)
+                      ? _register
+                      : (_isValidUsername && _isValidEmail && _isValidPassword)
+                          ? _login
+                          : null, // Disable the button if conditions are not met
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[300],
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    textStyle: TextStyle(fontSize: 16),
+                  ),
+                  child: Text(_isRegistering ? registerPageText['SUBMIT_BUTTON'] : loginPageText['SUBMIT_BUTTON']),
+                ),
               ),
-              obscureText: true,
-            ),
-            SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _isRegistering ? _register : _login,
-              child: Text(_isRegistering ? "S'enregistrer" : 'Se connecter'),
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _isRegistering = !_isRegistering;
-                });
-              },
-              child: Text(_isRegistering
-                  ? 'Tu as déja un compte? connecte toi!'
-                  : "tu n'as pas de compte? inscris-toi!"),
-            ),
-
-          ],
+              SizedBox(height: 16),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isRegistering = !_isRegistering;
+                      _isValidUsername = true;
+                    });
+                  },
+                  child: Text(
+                    _isRegistering
+                        ? registerPageText['ALREADY_HAVE_ACCOUNT'] + " " + registerPageText['LOGIN_LINK']
+                        : loginPageText["NO_ACCOUNT"] + " " + loginPageText["REGISTER_LINK"],
+                    style: TextStyle(color: Colors.purple),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/offline');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[500],
+                      foregroundColor: Colors.black,
+                    ),
+                    child: Text('Jouer hors-ligne')),
+              )
+            ],
+          ),
         ),
       ),
     );

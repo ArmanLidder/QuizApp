@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/animation.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/services/LanguageService.dart';
+import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'user_service.dart';
 
@@ -8,28 +12,107 @@ class LoggedInUserService extends GetxController {
   final UserService userService = UserService();
   final ImageStorageService imageStorageService = ImageStorageService();
   late var observableCurrency = 0.obs;
+  late var observablePrestige = 0.obs;
+  late var observableLevel = 0.obs;
+  late var observableUsername = "".obs;
+  late var observableAvatar = ''.obs;
   User? user;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Method to set user info
   void setUser(User? user) {
     this.user = user;
+    this.observableCurrency.value = (this.user?.currency ?? 0).round();
+    this.observablePrestige.value = (this.user?.prestige ?? 0).round();
+    this.observableLevel.value = (this.user?.level ?? 0).round();
+    this.observableUsername.value = this.user!.username;
+    this.observableAvatar.value = (this.user?.avatar ?? "");
   }
 
   Future<void> setUserByEmail(String email) async {
-    User? fetchedUser =
-        await this.userService.getUserByEmail(email); // Fetch user by email
+    User? fetchedUser = await this.userService.getUserByEmail(email); // Fetch user by email
     if (fetchedUser != null) {
       setUser(fetchedUser); // Set the fetched user
     } else {
       print('User not found with email: $email');
     }
   }
+  setUsername(String newUsername) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(this.getUid())
+        .update({'username': newUsername});
+    reloadUser();
 
+  }
+
+
+  Future<void> login(String email) async {
+
+    // Fetch and set the user by email
+    await setUserByEmail(email);
+    FriendService.instance.manuallyLoadFriends();
+    // Get the user object (assuming `userService.user` holds the current user)
+    User? currentUser = this.user;
+
+    // Check if the user was successfully set
+    if (currentUser != null) {
+      // Update the `isOnline` status in Firebase
+      if (this.user!.isConnected){ //TODO: disable this false flag
+        throw("USER ALREADY CONNECTED");
+      }
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .update({'isConnected': true});
+
+      DocumentReference userDocRef = _firestore.collection('users').doc(currentUser.uid);
+      DocumentSnapshot userSnapshot = await userDocRef.get();
+
+      List<dynamic> loginHistory = userSnapshot.get('loginHistory') ?? [];
+      Timestamp timestamp = Timestamp.now(); // Get the current timestamp
+      loginHistory.add({
+        'eventType': 'login',
+        'timestamp': timestamp,
+      });
+      await userDocRef.update({'loginHistory': loginHistory});
+      await reloadUser();
+      await LanguageService.instance.loadLanguage();
+    } else {
+      print('Login failed: user not found with email $email');
+    }
+  }
+
+  logout() async {
+    String? userId = user?.uid;  // Adjust this to match your user object structure
+
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .update({'isConnected': false});
+
+
+    if (userSnapshot.exists) {
+      List<dynamic> loginHistory = userSnapshot.get('loginHistory') ?? [];
+      Timestamp timestamp = Timestamp.fromDate(DateTime.now());
+      loginHistory.add({
+        'eventType': 'logout',
+        'timestamp': timestamp,
+      });
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'loginHistory': loginHistory,
+      });
+      await reloadUser();
+      print('Logout event added successfully');
+    } else {
+      print('User not found.');
+    }
+  }
   Future<void> reloadUser() async {
     String? uid = await this.getUid();
     User? user = await UserService.instance.getUserById(uid ?? '');
     this.setUser(user);
-    this.observableCurrency.value = (this.user?.currency ?? 0).round();
   }
 
   User? getUser() {
@@ -50,11 +133,20 @@ class LoggedInUserService extends GetxController {
     return string;
   }
 
-  Future<void> updateProfilePicture() async {
+  Future<void> uploadCustomProfilePicture() async {
     String? newImagelLink = await this.imageStorageService.pickAndUploadImage();
+    this.observableAvatar.value = newImagelLink!;
     await this.userService.updateUserAvatar(
         id: this.forceToString(this.getUid()),
         newAvatarUrl: this.forceToString(newImagelLink));
+    await this.reloadUser();
+  }
+
+  Future<void> chooseNewProfilePicture(String newProfileUrl) async {
+    this.observableAvatar.value = newProfileUrl;
+    await this.userService.updateUserAvatar(
+        id: this.forceToString(this.getUid()),
+        newAvatarUrl: this.forceToString(newProfileUrl));
     await this.reloadUser();
   }
 }

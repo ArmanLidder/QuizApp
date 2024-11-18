@@ -1,10 +1,9 @@
 export interface StoreItem {
     id: string;
     cost: number,
-    itemType: 'image' | 'theme'| 'rewardImage' | 'rewardTheme',
+    itemType: 'image' | 'theme'| 'rewardImage' | 'rewardTheme' | 'rewardCurrency',
     name: string,
     source?: string,
     minLevel?:number,
-    minPrestige?:number,
     achievement?:number,
 }

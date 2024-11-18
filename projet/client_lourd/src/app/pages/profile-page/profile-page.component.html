@@ -1,5 +1,5 @@
 <app-header></app-header>
-<div class="min-h-screen bg-gray-100">
+<div class="min-h-screen">
     <div class="max-w-4xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
         <ng-container *ngIf="currentUser$ | async as user">
             <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-lg shadow-md overflow-hidden">
@@ -9,7 +9,7 @@
                             {{ user.level }}
                         </div>
                         <img [src]="user.avatar" alt="Avatar de {{ user.username }}"
-                             class="w-32 h-32 rounded-full mx-auto mb-4 border-2 border-white shadow-lg"/>
+                             class="w-32 h-32 rounded-full object-cover mb-4 border-2 border-white shadow-lg"/>
                         <button class="absolute -bottom-0 -right-0 mb-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-10 h-10"
                                 (click)="avatarModificationDialog()">
                             <mat-icon class="text-xl">edit</mat-icon>

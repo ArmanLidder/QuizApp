@@ -148,7 +148,13 @@
     "OWNED": "Déjà possédé",
     "NOT_ENOUGH_FUNDS": "Pas assez de fonds",
     "BUY": "Acheter",
-    "COST_SUFFIX": "$"
+    "COST_SUFFIX": "$",
+    "REWARDS": "Récompenses",
+    "UNLOCKED_AT_ACHIEVEMENT": "Débloqué à l'exploit : ",
+    "UNLOCKED_AT_LEVEL": "Débloqué au niveau ",
+    "CLAIM": "Réclamer",
+    "REWARD_CURRENCY": "Récompenses d'exploits",
+    "ALREADY_CLAIMED": "Réclamée"
   },
   "GAME_ADMIN": {
     "TITLE": "Panneau d'administration : gérer tous les jeux-questionnaires",
@@ -546,5 +552,12 @@
     "CURRENT_POINTS": "Pointage",
     "BONUS_RECEIVED_FEEDBACK": "Vous avez recu des points Bonus!",
     "VALIDATE_BUTTON": "Valider"
+  },
+  "OBSERVER": {
+    "CHOOSE_PLAYER": "Choisir un joueur à observer",
+    "OBSERVE": "Observer",
+    "CANCEL": "Annuler",
+    "OBSERVATION_MENU": "Menu Observation",
+    "OBSERVING": "Vous observer"
   }
 }
