@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_widget.dart';
 import 'package:polyquiz/widgets/user_widget/friend/FriendListWidget.dart';
@@ -19,6 +21,7 @@ class Userpage extends StatelessWidget {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
   final ThemeService themeService = ThemeService.instance;
+  final TranslationService transService = TranslationService.instance;
   User? userData;
 
   @override
@@ -28,6 +31,8 @@ class Userpage extends StatelessWidget {
     print(this.userData);
 
     return Obx(() {
+      Language uselessShit = transService.languageValue.value;
+
       return MaterialApp(
         home: Scaffold(
           backgroundColor: themeService.mixedMain,

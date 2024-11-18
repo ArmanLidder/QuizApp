@@ -17,13 +17,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ThemeService themeService = ThemeService.instance;
-  final LanguageService ls = LanguageService.instance;
   final TranslationService transService = TranslationService.instance;
 
-  Map get text => transService.text;
-  Map get mainPageText => text['MAINPAGE'];
+  //Map get text => transService.text;
+  //Map get mainPageText => text['MAINPAGE'];
 
   final SocketService _socketService = SocketService();
   User? userData;
@@ -40,6 +40,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+
+      //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
+      Language uselessShit = transService.languageValue.value;
+
+      Map text = transService.text;
+      Map<String, dynamic> mainPageText = text['MAINPAGE'] ?? {};
+
       this.userData = this.loggedInUserService.getUser();
       return Scaffold(
         backgroundColor:

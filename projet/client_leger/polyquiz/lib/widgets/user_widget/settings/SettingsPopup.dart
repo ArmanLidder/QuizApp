@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/LanguageService.dart';
-import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import '../../../constants/themesNamesToColorArray.dart';
-import '../../../models/user.dart';
 import 'Theme Option.dart';
 
 class SettingsPopup extends StatefulWidget {
@@ -14,10 +13,8 @@ class SettingsPopup extends StatefulWidget {
 
 class _SettingsPopupState extends State<SettingsPopup> {
   late UserPageCustomisationService userPageCustomisationService;
-  final LanguageService languageService = LanguageService.instance;
-
+  final TranslationService translationService = TranslationService.instance;
   late ThemeService themeService;
-  late String _selectedLanguage;
   late String _selectedTheme;
   List<String> listOfThemeNames = []; // Initialize with an empty list
 
@@ -26,7 +23,6 @@ class _SettingsPopupState extends State<SettingsPopup> {
     super.initState();
     themeService = ThemeService.instance;
     userPageCustomisationService = UserPageCustomisationService.instance;
-    _selectedLanguage = languageService.languageAbr.value;
     _selectedTheme = themeService.themeName.value; // Assuming themeName is a property in your ThemeService
 
     // Trigger async initialization
@@ -38,8 +34,6 @@ class _SettingsPopupState extends State<SettingsPopup> {
   }
 
   Future<void> _loadAvailableThemes() async {
-    await languageService.loadLanguage();
-    _selectedLanguage = languageService.languageAbr.value;
     List<String> themes = await userPageCustomisationService.availableThemes();
     setState(() {
       listOfThemeNames = themes;
@@ -73,14 +67,14 @@ class _SettingsPopupState extends State<SettingsPopup> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: abrToName[languageService.languageAbr.value],
+                value: translationService.currentLanguageAbbr,
                 onChanged: (String? newValue) {
                   setState(() {
-                    LanguageService.instance.setLanguage(newValue!);
-                    _selectedLanguage = newValue!;
+                    print(newValue!);
+                    TranslationService.instance.currentLanguageAbbr =  newValue!;
                   });
                 },
-                items: <String>['Français', 'English', "Toki Pona"]
+                items: <String>['fr', 'en']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
