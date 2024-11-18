@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {ObserverCounterService} from "@app/services/observer-counter.service/observer-counter.service";
 
 @Component({
@@ -6,7 +6,13 @@ import {ObserverCounterService} from "@app/services/observer-counter.service/obs
   templateUrl: './observer-counter.component.html',
   styleUrls: ['./observer-counter.component.scss']
 })
-export class ObserverCounterComponent {
+export class ObserverCounterComponent implements OnInit {
 
   constructor(public observerCounterService: ObserverCounterService) {}
+
+  ngOnInit() {
+    console.log("ngOnit Observer Count Service");
+    this.observerCounterService.initialize();
+  }
+
 }
