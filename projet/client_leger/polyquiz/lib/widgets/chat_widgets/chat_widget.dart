@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/notification_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/channel_window_widget.dart';
 import 'package:polyquiz/widgets/chat_widgets/message_window_widget.dart';
 
@@ -13,6 +14,8 @@ class _ChatWidgetState extends State<ChatWidget> {
   Page page = Page.Channel;
   String currentChannelId = "Clavardage";
   NotificationService notificationService = NotificationService.instance;
+  Map get text => TranslationService.instance.text;
+  Map get chatText => text['CHAT_COMPONENT'];
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                   children: [
                     Icon(Icons.textsms, size: 40, color: Colors.white,),
                     SizedBox(width: 10,),
-                    Text("Clavardage", style: TextStyle(fontSize: 40, color: Colors.white)),
+                    Text(chatText['CHAT'], style: TextStyle(fontSize: 40, color: Colors.white)),
                   ],
                 )
             ),

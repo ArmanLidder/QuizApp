@@ -8,13 +8,15 @@ import {
     query,
     collection,
     getDocs,
-    where, collectionData,
+    where, collectionData, getDoc,
 } from '@angular/fire/firestore';
-import {firstValueFrom, Observable, of, switchMap} from 'rxjs';
+import {catchError, firstValueFrom, Observable, of, shareReplay, map, BehaviorSubject, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
 import {Auth, authState} from "@angular/fire/auth";
 import {LoginHistory} from "@common/interfaces/user-data.interface";
 import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
+import {TranslateService} from "@ngx-translate/core";
+import {StoreItem} from "@common/interfaces/store.interface";
 
 
 const defaultUser: User = {
@@ -51,17 +53,39 @@ const defaultUser: User = {
 })
 export class UsersService {
     user$ = authState(this.auth);
+    userProfile$: Observable<User | null> | undefined;
+    private userProfileSubject$ = new BehaviorSubject<Observable<User | null>>(of(null));
 
-    constructor(private firestore: Firestore, private auth: Auth,private serverTimeService: ServerTimeService) {
+    constructor(private firestore: Firestore,
+                private auth: Auth,
+                private serverTimeService: ServerTimeService,
+                private translate: TranslateService)
+    {
+        this.user$.subscribe(async (user) => {
+            if (user) {
+                this.userProfile$ = this.createUserProfileObservable(user.uid);
+                this.userProfileSubject$.next(this.userProfile$);
+            } else if (!user) { //logout
+                this.userProfile$ = undefined;
+                this.userProfileSubject$.next(of(null));
+            }
+        });
     }
 
     get currentUserProfile$(): Observable<User | null> {
-        return this.user$.pipe(
-            switchMap((user) => {
-                if (!user?.uid) return of(null);
-                const ref = doc(this.firestore, 'users', user.uid);
-                return docData(ref) as Observable<User>;
-            })
+        return this.userProfileSubject$.pipe(switchMap(obs => obs));
+    }
+
+    private createUserProfileObservable(uid: string): Observable<User | null> {
+        const ref = doc(this.firestore, 'users', uid);
+        console.log(`Adding a read because of a getUserProfile`);
+        return docData(ref).pipe(
+            map(data => data as User),
+            catchError(error => {
+                console.error('Error fetching user profile:', error);
+                return of(null);
+            }),
+            shareReplay(1) // Cache the latest result for all subscribers
         );
     }
 
@@ -97,17 +121,16 @@ export class UsersService {
 
     async updateUsername(newUsername: string): Promise<void> {
         const isTaken = await this.isUsernameTaken(newUsername);
-        if (isTaken) throw new Error('Ce nom est déja utilisé');
+        if (isTaken) throw new Error(await firstValueFrom(this.translate.get('USERNAME_MODIFICATION.ALREADY_USED')));
         if (this.auth.currentUser?.uid){
             const userDocRef = doc(this.firestore, `users/${this.auth.currentUser?.uid}`);
             await updateDoc(userDocRef, {username: newUsername});
-        } else throw new Error('Erreur: essayez de vous reconnectez.');
+        }
     }
 
     async addLogEvent(event : 'login' | 'logout'): Promise<void> {
         const currentUser = await firstValueFrom(this.currentUserProfile$)
         const time = await this.serverTimeService.getServerTime();
-
         const loginEvent: LoginHistory = {
             eventType: event,
             timestamp: time,
@@ -128,4 +151,33 @@ export class UsersService {
         } else return undefined;
     }
 
+    async getAvailableThemes(): Promise<string[]> {
+        const defaultThemes = ['light', 'dark'];
+        const currentUser = await firstValueFrom(this.currentUserProfile$);
+        if (!currentUser) return defaultThemes;
+
+        const storeProfileRef = doc(this.firestore, 'storeProfiles', currentUser.uid);
+        const storeProfileSnapshot = await getDoc(storeProfileRef);
+
+        if (!storeProfileSnapshot.exists()) return defaultThemes;
+
+        const storeProfileData = storeProfileSnapshot.data() as { ownedItems: string[] };
+        const ownedItemIds = storeProfileData.ownedItems || [];
+        if (ownedItemIds.length === 0) return defaultThemes;
+
+        const storeItemsRef = collection(this.firestore, 'storeItems');
+        const querySnapshot = await getDocs(storeItemsRef);
+
+        const ownedThemes = querySnapshot.docs
+            .filter(doc => ownedItemIds.includes(doc.id))
+            .map(doc => {
+                const data = doc.data() as StoreItem;
+                console.log('Matched Item:', { _id: doc.id, ...data });
+                return data;
+            })
+            .filter(item => item.itemType === 'theme' || item.itemType === 'rewardTheme')
+            .map(item => item.name);
+
+        return Array.from(new Set([...defaultThemes, ...ownedThemes]));
+    }
 }

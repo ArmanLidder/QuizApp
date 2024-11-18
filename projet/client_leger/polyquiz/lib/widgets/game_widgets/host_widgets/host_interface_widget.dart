@@ -3,6 +3,7 @@ import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_grading_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
@@ -130,6 +131,8 @@ class HostHeader extends StatelessWidget {
   final HostInterfaceManagementService hostInterfaceManagementService;
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
+  Map get text => TranslationService.instance.text;
+  Map get gameText => text['GAME_INTERFACE'];
 
   HostHeader({
     required this.isLastButton,
@@ -171,8 +174,8 @@ class HostHeader extends StatelessWidget {
                 onPressed: this.hostInterfaceManagementService.NextQuestionBtnDisabled ? null : onNextQuestion,
                 child: Text(
                   gameService.realGameService.isLast
-                      ? 'Résultats'
-                      : 'Prochaine question',
+                      ? gameText['SHOW_RESULT']
+                      : gameText['NEXT_QUESTION'],
                   style: TextStyle(
                       color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
                 ),

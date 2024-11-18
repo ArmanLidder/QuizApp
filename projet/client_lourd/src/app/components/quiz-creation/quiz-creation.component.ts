@@ -15,6 +15,7 @@ import {UsersService} from "@app/services/users.service/users.service";
 import {User} from "@common/interfaces/user-data.interface";
 import {firstValueFrom, Observable} from "rxjs";
 import {ErrorDialogComponent} from "@app/components/error-dialog/error-dialog.component";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -42,6 +43,7 @@ export class QuizCreationComponent implements OnInit{
     constructor(
         injector: Injector,
         private dialog: MatDialog,
+        private translate: TranslateService
     ) {
         this.quizFormService = injector.get<QuizFormService>(QuizFormService);
         this.quizValidationService = injector.get<QuizValidationService>(QuizValidationService);
@@ -64,6 +66,7 @@ export class QuizCreationComponent implements OnInit{
         if (id) {
             this.mode = PageMode.MODIFICATION;
             this.quiz = await firstValueFrom(this.quizService.basicGetById(id));
+            this.quizFormService.quiz = this.quiz;
             this.quizForm = await this.quizFormService.fillForm(this.quiz);
         } else if (isImport) {
             this.mode = PageMode.CREATION;
@@ -108,57 +111,69 @@ export class QuizCreationComponent implements OnInit{
         return condition;
     }
 
-    onSubmit() {
+    async onSubmit() {
         const quiz = this.quizFormService.extractQuizFromForm(this.quizForm, this.questionsArray);
         if (this.quizForm?.valid) {
             const title = this.quizForm.get('title')?.value;
             const isOwner = this.currentUid === this.quizForm.get('owner')?.value;
+
             if (this.mode === PageMode.MODIFICATION && !isOwner) {
-                this.quizService.basicGetById(this.quiz.id).subscribe((latestQuiz: Quiz) => {
+                this.quizService.basicGetById(this.quiz.id).subscribe(async (latestQuiz: Quiz) => {
                     if (latestQuiz === null) {
-                        this.openErrorDialog('Ce quiz a été supprimé par un autre utilisateur.');
-                        this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
+                        this.openErrorDialog(await this.translate.get('QUIZ_CREATION.QUIZ_DELETED_BY_OTHER_USER').toPromise());
+                        await this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
+                        return;
                     }
                     if (!isOwner && !latestQuiz.visible) {
-                        this.openErrorDialog('La visibilité de ce quiz a été modifiée à privée par le propriétaire pendant l\'édition.');
-                        this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
+                        this.openErrorDialog(await this.translate.get('QUIZ_CREATION.QUIZ_VISIBILITY_CHANGED_TO_PRIVATE').toPromise());
+                        await this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
+                        return;
                     }
+                    this.checkTitleUniquenessAndUpdateQuiz(title, quiz);
                 });
+            } else {
+                this.checkTitleUniquenessAndUpdateQuiz(title, quiz);
             }
-            this.quizService.checkTitleUniqueness(title).subscribe((response) => {
-                if (response.body?.isUnique || this.mode === PageMode.MODIFICATION) {
-                    this.addOrUpdateQuiz(quiz);
-                } else {
-                    this.openErrorDialog('Le titre existe déjà');
-                }
-            });
-
         } else {
-            this.formErrors = this.quizValidationService.validateQuiz(quiz);
+            this.formErrors = await this.quizValidationService.validateQuiz(quiz);
             this.showPopupIfFormConditionMet(true);
         }
     }
 
+    private checkTitleUniquenessAndUpdateQuiz(title: string, quiz: Quiz) {
+        this.quizService.checkTitleUniqueness(title).subscribe(async (response) => {
+            if (response.body?.isUnique || (this.mode === PageMode.MODIFICATION && response.body?.id == quiz.id)) {
+                this.addOrUpdateQuiz(quiz);
+            } else {
+                this.openErrorDialog(await this.translate.get('QUIZ_CREATION.TITLE_ALREADY_EXISTS').toPromise());
+            }
+        });
+    }
 
-    private addOrUpdateQuiz(quiz: Quiz) {
 
+
+    private async addOrUpdateQuiz(quiz: Quiz) {
         const navigateToAdminCallBack = () => {
             this.navigateRoute.navigate([`/${GAME_ADMIN_PAGE}`]);
         };
+
         if (this.mode === PageMode.MODIFICATION) {
             quiz.id = this.quiz.id;
-            this.quizService.basicPut(quiz).subscribe(() => {
-                this.snackBar.show('Le quiz a été mis à jour avec succès');
+            this.quizService.basicPut(quiz).subscribe(async () => {
+                const message = await this.translate.get('QUIZ_CREATION.QUIZ_UPDATED_SUCCESS').toPromise();
+                this.snackBar.show(message);
                 navigateToAdminCallBack();
             });
         } else {
             quiz.id = generateRandomId();
-            this.quizService.basicPost(quiz).subscribe(() => {
-                this.snackBar.show('Le quiz a été ajouté avec succès');
+            this.quizService.basicPost(quiz).subscribe(async () => {
+                const message = await this.translate.get('QUIZ_CREATION.QUIZ_ADDED_SUCCESS').toPromise();
+                this.snackBar.show(message);
                 navigateToAdminCallBack();
             });
         }
     }
+
 
 
 

@@ -111,10 +111,21 @@ export class QrlEvaluationService {
     }
 
     private initializePlayerAnswers(qrlAnswers: Map<string, { answers: string; time: number }>) {
-        const sortedMap = new Map([...qrlAnswers.entries()].sort((a, b) => a[0].localeCompare(b[0])));
-        sortedMap.forEach((value: { answers: string; time: number }, key: string) => {
-            this.usernames.push(key);
-            this.answers.push(value.answers);
-        });
+        const sortedEntries = [...qrlAnswers.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+        const pairedData = sortedEntries.map(entry => ({
+            username: entry[0],
+            answer: entry[1].answers,
+            time: entry[1].time
+        }));
+        this.shuffleArray(pairedData);
+        this.usernames = pairedData.map(item => item.username);
+        this.answers = pairedData.map(item => item.answer);
+    }
+
+    private shuffleArray(array: any[]): void {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1)); // Random index
+            [array[i], array[j]] = [array[j], array[i]];   // Swap elements
+        }
     }
 }

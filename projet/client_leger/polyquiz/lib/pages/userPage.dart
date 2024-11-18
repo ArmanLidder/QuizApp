@@ -3,6 +3,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/user_widget/friend/FriendListWidget.dart';
 import '../widgets/fancyAppBar.dart';
 import '../widgets/user_widget/ProfileCard.dart';
@@ -25,11 +26,11 @@ class Userpage extends StatelessWidget {
     this.userData = this.loggedInUserService.getUser();
     print(this.userData);
     List<num> achievements = this.userData?.achievements ?? [];
-
     return Obx(() {
+      print('The language is ${TranslationService.instance.languageValue}');
       return MaterialApp(
-        home: Scaffold(        backgroundColor: themeService.mixedMain,
-
+        home: Scaffold(
+            backgroundColor: themeService.mixedMain,
             appBar: FancyAppBar(
               context: context,
             ),

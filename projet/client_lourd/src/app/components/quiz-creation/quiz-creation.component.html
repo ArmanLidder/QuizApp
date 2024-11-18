@@ -1,51 +1,60 @@
 <div class="p-6 mx-auto bg-white rounded-lg shadow-lg justify-center">
-    <h2 class="text-2xl font-bold text-center mb-6 text-blue-600">{{ mode === pageModel.CREATION ? 'Création' : 'Modification' }} du jeu</h2>
+    <h2 class="text-2xl font-bold text-center mb-6 text-blue-600">
+        {{ mode === pageModel.CREATION ? ('QUIZ_CREATION.TITLE_CREATION' | translate) : ('QUIZ_CREATION.TITLE_EDIT' | translate) }}
+    </h2>
 
     <form *ngIf="quizForm" [formGroup]="quizForm" (ngSubmit)="onSubmit()" class="space-y-4">
         <div class="flex justify-between items-center">
             <!-- Left Section: Visibility Checkbox -->
             <div class="flex items-center space-x-3" *ngIf="currentUid === quizForm.get('owner')?.value">
-                <label for="visible" class="block text-sm font-medium">Visibilité :</label>
+                <label for="visible" class="block text-sm font-medium">{{ 'QUIZ_CREATION.VISIBILITY' | translate }}:</label>
                 <label class="relative inline-flex items-center cursor-pointer">
-                    <input
-                            type="checkbox"
-                            id="visible"
-                            formControlName="visible"
-                            class="sr-only peer"
-                    />
+                    <input type="checkbox" id="visible" formControlName="visible" class="sr-only peer" />
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer-checked:bg-blue-600 transition-all duration-300"></div>
                     <div class="absolute top-0 left-0 h-6 w-6 bg-white border border-gray-300 rounded-full transform peer-checked:translate-x-full peer-checked:border-blue-600 transition-transform duration-300"></div>
                 </label>
-                <span class="text-sm text-gray-600">{{ quizForm.get('visible')?.value ? 'Public' : 'Privé' }}</span>
+                <span class="text-sm text-gray-600">{{ quizForm.get('visible')?.value ? ('QUIZ_CREATION.PUBLIC' | translate) : ('QUIZ_CREATION.PRIVATE' | translate) }}</span>
             </div>
 
             <!-- Right Section: Owner -->
             <div class="ml-auto flex items-center space-x-3" *ngIf="owner | async as owner">
-                <span class="text-sm font-medium text-gray-700">Créateur :</span>
-                <app-avatar-with-level [user]="owner" [hideLevel]="true"></app-avatar-with-level>
+                <span class="text-sm font-medium text-gray-700">{{ 'QUIZ_CREATION.CREATOR' | translate }}:</span>
+                <app-avatar [uid]="owner.uid" [size]="'small'"></app-avatar>
                 <h3 class="text-sm font-medium text-gray-900">{{ owner.username }}</h3>
             </div>
         </div>
 
         <div>
-            <label for="title" class="block text-sm font-medium">Titre :</label>
-            <input maxlength="100" placeholder="Entrez le titre du jeu" type="text" id="title" formControlName="title" class="w-full p-2 border rounded" />
-            <p *ngIf="quizForm.get('title')?.hasError('required') && quizForm.get('title')?.touched" class="text-red-500 text-sm">Le titre est requis</p>
-            <p *ngIf="quizForm.get('title')?.hasError('pattern') && quizForm.get('title')?.touched" class="text-red-500 text-sm">Le titre ne doit pas être composé uniquement d'espaces</p>
+            <label for="title" class="block text-sm font-medium">{{ 'QUIZ_CREATION.TITLE_LABEL' | translate }}:</label>
+            <input maxlength="100" [placeholder]="'QUIZ_CREATION.TITLE_PLACEHOLDER' | translate" type="text" id="title" formControlName="title" class="w-full p-2 border rounded" />
+            <p *ngIf="quizForm.get('title')?.hasError('required') && quizForm.get('title')?.touched" class="text-red-500 text-sm">
+                {{ 'QUIZ_CREATION.TITLE_REQUIRED' | translate }}
+            </p>
+            <p *ngIf="quizForm.get('title')?.hasError('pattern') && quizForm.get('title')?.touched" class="text-red-500 text-sm">
+                {{ 'QUIZ_CREATION.TITLE_PATTERN' | translate }}
+            </p>
         </div>
 
         <div>
-            <label for="duration" class="block text-sm font-medium">Durée :</label>
-            <input placeholder="Entrez la durée (secondes) de chaque question" type="number" id="duration" formControlName="duration" class="w-full p-2 border rounded" />
-            <p *ngIf="quizForm.get('duration')?.hasError('required') && quizForm.get('duration')?.touched" class="text-red-500 text-sm">La durée est requise</p>
-            <p *ngIf="(quizForm.get('duration')?.hasError('min') || quizForm.get('duration')?.hasError('max')) && quizForm.get('title')?.touched" class="text-red-500 text-sm">La durée doit être entre 10 et 60 secondes</p>
+            <label for="duration" class="block text-sm font-medium">{{ 'QUIZ_CREATION.DURATION_LABEL' | translate }}:</label>
+            <input [placeholder]="'QUIZ_CREATION.DURATION_PLACEHOLDER' | translate" type="number" id="duration" formControlName="duration" class="w-full p-2 border rounded" />
+            <p *ngIf="quizForm.get('duration')?.hasError('required') && quizForm.get('duration')?.touched" class="text-red-500 text-sm">
+                {{ 'QUIZ_CREATION.DURATION_REQUIRED' | translate }}
+            </p>
+            <p *ngIf="(quizForm.get('duration')?.hasError('min') || quizForm.get('duration')?.hasError('max')) && quizForm.get('title')?.touched" class="text-red-500 text-sm">
+                {{ 'QUIZ_CREATION.DURATION_RANGE' | translate }}
+            </p>
         </div>
 
         <div>
-            <label for="description" class="block text-sm font-medium">Description :</label>
-            <input maxlength="250" placeholder="Entrez la description du jeu" type="text" id="description" formControlName="description" class="w-full p-2 border rounded" />
-            <p *ngIf="quizForm.get('description')?.hasError('required') && quizForm.get('description')?.touched" class="text-red-500 text-sm">La description est requise</p>
-            <p *ngIf="quizForm.get('description')?.hasError('pattern') && quizForm.get('description')?.touched" class="text-red-500 text-sm">La description ne doit pas être composée uniquement d'espaces</p>
+            <label for="description" class="block text-sm font-medium">{{ 'QUIZ_CREATION.DESCRIPTION_LABEL' | translate }}:</label>
+            <input maxlength="250" [placeholder]="'QUIZ_CREATION.DESCRIPTION_PLACEHOLDER' | translate" type="text" id="description" formControlName="description" class="w-full p-2 border rounded" />
+            <p *ngIf="quizForm.get('description')?.hasError('required') && quizForm.get('description')?.touched" class="text-red-500 text-sm">
+                {{ 'QUIZ_CREATION.DESCRIPTION_REQUIRED' | translate }}
+            </p>
+            <p *ngIf="quizForm.get('description')?.hasError('pattern') && quizForm.get('description')?.touched" class="text-red-500 text-sm">
+                {{ 'QUIZ_CREATION.DESCRIPTION_PATTERN' | translate }}
+            </p>
         </div>
 
         <app-question-list [questionsArray]="questionsArray" [parentGroup]="quizForm"></app-question-list>
@@ -56,10 +65,10 @@
 
         <div class="flex flex-wrap justify-end space-x-4 mt-20">
             <button type="submit" class="!bg-green-500 text-white px-4 py-2 rounded hover:!bg-green-600">
-                {{ mode === pageModel.CREATION ? 'Créer' : 'Modifier' }}
+                {{ mode === pageModel.CREATION ? ('QUIZ_CREATION.CREATE' | translate) : ('QUIZ_CREATION.EDIT' | translate) }}
             </button>
             <button type="button" class="!bg-red-500 text-white px-4 py-2 rounded hover:!bg-red-600" routerLink="/game-admin-page">
-                Annuler
+                {{ 'QUIZ_CREATION.CANCEL' | translate }}
             </button>
         </div>
 

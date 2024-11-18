@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class CancelBtn extends StatelessWidget {
   final GlobalNavigationService _globalNavigationService =
@@ -14,7 +15,7 @@ class CancelBtn extends StatelessWidget {
         _globalNavigationService.navigateTo('/home');
       },
       child: Text(
-        'Annuler',
+        TranslationService.instance.text['CONFIRMATION_DIALOG']['CANCEL'],
         style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
       ),
       style: TextButton.styleFrom(

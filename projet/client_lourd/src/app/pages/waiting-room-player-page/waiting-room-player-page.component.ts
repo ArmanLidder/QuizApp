@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
+import {
+    WaitingRoomManagementService
+} from "@app/services/waiting-room-management.service/waiting-room-management.service";
 
 @Component({
     selector: 'app-waiting-room-player-page',
@@ -11,8 +13,7 @@ export class WaitingRoomPlayerPageComponent implements OnDestroy, OnInit{
     isValidation: boolean = true;
     isPrivate: boolean = false;
 
-    constructor(private socketService: SocketClientService) {
-        if (!this.socketService.isSocketAlive()) this.socketService.connect()
+    constructor(public waitingRoomManagementService: WaitingRoomManagementService) {
     }
 
     ngOnInit() {

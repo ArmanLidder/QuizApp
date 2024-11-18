@@ -5,6 +5,8 @@
 export const environment = {
     production: false,
     serverUrl: 'http://localhost:3000/api',
+    // serverUrl: 'http://192.168.137.95:3000/api',
+    // serverUrl: 'http://ec2-3-142-150-244.us-east-2.compute.amazonaws.com:3000/api',
     firebase : {
         apiKey: "AIzaSyAurHesdch5GUNG0at-Ek2PeTrSQCv1xmg",
         authDomain: "polyquiz-app.firebaseapp.com",
@@ -14,6 +16,14 @@ export const environment = {
         appId: "1:98437822234:web:eb97250f2dd5957eaa5ea3",
         measurementId: "G-LYRYDVNRLW"
     }
+    // firebase : {
+    //     apiKey: "AIzaSyDyZJZmbrP_Phc8C9SNoqZWrioatX89Pzk",
+    //     authDomain: "polyquiz-103.firebaseapp.com",
+    //     projectId: "polyquiz-103",
+    //     storageBucket: "polyquiz-103.firebasestorage.app",
+    //     messagingSenderId: "278944080772",
+    //     appId: "1:278944080772:web:3b2c748ffd601ee94a73d1"
+    // }
 };
 
 /*
