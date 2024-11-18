@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 
 class MessageWindowWidget extends StatefulWidget {
   final void Function() returnCallback;
@@ -22,6 +24,8 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
   final TextEditingController _messageController = TextEditingController();
   String defaultName = 'null';
   List<Message> defaultMessages = [];
+  Map get text => TranslationService.instance.text;
+  Map get chatText => text['CHAT_COMPONENT'];
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +64,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
 
   Widget getDeletedChannelText() {
     return Text(
-      "Le canal a été effacé. Veuillez quitter. Au revoir!",
+      chatText['CHANNEL_DELETED'],
       style: TextStyle(
         color: Colors.red,
       ),
@@ -75,7 +79,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
           child: TextField(
             controller: _messageController,
             decoration: InputDecoration(
-              hintText: "input a message...",
+              hintText: chatText['ENTER_MESSAGE'],
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(color: Colors.grey, width: 1)
@@ -116,6 +120,8 @@ class MessageListWidget extends StatelessWidget {
   final List<Message> messages;
   final ScrollController scrollController;
   const MessageListWidget({required this.messages, required this.scrollController, super.key});
+  Map get text => TranslationService.instance.text;
+  Map get chatText => text['CHAT_COMPONENT'];
 
   @override
   Widget build(BuildContext context) {
@@ -221,31 +227,33 @@ class MessageTile extends StatelessWidget {
   }
 
   Widget buildUserInfo() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          flex: 3,
-          child: FutureBuilder(
-            future: getImageUrl(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) => CircleAvatar(
-              backgroundImage: NetworkImage(snapshot.data ?? imageUrl),
-            ),
-          ),
-        ),
-        Flexible(child: FutureBuilder(
-            future: getUsername(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot)
-              => Container(
-                width: 70,
-                child: Text(
-                  snapshot.data ?? username,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,),
-              )
-        ))
-      ],
-    );
+    return SmartAvatar(userId: userId, size: 42, hasName: true, interactible: true,);
+    //
+    // Column(
+    //   children: <Widget>[
+    //     Expanded(
+    //       flex: 3,
+    //       child: FutureBuilder(
+    //         future: getImageUrl(),
+    //         builder: (BuildContext context, AsyncSnapshot<String> snapshot) => CircleAvatar(
+    //           backgroundImage: NetworkImage(snapshot.data ?? imageUrl),
+    //         ),
+    //       ),
+    //     ),
+    //     Flexible(child: FutureBuilder(
+    //         future: getUsername(),
+    //         builder: (BuildContext context, AsyncSnapshot<String> snapshot)
+    //           => Container(
+    //             width: 70,
+    //             child: Text(
+    //               snapshot.data ?? username,
+    //               textAlign: TextAlign.center,
+    //               overflow: TextOverflow.ellipsis,
+    //               maxLines: 1,),
+    //           )
+    //     ))
+    //   ],
+    // );
   }
 
   bool isUserSender() {
