@@ -28,7 +28,9 @@ class HostInterfaceManagementService extends ChangeNotifier {
     return _timerText!;
   }
   void set timerText(String value) => _timerText = value;
-  Map get timerTransText => TranslationService.instance.text['GAME_INTERFACE']['TIMER_TEXT'];
+  Map get transText => TranslationService.instance.text['GAME_INTERFACE'];
+  Map get timerTransText => transText['TIMER_TEXT'];
+  Map get qreValueText => transText['QRE_HISTOGRAM_X_VAL'];
   bool isGameOver = false;
   Map<String, int> histogramDataChangingResponses = {};
   Map<String, bool> histogramDataValue = {};
@@ -106,6 +108,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.handleEndQuestion();
     this.handleFinalTimeTransition();
     this.handleRefreshChoicesStats();
+    this.handleQreRefresh();
     this.handleGetInitialQuestion();
     this.handleGetNextQuestion();
     this.handleRemovedPlayer();
@@ -197,6 +200,19 @@ class HostInterfaceManagementService extends ChangeNotifier {
           createChoicesStatsMap(List<num>.from(choicesStatsValue));
       notifyListeners();
     });
+  }
+
+  void handleQreRefresh() {
+    this._socketService.onMessage(SocketEvent.REFRESH_QRE_STATS, (qreStatsValue) {
+      final values = (qreStatsValue as List).map((element) => element as int).toList();
+      print(values);
+      this.histogramDataChangingResponses = {
+            qreValueText['WITHIN_MARGIN']: values[0],
+            qreValueText['EXACT_ANSWER']: values[1],
+            qreValueText['INCORRECT_ANSWER']: values[2]
+          };
+          notifyListeners();
+        });
   }
 
   void handleGetInitialQuestion() {
@@ -300,13 +316,35 @@ class HostInterfaceManagementService extends ChangeNotifier {
     print('question in init graph');
     print(question);
     this.isHostEvaluating = false;
-    if (question.type == QuestionType.QCM && question.choices != null) {
-      print('INIT GRAPH GOT INTO THE IF');
-      for (QuizChoice choice in question.choices!) {
-        this
-            .histogramDataValue
-            .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
-      }
+    // if (question.type == QuestionType.QCM) {
+    //   print('INIT GRAPH GOT INTO THE IF');
+    //   for (QuizChoice choice in question.choices!) {
+    //     this
+    //         .histogramDataValue
+    //         .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
+    //   }
+    // }
+    switch (question.type) {
+      case QuestionType.QCM:
+        print('INIT GRAPH GOT INTO THE IF');
+        if (question.choices == null) {
+          notifyListeners();
+          return;
+        }
+        for (QuizChoice choice in question.choices!) {
+          this
+              .histogramDataValue
+              .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
+        }
+        break;
+      case QuestionType.QRE:
+        this.histogramDataValue = {
+          qreValueText['WITHIN_MARGIN']: true,
+          qreValueText['EXACT_ANSWER']: true,
+          qreValueText['INCORRECT_ANSWER']: false,
+        };
+        break;
+      default:
     }
     notifyListeners();
   }

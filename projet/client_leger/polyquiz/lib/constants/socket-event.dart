@@ -51,4 +51,5 @@ class SocketEvent {
   static const String CREATE_TEAM = 'create_team';
   static const String JOIN_TEAM = 'join_team';
   static const String GET_GAME_TYPE = 'get_game_type';
+  static const String REFRESH_QRE_STATS = "refreshQREStats";
 }
