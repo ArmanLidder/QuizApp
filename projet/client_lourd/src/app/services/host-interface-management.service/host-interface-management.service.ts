@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, ApplicationRef} from '@angular/core';
 import {
     ACTIVE,
     ACTIVE_STATUS,
@@ -24,6 +24,9 @@ import {
     QuestionStatistics,
 } from '@common/constants/statistic-zone.component.const';
 import {TranslateService} from "@ngx-translate/core";
+import {GameConfigService} from "@app/services/game-config.service/game-config.service";
+import {OpenaiService} from "@app/services/openai.service/openai.service";
+import {QrlEvaluationService} from "@app/services/qrl-evaluation.service/qrl-evaluation.service";
 
 @Injectable({
     providedIn: 'root',
@@ -43,11 +46,16 @@ export class HostInterfaceManagementService {
     EXACT_ANSWER = this.translate.instant('GAME_INTERFACE.QRE_HISTOGRAM_X_VAL.EXACT_ANSWER');
     INCORRECT_ANSWER = this.translate.instant('GAME_INTERFACE.QRE_HISTOGRAM_X_VAL.INCORRECT_ANSWER');
 
+
     constructor(
         public gameService: GameService,
         private readonly socketService: SocketClientService,
         private interactiveListService: InteractiveListSocketService,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private gameConfig: GameConfigService,
+        private openIA: OpenaiService,
+        private evaluationQRLService: QrlEvaluationService,
+        private appRef: ApplicationRef,
     ) {}
 
     private get roomId() {
@@ -370,6 +378,21 @@ export class HostInterfaceManagementService {
     private sendQrlAnswer() {
         this.socketService.send(SocketEvent.GET_PLAYER_ANSWERS, this.gameService.gameRealService.roomId, (playerAnswers: string) => {
             this.responsesQRL = new Map(JSON.parse(playerAnswers));
+            if (this.gameConfig.IA) {
+                if(this.openIA) this.openIA.init();
+                for (const [key, value] of this.responsesQRL.entries()) {
+                    this.openIA.
+                    correctAnswer(value.answers, this.gameService.question?.text ?? "", this.translate.currentLang).
+                    then((response) => {
+                        const res = response?.choices[0].message?.content ?? "No Answer";
+                        const score = this.extractScoreFromIAQRL(res);
+                        this.evaluationQRLService.correctedQrlByOpenAi.set(key, [score, response?.choices[0].message?.content ?? "No Answer"])
+                        this.appRef.tick();
+                    });
+                }
+                this.appRef.tick();
+            }
+
         });
     }
 
@@ -394,6 +417,16 @@ export class HostInterfaceManagementService {
             data.push([values, responses, stats[2] as QuizQuestion]);
         });
         return data;
+    }
+
+    private extractScoreFromIAQRL(qrl_text: string) {
+        const patternAa = /Aa/;
+        const patternBb = /Bb/;
+        const patternCc = /Cc/;
+        if (patternCc.test(qrl_text)) return 100;
+        else if (patternBb.test(qrl_text)) return 50;
+        else if (patternAa.test(qrl_text)) return 0;
+        return 0;
     }
 
     reset() {
