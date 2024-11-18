@@ -4,9 +4,9 @@
 
 export const environment = {
     production: false,
-    //serverUrl: 'http://localhost:3000/api',
+    serverUrl: 'http://localhost:3000/api',
     // serverUrl: 'http://192.168.137.95:3000/api',
-    serverUrl: 'http://ec2-3-142-150-244.us-east-2.compute.amazonaws.com:3000/api',
+    //serverUrl: 'http://ec2-3-142-150-244.us-east-2.compute.amazonaws.com:3000/api',
     firebase: {
         apiKey: "AIzaSyAurHesdch5GUNG0at-Ek2PeTrSQCv1xmg",
         authDomain: "polyquiz-app.firebaseapp.com",

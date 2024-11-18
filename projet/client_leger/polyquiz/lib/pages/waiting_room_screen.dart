@@ -72,15 +72,15 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             widget.quiz.id, widget.gameConfigService!.getGameConfig());
         realGameService.username = 'host';
         realGameService.roomId = waitingRoomService.roomId;
-        waitingRoomService.getGameType();
+        setState(() {
+          waitingRoomService.gameType = widget.gameConfigService!.gameType;
+        });
       } else {
         roomId = widget.quiz.id;
         username = widget.username ?? 'nothing';
         waitingRoomService.roomId = int.parse(roomId);
         realGameService.username = username;
-        waitingRoomService.getGameType();
         realGameService.roomId = int.parse(roomId);
-
         print('Joining room $roomId as $username');
       }
       if (username == 'nothing') {
@@ -93,6 +93,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
         if (!widget.isHost) {
           waitingRoomService.gatherPlayers();
+          print(
+              'waiting room player game type: ${waitingRoomService.gameType}');
         }
       }
       waitingRoomService.configureBaseSocketFeatures();
@@ -193,11 +195,17 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                       : null,
                 ),
               SizedBox(height: 20.0),
-              Text(
-                  waitingRoomService.gameType == 'classic'
-                      ? waitRoomText['PLAYERS_TITLE']
-                      : waitRoomText['TEAMS_TITLE'],
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              AnimatedBuilder(
+                animation: waitingRoomService,
+                builder: (BuildContext context, Widget? snapshot) {
+                  return Text(
+                      waitingRoomService.gameType == 'classic'
+                          ? waitRoomText['PLAYERS_TITLE']
+                          : waitRoomText['TEAMS_TITLE'],
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20));
+                },
+              ),
               SizedBox(height: 20),
               Expanded(
                 child: AnimatedBuilder(
@@ -373,27 +381,29 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                     fontWeight: FontWeight.normal)),
                           );
                         }),
-                  if (!widget.isHost &&
-                      waitingRoomService.gameType != 'classic')
+                  if (!widget.isHost)
                     AnimatedBuilder(
                         animation: waitingRoomService,
                         builder: (BuildContext context, Widget? snapshot) {
-                          return TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor: (!this.onlyOneMember())
-                                    ? Color.fromRGBO(53, 121, 246, 1)
-                                    : Color.fromRGBO(200, 200, 200, 1),
-                              ),
-                              onPressed: this.onlyOneMember() == true
-                                  ? null
-                                  : () {
-                                      waitingRoomService.sendCreateTeam();
-                                    },
-                              child: Text(waitRoomText['CREATE_TEAM'],
-                                  style: TextStyle(
-                                      color: Color.fromRGBO(255, 255, 255, 1),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal)));
+                          return waitingRoomService.gameType == 'classic'
+                              ? SizedBox.shrink()
+                              : TextButton(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: (!this.onlyOneMember())
+                                        ? Color.fromRGBO(53, 121, 246, 1)
+                                        : Color.fromRGBO(200, 200, 200, 1),
+                                  ),
+                                  onPressed: this.onlyOneMember() == true
+                                      ? null
+                                      : () {
+                                          waitingRoomService.sendCreateTeam();
+                                        },
+                                  child: Text(waitRoomText['CREATE_TEAM'],
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromRGBO(255, 255, 255, 1),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.normal)));
                         }),
                   QuitBtn(
                       isHost: widget.isHost, roomId: waitingRoomService.roomId),
