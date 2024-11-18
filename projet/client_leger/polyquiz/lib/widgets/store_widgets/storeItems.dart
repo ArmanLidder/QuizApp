@@ -170,7 +170,42 @@ class RewardThemeItem extends StatelessWidget {
         ),
         SizedBox(height: 8),
         // Buy button with cost
-        RewardThemeButton(cost: cost, onBuy: onBuy, itemId: itemId, achievement: 4,),
+        RewardThemeButton(cost: cost, onBuy: onBuy, itemId: itemId, achievement: achievement,),
+        SizedBox(height: 20),
+      ],
+    );
+  }
+}
+class RewardCashItem extends StatelessWidget {
+  final String itemId;
+  final num cost;
+  final num achievement;
+  final Future<void> Function() onBuy;
+
+  const RewardCashItem({
+    Key? key,
+    required this.itemId,
+    required this.cost,
+    required this.onBuy,
+    required this.achievement,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Purple circle
+        ClipOval(
+          child: Image.network(
+            "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/shopGIFS%2FmoneyBag.png?alt=media&token=2b17df15-3c81-4f39-b27f-03c96b2f8f84",
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          ),
+        ),
+
+        SizedBox(height: 8),
+        // Buy button with cost
+        RewardCashButton(cost: cost, onClaim: onBuy, itemId: itemId, achievement: achievement),
         SizedBox(height: 20),
       ],
     );

@@ -114,8 +114,6 @@ class RewardImageStoreList extends StatelessWidget {
     ));
   }
 }
-
-
 class RewardThemeStoreList extends StatelessWidget {
   final List<Map<String, dynamic>> rewardItems;
   final String userId;
@@ -130,6 +128,34 @@ class RewardThemeStoreList extends StatelessWidget {
       Widget widget = RewardThemeItem(
         itemId: item["id"],
         name: item["name"],
+        cost: item["cost"],
+        achievement : item["achievement"],
+        onBuy: () async =>  {await storeService.buy(userId, item["id"])},
+      );
+      items.add(widget);
+      items.add(SizedBox(
+        width: 5,
+      ));
+    });
+    return  Center(child:Wrap(
+      children: items,
+    ));
+  }
+}
+
+class RewardCashStoreList extends StatelessWidget {
+  final List<Map<String, dynamic>> cashItems;
+  final String userId;
+  final StoreService storeService = Get.find();
+
+  RewardCashStoreList({required this.cashItems, required this.userId});
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> items = [];
+    cashItems.forEach((item) {
+      Widget widget = RewardCashItem(
+        itemId: item["id"],
         cost: item["cost"],
         achievement : item["achievement"],
         onBuy: () async =>  {await storeService.buy(userId, item["id"])},

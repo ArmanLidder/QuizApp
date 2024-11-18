@@ -80,6 +80,10 @@ class _StorepageState extends State<Storepage> {
                         RewardThemeStoreList(
                             rewardItems: storeItems!['rewardThemes']!, userId: this.uid),
                         SizedBox(height: 20),
+                        Text(TranslationService.instance.languageValue.value == Language.fr ? "Récompenses d'exploit: " : "Achievements rewards: "),
+                        RewardCashStoreList(
+                            cashItems: storeItems!['rewardCurrency']!, userId: this.uid),
+                        SizedBox(height: 20),
 
                       ],
                     ),
