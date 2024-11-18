@@ -23,18 +23,20 @@ export class GameConfigDialogComponent {
       friendsOnly: [false],
       private: [false],
       prestige: ['0', Validators.required],
+      IA: [false],
     });
   }
 
   // Submit form and send data to the service
   saveConfig(): void {
     if (this.gameConfigForm.valid) {
-      const { gameType, price, friendsOnly, private: isPrivate, prestige } = this.gameConfigForm.value;
+      const { gameType, price, friendsOnly, private: isPrivate, prestige, IA } = this.gameConfigForm.value;
       this.gameConfigService.setGameType(gameType);
       this.gameConfigService.setPrice(price);
       this.gameConfigService.setFriendsOnly(friendsOnly);
       this.gameConfigService.setPrivacy(isPrivate);
-      this.gameConfigService.setPrestige(prestige)
+      this.gameConfigService.setPrestige(prestige);
+      this.gameConfigService.setIA(IA);
       this.dialogRef.close(true);
     }
   }
