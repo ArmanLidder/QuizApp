@@ -337,6 +337,16 @@ class HostInterfaceManagementService extends ChangeNotifier {
               .addEntries(<String, bool>{choice.text: choice.isCorrect!}.entries);
         }
         break;
+      case QuestionType.QRL:
+        this.histogramDataChangingResponses = {
+            'Actif': 0,
+            'Inactif': numberOfPlayers,
+          };
+          this.histogramDataValue = {
+            'Actif': true,
+            'Inactif': false,
+        };
+        break;
       case QuestionType.QRE:
         this.histogramDataValue = {
           qreValueText['WITHIN_MARGIN']: true,
@@ -345,16 +355,6 @@ class HostInterfaceManagementService extends ChangeNotifier {
         };
         break;
       default:
-    }
-    else{
-      this.histogramDataChangingResponses = {
-        'Actif': 0,
-        'Inactif': numberOfPlayers,
-      };
-      this.histogramDataValue = {
-        'Actif': true,
-        'Inactif': false,
-      };
     }
     notifyListeners();
   }
