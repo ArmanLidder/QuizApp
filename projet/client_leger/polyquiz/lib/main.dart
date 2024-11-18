@@ -91,22 +91,84 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Polyquiz',
       navigatorKey: GlobalNavigationService.navigatorKey,
-      home: AuthPage(), // The starting page is set to LoginPage.
+      home: PopScope(
+        canPop: false,
+        child: AuthPage(),
+      ),
       routes: {
-        '/home': (context) => HomePage(),
-        '/auth': (context) => AuthPage(),
-        '/quizz': (context) => QuizListPage(),
-        '/offline': (context) => OfflineQuizListPage(),
-        '/offlinegame': (context) => OfflineGamePage(),
-        '/join': (context) => JoinRoomPage(),
-        '/roomList': (context) => ActiveGameListComponent(),
-        '/game': (context) => GamePage(),
-        '/user': (context) => Userpage(),
-        '/store': (context) => Storepage(),
-        '/waitingRoom': (context) => WaitingRoomScreen(
-            quiz: ModalRoute.of(context)!.settings.arguments as Quiz,
-            isHost: true),
+        '/home': (context) => PopScope(
+              canPop: false,
+              child: HomePage(),
+            ),
+        '/auth': (context) => PopScope(
+              canPop: false,
+              child: AuthPage(),
+            ),
+        '/quizz': (context) => PopScope(
+              canPop: false,
+              child: QuizListPage(),
+            ),
+        '/offline': (context) => PopScope(
+              canPop: false,
+              child: OfflineQuizListPage(),
+            ),
+        '/offlinegame': (context) => PopScope(
+              canPop: false,
+              child: OfflineGamePage(),
+            ),
+        '/join': (context) => PopScope(
+              canPop: false,
+              child: JoinRoomPage(),
+            ),
+        '/roomList': (context) => PopScope(
+              canPop: false,
+              child: ActiveGameListComponent(),
+            ),
+        '/game': (context) => PopScope(
+              canPop: false,
+              child: GamePage(),
+            ),
+        '/user': (context) => PopScope(
+              canPop: false,
+              child: Userpage(),
+            ),
+        '/store': (context) => PopScope(
+              canPop: false,
+              child: Storepage(),
+            ),
+        '/waitingRoom': (context) => PopScope(
+              canPop: false,
+              child: WaitingRoomScreen(
+                quiz: ModalRoute.of(context)!.settings.arguments as Quiz,
+                isHost: true,
+              ),
+            ),
       },
     );
   }
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     title: 'Polyquiz',
+  //     navigatorKey: GlobalNavigationService.navigatorKey,
+  //     home: AuthPage(), // The starting page is set to LoginPage.
+  //     routes: {
+  //       '/home': (context) => HomePage(),
+  //       '/auth': (context) => AuthPage(),
+  //       '/quizz': (context) => QuizListPage(),
+  //       '/offline': (context) => OfflineQuizListPage(),
+  //       '/offlinegame': (context) => OfflineGamePage(),
+  //       '/join': (context) => JoinRoomPage(),
+  //       '/roomList': (context) => ActiveGameListComponent(),
+  //       '/game': (context) => GamePage(),
+  //       '/user': (context) => Userpage(),
+  //       '/store': (context) => Storepage(),
+  //       '/waitingRoom': (context) => WaitingRoomScreen(
+  //           quiz: ModalRoute.of(context)!.settings.arguments as Quiz,
+  //           isHost: true),
+  //     },
+  //   );
+  // }
 }

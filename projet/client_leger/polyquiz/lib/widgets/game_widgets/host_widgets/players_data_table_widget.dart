@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/player_status.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/services/waiting_room_service.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 
 class PlayersDataTable extends StatefulWidget {
@@ -18,6 +19,7 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
   bool isAscending = true;
   TextStyle _textStyle = TextStyle(fontSize: 16);
   InteractiveListService _interactiveListService = InteractiveListService();
+  WaitingRoomService _waitingRoomService = WaitingRoomService();
 
   void onSort(int columnIndex, bool isAscending) {
     if (columnIndex == 0) {
@@ -66,6 +68,19 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
     }
   }
 
+  String findTeam(String userId) {
+    String result = "Quitté";
+    for (var teamId in _waitingRoomService.teams.keys) {
+      List<String> team = _waitingRoomService.teams[teamId]!;
+      if (team.contains(userId)) {
+        result = teamId.toString();
+        break;
+      }
+    }
+
+    return result;
+  }
+
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get columnText => gameText['PLAYER_LIST']['COLUMN_TITLES'];
 
@@ -80,8 +95,14 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
         onSort: (columnIndex, isAscending) => onSort(columnIndex, isAscending),
         label: Expanded(child: Center(child: Text(columnText['POINTS']))),
       ),
-      DataColumn(label: Expanded(child: Center(child: Text(columnText['BONUS'])))),
+      DataColumn(
+          label: Expanded(child: Center(child: Text(columnText['BONUS'])))),
     ];
+
+    if (_waitingRoomService.gameType == 'equipe') {
+      columns.add(DataColumn(
+          label: Expanded(child: Center(child: Text(columnText['TEAM'])))));
+    }
     return Container(
       width: 650.0,
       child: AnimatedBuilder(
@@ -110,19 +131,29 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                       decorationColor: Colors.white,
                       decorationThickness: 2);
                 }
-                return DataRow(color: WidgetStatePropertyAll(rowColor), cells: [
+                List<DataCell> cells = [
                   DataCell(Center(
-                      child: SmartAvatar(
-                          userId: player.username,
-                          hasName: true,
-                          interactible: false))),
+                    child: SmartAvatar(
+                      userId: player.username,
+                      hasName: true,
+                      interactible: false,
+                    ),
+                  )),
                   DataCell(Center(
-                      child: Text(player.score.toString(),
-                          style: playerTextStyle))),
+                    child:
+                        Text(player.score.toString(), style: playerTextStyle),
+                  )),
                   DataCell(Center(
                       child: Text(player.bonus.toString(),
                           style: playerTextStyle))),
-                ]);
+                ];
+                if (_waitingRoomService.gameType == 'equipe') {
+                  cells.add(DataCell(Center(
+                    child: Text(findTeam(player.username)),
+                  )));
+                }
+                return DataRow(
+                    color: WidgetStatePropertyAll(rowColor), cells: cells);
               }).toList(),
             );
           }),

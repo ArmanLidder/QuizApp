@@ -287,10 +287,10 @@ class ResultPage extends StatelessWidget {
           'Le jeux est terminé! voici les résultats.',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        StatisticZone(gameStats : this.hostInterfaceManagementService.gameStats),
         PlayersDataTable(
           isHost: true,
         ),
+        StatisticZone(gameStats : this.hostInterfaceManagementService.gameStats),
         QuitBtn(
           isHost: true,
           roomId: gameService.realGameService.roomId,
