@@ -148,7 +148,10 @@
     "OWNED": "Already owned",
     "NOT_ENOUGH_FUNDS": "Not enough funds",
     "BUY": "Buy",
-    "COST_SUFFIX": "$"
+    "COST_SUFFIX": "$",
+    "REWARDS": "Rewards",
+    "UNLOCKED_AT_ACHIEVEMENT": "Unlocked at achievement : ",
+    "UNLOCKED_AT_LEVEL": "Unlocked at level "
   },
   "GAME_ADMIN": {
     "TITLE": "Admin Panel: Manage All Quiz Games",

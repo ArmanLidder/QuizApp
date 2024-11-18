@@ -5,6 +5,5 @@ export interface StoreItem {
     name: string,
     source?: string,
     minLevel?:number,
-    minPrestige?:number,
     achievement?:number,
 }

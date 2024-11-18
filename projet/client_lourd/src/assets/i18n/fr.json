@@ -148,7 +148,10 @@
     "OWNED": "Déjà possédé",
     "NOT_ENOUGH_FUNDS": "Pas assez de fonds",
     "BUY": "Acheter",
-    "COST_SUFFIX": "$"
+    "COST_SUFFIX": "$",
+    "REWARDS": "Récompenses",
+    "UNLOCKED_AT_ACHIEVEMENT": "Débloqué à l'exploit : ",
+    "UNLOCKED_AT_LEVEL": "Débloqué au niveau "
   },
   "GAME_ADMIN": {
     "TITLE": "Panneau d'administration : gérer tous les jeux-questionnaires",
