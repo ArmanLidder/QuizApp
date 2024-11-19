@@ -30,7 +30,9 @@ class NotificationService extends GetxController {
     // though in theory they should always be added by other means
     if (!channelMessageCount.containsKey(channel.id)) {
       channelMessageCount[channel.id!] = channel.messages.length;
-      isChannelRead[channel.id!] = false;
+      bool isNewChannel = channel.messages.length == 0;
+      isChannelRead[channel.id!] = isNewChannel;
+      if (isNewChannel) return;
       notify();
       return;
     }

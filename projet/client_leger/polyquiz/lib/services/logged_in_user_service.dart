@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
+import 'package:polyquiz/services/notification_service.dart';
 import 'user_service.dart';
 
 class LoggedInUserService extends GetxController {
@@ -79,6 +80,8 @@ class LoggedInUserService extends GetxController {
           .collection('users')
           .doc(currentUser.uid)
           .update({'isConnected': true});
+
+      NotificationService.instance.updateChannelMaps();
 
       DocumentReference userDocRef = _firestore.collection('users').doc(currentUser.uid);
       DocumentSnapshot userSnapshot = await userDocRef.get();
