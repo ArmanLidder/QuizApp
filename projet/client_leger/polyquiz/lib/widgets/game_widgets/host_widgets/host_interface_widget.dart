@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/enums/question_type.dart';
+import 'package:polyquiz/models/question_statistics.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
@@ -162,6 +163,18 @@ class HostHeader extends StatelessWidget {
         ));
   }
 
+  Widget? getQREAnswer() {
+    final currentQuestion = this.gameService.realGameService.question;
+    if (currentQuestion == null || this.gameService.realGameService.question?.type != QuestionType.QRE) return null;
+    return Text(
+      "✅ : ${currentQuestion.answer} ± ${currentQuestion.margin}",
+      style: TextStyle(
+        fontWeight: FontWeight.normal,
+        fontSize: 16
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final validateButtonStyle = TextButton.styleFrom(
@@ -183,6 +196,7 @@ class HostHeader extends StatelessWidget {
               )
             ],
           ),
+          if (getQREAnswer() != null) getQREAnswer()!,
           if (getImageWidgetFromQuestion(context) != null)
             getImageWidgetFromQuestion(context)!
           else SizedBox(height: 40),
