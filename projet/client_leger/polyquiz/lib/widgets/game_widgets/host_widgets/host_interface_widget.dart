@@ -142,6 +142,25 @@ class HostHeader extends StatelessWidget {
     this.gameInterfaceManagementService,
   });
 
+  Widget? getImageWidgetFromQuestion(BuildContext context) {
+    String? imageUrl = this.gameService.realGameService.question?.imageUrl;
+    if (imageUrl == null) return null;
+    return Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.25,
+          // height: MediaQuery.of(context).size.height * 0.25,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +183,9 @@ class HostHeader extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(height: 40),
+          if (getImageWidgetFromQuestion(context) != null)
+            getImageWidgetFromQuestion(context)!
+          else SizedBox(height: 40),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
