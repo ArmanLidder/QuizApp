@@ -58,4 +58,10 @@
             <a class="text-purple-700 ml-2 font-bold" [routerLink]="['/login']">{{ 'REGISTER_PAGE.LOGIN_LINK' | translate }}</a>
         </div>
     </form>
+    <div
+            *ngIf="isLogging"
+            class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-md"
+    >
+        <mat-spinner [diameter]="50"></mat-spinner>
+    </div>
 </div>
