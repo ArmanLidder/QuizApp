@@ -21,7 +21,7 @@
 
         <div *ngIf="customAvatarUrl" class="avatar-item">
             <img [src]="customAvatarUrl"
-                 alt="Custom Avatar" class="w-24 h-24 rounded-full"
+                 alt="Custom Avatar" class="w-20 h-20 rounded-full mb-2 object-cover"
                  [class.ring-4]="customAvatarSelected"
                  [class.ring-blue-500]="customAvatarSelected"
                  (click)="selectCustomAvatar()"/>
