@@ -4,9 +4,10 @@ import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/initial_question_data.dart';
 import 'package:polyquiz/models/next_question_data.dart';
-import 'package:polyquiz/models/player.dart';
+import 'package:polyquiz/models/player.dart' as player;
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/game_interface_management_service.dart';
 
 class RealGameService extends ChangeNotifier {
   static final RealGameService _instance = RealGameService._internal();
@@ -18,10 +19,12 @@ class RealGameService extends ChangeNotifier {
   }
 
   SocketService _socketService = SocketService();
+  GameInterfaceManagementService _gameInterfaceManagementService =
+      GameInterfaceManagementService();
 
   String username = '';
   int roomId = 0;
-  List<Player> players = [];
+  List<player.Player> players = [];
   Map<int, String?> answers = {};
   int questionNumber = 1;
   int timer = 0;
@@ -95,8 +98,9 @@ class RealGameService extends ChangeNotifier {
         index: data['index'],
         numberOfQuestions: data['numberOfQuestions'],
       );
-
+      this._gameInterfaceManagementService.changeQcmEnabled(true);
       this.question = questionData.question;
+      this.oldQuestion = this.question!;
       if (!isNotified) {
         notifyListeners();
         isNotified = true;
@@ -109,12 +113,11 @@ class RealGameService extends ChangeNotifier {
     });
 
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) {
-      this.oldQuestion = this.question!;
       NextQuestionData nextQuestionData = NextQuestionData(
           question: QuizQuestion.fromJson(data['question']),
           index: data['index'],
           isLast: data['isLast']);
-
+      this._gameInterfaceManagementService.changeQcmEnabled(true);
       if (!isNotified) {
         notifyListeners();
         isNotified = true;
@@ -123,6 +126,7 @@ class RealGameService extends ChangeNotifier {
       this.isHostEvaluating = false;
       this.isSentAnswer = false;
       this.question = nextQuestionData.question;
+      this.oldQuestion = this.question!;
       this.questionNumber = nextQuestionData.index;
       this.isLast = nextQuestionData.isLast;
       this.validated = false;
