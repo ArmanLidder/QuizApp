@@ -28,6 +28,7 @@
                 <h2> Question {{gameService.questionNumber}}</h2>
                 <h3> {{ 'GAME_INTERFACE.QUESTION_INFO.VALUE' | translate }}: {{ gameService.question?.points }} points</h3>
                 <h1>{{ gameService.question?.text }}</h1>
+                <h3 *ngIf="gameService.question?.type === 2">✅ : {{gameService.question?.answer }} ± {{gameService.question?.margin}}</h3>
             </div>
         </section>
     </div>
