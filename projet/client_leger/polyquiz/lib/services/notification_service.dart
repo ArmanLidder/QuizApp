@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/background_notification_service.dart';
 import 'package:polyquiz/services/channelService.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 
 class NotificationService extends GetxController {
   final channelService = ChannelService.instance;
@@ -24,6 +25,9 @@ class NotificationService extends GetxController {
 
   void handlePermittedChannel(Canal channel) {
     if (channel.id == null) return;
+
+    // this if clause is a false safe is a permitted channel hasn't been added
+    // though in theory they should always be added by other means
     if (!channelMessageCount.containsKey(channel.id)) {
       channelMessageCount[channel.id!] = channel.messages.length;
       isChannelRead[channel.id!] = false;
@@ -35,6 +39,7 @@ class NotificationService extends GetxController {
 
     if (channel.messages.length > channelMessageCount[channel.id]!) {
       channelMessageCount[channel.id!] = channel.messages.length;
+      if (channel.messages.last.userUid == LoggedInUserService.instance.user?.uid) return; // if the message was sent by user, ignore it
       isChannelRead[channel.id!] = false;
       notify();
       print("New unread message in ${channel.name}");
@@ -44,6 +49,19 @@ class NotificationService extends GetxController {
   void handleUnpermittedChannel(Canal channel) {
     if (channelMessageCount.containsKey(channel.id)) channelMessageCount.remove(channel.id);
     if (isChannelRead.containsKey(channel.id)) isChannelRead.remove(channel.id);
+  }
+
+  void updateChannelMaps() {
+    channelService.channels.forEach((channel) {
+      if (channel.id == null) return;
+      if (isChannelPermitted(channel.id!)) {
+        if (channelMessageCount.containsKey(channel.id)) return; // no need to add channel if it's already in the list
+        channelMessageCount[channel.id!] = channel.messages.length;
+        isChannelRead[channel.id!] = true;
+      } else {
+        handleUnpermittedChannel(channel);
+      }
+    });
   }
 
   void updateUnreadChannelValue() {
@@ -63,6 +81,7 @@ class NotificationService extends GetxController {
   void setUpChannelListener() {
     channelService.getChannelStream().listen((snapshot) {
       snapshot.docChanges.forEach((element) {
+        if (LoggedInUserService.instance.user == null) return; // if user isn't logged in, there shouldn't be a notification
         Canal changedChannel = Canal.fromDocument(element.doc);
         if (changedChannel.id == null) return;
 
