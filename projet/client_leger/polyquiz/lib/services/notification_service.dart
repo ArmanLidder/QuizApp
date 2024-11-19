@@ -12,6 +12,7 @@ class NotificationService extends GetxController {
   Map<String, bool> isChannelRead = {};
   RxBool hasUnreadChannels = false.obs;
   final player = AudioPlayer();
+  bool isChatOpen = false;
 
 
   @override

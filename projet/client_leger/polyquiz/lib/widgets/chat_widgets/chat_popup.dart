@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/notification_service.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_widget.dart';
 
@@ -13,6 +14,14 @@ class ChatPopup extends StatefulWidget {
 class _ChatPopupState extends State<ChatPopup> {
   bool _isChatOpen = false;
   NotificationService notificationService = NotificationService.instance;
+
+  bool get isChatOpen => _isChatOpen;
+  void set isChatOpen(bool value) {
+    setState(() {
+      _isChatOpen = value;
+    });
+    notificationService.isChatOpen = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +67,8 @@ class _ChatPopupState extends State<ChatPopup> {
   }
 
   void openChat(BuildContext context) {
-    setState(() {
-      _isChatOpen = true;
-    });
-
+    isChatOpen = true;
+    if (ChannelService.instance.permittedChannels.length == 1) notificationService.readChannel(ChannelService.instance.permittedChannels.first.id!);
     showDialog(context: context, builder: (BuildContext context) {
       return Dialog(
         clipBehavior: Clip.hardEdge,
@@ -76,9 +83,7 @@ class _ChatPopupState extends State<ChatPopup> {
         )
       );
     }).then((val) {
-      setState(() {
-        _isChatOpen = false;
-      });
+      isChatOpen = false;
     });
   }
 }
