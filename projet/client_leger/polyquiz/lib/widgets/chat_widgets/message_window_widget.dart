@@ -104,6 +104,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
     }
     await channelService.addMessage(widget.channelId, content);
     _messageController.clear();
+    await Future.delayed(const Duration(milliseconds: 250));
     scrollToBottom();
   }
 
