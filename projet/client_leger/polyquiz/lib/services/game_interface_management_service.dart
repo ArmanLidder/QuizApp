@@ -94,6 +94,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
       this.inPanicMode = false;
       if (this.gameService.question?.type == QuestionType.QCM) {
         this.getScore();
+        this.changeQcmEnabled(false);
       } else {
         this.gameService.qrlAnswer = '';
         this.gameService.realGameService.validated = true;
