@@ -24,6 +24,7 @@ export class RegisterPageComponent implements OnInit {
     private fb = inject(FormBuilder);
     private router = inject(Router);
     private translate = inject(TranslateService)
+    isLogging: boolean = false;
     constructor() {
         this.authForm = this.fb.group({
             username: ['', [Validators.required, this.usernameValidator]],
@@ -57,6 +58,7 @@ export class RegisterPageComponent implements OnInit {
 
     async register(): Promise<void> {
         if (this.authForm.valid && this.selectedAvatar !== null) {
+            this.isLogging = true;
             const { username, email, password } = this.authForm.value;
             try {
                 await this.authService.register(username, email, password, this.selectedAvatar);
@@ -64,6 +66,8 @@ export class RegisterPageComponent implements OnInit {
                 this.router.navigate(['/home']);
             } catch (error: any) {
                 this.snackbarService.show(error.message);
+            } finally {
+                this.isLogging = false;
             }
         }
     }

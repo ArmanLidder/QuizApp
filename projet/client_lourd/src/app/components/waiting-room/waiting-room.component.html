@@ -1,76 +1,79 @@
-<div *ngIf='!waitingRoomManagementService.isTransition' class="waiting-room">
-    <div class="waiting-room-header">
-        <h1>{{ 'WAITING_ROOM_PAGE.TITLE' | translate }}</h1>
-        <h2 *ngIf='isHost'>{{ 'WAITING_ROOM_PAGE.ROOM_CODE' | translate }} : {{ waitingRoomManagementService.roomId }}</h2>
-        <div *ngIf='isHost'>
-            <h3>{{ 'WAITING_ROOM_PAGE.ROOM_STATUS' | translate }} {{ setLockActionMessage() }}</h3>
-            <label class="switch-btn" [matTooltip]="'WAITING_ROOM_PAGE.LOCK_ROOM_TOOLTIP' | translate">
-                <input type="checkbox" (click)='toggleRoomLocked()'/>
-                <span class="slider round"></span>
-            </label>
+<div class="waiting-room-container">
+    <div *ngIf='!waitingRoomManagementService.isTransition' class="waiting-room">
+        <div class="waiting-room-header">
+            <h1>{{ 'WAITING_ROOM_PAGE.TITLE' | translate }}</h1>
+            <h2 *ngIf='isHost'>{{ 'WAITING_ROOM_PAGE.ROOM_CODE' | translate }} : {{ waitingRoomManagementService.roomId }}</h2>
+            <div *ngIf='isHost'>
+                <h3>{{ 'WAITING_ROOM_PAGE.ROOM_STATUS' | translate }} {{ setLockActionMessage() }}</h3>
+                <label class="switch-btn" [matTooltip]="'WAITING_ROOM_PAGE.LOCK_ROOM_TOOLTIP' | translate">
+                    <input type="checkbox" (click)='toggleRoomLocked()'/>
+                    <span class="slider round"></span>
+                </label>
+            </div>
         </div>
-    </div>
 
-    <div class="players-list">
-        <ng-container *ngIf="waitingRoomManagementService.gameType !== 'equipe'">
-            <h2>{{ 'WAITING_ROOM_PAGE.PLAYERS_TITLE' | translate }}</h2>
-            <ng-container *ngIf="waitingRoomManagementService.players.length > 0; else noPlayers">
-                <ul>
-                    <li class="player-item" *ngFor="let player of waitingRoomManagementService.players">
-                        <app-avatar class="player-name" [isChat]="true" [uid]="player"></app-avatar>
-                        <div class='icon-container'>
-                            <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' [matTooltip]="'WAITING_ROOM_PAGE.BAN_TOOLTIP' | translate"></i>
-                        </div>
-                    </li>
-                </ul>
-            </ng-container>
-            <ng-template #noPlayers>
-                <p class="text-gray-500">{{ 'WAITING_ROOM_PAGE.NO_PLAYERS' | translate }}</p>
-            </ng-template>
-        </ng-container>
-
-        <ng-container *ngIf="waitingRoomManagementService.gameType === 'equipe'">
-            <h2>{{ 'WAITING_ROOM_PAGE.TEAMS_TITLE' | translate }}</h2>
-            <div *ngIf="waitingRoomManagementService.teamsForInterface.length > 0; else noTeams" class="teams-container">
-                <div *ngFor="let team of waitingRoomManagementService.teamsForInterface" class="team">
-                    <div class="team-header">
-                        <span>{{ 'WAITING_ROOM_PAGE.TEAM_LABEL' | translate }} {{ team.name }}</span>
-                        <button *ngIf="!isHost && !team.userIds.members.includes(currentUserId)"
-                                class="action-btn"
-                                (click)="waitingRoomManagementService.joinTeam(team.name)">
-                            {{ 'WAITING_ROOM_PAGE.JOIN_TEAM' | translate }}
-                        </button>
-                    </div>
-                    <div class="team-players">
-                        <div *ngFor="let player of team.userIds.members" class="team-item">
-                            <app-avatar class="team-avatar" [isChat]="true" [uid]="player"></app-avatar>
+        <div class="players-list">
+            <ng-container *ngIf="waitingRoomManagementService.gameType !== 'equipe'">
+                <h2>{{ 'WAITING_ROOM_PAGE.PLAYERS_TITLE' | translate }}</h2>
+                <ng-container *ngIf="waitingRoomManagementService.players.length > 0; else noPlayers">
+                    <ul>
+                        <li class="player-item" *ngFor="let player of waitingRoomManagementService.players">
+                            <app-avatar class="player-name" [isChat]="true" [uid]="player"></app-avatar>
                             <div class='icon-container'>
                                 <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' [matTooltip]="'WAITING_ROOM_PAGE.BAN_TOOLTIP' | translate"></i>
+                            </div>
+                        </li>
+                    </ul>
+                </ng-container>
+                <ng-template #noPlayers>
+                    <p class="text-gray-500">{{ 'WAITING_ROOM_PAGE.NO_PLAYERS' | translate }}</p>
+                </ng-template>
+            </ng-container>
+
+            <ng-container *ngIf="waitingRoomManagementService.gameType === 'equipe'">
+                <h2>{{ 'WAITING_ROOM_PAGE.TEAMS_TITLE' | translate }}</h2>
+                <div *ngIf="waitingRoomManagementService.teamsForInterface.length > 0; else noTeams" class="teams-container">
+                    <div *ngFor="let team of waitingRoomManagementService.teamsForInterface" class="team">
+                        <div class="team-header">
+                            <span>{{ 'WAITING_ROOM_PAGE.TEAM_LABEL' | translate }} {{ team.name }}</span>
+                            <button *ngIf="!isHost && !team.userIds.members.includes(currentUserId)"
+                                    class="action-btn"
+                                    (click)="waitingRoomManagementService.joinTeam(team.name)">
+                                {{ 'WAITING_ROOM_PAGE.JOIN_TEAM' | translate }}
+                            </button>
+                        </div>
+                        <div class="team-players">
+                            <div *ngFor="let player of team.userIds.members" class="team-item">
+                                <app-avatar class="team-avatar" [isChat]="true" [uid]="player"></app-avatar>
+                                <div class='icon-container'>
+                                    <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' [matTooltip]="'WAITING_ROOM_PAGE.BAN_TOOLTIP' | translate"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <ng-template #noTeams>
-                <p class="text-gray-500">{{ 'WAITING_ROOM_PAGE.NO_TEAMS' | translate }}</p>
-            </ng-template>
-        </ng-container>
-    </div>
+                <ng-template #noTeams>
+                    <p class="text-gray-500">{{ 'WAITING_ROOM_PAGE.NO_TEAMS' | translate }}</p>
+                </ng-template>
+            </ng-container>
+        </div>
 
-    <div class="actions">
-        <button *ngIf='isHost' class="action-btn" (click)='startGame()'
-                [disabled]="validationBeforeEntry()">
-            {{ 'WAITING_ROOM_PAGE.START_BUTTON' | translate }}
-        </button>
-        <button *ngIf="!isHost && waitingRoomManagementService.gameType === 'equipe'"
-                [disabled]="onlyOneMember()"
-                class="action-btn"
-                (click)="waitingRoomManagementService.sendCreateTeam()">
-            {{ 'WAITING_ROOM_PAGE.CREATE_TEAM' | translate }}
-        </button>
-        <app-leave-boutton></app-leave-boutton>
+        <div class="actions">
+            <button *ngIf='isHost' class="action-btn" (click)='startGame()'
+                    [disabled]="validationBeforeEntry()">
+                {{ 'WAITING_ROOM_PAGE.START_BUTTON' | translate }}
+            </button>
+            <button *ngIf="!isHost && waitingRoomManagementService.gameType === 'equipe'"
+                    [disabled]="onlyOneMember()"
+                    class="action-btn"
+                    (click)="waitingRoomManagementService.sendCreateTeam()">
+                {{ 'WAITING_ROOM_PAGE.CREATE_TEAM' | translate }}
+            </button>
+            <app-leave-boutton></app-leave-boutton>
+        </div>
     </div>
 </div>
+
 
 <div *ngIf='waitingRoomManagementService.isTransition' class='transition'>
     <div class='timer'>

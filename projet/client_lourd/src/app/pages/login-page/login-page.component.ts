@@ -1,4 +1,4 @@
-import {Component, ViewEncapsulation} from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from "@app/services/auth.service/auth.service";
 import {SnackbarService} from "@app/services/snackbar.service/snack-bar.service";
@@ -10,9 +10,9 @@ import {TranslateService} from "@ngx-translate/core";
     selector: 'app-login.page',
     templateUrl: './login-page.component.html',
     styleUrls: ['./login-page.component.scss'],
-    encapsulation: ViewEncapsulation.None
 })
 export class LoginPageComponent {
+    isLogging: boolean = false;
     authForm: FormGroup;
     passwordVisible: boolean = false;
     language: string;
@@ -33,11 +33,16 @@ export class LoginPageComponent {
         const { email, password } = this.authForm.value;
         if (this.authForm.valid) {
             try {
+                console.log("Set to true")
+                this.isLogging = true;
                 await this.authService.login(email, password);
                 this.snackbarService.show(this.translate.instant('LOGIN_PAGE.SUCCESS_LOGIN_POPUP'));
                 this.router.navigate(['/home']);
             } catch (error:any) {
                 this.snackbarService.show(error.message);
+            } finally {
+                console.log("set to false")
+                this.isLogging = false;
             }
         }
     }

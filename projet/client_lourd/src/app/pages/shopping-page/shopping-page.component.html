@@ -7,125 +7,156 @@
 
     <!-- Themes Section -->
     <h2 class="text-xl font-semibold mb-4 text-center">{{ 'SHOPPING.THEMES' | translate }}</h2>
-    <div *ngIf="themeItems$ | async as themeItems; else noThemesMessage"
-         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        <div *ngFor="let item of themeItems" class="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center">
-            <img [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
-            <h3 class="text-base font-medium">{{ item.name }}</h3>
-            <button
-                    [ngClass]="{
-                    'bg-gray-400 cursor-not-allowed': item.isOwned,
-                    'bg-red-400 text-white cursor-not-allowed': !item.isOwned && !hasEnoughCurrency(item),
-                    'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && hasEnoughCurrency(item)
-                }"
-                    class="mt-3 px-3 py-1.5 rounded-full text-sm w-full"
-                    [disabled]="item.isOwned || !hasEnoughCurrency(item)"
-                    (click)="buyItem(item.id)">
-                <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
-                <ng-container *ngIf="!item.isOwned && !hasEnoughCurrency(item)">
-                    {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
-                </ng-container>
-                <ng-container *ngIf="!item.isOwned && hasEnoughCurrency(item)">
-                    {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} $)
-                </ng-container>
-            </button>
+    <ng-container *ngIf="(themeItems$ | async) as themeItems; else loadingThemes">
+        <div *ngIf="themeItems.length > 0; else noThemesMessage"
+             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div *ngFor="let item of themeItems" class="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center">
+                <img [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
+                <h3 class="text-base font-medium">{{ item.name }}</h3>
+                <button
+                        [ngClass]="{
+                        'bg-gray-400 cursor-not-allowed': item.isOwned,
+                        'bg-red-400 text-white cursor-not-allowed': !item.isOwned && !hasEnoughCurrency(item),
+                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && hasEnoughCurrency(item)
+                    }"
+                        class="mt-3 px-3 py-1.5 rounded-full text-sm w-full"
+                        [disabled]="item.isOwned || !hasEnoughCurrency(item)"
+                        (click)="buyItem(item.id)">
+                    <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
+                    <ng-container *ngIf="!item.isOwned && !hasEnoughCurrency(item)">
+                        {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
+                    </ng-container>
+                    <ng-container *ngIf="!item.isOwned && hasEnoughCurrency(item)">
+                        {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} $)
+                    </ng-container>
+                </button>
+            </div>
         </div>
-    </div>
+    </ng-container>
+    <ng-template #loadingThemes>
+        <div class="flex justify-center items-center h-40">
+            <mat-spinner></mat-spinner>
+        </div>
+    </ng-template>
     <ng-template #noThemesMessage>
         <p class="text-center text-gray-500">{{ 'SHOPPING.NO_THEMES' | translate }}</p>
     </ng-template>
 
     <!-- Images Section -->
     <h2 class="text-xl font-semibold mt-6 mb-4 text-center">{{ 'SHOPPING.IMAGES' | translate }}</h2>
-    <div *ngIf="imageItems$ | async as imageItems; else noImagesMessage"
-         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        <div *ngFor="let item of imageItems" class="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center">
-            <img [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
-            <h3 class="text-base font-medium">{{ item.name }}</h3>
-            <button
-                    [ngClass]="{
-                    'bg-gray-400 cursor-not-allowed': item.isOwned,
-                    'bg-red-400 text-white cursor-not-allowed': !item.isOwned && !hasEnoughCurrency(item),
-                    'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && hasEnoughCurrency(item)
-                }"
-                    class="mt-3 px-3 py-1.5 rounded-full text-sm w-full"
-                    [disabled]="item.isOwned || !hasEnoughCurrency(item)"
-                    (click)="buyItem(item.id)">
-                <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
-                <ng-container *ngIf="!item.isOwned && !hasEnoughCurrency(item)">
-                    {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
-                </ng-container>
-                <ng-container *ngIf="!item.isOwned && hasEnoughCurrency(item)">
-                    {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }})
-                </ng-container>
-            </button>
+    <ng-container *ngIf="(imageItems$ | async) as imageItems; else loadingImages">
+        <div *ngIf="imageItems.length > 0; else noImagesMessage"
+             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div *ngFor="let item of imageItems" class="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center">
+                <img [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
+                <h3 class="text-base font-medium">{{ item.name }}</h3>
+                <button
+                        [ngClass]="{
+                        'bg-gray-400 cursor-not-allowed': item.isOwned,
+                        'bg-red-400 text-white cursor-not-allowed': !item.isOwned && !hasEnoughCurrency(item),
+                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && hasEnoughCurrency(item)
+                    }"
+                        class="mt-3 px-3 py-1.5 rounded-full text-sm w-full"
+                        [disabled]="item.isOwned || !hasEnoughCurrency(item)"
+                        (click)="buyItem(item.id)">
+                    <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
+                    <ng-container *ngIf="!item.isOwned && !hasEnoughCurrency(item)">
+                        {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
+                    </ng-container>
+                    <ng-container *ngIf="!item.isOwned && hasEnoughCurrency(item)">
+                        {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }})
+                    </ng-container>
+                </button>
+            </div>
         </div>
-    </div>
+    </ng-container>
+    <ng-template #loadingImages>
+        <div class="flex justify-center items-center h-40">
+            <mat-spinner></mat-spinner>
+        </div>
+    </ng-template>
     <ng-template #noImagesMessage>
         <p class="text-center text-gray-500">{{ 'SHOPPING.NO_IMAGES' | translate }}</p>
     </ng-template>
 
     <!-- Rewards Section -->
     <h2 class="text-xl font-semibold mt-6 mb-4 text-center">{{ 'SHOPPING.REWARDS' | translate }}</h2>
-    <div *ngIf="rewardItems$ | async as rewardItems"
-         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        <div *ngFor="let item of rewardItems" class="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center">
-            <img *ngIf="item.source" [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
-            <h3 class="text-base font-medium">{{ item.name }}</h3>
-            <button
-                    [ngClass]="{
-                    'bg-gray-400 cursor-not-allowed': item.isOwned,
-                    'bg-red-400 text-white cursor-not-allowed': !item.isOwned && (!meetsRequirements(item) || !hasEnoughCurrency(item)),
-                    'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && meetsRequirements(item) && hasEnoughCurrency(item)
-                }"
-                    class="mt-3 px-3 py-1.5 rounded-full text-sm w-full"
-                    [disabled]="item.isOwned || !meetsRequirements(item) || !hasEnoughCurrency(item)"
-                    (click)="buyItem(item.id)">
-                <ng-container *ngIf="item.isOwned">
-                    {{ 'SHOPPING.OWNED' | translate }}
-                </ng-container>
-                <ng-container *ngIf="!item.isOwned && !meetsRequirements(item)">
-                    {{ getRequirementMessage(item) }}
-                </ng-container>
-                <ng-container *ngIf="!item.isOwned && meetsRequirements(item) && !hasEnoughCurrency(item)">
-                    {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
-                </ng-container>
-                <ng-container *ngIf="!item.isOwned && meetsRequirements(item) && hasEnoughCurrency(item)">
-                    {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }})
-                </ng-container>
-            </button>
+    <ng-container *ngIf="(rewardItems$ | async) as rewardItems; else loadingRewards">
+        <div *ngIf="rewardItems.length > 0; else noRewardsMessage"
+             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div *ngFor="let item of rewardItems" class="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center">
+                <img *ngIf="item.source" [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
+                <h3 class="text-base font-medium">{{ item.name }}</h3>
+                <button
+                        [ngClass]="{
+                        'bg-gray-400 cursor-not-allowed': item.isOwned,
+                        'bg-red-400 text-white cursor-not-allowed': !item.isOwned && (!meetsRequirements(item) || !hasEnoughCurrency(item)),
+                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && meetsRequirements(item) && hasEnoughCurrency(item)
+                    }"
+                        class="mt-3 px-3 py-1.5 rounded-full text-sm w-full"
+                        [disabled]="item.isOwned || !meetsRequirements(item) || !hasEnoughCurrency(item)"
+                        (click)="buyItem(item.id)">
+                    <ng-container *ngIf="item.isOwned">
+                        {{ 'SHOPPING.OWNED' | translate }}
+                    </ng-container>
+                    <ng-container *ngIf="!item.isOwned && !meetsRequirements(item)">
+                        {{ getRequirementMessage(item) }}
+                    </ng-container>
+                    <ng-container *ngIf="!item.isOwned && meetsRequirements(item) && !hasEnoughCurrency(item)">
+                        {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
+                    </ng-container>
+                    <ng-container *ngIf="!item.isOwned && meetsRequirements(item) && hasEnoughCurrency(item)">
+                        {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }})
+                    </ng-container>
+                </button>
+            </div>
         </div>
-    </div>
+    </ng-container>
+    <ng-template #loadingRewards>
+        <div class="flex justify-center items-center h-40">
+            <mat-spinner></mat-spinner>
+        </div>
+    </ng-template>
+    <ng-template #noRewardsMessage>
+        <p class="text-center text-gray-500">{{ 'SHOPPING.NO_REWARDS' | translate }}</p>
+    </ng-template>
+
     <!-- Reward Currency Section -->
     <h2 class="text-xl font-semibold mt-6 mb-4 text-center">{{ 'SHOPPING.REWARD_CURRENCY' | translate }}</h2>
-    <div *ngIf="rewardCurrencyItems$ | async as rewardCurrencyItems; else noRewardCurrencyMessage"
-         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        <div *ngFor="let item of rewardCurrencyItems" class="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center">
-            <img [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
-            <h3 class="text-base font-medium">{{ item.name }}</h3>
-            <button
-                    [ngClass]="{
-                'bg-gray-400 cursor-not-allowed': item.isOwned,
-                'bg-red-400 text-white': !item.isOwned && !meetsRequirements(item),
-                'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && meetsRequirements(item)
-            }"
-                    class="mt-3 px-3 py-1.5 rounded-full text-sm w-full"
-                    [disabled]="item.isOwned || !meetsRequirements(item)"
-                    (click)="buyItem(item.id)">
-                <ng-container *ngIf="item.isOwned">
-                    {{ 'SHOPPING.ALREADY_CLAIMED' | translate }}
-                </ng-container>
-                <ng-container *ngIf="!item.isOwned && !meetsRequirements(item)">
-                    {{ getRequirementMessage(item) }}
-                </ng-container>
-                <ng-container *ngIf="!item.isOwned && meetsRequirements(item)">
-                    {{ 'SHOPPING.CLAIM' | translate }}
-                </ng-container>
-            </button>
+    <ng-container *ngIf="(rewardCurrencyItems$ | async) as rewardCurrencyItems; else loadingRewardCurrency">
+        <div *ngIf="rewardCurrencyItems.length > 0; else noRewardCurrencyMessage"
+             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div *ngFor="let item of rewardCurrencyItems" class="bg-white p-3 rounded-lg shadow-lg flex flex-col items-center">
+                <img [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
+                <h3 class="text-base font-medium">{{ item.name }}</h3>
+                <button
+                        [ngClass]="{
+                        'bg-gray-400 cursor-not-allowed': item.isOwned,
+                        'bg-red-400 text-white cursor-not-allowed': !item.isOwned && !meetsRequirements(item),
+                        'bg-green-500 hover:bg-green-600 text-white': !item.isOwned && meetsRequirements(item)
+                    }"
+                        class="mt-3 px-3 py-1.5 rounded-full text-sm w-full"
+                        [disabled]="item.isOwned || !meetsRequirements(item)"
+                        (click)="buyItem(item.id)">
+                    <ng-container *ngIf="item.isOwned">
+                        {{ 'SHOPPING.ALREADY_CLAIMED' | translate }}
+                    </ng-container>
+                    <ng-container *ngIf="!item.isOwned && !meetsRequirements(item)">
+                        {{ getRequirementMessage(item) }}
+                    </ng-container>
+                    <ng-container *ngIf="!item.isOwned && meetsRequirements(item)">
+                        {{ 'SHOPPING.CLAIM' | translate }}
+                    </ng-container>
+                </button>
+            </div>
         </div>
-    </div>
+    </ng-container>
+    <ng-template #loadingRewardCurrency>
+        <div class="flex justify-center items-center h-40">
+            <mat-spinner></mat-spinner>
+        </div>
+    </ng-template>
     <ng-template #noRewardCurrencyMessage>
         <p class="text-center text-gray-500">{{ 'SHOPPING.NO_REWARD_CURRENCY' | translate }}</p>
     </ng-template>
 </div>
-<!--<button (click)="storeService.addStoreItems()">test</button>-->

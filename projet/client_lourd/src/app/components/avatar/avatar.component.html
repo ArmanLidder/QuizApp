@@ -1,8 +1,11 @@
 <div class="flex flex-col items-center">
     <div class="relative inline-block">
+        <div *ngIf="isLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 rounded-full">
+            <mat-spinner [diameter]="30" color="primary"></mat-spinner>
+        </div>
         <img *ngIf="showMenu"
              [src]="(currentUser$ | async)?.avatar"
-             alt="User Avatar"
+             alt=""
              [ngClass]="{
                'w-14 h-14': size === 'small',
                'w-20 h-20': size === 'medium',
@@ -10,10 +13,11 @@
              }"
              class="rounded-full border-2 border-white shadow cursor-pointer object-cover"
              [matMenuTriggerFor]="menu"
+             (load)="onImageLoad()"
         />
         <img *ngIf="!showMenu"
              [src]="(currentUser$ | async)?.avatar"
-             alt="User Avatar"
+             alt=""
              [ngClass]="{
                'w-14 h-14': size === 'small',
                'w-20 h-20': size === 'medium',
@@ -21,6 +25,7 @@
              }"
              class="rounded-full border-2 border-white shadow cursor-pointer object-cover"
              (click)="openProfileDialog()"
+             (load)="onImageLoad()"
         />
 
         <div *ngIf="!hideLevel"
