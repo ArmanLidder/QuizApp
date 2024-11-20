@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { StoreService } from "@app/services/store.service/store.service";
-import { Observable} from "rxjs";
+import {Observable} from "rxjs";
 import { StoreItem } from "@common/interfaces/store.interface";
 import { map } from 'rxjs/operators';
 import { UsersService } from "@app/services/users.service/users.service";
 import { User } from "@common/interfaces/user-data.interface";
 import { SnackbarService } from "@app/services/snackbar.service/snack-bar.service";
-import {TranslateService} from "@ngx-translate/core";
+import { TranslateService } from "@ngx-translate/core";
+
 type StoreItemWithOwnership = StoreItem & { isOwned: boolean };
+
 @Component({
   selector: 'app-shopping-page',
   templateUrl: './shopping-page.component.html',
@@ -16,15 +18,20 @@ type StoreItemWithOwnership = StoreItem & { isOwned: boolean };
 export class ShoppingPageComponent implements OnInit {
   imageItems$: Observable<StoreItemWithOwnership[]>;
   themeItems$: Observable<StoreItemWithOwnership[]>;
-  rewardImageItems$: Observable<StoreItemWithOwnership[]>;
-  rewardThemeItems$: Observable<StoreItemWithOwnership[]>;
-
+  rewardItems$: Observable<StoreItemWithOwnership[]>;
+  rewardCurrencyItems$: Observable<StoreItemWithOwnership[]>;
   userCurrency$: Observable<number>;
   currentUser$: Observable<User | null>;
   currentUser: User | null = null;
   userCurrency: number = 0;
+  allAchievements: string[] = [];
 
-  constructor(private storeService: StoreService, private usersService: UsersService, private snackbar: SnackbarService, private translate: TranslateService) {}
+  constructor(
+      public storeService: StoreService,
+      private usersService: UsersService,
+      private snackbar: SnackbarService,
+      private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     const allItems$ = this.storeService.allStoreItemsWithOwnership;
@@ -37,13 +44,20 @@ export class ShoppingPageComponent implements OnInit {
         map(items => items.filter(item => item.itemType === 'theme'))
     );
 
-    this.rewardImageItems$ = allItems$.pipe(
-        map(items => items.filter(item => item.itemType === 'rewardImage'))
+    this.rewardItems$ = allItems$.pipe(
+        map(items => items.filter(item =>
+            item.itemType === 'rewardImage' || item.itemType === 'rewardTheme'
+        ))
     );
 
-    this.rewardThemeItems$ = allItems$.pipe(
-        map(items => items.filter(item => item.itemType === 'rewardTheme'))
+    this.rewardCurrencyItems$ = allItems$.pipe(
+        map(items =>
+            items
+                .filter(item => item.itemType === 'rewardCurrency')
+                .sort((a, b) => (a.achievement || 0) - (b.achievement || 0)) // Sort by achievement field
+        )
     );
+
 
     this.userCurrency$ = this.usersService.currentUserProfile$.pipe(
         map(user => user?.currency ?? 0)
@@ -53,10 +67,25 @@ export class ShoppingPageComponent implements OnInit {
 
     this.currentUser$.subscribe(user => (this.currentUser = user));
     this.userCurrency$.subscribe(currency => (this.userCurrency = currency));
+
+    this.loadAchievements();
+    this.translate.onLangChange.subscribe(() => {
+      this.loadAchievements();
+    });
   }
 
-  canBuyRewardItem(item: StoreItemWithOwnership): boolean {
-    return this.meetsRequirements(item) && this.hasEnoughCurrency(item);
+  loadAchievements() {
+    this.allAchievements = this.translate.instant('PROFILE.ALL_ACHIEVEMENTS');
+  }
+
+  getRequirementMessage(item: StoreItemWithOwnership): string {
+    if (item.minLevel) {
+      return this.translate.instant('SHOPPING.UNLOCKED_AT_LEVEL') + item.minLevel.toString();
+    }
+    if (item.achievement && this.allAchievements[item.achievement - 1]) {
+      return this.translate.instant('SHOPPING.UNLOCKED_AT_ACHIEVEMENT') + this.allAchievements[item.achievement - 1];
+    }
+    return '';
   }
 
   meetsRequirements(item: StoreItemWithOwnership): boolean {
@@ -64,14 +93,18 @@ export class ShoppingPageComponent implements OnInit {
       return false;
     }
 
-    return (!item.minLevel || this.currentUser.level >= item.minLevel) &&
-        (!item.minPrestige || this.currentUser.prestige >= item.minPrestige);
+    if (item.minLevel) {
+      return this.currentUser.level >= item.minLevel;
+    }
+    if (item.achievement) {
+      return this.currentUser.achievements.includes(item.achievement);
+    }
+    return true;
   }
 
   hasEnoughCurrency(item: StoreItemWithOwnership): boolean {
     return this.userCurrency >= item.cost;
   }
-
 
   async buyItem(id: string) {
     try {
@@ -80,30 +113,4 @@ export class ShoppingPageComponent implements OnInit {
       this.snackbar.show(error.message);
     }
   }
-
-
-  getPrestigeLabel(prestige: number) {
-    let prestigeLabel: string;
-    let prestigeIcon: string;
-
-    if (prestige >= 200) {
-      prestigeLabel = (this.translate.instant('PROFILE.PLATINUM'));
-      prestigeIcon = '🏅';
-    } else if (prestige >= 150) {
-      prestigeLabel = (this.translate.instant('PROFILE.GOLD'));
-      prestigeIcon = '🥇';
-    } else if (prestige >= 100) {
-      prestigeLabel = (this.translate.instant('PROFILE.SILVER'));
-      prestigeIcon = '🥈';
-    } else if (prestige >= 50) {
-      prestigeLabel = (this.translate.instant('PROFILE.BRONZE'));
-      prestigeIcon = '🥉';
-    } else {
-      prestigeLabel = (this.translate.instant('PROFILE.NONE'));
-      prestigeIcon = '🚫';
-    }
-
-    return prestigeIcon + prestigeLabel;
-  }
 }
-

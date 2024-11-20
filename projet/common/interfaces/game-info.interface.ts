@@ -13,4 +13,5 @@ export interface GameConfig {
     price?: number; // prix d'une partie
     friendsOnly?: boolean; // prix d'une partie
     prestige?: number; // niveau de prestige
+    IA?: boolean;
 }

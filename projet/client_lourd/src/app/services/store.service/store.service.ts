@@ -15,6 +15,29 @@ export class StoreService {
     constructor(private firestore: Firestore, private usersService: UsersService) {
     }
 
+    // async addStoreItems() {
+    //     const itemsCollectionRef = collection(this.firestore, 'storeItems');
+    //
+    //     for (let i = 1; i <= 8; i++) {
+    //         const itemData = {
+    //             achievement: i,
+    //             cost: -20 * i,
+    //             itemType: 'rewardCurrency',
+    //             name: `${20 * i} $`,
+    //             source: 'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/shopGIFS%2FmoneyBag.png?alt=media&token=a991db2c-7dff-435c-83bf-d8d6131e236b',
+    //         };
+    //
+    //         const itemDocRef = doc(itemsCollectionRef);
+    //         try {
+    //             await setDoc(itemDocRef, itemData);
+    //             console.log(`Item ${i} added successfully.`);
+    //         } catch (error) {
+    //             console.error(`Error adding item ${i}:`, error);
+    //         }
+    //     }
+    // }
+
+
     get allStoreItems(): Observable<StoreItem[]> {
         const itemsCollectionRef = collection(this.firestore, `storeItems`);
         return collectionData(itemsCollectionRef, {idField: 'id'}).pipe(map((data) => data as StoreItem[]), catchError((error) => {
@@ -105,7 +128,6 @@ export class StoreService {
             if ((currentUser?.currency || 0) < storeItem.cost) throw new Error("Vous n'avez pas assez d'argent.")
             if (storeItem.itemType === 'rewardTheme' || storeItem.itemType === 'rewardImage') {
                 if ((currentUser?.level||0) < (storeItem.minLevel||0)) throw new Error(`Vous n'avez pas le niveau requis pour ce item (${storeItem.minLevel!})}`);
-                if ((currentUser?.prestige||0) < (storeItem.minPrestige||0)) throw new Error(`Vous n'avez pas le prestige requis pour ce item (${storeItem.minPrestige!})}`);
                 const hasRequiredAchievement = !storeItem.achievement || (currentUser?.achievements || []).includes(storeItem.achievement);
                 if (!hasRequiredAchievement) throw new Error(`Vous n'avez pas le achievement requis pour ce item`);
             }

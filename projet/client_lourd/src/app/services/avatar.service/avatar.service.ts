@@ -90,7 +90,7 @@ export class AvatarService {
 
             if (itemDoc.exists()) {
                 const itemData = itemDoc.data() as StoreItem;
-                if (itemData.itemType === 'image' && itemData.source) {
+                if ((itemData.itemType === 'image' || itemData.itemType === 'rewardImage') && itemData.source) {
                     avatarUrls.push(itemData.source);
                 }
             }

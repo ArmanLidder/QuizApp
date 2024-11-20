@@ -148,7 +148,13 @@
     "OWNED": "Already owned",
     "NOT_ENOUGH_FUNDS": "Not enough funds",
     "BUY": "Buy",
-    "COST_SUFFIX": "$"
+    "COST_SUFFIX": "$",
+    "REWARDS": "Rewards",
+    "UNLOCKED_AT_ACHIEVEMENT": "Unlocked at achievement : ",
+    "UNLOCKED_AT_LEVEL": "Unlocked at level ",
+    "CLAIM": "Claim",
+    "REWARD_CURRENCY": "Achievement rewards",
+    "ALREADY_CLAIMED": "Claimed"
   },
   "GAME_ADMIN": {
     "TITLE": "Admin Panel: Manage All Quiz Games",
@@ -293,6 +299,7 @@
     "PRICE_LABEL": "Price",
     "FRIENDS_ONLY_LABEL": "Friends Only",
     "PRIVATE_GAME_LABEL": "Private Game",
+    "IA_CORRECTION": "AI Correction",
     "MIN_PRESTIGE_LABEL": "Minimum Prestige",
     "NONE": "None",
     "BRONZE": "🥉Bronze",
@@ -545,5 +552,12 @@
     "CURRENT_POINTS": "Points",
     "BONUS_RECEIVED_FEEDBACK": "You received Bonus points!!",
     "VALIDATE_BUTTON": "Validate"
+  },
+  "OBSERVER": {
+    "CHOOSE_PLAYER": "Choose a player to observe",
+    "OBSERVE": "Observe",
+    "CANCEL": "Cancel",
+    "OBSERVATION_MENU": "Observation Menu",
+    "OBSERVING": "You are observing"
   }
 }

@@ -6,13 +6,13 @@
     <div class="flex flex-wrap justify-center gap-4">
         <ng-container *ngIf="!loading">
             <div *ngFor="let avatarUrl of defaultAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
-                <img [src]="avatarUrl" alt="Avatar" class="w-24 h-24 rounded-full"
+                <img [src]="avatarUrl" alt="Avatar" class="w-20 h-20 rounded-full mb-2 object-cover"
                      [class.ring-4]="avatarUrl === selectedAvatar"
                      [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
             </div>
             <ng-container *ngIf="showOwnedAvatars" >
                 <div *ngFor="let avatarUrl of ownedAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
-                    <img [src]="avatarUrl" alt="Avatar" class="w-24 h-24 rounded-full"
+                    <img [src]="avatarUrl" alt="Avatar" class="w-20 h-20 rounded-full mb-2 object-cover"
                          [class.ring-4]="avatarUrl === selectedAvatar"
                          [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
                 </div>
@@ -21,7 +21,7 @@
 
         <div *ngIf="customAvatarUrl" class="avatar-item">
             <img [src]="customAvatarUrl"
-                 alt="Custom Avatar" class="w-24 h-24 rounded-full"
+                 alt="Custom Avatar" class="w-20 h-20 rounded-full mb-2 object-cover"
                  [class.ring-4]="customAvatarSelected"
                  [class.ring-blue-500]="customAvatarSelected"
                  (click)="selectCustomAvatar()"/>
