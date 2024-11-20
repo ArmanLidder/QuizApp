@@ -26,11 +26,6 @@ class FriendService extends GetxService {
             {'fromUserId': currentUserId, 'toUserId': targetUserId}
           ]),
         });
-        await _firestore.collection('users').doc(currentUserId).update({
-          'friendRequests': FieldValue.arrayUnion([
-            {'fromUserId': currentUserId, 'toUserId': targetUserId}
-          ]),
-        });
       }
     } catch (e) {
       print('Error creating friend request: $e');
@@ -45,7 +40,6 @@ class FriendService extends GetxService {
       });
       await _firestore.collection('users').doc(requesterId).update({
         'friends': FieldValue.arrayUnion([currentUserId]),
-        'friendRequests': FieldValue.arrayRemove([{'fromUserId': requesterId, 'toUserId': currentUserId}]),
       });
     } catch (e) {
       print('Error accepting friend request: $e');
@@ -55,9 +49,6 @@ class FriendService extends GetxService {
   Future<void> refuseFriendRequest(String currentUserId, String requesterId) async {
     try {
       await _firestore.collection('users').doc(currentUserId).update({
-        'friendRequests': FieldValue.arrayRemove([{'fromUserId': requesterId, 'toUserId': currentUserId}]),
-      });
-      await _firestore.collection('users').doc(requesterId).update({
         'friendRequests': FieldValue.arrayRemove([{'fromUserId': requesterId, 'toUserId': currentUserId}]),
       });
     } catch (e) {
