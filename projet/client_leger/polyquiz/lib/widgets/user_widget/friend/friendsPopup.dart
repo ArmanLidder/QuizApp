@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 import '../../../services/LanguageService.dart';
 
@@ -13,15 +14,17 @@ class UserIdsRow extends StatefulWidget {
 class _UserIdsRowState extends State<UserIdsRow> {
   String filterText = ''; // Text input for filtering
   final LanguageService ls = LanguageService.instance;
+ final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
 
   // Filters the list of users based on the entered text.
   List<QueryDocumentSnapshot> _filterUsers(
-      List<QueryDocumentSnapshot> users, String filter) {
+
+  List<QueryDocumentSnapshot> users, String filter) {
     return users
         .where((doc) {
       final username = doc['username'] as String? ?? '';
-      return username.toLowerCase().contains(filter.toLowerCase());
-    })
+      final userId = doc['uid'] as String? ?? '';
+      return username.toLowerCase().contains(filter.toLowerCase()) && userId != loggedInUserService.getUid();    })
         .toList();
   }
 

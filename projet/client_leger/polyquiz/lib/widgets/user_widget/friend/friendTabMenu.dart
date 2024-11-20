@@ -113,6 +113,7 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
           String requestId = loggedInUserService.friendRequests[index];
           return SingleFriendInteractable(
             userId: requestId,
+            isPending: true,
           );
         },
       );

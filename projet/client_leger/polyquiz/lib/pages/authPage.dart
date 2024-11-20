@@ -99,7 +99,7 @@ class _AuthPageState extends State<AuthPage> {
         String? errorCode = error?.code;
         String? cleanErrorCode = firebaseAuthErrors[errorCode];
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Connexion échouée: $cleanErrorCode')),
+          SnackBar(content: Text(loginPageText[cleanErrorCode])),
         );
       }
     }
