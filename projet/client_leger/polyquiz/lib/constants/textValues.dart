@@ -102,6 +102,7 @@ const frenchTextValues = {
   },
   "FRIENDS": {
     "TITLE": "Amis",
+    "PENDING_TITLE": "en attente",
     "ADD_FRIEND": "Ajouter",
     "FRIENDS_TAB": "Amis",
     "EMPTY_FRIENDS_LIST": "Votre liste d'amis est vide pour le moment.",
@@ -653,6 +654,7 @@ const englishTextValues = {
     "PLATINUM": "Platinum"
   },
   "FRIENDS": {
+    "PENDING_TITLE": "Pending",
     "TITLE": "Friends",
     "ADD_FRIEND": "Add",
     "FRIENDS_TAB": "Friends",
