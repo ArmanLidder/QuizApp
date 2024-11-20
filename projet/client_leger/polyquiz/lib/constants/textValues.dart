@@ -14,7 +14,7 @@ const frenchTextValues = {
     "PASSWORD_MIN_LENGTH": "Le mot de passe doit avoir au moins 6 caractères",
     "SUBMIT_BUTTON": "Se Connecter",
     "NO_ACCOUNT": "Pas de compte?",
-    "REGISTER_LINK": "S'inscrire",
+    "REGISTER_LINK": " S'inscrire",
     "SUCCESS_LOGIN_POPUP": "Connexion réussie",
     "USER_ALREADY_CONNECTED": "Cet utilisateur est déjà connecté.",
     "INVALID_EMAIL": "L'adresse e-mail est invalide.",
@@ -27,7 +27,8 @@ const frenchTextValues = {
     "OPERATION_NOT_ALLOWED": "Cette opération n'est pas autorisée.",
     "NETWORK_REQUEST_FAILED": "La connexion au réseau a échoué.",
     "REQUIRES_RECENT_LOGIN": "Veuillez vous reconnecter avant d'effectuer cette opération.",
-    "UNKNOWN_ERROR": "Une erreur inconnue s'est produite."
+    "UNKNOWN_ERROR": "Une erreur inconnue s'est produite.",
+    "OFFLINE_PLAY":"Jouer hors-ligne"
   },
   "REGISTER_PAGE": {
     "TITLE": "S'inscrire",
@@ -47,7 +48,7 @@ const frenchTextValues = {
     "PASSWORD_MIN_LENGTH": "Le mot de passe doit avoir au moins 6 caractères",
     "SUBMIT_BUTTON": "S'inscrire",
     "ALREADY_HAVE_ACCOUNT": "Déjà un compte?",
-    "LOGIN_LINK": "Se connecter",
+    "LOGIN_LINK": " Se connecter",
     "SUCCESS_REGISTER_POPUP": "Compte créé",
     "THE_NAME_IS_ALREADY_USED": "Le nom \"{{name}}\" est déjà utilisé"  },
   "MAINPAGE": {
@@ -576,7 +577,9 @@ const englishTextValues = {
     "OPERATION_NOT_ALLOWED": "This operation is not allowed.",
     "NETWORK_REQUEST_FAILED": "Network connection failed.",
     "REQUIRES_RECENT_LOGIN": "Please log in again before performing this operation.",
-    "UNKNOWN_ERROR": "An unknown error occurred."
+    "UNKNOWN_ERROR": "An unknown error occurred.",
+    "OFFLINE_PLAY":"Play offline"
+
   },
   "REGISTER_PAGE": {
     "TITLE": "Sign Up",
