@@ -47,6 +47,7 @@ class RealGameService extends ChangeNotifier {
   bool isHostEvaluating = false;
   bool _isValidateButtonActive = true;
   bool isSentAnswer = false;
+  bool observerMode = false;
 
 
   bool get isValidateActive => this._isValidateButtonActive;
@@ -56,7 +57,11 @@ class RealGameService extends ChangeNotifier {
     notifyListeners();
   }
 
-  init() {
+  init([bool isObserver = false]) {
+    if (isObserver) {
+      this.observerMode = true;
+      this.username = 'host';
+    }
     this.configureBaseSocket();
     this._socketService.sendMessage(SocketEvent.GET_QUESTION, this.roomId);
     print('ROOM ID SENT: ${this.roomId}');
@@ -105,6 +110,7 @@ class RealGameService extends ChangeNotifier {
       );
       this.gameInterfaceManagementService.changeQcmEnabled(true);
       this.question = questionData.question;
+      if (!this.observerMode) this.username = questionData.username; // TODO: make sure this is needed
       this.oldQuestion = this.question!;
       if (!isNotified) {
         notifyListeners();
@@ -160,6 +166,7 @@ class RealGameService extends ChangeNotifier {
 
   void reset() {
     this.username = '';
+    this.observerMode = false;
     this.roomId = 0;
     this.timer = 0;
     this.question = null;
