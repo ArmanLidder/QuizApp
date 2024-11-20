@@ -111,7 +111,6 @@ class _FancyAppBarState extends State<FancyAppBar> {
                   },
                 ),
               ],
-              child: Flexible( // Wrap with Flexible to prevent overflow
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -166,7 +165,6 @@ class _FancyAppBarState extends State<FancyAppBar> {
                 ),
               ),
             ),
-          ),
         ],      ),
     );
   }
