@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/active_game_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
@@ -26,6 +27,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   late Future<void> _initializeFuture;
   Map<String, String> quizNameMap = {};
   WaitingRoomService waitingRoomService = WaitingRoomService();
+  GameService gameService = GameService();
   final UserService userService = UserService();
   bool _isJoining = false;
   late final GameListService gameListService;
@@ -488,6 +490,8 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                               return GestureDetector(
                                   onTap: () {
                                     // add method for observer
+                                    observeGame(game);
+                                    print('observer method');
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
@@ -523,6 +527,13 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
         },
       ),
     );
+  }
+
+  void observeGame(GameListItem game) {
+    this.gameService.init(game.room.toString(), true);
+    // this.gameService.gameRealService.username = HOST_USERNAME;
+    // this.observationService.observeGame(game);
+    // setTimeout(() => {this.router.navigate([`game/${game.room}`]);}, 500);
   }
 
   String _getQuizName(String id) {
