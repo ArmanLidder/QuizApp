@@ -38,6 +38,7 @@ class Userpage extends StatelessWidget {
           backgroundColor: themeService.mixedMain,
           appBar: FancyAppBar(
             context: context,
+            hasBackButton: true,
           ),
           body: Stack(
             children: [

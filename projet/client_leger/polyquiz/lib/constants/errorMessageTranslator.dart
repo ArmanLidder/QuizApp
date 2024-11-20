@@ -1,14 +1,16 @@
+
+
 const Map<String, String> firebaseAuthErrors = {
-  'invalid-email': "L'adresse e-mail est invalide.",
-  'invalid-credential': "Courriel et/ou mot de passe incorrect",
-  'user-disabled': "Le compte de cet utilisateur est désactivé.",
-  'user-not-found': "Aucun utilisateur trouvé avec cet e-mail.",
-  'wrong-password': "Le mot de passe est incorrect.",
-  'email-already-in-use': "Ce courriel est déjà utilisé par un autre compte.",
-  'weak-password': "Le mot de passe est trop faible.",
-  'operation-not-allowed': "Cette opération n'est pas autorisée.",
-  'network-request-failed': "La connexion au réseau a échoué.",
-  'requires-recent-login': "Veuillez vous reconnecter avant d'effectuer cette opération.",
+  'invalid-email': "EMAIL_INVALID",
+  'invalid-credential': "INVALID_CREDENTIAL",
+  'user-disabled': "USER_DISABLED",
+  'user-not-found': "USER_NOT_FOUND",
+  'wrong-password': "WRONG_PASSWORD",
+  'email-already-in-use': "EMAIL_ALREADY_IN_USE",
+  'weak-password': "WEAK_PASSWORD",
+  'operation-not-allowed': "OPERATION_NOT_ALLOWED",
+  'network-request-failed': "NETWORK_REQUEST_FAILED",
+  'requires-recent-login': "REQUIRES_RECENT_LOGIN",
 };
 
 String mapFirebaseAuthError(String errorCode) {
