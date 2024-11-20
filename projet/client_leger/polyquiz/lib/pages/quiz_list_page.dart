@@ -11,6 +11,7 @@ import 'package:polyquiz/widgets/game_config_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 
 import '../services/theme_service.dart';
+import '../widgets/fancyAppBar.dart';
 
 class QuizListPage extends StatefulWidget {
   @override
@@ -70,10 +71,9 @@ class _QuizListPageState extends State<QuizListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Quizzes'),
-        automaticallyImplyLeading: false,
-      ),
+      backgroundColor: ts.mainBackground.value,
+      appBar:
+        FancyAppBar(context: context, hasBackButton: false),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : errorMessage.isNotEmpty
@@ -87,9 +87,9 @@ class _QuizListPageState extends State<QuizListPage> {
                         width: double.infinity,
                         margin: EdgeInsets.symmetric(horizontal: 50),
                         decoration: BoxDecoration(
-                            color: Color.fromRGBO(53, 121, 246, 1),
+                            color: ts.secondaryBackground.value,
                             border: Border.all(
-                                color: const Color.fromRGBO(0, 0, 0, 1),
+                                color: ts.mainAccent.value,
                                 width: 1.0)),
                         child: Center(
                           child: Padding(
@@ -97,7 +97,7 @@ class _QuizListPageState extends State<QuizListPage> {
                             child: Text(text['GAME_ADMIN']['QUIZZES'],
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                    color: ts.mainBackground.value,
                                     fontSize: 16)),
                           ),
                         ),
@@ -111,12 +111,12 @@ class _QuizListPageState extends State<QuizListPage> {
                               margin: EdgeInsets.symmetric(horizontal: 50),
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: const Color.fromRGBO(0, 0, 0, 1),
+                                      color: ts.mainAccent.value,
                                       width: 1.0)),
                               child: ListTile(
                                 tileColor: quiz == selectedQuiz
-                                    ? const Color.fromRGBO(184, 223, 255, 1)
-                                    : Colors.white,
+                                    ? Color.alphaBlend(ts.mainBackground.value, ts.secondaryBackground.value)
+                                    : ts.mainBackground.value,
                                 title: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -210,7 +210,7 @@ class _QuizListPageState extends State<QuizListPage> {
                             },
                             child: Text(text['GAME_ADMIN']['PLAY'],
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: ts.secondaryAccent.value ,
                                     fontWeight: FontWeight.normal,
                                     fontSize: 20)),
                             style: TextButton.styleFrom(

@@ -5,9 +5,6 @@ import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/widgets/store_widgets/storeLists.dart';
-
-import 'package:polyquiz/widgets/store_widgets/storeLists.dart';
-//import 'package:polyquiz/widgets/store_widgets/themeWidget.dart';
 import '../models/user.dart';
 import '../services/theme_service.dart';
 import '../widgets/fancyAppBar.dart';
