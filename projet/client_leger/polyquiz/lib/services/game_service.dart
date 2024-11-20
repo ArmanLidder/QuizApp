@@ -25,6 +25,7 @@ class GameService extends ChangeNotifier {
   int qreAnswer = 0;
   bool gotNotified = false;
   bool isQuitBtn = false;
+  bool isObserverMode = false;
 
   final OfflineGameService offlineGameService = OfflineGameService();
   final RealGameService realGameService = RealGameService();
@@ -87,7 +88,8 @@ class GameService extends ChangeNotifier {
     this.answers.clear();
   }
 
-  void init(String pathId) {
+  void init(String pathId,[bool isObserver=false]) {
+    if (isObserver) this.isObserverMode = true;
     if (!this.isOfflineMode) {
       configureBaseSockets();
       this.realGameService.roomId = int.parse(pathId);
