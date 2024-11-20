@@ -118,16 +118,6 @@ class _FancyAppBarState extends State<FancyAppBar> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      loggedInUserService.observableUsername.value,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10, // Adjust the size as needed
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis, // Ensure text does not overflow
-                      maxLines: 1,
-                    ),
                     SizedBox(
                       height: 36,
                       width: 40,
@@ -164,7 +154,28 @@ class _FancyAppBarState extends State<FancyAppBar> {
                           ),
                         ],
                       ),
-                    )
+                    ),
+                    Obx((){
+                      return Row(children: [
+                        Icon(
+                          Icons.monetization_on,
+                          size: 10.0,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          loggedInUserService.observableCurrency.value.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10, // Adjust the size as needed
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis, // Ensure text does not overflow
+                          maxLines: 1,
+                        ),
+                      ],);
+
+                    })
+
                   ],
                 ),
               ),
