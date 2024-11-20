@@ -19,8 +19,13 @@ class RealGameService extends ChangeNotifier {
   }
 
   SocketService _socketService = SocketService();
-  GameInterfaceManagementService _gameInterfaceManagementService =
-      GameInterfaceManagementService();
+  GameInterfaceManagementService? _gameInterfaceManagementService;
+
+
+  GameInterfaceManagementService get gameInterfaceManagementService {
+    if (_gameInterfaceManagementService == null) _gameInterfaceManagementService = GameInterfaceManagementService();
+    return _gameInterfaceManagementService!;
+  }
 
   String username = '';
   int roomId = 0;
@@ -98,7 +103,7 @@ class RealGameService extends ChangeNotifier {
         index: data['index'],
         numberOfQuestions: data['numberOfQuestions'],
       );
-      this._gameInterfaceManagementService.changeQcmEnabled(true);
+      this.gameInterfaceManagementService.changeQcmEnabled(true);
       this.question = questionData.question;
       this.oldQuestion = this.question!;
       if (!isNotified) {
@@ -117,7 +122,7 @@ class RealGameService extends ChangeNotifier {
           question: QuizQuestion.fromJson(data['question']),
           index: data['index'],
           isLast: data['isLast']);
-      this._gameInterfaceManagementService.changeQcmEnabled(true);
+      this.gameInterfaceManagementService.changeQcmEnabled(true);
       if (!isNotified) {
         notifyListeners();
         isNotified = true;
