@@ -40,6 +40,8 @@ class _AuthPageState extends State<AuthPage> {
   bool _isValidPassword = true;
   String? _selectedAvatar;
   Widget languageDropdown() {
+    _selectedAvatar = constDefaultAvatars[0];
+
     return DropdownButton<String>(
       value: translationService.currentLanguageAbbr,
       onChanged: (String? newLanguage) {
@@ -80,7 +82,7 @@ class _AuthPageState extends State<AuthPage> {
       await loggedInUserService.login(_emailController.text);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Connexion réussie!')),
+        SnackBar(content: Text(loginPageText['SUCCESS_LOGIN_POPUP'])),
       );
       translationService.currentLanguage = loggedInUserService.user!.settings.language;
       Navigator.pushReplacementNamed(context, '/home');
@@ -89,7 +91,7 @@ class _AuthPageState extends State<AuthPage> {
       if (e == "USER ALREADY CONNECTED") {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Connexion échouée: ce compte est deja connecte')),
+              content: Text(loginPageText['USER_ALREADY_CONNECTED'])),
         );
       } else {
         print(e);
@@ -110,7 +112,7 @@ class _AuthPageState extends State<AuthPage> {
         password: _passwordController.text,
       );
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Inscription réussie!')),
+        SnackBar(content: Text(registerPageText['SUCCESS_REGISTER_POPUP'])),
       );
 
       await userService.createUser(
@@ -127,7 +129,7 @@ class _AuthPageState extends State<AuthPage> {
       String? errorCode = error?.code;
       String? cleanErrorCode = firebaseAuthErrors[errorCode];
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Inscription échouée: $cleanErrorCode')),
+        SnackBar(content: Text(registerPageText[cleanErrorCode])),
       );
     }
   }
@@ -297,7 +299,7 @@ class _AuthPageState extends State<AuthPage> {
                         color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
-                  child: Text(_isRegistering ? "S'inscrire" : 'Se connecter'),
+                  child: Text(_isRegistering ? loginPageText['REGISTER_LINK'] : loginPageText['SUBMIT_BUTTON']),
                 ),
               ),
               SizedBox(height: 16),
@@ -311,8 +313,8 @@ class _AuthPageState extends State<AuthPage> {
                   },
                   child: Text(
                     _isRegistering
-                        ? "Déjà un compte? Se connecter"
-                        : "Pas de compte? S'inscrire",
+                        ? registerPageText['ALREADY_HAVE_ACCOUNT'] + registerPageText['LOGIN_LINK']
+                        : loginPageText['NO_ACCOUNT'] + loginPageText['REGISTER_LINK'],
                     style: TextStyle(color: Colors.purple),
                   ),
                 ),
@@ -327,7 +329,7 @@ class _AuthPageState extends State<AuthPage> {
                       backgroundColor: Colors.blue[500],
                       foregroundColor: Colors.black,
                     ),
-                    child: Text('Jouer hors-ligne')),
+                    child: Text(loginPageText["OFFLINE_PLAY"])),
               )
             ],
           ),

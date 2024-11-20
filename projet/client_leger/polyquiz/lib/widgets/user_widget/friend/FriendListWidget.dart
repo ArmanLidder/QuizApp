@@ -7,6 +7,7 @@ import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 import '../../../services/LanguageService.dart';
 import '../../../services/theme_service.dart';
+import 'friendTabMenu.dart';
 import 'friendsPopup.dart';
 class FriendListDisplay extends StatefulWidget {
   final FriendService friendService = FriendService.instance;
@@ -81,87 +82,9 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
             ),
           ],
         ),
-        SizedBox(
-          height: 400,
-          child: Obx(() {
-            return Container(
-              margin: EdgeInsets.all(16),
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: themeService.mainBackground.value,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: themeService.mixedMain.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  TabBar(
-                    controller: _tabController,
-                    tabs: [
-                      Tab(text: widget.ls.friendsLabel),
-                      Tab(text: widget.ls.pendingLabel),
-                    ],
-                    indicatorColor: themeService.secondaryBackground.value,
-                    labelColor: themeService.secondaryBackground.value,
-                    unselectedLabelColor: themeService.mainAccent.value,
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildFriendsList(),
-                        _buildPendingRequestsList(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ),
+        FriendDisplayBox(),
       ],
     );
   }
 
-  Widget _buildFriendsList() {
-    return Obx(() {
-      if (widget.loggedInUserService.friends.isEmpty) {
-        return Center(child: Text('No friends found'));
-      }
-
-      return ListView.builder(
-        itemCount: widget.loggedInUserService.friends.length,
-        itemBuilder: (context, index) {
-          String friendId = widget.loggedInUserService.friends[index];
-          return SingleFriendInteractable(
-            userId: friendId,
-          );
-        },
-      );
-    });
-  }
-
-  Widget _buildPendingRequestsList() {
-    return Obx(() {
-      if (widget.loggedInUserService.friendRequests.isEmpty) {
-        return Center(child: Text('No pending requests'));
-      }
-
-      return ListView.builder(
-        itemCount: widget.loggedInUserService.friendRequests.length,
-        itemBuilder: (context, index) {
-          String requestId = widget.loggedInUserService.friendRequests[index];
-          return SingleFriendInteractable(
-            userId: requestId,
-          );
-        },
-      );
-    });
-  }
 }
