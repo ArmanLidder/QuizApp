@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/offline_game_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
@@ -25,7 +26,10 @@ class GameService extends ChangeNotifier {
   int qreAnswer = 0;
   bool gotNotified = false;
   bool isQuitBtn = false;
+
   bool isObserverMode = false;
+  bool isObservingHost = true;
+  String observedUid = '';
 
   final OfflineGameService offlineGameService = OfflineGameService();
   final RealGameService realGameService = RealGameService();
@@ -90,6 +94,7 @@ class GameService extends ChangeNotifier {
 
   void init(String pathId,[bool isObserver=false]) {
     if (isObserver) this.isObserverMode = true;
+    // TODO: add configurations for observer
     if (!this.isOfflineMode) {
       configureBaseSockets();
       this.realGameService.roomId = int.parse(pathId);
@@ -144,6 +149,14 @@ class GameService extends ChangeNotifier {
       this.offlineGameService.sendAnswer();
     }
     this.lastQrlScore = null;
+    if (!this.isObserverMode) {
+      this.socketService.sendMessage(SocketEvent.GET_LAST_QRL_STATUS, {
+        'roomId': this.realGameService.roomId,
+        'lastQRLScore': this.lastQrlScore,
+        'qrlAnswer': this.qreAnswer,
+        'userId': LoggedInUserService.instance.user?.uid
+      }); // Done
+    }
     this.answers.clear();
   }
 
@@ -167,6 +180,7 @@ class GameService extends ChangeNotifier {
     this.offlineGameService.reset();
     this.gotNotified = false;
     this.isQuitBtn = false;
+    this.isObserverMode = false;
     this.lastQrlScore = null;
     this.qreAnswer = 0;
   }
@@ -181,9 +195,9 @@ class GameService extends ChangeNotifier {
   void handleTimeEvent(timeValue) {
     this.realGameService.timer = timeValue;
     if (this.timer == 0 && !this.realGameService.locked) {
-
+      // sendQREAnswer not done??
       this.realGameService.locked = true;
-      if (this.username != 'host') sendAnswer();
+      if (this.username != 'host' && !this.isObserverMode) sendAnswer();
     }
   }
 }
