@@ -43,7 +43,6 @@ class LoggedInUserService extends GetxController {
     this.observableUsername.value = this.user!.username;
     this.observableAvatar.value = (this.user?.avatar ?? "");
     this.observableAchievement.value = (this.user?.achievements ?? []);
-
   }
   Future<void> setUserByEmail(String email) async {
     User? fetchedUser = await this.userService.getUserByEmail(email); // Fetch user by email

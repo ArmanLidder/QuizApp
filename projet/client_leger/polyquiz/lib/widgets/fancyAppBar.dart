@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/widgets/user_widget/friend/appBarFriendIcon.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final BuildContext context;
-
   FancyAppBar({required this.context});
 
   @override
@@ -50,11 +50,10 @@ class _FancyAppBarState extends State<FancyAppBar> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading:IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.red),
-            onPressed: () {
-            Navigator.pushReplacementNamed(widget.context, '/home');   }),
-        actions: [
+        leading:
+          PendingRequestsWidget(),
+
+    actions: [
           GestureDetector(
             onTap: () {
               showDialog(
