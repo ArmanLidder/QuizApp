@@ -9,8 +9,9 @@ class ThemeItem extends StatelessWidget {
   final String name;
   final num cost;
   final Future<void> Function() onBuy;
+  final ThemeService ts = ThemeService.instance;
 
-  const ThemeItem.ThemeStoreItem({
+  ThemeItem.ThemeStoreItem({
     Key? key,
     required this.itemId,
     required this.name,
@@ -35,7 +36,7 @@ class ThemeItem extends StatelessWidget {
         // Item name in white
         Text(
           name,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: ts.mainAccent.value),
         ),
         SizedBox(height: 8),
         // Buy button with cost
@@ -52,8 +53,9 @@ class ImageItem extends StatelessWidget {
   final num cost;
   final String source; // New field for image source
   final Future<void> Function() onBuy;
+  final ThemeService ts = ThemeService.instance;
 
-  const ImageItem({
+  ImageItem({
     Key? key,
     required this.itemId,
     required this.name,
@@ -79,7 +81,7 @@ class ImageItem extends StatelessWidget {
         // Item name in black
         Text(
           name,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: ts.mainAccent.value),
         ),
         SizedBox(height: 8),
         // Buy button with cost
@@ -140,8 +142,9 @@ class RewardThemeItem extends StatelessWidget {
   final num cost;
   final num achievement;
   final Future<void> Function() onBuy;
+  final ThemeService ts = ThemeService.instance;
 
-  const RewardThemeItem({
+  RewardThemeItem({
     Key? key,
     required this.itemId,
     required this.name,
@@ -166,7 +169,7 @@ class RewardThemeItem extends StatelessWidget {
         // Item name in white
         Text(
           name,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: ts.mainAccent.value),
         ),
         SizedBox(height: 8),
         // Buy button with cost

@@ -8,7 +8,7 @@ Map<String, List<Color>> themeColors = {
     Colors.white,   // secondaryAccent
   ],
   "dark": [
-    Colors.black,   // mainBackground
+    Color(0xFF535252),   // mainBackground
     Colors.white,   // mainAccent
     Colors.blue[500]!,    // secondaryBackground
     Colors.black,   // secondaryAccent

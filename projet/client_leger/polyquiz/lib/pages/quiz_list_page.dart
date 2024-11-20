@@ -10,6 +10,8 @@ import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/widgets/game_config_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 
+import '../services/theme_service.dart';
+
 class QuizListPage extends StatefulWidget {
   @override
   _QuizListPageState createState() => _QuizListPageState();
@@ -18,6 +20,8 @@ class QuizListPage extends StatefulWidget {
 class _QuizListPageState extends State<QuizListPage> {
   final QuizService quizService = QuizService();
   final QuizFileService _quizFileService = QuizFileService();
+  final ThemeService ts = ThemeService.instance;
+
   List<Quiz> quizzes = [];
   bool isLoading = true;
   String errorMessage = '';
