@@ -35,32 +35,30 @@ class PendingRequestsWidget extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             const Icon(
-              Icons.person,
+              Icons.group,
               size: 48.0,
-              color: Colors.black,
+              color: Colors.white,
             ),
             if (loggedInUserService.friendRequests.value.isNotEmpty)
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  width: 20.0,
-                  height: 20.0,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '${loggedInUserService.friendRequests.value.length}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+      Positioned(
+        top: 0,
+        right: 0,
+        child: Container(
+          width: 20.0,
+          height: 20.0,
+          decoration: BoxDecoration(
+            color: Color(0xFF3F51B5), // Blue circle
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            '${loggedInUserService.friendRequests.value.length}',
+            style: const TextStyle(
+              color: Colors.white, // White text
+              fontSize: 12.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),))
           ],
         ),
       );

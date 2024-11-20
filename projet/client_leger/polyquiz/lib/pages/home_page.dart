@@ -99,7 +99,6 @@ class _HomePageState extends State<HomePage> {
                     foregroundColor: this.themeService.secondaryAccent.value,
                   ),
                   child: Text(mainPageText['SHOP'])),
-            PendingRequestsWidget(),
               ChatPopup(),
             ],
           ),
