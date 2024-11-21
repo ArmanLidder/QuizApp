@@ -188,9 +188,9 @@ class _QuizListPageState extends State<QuizListPage> {
                           TextButton(
                             onPressed: () async {
                               if (selectedQuiz != null) {
-                                final gameConfigService =
-                                    Provider.of<GameConfigService>(context,
-                                        listen: false);
+                                // final gameConfigService =
+                                //     Provider.of<GameConfigService>(context,
+                                //         listen: false);
 
                                 await showDialog(
                                   context: context,

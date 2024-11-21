@@ -161,7 +161,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                           roomValidationService.isUsernameValid) {
                         try {
                           // Navigate to the WaitingRoomScreen
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => WaitingRoomScreen(
@@ -199,7 +199,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                         roomValidationService.isUsernameValid) {
                       try {
                         // Navigate to the WaitingRoomScreen
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => WaitingRoomScreen(

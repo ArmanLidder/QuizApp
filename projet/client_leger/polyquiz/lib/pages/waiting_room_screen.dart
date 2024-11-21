@@ -62,6 +62,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     if(!waitingRoomService.isTransition) {
       if (widget.isHost) {
           this.waitingRoomService.userLeft(roomId, SocketEvent.HOST_LEFT);
+          this.waitingRoomService.deleteRoom(roomId);
       }
       else{
           this.waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
