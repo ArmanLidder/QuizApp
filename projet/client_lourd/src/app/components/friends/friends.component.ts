@@ -62,7 +62,7 @@ export class FriendsComponent {
 
     openUserSearch() {
         this.dialog.open(UserSearchDialogComponent, {
-            width:'30%',
+            width: 'auto',
             minWidth:'30%'
         });
     }

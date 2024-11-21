@@ -47,7 +47,11 @@ export class AvatarComponent implements OnInit{
 
   openProfileDialog(): void {
     if (this.uid && this.showProfileOnClick && !this.isProfilePopupOpen) {
-      this.dialog.closeAll(); // Close any existing dialogs
+      this.dialog.openDialogs.forEach(dialogRef => {
+        if (dialogRef.componentInstance instanceof ProfileViewerComponent) {
+          dialogRef.close();
+        }
+      });
       this.isProfilePopupOpen = true;
 
       const dialogRef = this.dialog.open(ProfileViewerComponent, {

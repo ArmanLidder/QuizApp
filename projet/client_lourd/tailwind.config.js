@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{html,ts}', './projects/**/*.{html,ts}'],
+  content: ['./src/**/*.{html,ts,scss}', './projects/**/*.{html,ts,scss}'],
   theme: {
     extend: {
       fontFamily:{
@@ -10,7 +10,7 @@ module.exports = {
         primary:"var(--color-primary)",
         secondary:"var(--color-secondary)",
         bgPrimary:"var(--color-bg-primary)",
-        tBase:"var(--color-text-base)"
+        bgSecondary:"var(--color-bg-secondary)",
       }
     },
   },

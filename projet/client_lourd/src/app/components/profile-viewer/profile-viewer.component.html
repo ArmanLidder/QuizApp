@@ -1,44 +1,44 @@
-<div class="w-full p-4 bg-white rounded-lg relative">
+<div class="w-full p-4 bg-white relative !bg-bgPrimary">
     <ng-container *ngIf="viewedUser$ | async as user" class="w-full">
         <div *ngIf="!hideFriendButtons" class="absolute top-2 right-2">
             <ng-container *ngIf="isFriend$ | async; else addOrPendingIcons">
-                <span class="text-black font-semibold">
-                    <mat-icon [matTooltip]="'PROFILE_POPUP.ALREADY_FRIENDS_TOOLTIP' | translate" matTooltipClass="custom-tooltip">people</mat-icon>
+                <span class="text-primary font-semibold">
+                    <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.ALREADY_FRIENDS_TOOLTIP' | translate" matTooltipClass="custom-tooltip">people</mat-icon>
                 </span>
             </ng-container>
 
             <ng-template #addOrPendingIcons>
                 <ng-container *ngIf="!(hasPendingRequest$ | async); else pendingRequestIcon">
                     <button (click)="sendFriendRequest(user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out">
-                        <mat-icon [matTooltip]="'PROFILE_POPUP.SEND_FRIEND_REQUEST_TOOLTIP' | translate">person_add</mat-icon>
+                        <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.SEND_FRIEND_REQUEST_TOOLTIP' | translate">person_add</mat-icon>
                     </button>
                 </ng-container>
                 <ng-template #pendingRequestIcon>
-                    <mat-icon [matTooltip]="'PROFILE_POPUP.REQUEST_PENDING_TOOLTIP' | translate" matTooltipClass="custom-tooltip">hourglass_empty</mat-icon>
+                    <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.REQUEST_PENDING_TOOLTIP' | translate" matTooltipClass="custom-tooltip">hourglass_empty</mat-icon>
                 </ng-template>
             </ng-template>
         </div>
 
-        <div class="flex items-start space-x-4">
+        <div class="flex items-start space-x-4 !text-primary">
             <div class="relative flex-shrink-0">
                 <app-avatar [showProfileOnClick]="false" [showMenu]="false" [uid]="user.uid"></app-avatar>
             </div>
 
             <div class="flex-1">
-                <h1 class="text-xl font-bold text-gray-900">{{ user.username }}</h1>
-                <div class="flex items-center space-x-2 mt-1 text-sm text-gray-600">
+                <h1 class="text-xl font-bold">{{ user.username }}</h1>
+                <div class="flex items-center space-x-2 mt-1 text-sm">
                     <span class="font-semibold">{{ 'PROFILE_POPUP.PRESTIGE' | translate }}:</span>
                     <span class="text-lg">{{ prestigeIcon }}</span>
-                    <span class="text-sm text-gray-600">{{ prestigeLabel }}</span>
+                    <span class="text-sm">{{ prestigeLabel }}</span>
                 </div>
-                <div class="text-sm text-gray-600 mt-1">
+                <div class="text-sm mt-1">
                     <span class="font-semibold mr-2">{{ 'PROFILE_POPUP.CURRENCY' | translate }}:</span>
                     {{ user.currency }}
                 </div>
             </div>
         </div>
 
-        <div class="mt-3 text-sm text-gray-600">
+        <div class="mt-3 text-sm !text-primary">
             <div class="flex justify-between py-1">
                 <span>{{ 'PROFILE_POPUP.GAMES_PLAYED' | translate }}:</span>
                 <span class="font-medium">{{ user.stats.gamesPlayed || 0}}</span>
@@ -56,16 +56,16 @@
                 <span class="font-medium">{{ user.stats.avgGameTime || 0}} {{ 'PROFILE_POPUP.SECONDS' | translate }}</span>
             </div>
         </div>
-        <div class="mt-4">
+        <div class="mt-4 !text-primary">
             <div class="flex items-center justify-between mb-2">
-                <h2 class="text-sm font-semibold text-gray-900">{{ 'PROFILE_POPUP.ACHIEVEMENTS' | translate }}</h2>
+                <h2 class="text-sm font-semibold">{{ 'PROFILE_POPUP.ACHIEVEMENTS' | translate }}</h2>
             </div>
             <div class="space-y-1">
                 <div *ngFor="let achievement of allAchievements; let i = index"
-                     class="flex items-center space-x-2 text-sm p-1.5 rounded"
+                     class="flex items-center space-x-2 text-sm p-1.5 rounded !bg-bgSecondary"
                      [ngClass]="achievementClasses[i]">
-                    <span class="text-base">{{ achievementIcons[i] }}</span>
-                    <span>{{ achievement }}</span>
+                    <span class="!text-primary">{{ achievementIcons[i] }}</span>
+                    <span class="!text-primary">{{ achievement }}</span>
                 </div>
             </div>
         </div>

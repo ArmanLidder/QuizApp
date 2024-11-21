@@ -11,15 +11,18 @@ import {TranslateService} from "@ngx-translate/core";
 export class UserSettingsService {
   currentLanguage: Observable<'en' | 'fr'>;
   currentTheme: Observable<string>;
-  activeTheme: string = 'theme-default';
+  activeTheme: string = 'theme-light';
 
   constructor(private userService: UsersService,private translate: TranslateService) {
     this.currentLanguage = this.getCurrentLanguage().pipe(
         map((language) => language || 'fr')
     );
     this.currentTheme = this.getCurrentTheme().pipe(
-        map((theme) => theme || 'light')
+        map((theme) => theme || 'light'),
     );
+    this.currentTheme.subscribe((theme) => {
+      this.setTheme(theme);
+    });
   }
 
   async switchLanguage(language: 'en' | 'fr') {

@@ -103,50 +103,47 @@ button[mat-icon-button]{
   :root {
     --color-primary: hsl(0, 0%, 0%); /* Default: Black */
     --color-secondary: hsl(0, 0%, 50%); /* Default: Grey */
-    --color-text-base: hsl(0, 0%, 100%); /* Default: White */
     --color-bg-primary: hsl(0, 0%, 100%); /* Default: White */
-    --color-bg-secondary: hsl(240, 100%, 50%); /* Default: Blue */
+    --color-bg-secondary: hsl(0, 0%, 50%) /* Default: White */
   }
 
-  * {
-    @apply transition-colors duration-500 ease-in-out;
-  }
+  //* {
+  //  @apply transition-colors duration-500 ease-in-out;
+  //}
 
   /* Default Theme */
-  .theme-default {
-    --color-primary: hsl(0, 0%, 0%); /* Default: Black */
-    --color-secondary: hsl(0, 0%, 50%); /* Default: Grey */
-    --color-text-base: hsl(0, 0%, 100%); /* Default: White */
-    --color-bg-primary: hsl(0, 0%, 100%); /* Default: White */
-    --color-bg-secondary: hsl(240, 100%, 50%); /* Default: Blue */
+  .theme-light {
+    --color-primary: hsl(0, 0%, 0%);
+    --color-secondary: hsl(0, 0%, 100%);
+    --color-bg-primary: hsl(0, 0%, 100%);
+    --color-bg-secondary: hsl(0, 0%, 93%)
   }
 
   /* Dark Theme */
   .theme-dark {
-    --color-primary: hsl(0, 0%, 100%); /* White */
-    --color-secondary: hsl(0, 0%, 0%); /* Black */
-    --color-text-base: hsl(0, 0%, 95%); /* Off-White for Text */
-    --color-bg-primary: hsl(220, 15%, 20%); /* Matches Primary Background */
-    --color-bg-secondary: hsl(240, 100%, 50%); /* Blue */
+    --color-primary: hsl(0, 0%, 100%);
+    --color-secondary: hsl(0, 0%, 0%);
+    --color-bg-primary: hsl(220, 15%, 20%);
+    --color-bg-secondary: hsl(0, 0%, 32%)
   }
 
   /* Disco Theme */
   .theme-disco {
-    --color-primary: hsl(270, 50%, 50%); /* Purple */
-    --color-secondary: hsl(60, 100%, 50%); /* Yellow */
-    --color-text-base: hsl(0, 0%, 0%); /* Black */
-    --color-bg-primary: hsl(270, 50%, 50%); /* Purple */
-    --color-bg-secondary: hsl(0, 100%, 50%); /* Red */
+    --color-primary: hsl(60, 100%, 50%);
+    --color-secondary: hsl(0, 100%, 50%);
+    --color-bg-primary: hsl(270, 50%, 50%);
+    --color-bg-secondary: hsl(0, 100%, 50%);
   }
 
   /* BlueGrey Theme */
   .theme-blueGrey {
-    --color-primary: hsl(210, 12%, 12%); /* BlueGrey 900 */
-    --color-secondary: hsl(210, 36%, 96%); /* BlueGrey 50 */
-    --color-text-base: hsl(270, 50%, 50%); /* Purple 600 */
-    --color-bg-primary: hsl(210, 12%, 12%); /* BlueGrey 900 */
-    --color-bg-secondary: hsl(270, 50%, 75%); /* Purple 200 */
+    --color-primary: hsl(351, 100%, 96%);
+    --color-secondary: hsl(270, 50%, 75%);
+    --color-bg-primary: hsl(210, 12%, 12%);
+    --color-bg-secondary: hsl(270, 50%, 75%);
   }
 }
 
+
+/* Alternatively, apply it to specific elements */
 
