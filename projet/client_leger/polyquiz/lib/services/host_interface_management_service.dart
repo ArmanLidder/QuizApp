@@ -9,8 +9,10 @@ import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'dart:convert';
-
+import 'package:polyquiz/services/game_config_service.dart';
+import 'package:polyquiz/services/openai_service.dart';
 import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/services/qrl_evaluation_service.dart';
 
 class HostInterfaceManagementService extends ChangeNotifier {
   static final HostInterfaceManagementService _instance =
@@ -45,10 +47,15 @@ class HostInterfaceManagementService extends ChangeNotifier {
   bool NextQuestionBtnDisabled = true;
   bool isResultPage = false;
   Function(Map<String, ResponseData>)? _qrlCallback;
+  Map<String, List<dynamic>> correctedQrlByOpenAi = {};
 
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
+  GameConfigService gameConfig = GameConfigService();
+  OpenaiService openIA = OpenaiService();
+  // QrlEvaluationService evaluationQRLService = QrlEvaluationService();
+
 
   void set qrlCallback(Function(Map<String, ResponseData>) callback) {
     this._qrlCallback = callback;
@@ -370,8 +377,36 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.responsesQRL = transformIntoResponsesQrl(decodedAnswers);
       print("Just received the user answers with a length of ${this.responsesQRL.length}");
       if (_qrlCallback != null) _qrlCallback!(this.responsesQRL);
+      if (true) {
+        print('IA IS TRUE');
+        this.openIA.init();
+        this.responsesQRL.forEach((key, value) {
+          this.openIA.correctAnswer(value.answers, this.gameService.question?.text ?? "", TranslationService.instance.currentLanguageAbbr)
+            .then((response) {
+              final res = response['choices'][0]['message']['content'] ?? "No Answer";
+              final score = this.extractScoreFromIAQRL(res);
+              this.correctedQrlByOpenAi[key] = [score, res];
+              notifyListeners();
+            });
+        });
+      }
       notifyListeners();
     });
+  }
+
+  int extractScoreFromIAQRL(String qrlText) {
+    final patternAa = RegExp(r'Aa');
+    final patternBb = RegExp(r'Bb');
+    final patternCc = RegExp(r'Cc');
+    
+    if (patternCc.hasMatch(qrlText)) {
+      return 100;
+    } else if (patternBb.hasMatch(qrlText)) {
+      return 50;
+    } else if (patternAa.hasMatch(qrlText)) {
+      return 0;
+    }
+    return 0;
   }
 
   void sendGameStats() {

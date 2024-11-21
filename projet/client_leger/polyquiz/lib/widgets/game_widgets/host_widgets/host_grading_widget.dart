@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/qrl_evaluation_service.dart';
+import 'package:polyquiz/services/game_config_service.dart';
+import 'package:polyquiz/services/host_interface_management_service.dart';
 
 class HostGrading extends StatefulWidget {
   final List<QuestionStatistics> gameStats;
@@ -18,6 +20,9 @@ class HostGrading extends StatefulWidget {
 
 class _HostGradingState extends State<HostGrading> {
   QrlEvaluationService _qrlEvaluationService = QrlEvaluationService();
+  GameConfigService gameConfigs = GameConfigService();
+  HostInterfaceManagementService hostInterfaceManagementService = HostInterfaceManagementService();
+  bool revokeAIcorrection = false;
 
   @override
   void initState() {
@@ -29,6 +34,24 @@ class _HostGradingState extends State<HostGrading> {
   void dispose() {
     this._qrlEvaluationService.reset();
     super.dispose();
+  }
+
+  String get AIcorrectionText {
+    print(hostInterfaceManagementService.correctedQrlByOpenAi);
+    return hostInterfaceManagementService.correctedQrlByOpenAi[_qrlEvaluationService.currentUsername]?[1] ?? "Open AI is down";
+  }
+
+  int get AIscore {
+    final score = hostInterfaceManagementService.correctedQrlByOpenAi[_qrlEvaluationService.currentUsername]?[0] ?? 0;
+    if (!revokeAIcorrection) _qrlEvaluationService.inputPoint = score;
+    return score;
+  }
+
+  void switchScore(int score) {
+    setState(() {
+      revokeAIcorrection = true;
+      _qrlEvaluationService.inputPoint = score;
+    });
   }
 
   @override
@@ -46,6 +69,24 @@ class _HostGradingState extends State<HostGrading> {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   // Text('Joueur: ${_qrlEvaluationService.currentUsername}',
                   //     style: TextStyle(fontSize: 16)),
+                    Text(
+                      'Correction IA',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.smart_toy),
+                        SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            AIcorrectionText,
+                            softWrap: true,
+                            overflow: TextOverflow.visible,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text('Points : $AIscore'),
                   Text('Réponse: ${_qrlEvaluationService.currentAnswer}',
                       style: TextStyle(fontSize: 16)),
                   SizedBox(height: 20.0),
@@ -53,6 +94,7 @@ class _HostGradingState extends State<HostGrading> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DropdownMenu(
+                        initialSelection: AIscore,
                         dropdownMenuEntries: <DropdownMenuEntry<int>>[
                           DropdownMenuEntry(
                               value: _qrlEvaluationService.scores[0],
@@ -66,7 +108,10 @@ class _HostGradingState extends State<HostGrading> {
                         ],
                         onSelected: (value) {
                           if (value != null)
-                            _qrlEvaluationService.inputPoint = value;
+                            {
+                              switchScore(value);
+                              _qrlEvaluationService.inputPoint = value;
+                            }
                         },
                       ),
                       SizedBox(
@@ -78,8 +123,8 @@ class _HostGradingState extends State<HostGrading> {
                                   Color.fromRGBO(53, 121, 246, 1))),
                           onPressed: () {
                             if (_qrlEvaluationService.inputPoint != -1)
-                              _qrlEvaluationService
-                                  .submitPoint(widget.gameStats);
+                              _qrlEvaluationService.submitPoint(widget.gameStats);
+                              this.revokeAIcorrection = false;
                           },
                           child: Text(
                             'Confirmer',

@@ -25,6 +25,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
   bool _friendsOnly = false;
   bool _private = false;
   int _prestige = 0;
+  bool _IsAIOn = false;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   User? userData;
   Map get configText => TranslationService.instance.text['GAME_CONFIG_DIALOG'];
@@ -118,6 +119,23 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                   child: Container(
                     color: Color.fromRGBO(240, 240, 240, 1),
                     child: CheckboxListTile(
+                      title: Text(configText['IA_CORRECTION']),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Color.fromRGBO(53, 121, 246, 1),
+                      value: _IsAIOn,
+                      onChanged: (value) {
+                        setState(() {
+                          _IsAIOn = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20),
+                Flexible(
+                  child: Container(
+                    color: Color.fromRGBO(240, 240, 240, 1),
+                    child: CheckboxListTile(
                       title: Text(configText['PRIVATE_GAME_LABEL']),
                       controlAffinity: ListTileControlAffinity.leading,
                       activeColor: Color.fromRGBO(53, 121, 246, 1),
@@ -188,6 +206,8 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                     this.userData = this.loggedInUserService.getUser();
                     if (_formKey.currentState!.validate()) {
                       print('got into validate if');
+                      print(_IsAIOn);
+                      gameConfigService.setIA(_IsAIOn);
                       gameConfigService.setGameType(_gameType);
                       gameConfigService.setPrice(_price);
                       gameConfigService.setFriendsOnly(_friendsOnly);
@@ -196,7 +216,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       gameConfigService.setUser(this.userData!);
                       Navigator.of(context).pop(); // Close the dialog
 
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => WaitingRoomScreen(

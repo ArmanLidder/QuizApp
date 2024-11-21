@@ -6,6 +6,9 @@ import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/game_config_service.dart';
+import 'package:polyquiz/services/openai_service.dart';
+
 
 class QrlEvaluationService extends ChangeNotifier {
   static final QrlEvaluationService _instance =
@@ -26,6 +29,7 @@ class QrlEvaluationService extends ChangeNotifier {
   bool isCorrectionFinished = false;
   bool isValid = true;
   List<int> points = [];
+  // Map<String, List<dynamic>> correctedQrlByOpenAi = {};
 
   final Map<String, int> correctedQrlAnswers = {};
   List<String> answers = [];
@@ -39,12 +43,18 @@ class QrlEvaluationService extends ChangeNotifier {
 
   SocketService _socketService = SocketService();
   GameService _gameService = GameService();
+  GameConfigService gameConfigs = GameConfigService();
+  OpenaiService openai = OpenaiService();
+
 
   void initialize(Map<String, ResponseData> qrlAnswers) {
     this.indexPlayer = -1;
     this.isCorrectionFinished = false;
     hostInterfaceManagementService.qrlCallback = this.initializePlayerAnswers;
     this.initializePlayerAnswers(qrlAnswers);
+    if (this.gameConfigs.IA) {
+      this.openai.init();
+    }
     this.nextAnswer();
   }
 
@@ -54,14 +64,15 @@ class QrlEvaluationService extends ChangeNotifier {
 
   void nextAnswer() {
     this.indexPlayer++;
-    print(indexPlayer);
-    print(usernames);
-    print(currentAnswer);
     if (this.indexPlayer < this.usernames.length) {
       this.currentAnswer = this.answers[this.indexPlayer];
       this.currentUsername = this.usernames[this.indexPlayer];
     }
     notifyListeners();
+  }
+
+  Map<String, List<dynamic>> get correctedQrlByOpenAi {
+    return this.hostInterfaceManagementService.correctedQrlByOpenAi;
   }
 
   void reset() {
@@ -80,6 +91,7 @@ class QrlEvaluationService extends ChangeNotifier {
     points.clear();
     correctedQrlAnswers.clear();
     questionStats.clear();
+    this.hostInterfaceManagementService.correctedQrlByOpenAi.clear();
     questionStats.addAll({
       '0': 0,
       '50': 0,

@@ -20,6 +20,7 @@ class GameConfig {
   final int? price;
   final bool? friendsOnly;
   final int? prestige;
+  final bool? IA;
 
   GameConfig({
     this.hostUserId,
@@ -29,6 +30,7 @@ class GameConfig {
     this.price,
     this.friendsOnly,
     this.prestige,
+    this.IA,
   });
 
   Map<String, dynamic> toJson() {
