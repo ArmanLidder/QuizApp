@@ -41,13 +41,13 @@ class Player {
 }
 
 class HostCurrentGameInterface {
-  num roomId;
+  int roomId;
   String timerText;
   bool isGameOver;
-  num currentTime;
+  int currentTime;
   List<Player> leftPlayers;
   List<Player> players;
-  List<num> histogramDataChangingResponses;
+  List<int> histogramDataChangingResponses;
   bool isHostEvaluating;
   String gameStats;
   bool isPaused;
@@ -71,13 +71,13 @@ class HostCurrentGameInterface {
 
   factory HostCurrentGameInterface.fromJson(Map<String, dynamic> json) {
     return HostCurrentGameInterface(
-      roomId: json['roomId'] as num,
+      roomId: json['roomId'] as int,
       timerText: json['timerText'] as String,
       isGameOver: json['isGameOver'] as bool,
-      currentTime: json['currentTime'] as num,
+      currentTime: json['currentTime'] as int,
       leftPlayers: (json['leftPlayers'] as List<dynamic>).map((player) => Player.fromList(player as List<dynamic>)).toList(),
       players: (json['players'] as List<dynamic>).map((player) => Player.fromList(player)).toList(),
-      histogramDataChangingResponses: (json['histogramDataChangingResponses'] as List).map((e) => e as num).toList(),
+      histogramDataChangingResponses: (json['histogramDataChangingResponses'] as List).map((e) => e as int).toList(),
       isHostEvaluating: json['isHostEvaluating'] as bool,
       gameStats: json['gameStats'] as String,
       isPaused: json['isPaused'] as bool,
@@ -131,11 +131,11 @@ class PlayerScore {
 }
 
 class PlayerCurrentGameInterface {
-  final num roomId;
+  final int roomId;
   final bool isBonus;
-  final num playerScore;
+  final int playerScore;
   final List<PlayerScore> players;
-  final num qreAnswer;
+  final int qreAnswer;
   final String qrlAnswer;
   final List<int> choicesStatsValues;
 
@@ -151,7 +151,7 @@ class PlayerCurrentGameInterface {
 
   factory PlayerCurrentGameInterface.fromJson(Map<String, dynamic> json) {
     return PlayerCurrentGameInterface(
-      roomId: json['roomId'] as num,
+      roomId: json['roomId'] as int,
       isBonus: json['isBonus'] as bool,
       playerScore: json['playerScore'] as int,
       players: (json['players'] as List)
