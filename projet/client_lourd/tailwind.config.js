@@ -5,6 +5,12 @@ module.exports = {
     extend: {
       fontFamily:{
         poppins:["Poppins", "sans-serif"]
+      },
+      colors: {
+        primary:"var(--color-primary)",
+        secondary:"var(--color-secondary)",
+        bgPrimary:"var(--color-bg-primary)",
+        tBase:"var(--color-text-base)"
       }
     },
   },

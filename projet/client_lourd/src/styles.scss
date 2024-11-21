@@ -99,3 +99,54 @@ button[mat-icon-button]{
   }
 }
 
+@layer base {
+  :root {
+    --color-primary: hsl(0, 0%, 0%); /* Default: Black */
+    --color-secondary: hsl(0, 0%, 50%); /* Default: Grey */
+    --color-text-base: hsl(0, 0%, 100%); /* Default: White */
+    --color-bg-primary: hsl(0, 0%, 100%); /* Default: White */
+    --color-bg-secondary: hsl(240, 100%, 50%); /* Default: Blue */
+  }
+
+  * {
+    @apply transition-colors duration-500 ease-in-out;
+  }
+
+  /* Default Theme */
+  .theme-default {
+    --color-primary: hsl(0, 0%, 0%); /* Default: Black */
+    --color-secondary: hsl(0, 0%, 50%); /* Default: Grey */
+    --color-text-base: hsl(0, 0%, 100%); /* Default: White */
+    --color-bg-primary: hsl(0, 0%, 100%); /* Default: White */
+    --color-bg-secondary: hsl(240, 100%, 50%); /* Default: Blue */
+  }
+
+  /* Dark Theme */
+  .theme-dark {
+    --color-primary: hsl(0, 0%, 100%); /* White */
+    --color-secondary: hsl(0, 0%, 0%); /* Black */
+    --color-text-base: hsl(0, 0%, 95%); /* Off-White for Text */
+    --color-bg-primary: hsl(220, 15%, 20%); /* Matches Primary Background */
+    --color-bg-secondary: hsl(240, 100%, 50%); /* Blue */
+  }
+
+  /* Disco Theme */
+  .theme-disco {
+    --color-primary: hsl(270, 50%, 50%); /* Purple */
+    --color-secondary: hsl(60, 100%, 50%); /* Yellow */
+    --color-text-base: hsl(0, 0%, 0%); /* Black */
+    --color-bg-primary: hsl(270, 50%, 50%); /* Purple */
+    --color-bg-secondary: hsl(0, 100%, 50%); /* Red */
+  }
+
+  /* BlueGrey Theme */
+  .theme-blueGrey {
+    --color-primary: hsl(210, 12%, 12%); /* BlueGrey 900 */
+    --color-secondary: hsl(210, 36%, 96%); /* BlueGrey 50 */
+    --color-text-base: hsl(270, 50%, 50%); /* Purple 600 */
+    --color-bg-primary: hsl(210, 12%, 12%); /* BlueGrey 900 */
+    --color-bg-secondary: hsl(270, 50%, 75%); /* Purple 200 */
+  }
+}
+
+
