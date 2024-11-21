@@ -1,14 +1,14 @@
 <div class="quizzes-container">
-    <table class="table-auto w-full">
+    <table class="table-auto w-full text-primary">
         <thead>
         <tr>
             <th class="w-1/2 px-4 py-2 text-left">{{ 'GAME_ADMIN.QUIZZES' | translate }}</th>
             <th *ngIf="isAdmin" class="w-1/4 px-4 py-2 text-left">{{ 'GAME_ADMIN.LAST_MODIFIED' | translate }}</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody class="bg-bgPrimary">
         <tr *ngIf="quizzes.length === 0">
-            <td colspan="3" class="text-center text-gray-500 py-4">
+            <td colspan="3" class="text-center py-4">
                 {{ 'GAME_ADMIN.NO_QUIZZES' | translate }}
             </td>
         </tr>
@@ -17,10 +17,10 @@
                 <app-game-item [quiz]="quiz" class="game-item" [isAdmin]="isAdmin" (removeQuiz)="removeQuiz($event)" (refresh)="refresh($event)"></app-game-item>
                 <app-quiz-info *ngIf="quiz === selectedQuiz && !isAdmin" [selectedQuiz]="quiz"></app-quiz-info>
             </td>
-            <td *ngIf="isAdmin" class="text-gray-600 px-4 py-3">{{ quiz.lastModification }}</td>
+            <td *ngIf="isAdmin" class="px-4 py-3">{{ quiz.lastModification }}</td>
         </tr>
         </tbody>
-        <tfoot>
+        <tfoot class="bg-bgPrimary">
         <tr>
             <td colspan="3">
                 <div class="flex justify-between space-x-4">

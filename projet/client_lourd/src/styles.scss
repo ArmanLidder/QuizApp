@@ -104,7 +104,8 @@ button[mat-icon-button]{
     --color-primary: hsl(0, 0%, 0%); /* Default: Black */
     --color-secondary: hsl(0, 0%, 50%); /* Default: Grey */
     --color-bg-primary: hsl(0, 0%, 100%); /* Default: White */
-    --color-bg-secondary: hsl(0, 0%, 50%) /* Default: White */
+    --color-bg-secondary: hsl(0, 0%, 50%); /* Default: White */
+    --color-error: rgb(220 38 38);
   }
 
   //* {
@@ -116,7 +117,8 @@ button[mat-icon-button]{
     --color-primary: hsl(0, 0%, 0%);
     --color-secondary: hsl(0, 0%, 100%);
     --color-bg-primary: hsl(0, 0%, 100%);
-    --color-bg-secondary: hsl(0, 0%, 93%)
+    --color-bg-secondary: hsl(0, 0%, 93%);
+    --color-error: rgb(220 38 38);
   }
 
   /* Dark Theme */
@@ -124,7 +126,8 @@ button[mat-icon-button]{
     --color-primary: hsl(0, 0%, 100%);
     --color-secondary: hsl(0, 0%, 0%);
     --color-bg-primary: hsl(220, 15%, 20%);
-    --color-bg-secondary: hsl(0, 0%, 32%)
+    --color-bg-secondary: hsl(0, 0%, 32%);
+    --color-error: rgb(255, 102, 102);
   }
 
   /* Disco Theme */
@@ -133,6 +136,7 @@ button[mat-icon-button]{
     --color-secondary: hsl(0, 100%, 50%);
     --color-bg-primary: hsl(270, 50%, 50%);
     --color-bg-secondary: hsl(0, 100%, 50%);
+    --color-error: rgb(220 38 38);
   }
 
   /* BlueGrey Theme */
@@ -141,6 +145,7 @@ button[mat-icon-button]{
     --color-secondary: hsl(270, 50%, 75%);
     --color-bg-primary: hsl(210, 12%, 12%);
     --color-bg-secondary: hsl(270, 50%, 75%);
+    --color-error: rgb(220 38 38);
   }
 }
 
