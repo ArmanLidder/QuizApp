@@ -43,10 +43,10 @@
                         </ng-container>
                         <ng-template #nonAdminButtons>
                             <button [matTooltip]="!selectedQuiz ? ('GAME_ADMIN.PLAY_TOOLTIP' | translate) : ''" (click)="playGame()"
-                                    class="px-4 py-2 border rounded transition"
+                                    class="!bg-bgButton !text-secondary px-4 py-2 rounded transition"
                                     [ngClass]="{
-          'border-blue-500 bg-blue-600 text-white hover:bg-blue-700': selectedQuiz,
-          'border-gray-300 bg-gray-300 text-gray-500 cursor-not-allowed': !selectedQuiz
+          '!bg-bgPrimary !text-secondary hover:opacity-75': selectedQuiz,
+          '!bg-gray-300 !text-gray-500 !cursor-not-allowed': !selectedQuiz
         }"
                                     [disabled]="!selectedQuiz">
                                 {{ 'GAME_ADMIN.PLAY' | translate }}

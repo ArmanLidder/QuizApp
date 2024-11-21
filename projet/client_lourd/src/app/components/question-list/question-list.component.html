@@ -7,25 +7,25 @@
 
                 <div class="flex gap-2 mb-2 items-center">
                     <div class="flex gap-2">
-                        <button (click)="addQuestion(i)" class="p-2 rounded hover:bg-blue-100" type="button">
+                        <button (click)="addQuestion(i)" class="p-2 rounded hover:opacity-75" type="button">
                             <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.ADD_QUESTION' | translate"
-                                      class="!text-blue-600"
+                                      class="!text-bgButton"
                                       matTooltipClass="custom-tooltip">add
                             </mat-icon>
                         </button>
 
                         <button (click)="modifyQuestion(i)"
-                                *ngIf="!question.get('beingModified')?.value" class="p-2 rounded hover:bg-gray-100"
+                                *ngIf="!question.get('beingModified')?.value" class="p-2 rounded hover:opacity-75"
                                 type="button">
                             <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.MODIFY_QUESTION' | translate"
-                                      class="!text-black"
+                                      class="!text-primary"
                                       matTooltipClass="custom-tooltip">edit
                             </mat-icon>
                         </button>
                     </div>
 
                     <div class="flex gap-2 justify-center flex-1">
-                        <button (click)="moveQuestionUp(i)" *ngIf="i !== 0" class="p-2 rounded hover:bg-gray-100"
+                        <button (click)="moveQuestionUp(i)" *ngIf="i !== 0" class="p-2 rounded hover:opacity-75"
                                 type="button">
                             <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.MOVE_UP' | translate"
                                       class="!text-primary"
@@ -34,7 +34,7 @@
                         </button>
 
                         <button (click)="moveQuestionDown(i)" *ngIf="i + 1 !== questionsArray?.length"
-                                class="p-2 rounded hover:bg-gray-100"
+                                class="p-2 rounded hover:opacity-75"
                                 type="button">
                             <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.MOVE_DOWN' | translate"
                                       class="!text-primary"
@@ -43,7 +43,7 @@
                         </button>
                     </div>
 
-                    <button (click)="removeQuestion(i)" class="p-2 rounded hover:bg-red-100" type="button">
+                    <button (click)="removeQuestion(i)" class="p-2 rounded hover:opacity-75" type="button">
                         <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.DELETE_QUESTION' | translate"
                                   class="!text-error"
                                   matTooltipClass="custom-tooltip">delete
@@ -137,7 +137,7 @@
                                          class="w-40 h-40 object-cover rounded">
 
                                     <button (click)="removeImage(i)"
-                                            class="inline-flex items-center px-3 py-2 bg-red-50 text-red-700 rounded w-fit hover:bg-red-100">
+                                            class="inline-flex items-center px-3 py-2 bg-red-50 text-red-700 rounded w-fit hover:opacity-75">
                                         <mat-icon class="mr-1">delete</mat-icon>
                                         {{ 'QUIZ_CREATION.QUESTION_LIST.IMAGE_DELETE' | translate }}
                                     </button>
@@ -154,7 +154,7 @@
                             <button (click)="addChoice(i, getChoicesArray(i).controls.length - 1)"
                                     [disabled]="getChoicesArray(i).controls.length !== 0"
                                     [ngClass]="{ 'hidden': getChoicesArray(i).controls.length !== 0 }"
-                                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    class="px-4 py-2 bg-blue-500 text-white rounded hover:opacity-75"
                                     type="button">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.ADD_CHOICE' | translate }}
                             </button>
@@ -274,7 +274,7 @@
                                 <div class="flex gap-2">
                                     <button (click)="moveChoice(itemMovingDirection.DOWN, i, j)"
                                             *ngIf="j !== getChoicesArray(i).controls.length - 1"
-                                            class="p-2 hover:bg-gray-100 rounded"
+                                            class="p-2 hover:opacity-75 rounded"
                                             type="button">
                                         <mat-icon class="!text-primary"
                                                 [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.CHOICE.MOVE_DOWN' | translate"
@@ -283,7 +283,7 @@
                                         </mat-icon>
                                     </button>
                                     <button (click)="moveChoice(itemMovingDirection.UP, i, j)" *ngIf="j !== 0"
-                                            class="p-2 hover:bg-gray-100 rounded"
+                                            class="p-2 hover:opacity-75 rounded"
                                             type="button">
                                         <mat-icon class="!text-primary"
                                                 [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.CHOICE.MOVE_UP' | translate"
@@ -291,7 +291,7 @@
                                             keyboard_arrow_up
                                         </mat-icon>
                                     </button>
-                                    <button (click)="addChoice(i, j)" class="p-2 hover:bg-blue-100 rounded"
+                                    <button (click)="addChoice(i, j)" class="p-2 hover:opacity-75 rounded"
                                             type="button">
                                         <mat-icon
                                                 [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.CHOICE.ADD_CHOICE' | translate"
@@ -299,7 +299,7 @@
                                                 matTooltipClass="custom-tooltip">add
                                         </mat-icon>
                                     </button>
-                                    <button (click)="removeChoice(i, j)" class="p-2 hover:bg-red-100 rounded"
+                                    <button (click)="removeChoice(i, j)" class="p-2 hover:opacity-75 rounded"
                                             type="button">
                                         <mat-icon
                                                 [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.CHOICE.REMOVE_CHOICE' | translate"
@@ -407,7 +407,7 @@
         <div class="flex justify-center mt-4">
             <button (click)="addQuestion(questionsArray ? questionsArray.length - 1 : 0)"
                     *ngIf='(questionsArray ? questionsArray.length - 1 : 0) < 0'
-                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    class="bg-bgButton text-secondary px-4 py-2 rounded hover:opacity-75"
                     type="button">
                 {{ 'QUIZ_CREATION.QUESTION_LIST.ADD_QUESTION_BUTTON' | translate }}
             </button>

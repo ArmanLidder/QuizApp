@@ -11,6 +11,7 @@ module.exports = {
         secondary:"var(--color-secondary)",
         bgPrimary:"var(--color-bg-primary)",
         bgSecondary:"var(--color-bg-secondary)",
+        bgButton:"var(--color-bg-button)",
         error:"var(--color-error)",
       }
     },

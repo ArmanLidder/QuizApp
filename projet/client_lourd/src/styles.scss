@@ -105,6 +105,7 @@ button[mat-icon-button]{
     --color-secondary: hsl(0, 0%, 50%); /* Default: Grey */
     --color-bg-primary: hsl(0, 0%, 100%); /* Default: White */
     --color-bg-secondary: hsl(0, 0%, 50%); /* Default: White */
+    --color-bg-button: rgb(33, 150, 243);
     --color-error: rgb(220 38 38);
   }
 
@@ -118,6 +119,7 @@ button[mat-icon-button]{
     --color-secondary: hsl(0, 0%, 100%);
     --color-bg-primary: hsl(0, 0%, 100%);
     --color-bg-secondary: hsl(0, 0%, 93%);
+    --color-bg-button: rgb(33, 150, 243);
     --color-error: rgb(220 38 38);
   }
 
@@ -127,28 +129,29 @@ button[mat-icon-button]{
     --color-secondary: hsl(0, 0%, 0%);
     --color-bg-primary: hsl(220, 15%, 20%);
     --color-bg-secondary: hsl(0, 0%, 32%);
+    --color-bg-button: rgb(33, 150, 243);
     --color-error: rgb(255, 102, 102);
   }
-
+  //button bg is bgButton, the text inside it is secondary
   /* Disco Theme */
   .theme-disco {
     --color-primary: hsl(60, 100%, 50%);
-    --color-secondary: hsl(0, 100%, 50%);
+    --color-secondary: hsl(0, 100%, 50%); //secondary accent
     --color-bg-primary: hsl(270, 50%, 50%);
     --color-bg-secondary: hsl(0, 100%, 50%);
+    --color-bg-button: #000000;
     --color-error: rgb(220 38 38);
   }
 
   /* BlueGrey Theme */
   .theme-blueGrey {
     --color-primary: hsl(351, 100%, 96%);
-    --color-secondary: hsl(270, 50%, 75%);
+    --color-secondary: hsl(270, 50%, 75%); //secondary accent
     --color-bg-primary: hsl(210, 12%, 12%);
     --color-bg-secondary: hsl(270, 50%, 75%);
+    --color-bg-button: rgb(142, 36, 170);
     --color-error: rgb(220 38 38);
   }
 }
 
-
-/* Alternatively, apply it to specific elements */
 

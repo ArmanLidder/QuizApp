@@ -9,18 +9,18 @@
                             {{ user.level }}
                         </div>
                         <img [src]="user.avatar" alt="Avatar de {{ user.username }}"
-                             class="w-32 h-32 rounded-full object-cover mb-4 border-2 border-white shadow-lg"/>
-                        <button class="absolute -bottom-0 -right-0 mb-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-10 h-10"
+                             class="w-32 h-32 rounded-full object-cover mb-4 border-2 shadow-lg"/>
+                        <button class="absolute -bottom-0 -right-0 mb-2 bg-bgPrimary hover:bg-opacity-75 text-blue-600 rounded-full w-10 h-10"
                                 (click)="avatarModificationDialog()">
-                            <mat-icon class="text-xl">edit</mat-icon>
+                            <mat-icon class="text-xl text-bgButton">edit</mat-icon>
                         </button>
                     </div>
                     <div class="mt-4">
                         <div class="flex items-center justify-center">
                             <h1 class="text-3xl font-bold !text-secondary">{{ user.username }}</h1>
-                            <button class="ml-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-6 h-6"
+                            <button class="ml-2 bg-bgPrimary hover:bg-opacity-75 text-blue-600 rounded-full w-6 h-6"
                                     (click)="usernameModificationDialog()">
-                                <mat-icon class="text-base">edit</mat-icon>
+                                <mat-icon class="text-base text-bgButton">edit</mat-icon>
                             </button>
                         </div>
                         <p class="text-lg mt-2 break-words !text-secondary">{{ user.email }}</p>
