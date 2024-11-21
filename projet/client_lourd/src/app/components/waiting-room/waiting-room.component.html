@@ -19,7 +19,7 @@
                     <ul>
                         <li class="player-item" *ngFor="let player of waitingRoomManagementService.players">
                             <app-avatar class="player-name" [isChat]="true" [uid]="player"></app-avatar>
-                            <div class='icon-container'>
+                            <div class='icon-container ml-3'>
                                 <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' [matTooltip]="'WAITING_ROOM_PAGE.BAN_TOOLTIP' | translate"></i>
                             </div>
                         </li>
@@ -32,7 +32,7 @@
 
             <ng-container *ngIf="waitingRoomManagementService.gameType === 'equipe'">
                 <h2>{{ 'WAITING_ROOM_PAGE.TEAMS_TITLE' | translate }}</h2>
-                <div *ngIf="waitingRoomManagementService.teamsForInterface.length > 0; else noTeams" class="teams-container">
+                <div *ngIf="waitingRoomManagementService.teamsForInterface.length > 0; else noTeams" class="teams-container text-primary">
                     <div *ngFor="let team of waitingRoomManagementService.teamsForInterface" class="team">
                         <div class="team-header">
                             <span>{{ 'WAITING_ROOM_PAGE.TEAM_LABEL' | translate }} {{ team.name }}</span>
@@ -43,9 +43,9 @@
                             </button>
                         </div>
                         <div class="team-players">
-                            <div *ngFor="let player of team.userIds.members" class="team-item">
+                            <div *ngFor="let player of team.userIds.members" class="team-item text-center">
                                 <app-avatar class="team-avatar" [isChat]="true" [uid]="player"></app-avatar>
-                                <div class='icon-container'>
+                                <div class='icon-container text-center'>
                                     <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' [matTooltip]="'WAITING_ROOM_PAGE.BAN_TOOLTIP' | translate"></i>
                                 </div>
                             </div>
@@ -77,8 +77,8 @@
 
 <div *ngIf='waitingRoomManagementService.isTransition' class='transition'>
     <div class='timer'>
-        <h2>{{ 'WAITING_ROOM_PAGE.QUIZ_STARTING_IN' | translate }}</h2>
-        <div>{{ waitingRoomManagementService.time }}</div>
+        <h2 class="!text-primary">{{ 'WAITING_ROOM_PAGE.QUIZ_STARTING_IN' | translate }}</h2>
+        <div class="!text-primary">{{ waitingRoomManagementService.time }}</div>
     </div>
     <app-leave-boutton></app-leave-boutton>
 </div>

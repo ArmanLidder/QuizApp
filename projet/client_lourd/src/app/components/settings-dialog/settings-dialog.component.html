@@ -23,7 +23,7 @@
                 (change)="switchTheme($event)"
                 [(ngModel)]="currentTheme"
                 class="bg-white text-black rounded p-2 w-1/2">
-            <option *ngFor="let theme of availableThemes" [value]="theme">{{ theme }}</option>
+            <option *ngFor="let theme of availableThemes$ | async" [value]="theme">{{ theme }}</option>
         </select>
     </div>
 </div>
