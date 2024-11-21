@@ -4,6 +4,8 @@ import 'package:polyquiz/constants/constants.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/game_list_item.dart';
+import 'package:polyquiz/models/host_interface.dart';
+import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
@@ -99,15 +101,35 @@ class ObservationService extends GetxController {
   }
 
   void handleGetQREAnswer() {
-    // TODO
+    this.socketService.onMessage(SocketEvent.GET_QRE_ANSWER_FOR_OBS, (value) {
+      this.gameService.obsQreAnswer = value as int;
+    });
   }
 
   void handleObsGetInitialQuestion() {
-    // TODO
+    this.socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION, (data) {
+      InitialQuestionData questionData = InitialQuestionData(
+        question: QuizQuestion.fromJson(data['question']),
+        username: data['username'],
+        index: data['index'],
+        numberOfQuestions: data['numberOfQuestions'],
+      );
+      this.gameService.realGameService.question = questionData.question;
+      this.gameService.realGameService.isLast = questionData.numberOfQuestions == questionData.index;
+    });
   }
 
   void handleGameStateReception() {
-    // TODO
+    this.socketService.onMessage(SocketEvent.RECEIVING_HOST_GAME_STATUS, (data) {
+      final hostData = HostCurrentGameInterface.fromJson(data);
+      this.setUpGameState(hostData);
+      final resetPlayerStatus = this.hostInterfaceManagementService.isGameOver;
+      this.hostInterfaceManagementService.interactiveListService.getPlayersList(
+        this.gameService.realGameService.roomId,
+        leftPlayers: this.hostInterfaceManagementService.leftPlayers,
+        resetPlayerStatus: resetPlayerStatus
+      );
+    });
   }
 
   void handleGameStatusDistribution() {
