@@ -1,5 +1,5 @@
 <app-header [showMenu]="!waitingRoomManagementService.isTransition"></app-header>
-<div *ngIf='isValidation'>
+<div *ngIf='isValidation' class="bg-bgPrimary min-h-[calc(100vh-120px)]">
     <button class="solo-btn" (click)="togglePrivate()">
         {{ isPrivate ? ('PLAYER_WAITING_PAGE.JOIN_PUBLIC_GAME' | translate) : ('PLAYER_WAITING_PAGE.JOIN_PRIVATE_GAME' | translate) }}
     </button>

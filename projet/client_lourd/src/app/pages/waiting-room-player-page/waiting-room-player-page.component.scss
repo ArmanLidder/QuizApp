@@ -1,8 +1,8 @@
 .solo-btn {
   margin: 10px;
   padding: 10px 20px; /* Adjust padding for better appearance */
-  background-color: #007bff; /* Button background color */
-  color: white; /* Text color */
+  background-color: var(--color-bg-button);
+  color: var(--color-secondary); /* Text color */
   border: none; /* Remove default border */
   border-radius: 5px; /* Rounded corners */
   font-size: 1em; /* Font size */
@@ -12,5 +12,5 @@
 }
 
 .solo-btn:hover {
-  background-color: #0056b3; /* Darker shade on hover */
+  opacity: 0.75;
 }

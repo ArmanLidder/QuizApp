@@ -101,10 +101,10 @@ button[mat-icon-button]{
 
 @layer base {
   :root {
-    --color-primary: hsl(0, 0%, 0%); /* Default: Black */
-    --color-secondary: hsl(0, 0%, 50%); /* Default: Grey */
-    --color-bg-primary: hsl(0, 0%, 100%); /* Default: White */
-    --color-bg-secondary: hsl(0, 0%, 50%); /* Default: White */
+    --color-primary: hsl(0, 0%, 0%);
+    --color-secondary: hsl(0, 0%, 100%);
+    --color-bg-primary: hsl(0, 0%, 100%);
+    --color-bg-secondary: hsl(0, 0%, 93%);
     --color-bg-button: rgb(33, 150, 243);
     --color-error: rgb(220 38 38);
   }
@@ -128,7 +128,7 @@ button[mat-icon-button]{
     --color-primary: hsl(0, 0%, 100%);
     --color-secondary: hsl(0, 0%, 0%);
     --color-bg-primary: hsl(220, 15%, 20%);
-    --color-bg-secondary: hsl(0, 0%, 32%);
+    --color-bg-secondary: hsl(0, 0%, 14%);
     --color-bg-button: rgb(33, 150, 243);
     --color-error: rgb(255, 102, 102);
   }
@@ -153,4 +153,5 @@ button[mat-icon-button]{
     --color-error: rgb(220 38 38);
   }
 }
+
 
