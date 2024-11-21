@@ -198,7 +198,15 @@ class ObservationService extends GetxController {
   }
 
   void handleLastQRLAnswerReception() {
-    // TODO
+    this.socketService.onMessage(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, (data) {
+      // Assuming 'data' is a Map containing the expected values
+      final Map<String, dynamic> dataMap = data as Map<String, dynamic>;
+
+      if (gameService.observedUid == (dataMap['userId'] as String)) {
+        gameService.lastQrlScore = dataMap['lastQRLScore'] ?? 0;
+        gameService.obsQrlAnswer = dataMap['qrlAnswer'] ?? "";
+      }
+    });
   }
 
   void reset(BuildContext context) {
