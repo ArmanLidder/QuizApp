@@ -10,6 +10,7 @@ import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../widgets/fancyAppBar.dart';
+import '../widgets/user_widget/friend/appBarFriendIcon.dart';
 
 class HomePage extends StatefulWidget {
   @override
