@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UsersService } from '@app/services/users.service/users.service';
-import { firstValueFrom, from, Observable, of, switchMap} from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import {BehaviorSubject, firstValueFrom, from, Observable, of, switchMap, take, tap} from 'rxjs';
+import { map } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { collection, doc, getDoc, getDocs, Firestore } from '@angular/fire/firestore';
 import { StoreItem } from '@common/interfaces/store.interface';
@@ -14,7 +14,15 @@ export class UserSettingsService {
   currentLanguage: Observable<'en' | 'fr'>;
   currentTheme: Observable<string>;
   activeTheme: string = 'theme-light';
-  availableThemes$: Observable<string[]>; // Cached observable for available themes
+  private availableThemesSubject: BehaviorSubject<string[] | null> = new BehaviorSubject<string[] | null>(null);
+  availableThemes$: Observable<string[]> = this.availableThemesSubject.asObservable().pipe(
+      switchMap((cachedThemes) => {
+        if (cachedThemes) return of(cachedThemes);
+        return this.loadAvailableThemes().pipe(
+            tap((themes) => this.availableThemesSubject.next(themes))
+        );
+      })
+  );
 
   constructor(private firestore: Firestore, private userService: UsersService, private translate: TranslateService) {
     this.currentLanguage = this.getCurrentLanguage().pipe(
@@ -26,9 +34,6 @@ export class UserSettingsService {
     this.currentTheme.subscribe((theme) => {
       this.setTheme(theme);
     });
-
-    // Initialize the cached available themes observable
-    this.availableThemes$ = this.createAvailableThemesObservable();
   }
 
 
@@ -79,10 +84,11 @@ export class UserSettingsService {
     return this.userService.currentUserProfile$.pipe(map((user) => user?.settings.theme));
   }
 
-  private createAvailableThemesObservable(): Observable<string[]> {
+  loadAvailableThemes(): Observable<string[]> {
     const defaultThemes = ['light', 'dark'];
 
     return this.userService.currentUserProfile$.pipe(
+        take(1), // Only take the first emitted value to prevent repeated reads
         switchMap((currentUser) => {
           if (!currentUser) return of(defaultThemes);
 
@@ -96,9 +102,8 @@ export class UserSettingsService {
                 const ownedItemIds = storeProfileData.ownedItems || [];
 
                 if (ownedItemIds.length === 0) return of(defaultThemes);
-
+                console.log("lots of reads..")
                 const storeItemsRef = collection(this.firestore, 'storeItems');
-                console.log('lots of reads');
                 return from(getDocs(storeItemsRef)).pipe(
                     map((querySnapshot) => {
                       const ownedThemes = querySnapshot.docs
@@ -115,8 +120,12 @@ export class UserSettingsService {
                 );
               })
           );
-        }),
-        shareReplay(1) // Cache the result and replay the last emitted value to new subscribers
+        })
     );
+  }
+
+  async refreshAvailableThemes(): Promise<void> {
+    const themes = await firstValueFrom(this.loadAvailableThemes());
+    this.availableThemesSubject.next(themes);
   }
 }

@@ -34,6 +34,6 @@
                 (click)="openSettingsDialog()">
             <mat-icon>settings</mat-icon>
         </button>
-        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="showMenu" [showMoney]="true"></app-avatar>
+        <app-avatar *ngIf="currentUser$ | async as user" [showMenu]="showMenu" [showMoney]="true" [ignoreThemes]="true"></app-avatar>
     </div>
 </header>

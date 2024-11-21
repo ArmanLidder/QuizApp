@@ -20,8 +20,9 @@ export class AvatarComponent implements OnInit{
   @Input() showMenu: boolean = false;
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() hideLevel: boolean = false;
-
   @Input() uid: string; //imporant to pass in
+  @Input() ignoreThemes: boolean = false;
+
 
   currentUser$: Observable<User | undefined>;
 

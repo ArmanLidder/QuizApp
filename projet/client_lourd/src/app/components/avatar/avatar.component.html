@@ -50,6 +50,11 @@
         </mat-menu>
     </div>
 
-    <p *ngIf="isChat" class="text-center mt-1 p-0 text-primary">{{ (currentUser$ | async)?.username }}</p>
-    <p *ngIf="showMoney" class="text-center text-primary"><i class="bi bi-cash-coin"></i> {{ (currentUser$ | async)?.currency }}</p>
+    <p *ngIf="isChat" class="text-center mt-1 p-0" [class.text-primary]="!ignoreThemes">
+        {{ (currentUser$ | async)?.username }}
+    </p>
+    <p *ngIf="showMoney" class="text-center" [class.text-primary]="!ignoreThemes">
+        <i class="bi bi-cash-coin"></i> {{ (currentUser$ | async)?.currency }}
+    </p>
+
 </div>
