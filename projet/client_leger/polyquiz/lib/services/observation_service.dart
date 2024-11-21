@@ -44,21 +44,36 @@ class ObservationService extends GetxController {
   }
 
   void configureBaseSocketFeatures(BuildContext context) {
-    // this.handleGetQRLInteraction();
-    // this.handleGetQRLAnswer();
-    // this.handleQREAnswer();
-    // this.handleObsGetInitialQuestion();
+    this.handleGetQRLInteraction();
+    this.handleGetQRLAnswer();
+    this.handleGetQREAnswer();
+    this.handleObsGetInitialQuestion();
     this.gameInterfaceManagementService.configureBaseSocketFeatures();
     this.hostInterfaceManagementService.configureBaseSocketFeatures(context);
-    // this.handleGameStateReception();
-    // this.handlePlayerGameState();
-    // this.handleGameStatusDistribution();
+    this.handleGameStateReception();
+    this.handlePlayerGameState();
+    this.handleGameStatusDistribution();
     this.handleHostLeft();
-    // this.handleLastQRLAnswerReception();
+    this.handleLastQRLAnswerReception();
   }
 
   void observeOtherPlayer(String oldUid, String newUid) {
-    // TODO
+    final data = {
+      'roomId': this.gameConfigs?.room,
+      'oldUserId': oldUid,
+      'newUserId': newUid,
+      'isHost': this.isHost,
+    };
+    this.isHost = newUid == this.gameConfigs?.hostUserId;
+    this.gameService.isObservingHost = this.isHost;
+    this.gameService.observedUid = newUid;
+    this.gameService.realGameService.username = this.isHost ? 'host' : newUid;
+    if (this.gameService.isObserverMode) this.gameService.obsQrlAnswer = observerText['INACTIVE_PLAYER'];
+    this.socketService.sendMessage(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
+    if (this.isHost) this.socketService.sendMessage(SocketEvent.NEW_OBSERVER_GAME, {
+      'roomId': this.gameConfigs?.room,
+      'isFirst': false,
+    });
   }
 
   void handleHostLeft() {
