@@ -17,6 +17,7 @@ import {UsersService} from "@app/services/users.service/users.service";
 import {User} from "@app/interfaces/user/user-data.interface";
 import {PopoutWindowComponent} from "angular-popout-window";
 import {TranslateService} from "@ngx-translate/core";
+import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
 
 export enum State {
     closed,
@@ -30,11 +31,13 @@ export enum State {
     styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
-    private canalService: CanalService = inject(CanalService)
-    private fb: FormBuilder = inject(FormBuilder)
-    private appRef: ApplicationRef = inject(ApplicationRef)
-    public usersService: UsersService = inject(UsersService)
-    private translate: TranslateService = inject(TranslateService)
+    private canalService: CanalService = inject(CanalService);
+    private fb: FormBuilder = inject(FormBuilder);
+    private appRef: ApplicationRef = inject(ApplicationRef);
+    public usersService: UsersService = inject(UsersService);
+    private translate: TranslateService = inject(TranslateService);
+    private settings: UserSettingsService = inject(UserSettingsService);
+
     @ViewChild('popupWindow') popWindow: PopoutWindowComponent;
     @ViewChild('chatscrollable') private scrollContainer!: ElementRef;
     messageForm: FormGroup;
@@ -91,9 +94,18 @@ export class ChatComponent implements OnInit {
     popOut() {
         this.state = State.outside;
         this.popWindow.popOut();
-        const input = this.popWindow["popoutWindow"].document.getElementById('input_message') as HTMLElement;
+        let currentTheme: string;
+        const popoutDocument = this.popWindow['popoutWindow'].document;
+
+        this.settings.currentTheme.subscribe(theme => {
+            popoutDocument.documentElement.classList.add(`theme-${theme}`);
+            if (currentTheme&& currentTheme!=theme) popoutDocument.documentElement.classList.remove(`theme-${currentTheme}`)
+            currentTheme = theme;
+        })
+        const input = popoutDocument.getElementById('input_message') as HTMLElement;
         input?.focus();
     }
+
 
     // Methods for UI
     trackById(index: number, canal: Canal): string {

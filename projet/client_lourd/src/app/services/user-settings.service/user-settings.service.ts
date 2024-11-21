@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UsersService } from '@app/services/users.service/users.service';
-import { firstValueFrom, from, Observable, of, switchMap } from 'rxjs';
+import { firstValueFrom, from, Observable, of, switchMap} from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { collection, doc, getDoc, getDocs, Firestore } from '@angular/fire/firestore';
@@ -30,6 +30,7 @@ export class UserSettingsService {
     // Initialize the cached available themes observable
     this.availableThemes$ = this.createAvailableThemesObservable();
   }
+
 
   async switchLanguage(language: 'en' | 'fr') {
     const currentUser: User | null = await firstValueFrom(this.userService.currentUserProfile$);
@@ -104,7 +105,6 @@ export class UserSettingsService {
                           .filter((doc) => ownedItemIds.includes(doc.id))
                           .map((doc) => {
                             const data = doc.data() as StoreItem;
-                            console.log('Matched Item:', { _id: doc.id, ...data });
                             return data;
                           })
                           .filter((item) => item.itemType === 'theme' || item.itemType === 'rewardTheme')
