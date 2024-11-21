@@ -81,7 +81,7 @@
                                     {{ 'PROFILE.CONNECTION_HISTORY' | translate }}
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
-                            <ul class="!bg-secondary !text-primary p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
+                            <ul class="!bg-bgPrimary !text-primary p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
                                 <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
                                 <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
                                     {{ history.eventType === 'login' ? ('PROFILE.LOGIN' | translate) : ('PROFILE.LOGOUT' | translate) }} -
@@ -97,7 +97,7 @@
                                     {{ 'PROFILE.GAME_HISTORY' | translate }}
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
-                            <ul class="!bg-secondary p-4 rounded-lg !text-primary" style="max-height: 200px; overflow-y: auto;">
+                            <ul class="!bg-bgPrimary p-4 rounded-lg !text-primary" style="max-height: 200px; overflow-y: auto;">
                                 <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
                                 <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
                                     {{ game.result === 'win' ? ('PROFILE.WIN' | translate) : ('PROFILE.LOSS' | translate) }} -
