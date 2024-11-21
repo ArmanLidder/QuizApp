@@ -31,6 +31,9 @@ class GameService extends ChangeNotifier {
   bool isObservingHost = true;
   String observedUid = '';
 
+  int obsQreAnswer = 0;
+  String obsQrlAnswer = '';
+
   final OfflineGameService offlineGameService = OfflineGameService();
   final RealGameService realGameService = RealGameService();
   final SocketService socketService = SocketService();
