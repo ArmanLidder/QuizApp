@@ -95,6 +95,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
       if (this.gameService.question?.type == QuestionType.QCM) {
         this.getScore();
         this.changeQcmEnabled(false);
+        this.gameService.realGameService.qcmEnabled = false;
       } else {
         this.gameService.qrlAnswer = '';
         this.gameService.realGameService.validated = true;
@@ -248,6 +249,9 @@ class GameInterfaceManagementService extends ChangeNotifier {
   }
 
   bool getQcmEnabled() {
+    if(this.gameService.realGameService.qcmEnabled){
+      return true;
+    }
     return this._qcmEnabled;
   }
 }
