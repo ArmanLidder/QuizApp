@@ -16,7 +16,7 @@ class PlayerQreWidget extends StatefulWidget {
 class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
   bool get isValidated => !gameInterfaceManagementService.gameService.realGameService.isValidateActive;
-  int currentValue = 0;
+  int currentValue = 0;  // TODO: attach this to gameService maybe
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get qreText => gameText['PLAYER_QRE_INTERFACE'];
 
