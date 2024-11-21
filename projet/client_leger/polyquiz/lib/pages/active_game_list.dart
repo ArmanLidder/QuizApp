@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/services/game_service.dart';
+import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/active_game_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
@@ -490,7 +492,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                               return GestureDetector(
                                   onTap: () {
                                     // add method for observer
-                                    observeGame(game);
+                                    observeGame(game, context);
                                     print('observer method');
                                   },
                                   child: Padding(
@@ -529,10 +531,16 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     );
   }
 
-  void observeGame(GameListItem game) {
+  void observeGame(GameListItem game, BuildContext context) {
     this.gameService.init(game.room.toString(), true);
-    // this.gameService.gameRealService.username = HOST_USERNAME;
-    // this.observationService.observeGame(game);
+    this.gameService.realGameService.username = 'host';
+    ObservationService.instance.observeGame(game, context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GamePage()
+      )
+    );
     // setTimeout(() => {this.router.navigate([`game/${game.room}`]);}, 500);
   }
 

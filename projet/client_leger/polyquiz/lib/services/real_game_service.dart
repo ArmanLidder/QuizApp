@@ -102,9 +102,10 @@ class RealGameService extends ChangeNotifier {
 
   void configureBaseSocket() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION, (data) {
+      print(data);
       InitialQuestionData questionData = InitialQuestionData(
         question: QuizQuestion.fromJson(data['question']),
-        username: data['username'],
+        username: data['username'] ?? 'host',
         index: data['index'],
         numberOfQuestions: data['numberOfQuestions'],
       );
