@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/constants/timer_message.dart';
 import 'package:polyquiz/enums/question_type.dart';
+import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_service.dart';
@@ -49,6 +50,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
+  InteractiveListService get interactiveListService => _interactiveListService;
 
   void set qrlCallback(Function(Map<String, ResponseData>) callback) {
     this._qrlCallback = callback;

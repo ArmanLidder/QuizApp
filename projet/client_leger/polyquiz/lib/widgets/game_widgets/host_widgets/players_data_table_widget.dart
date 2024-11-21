@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/player_status.dart';
+import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/waiting_room_service.dart';
