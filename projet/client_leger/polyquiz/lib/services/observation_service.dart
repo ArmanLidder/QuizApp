@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/constants/constants.dart';
@@ -6,7 +8,7 @@ import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/game_list_item.dart';
 import 'package:polyquiz/models/host_interface.dart';
 import 'package:polyquiz/models/quiz.dart';
-import 'package:polyquiz/services/game_interface_management_service.dart';
+import 'package:polyquiz/services/game_interface_management_service.dart' as gims;
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
@@ -19,7 +21,7 @@ class ObservationService extends GetxController {
   SocketService socketService = SocketService();
   GameService gameService = GameService();
   HostInterfaceManagementService hostInterfaceManagementService = HostInterfaceManagementService();
-  GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
+  gims.GameInterfaceManagementService gameInterfaceManagementService = gims.GameInterfaceManagementService();
   // TRANSLATION VALUES
   Map get text => TranslationService.instance.text;
   Map get observerText => text['OBSERVER_INTERFACE'];
@@ -133,11 +135,16 @@ class ObservationService extends GetxController {
   }
 
   void handleGameStatusDistribution() {
-    // TODO
+    this.socketService.onMessage(SocketEvent.GAME_STATUS_DISTRIBUTION, (data) {
+      this.unpackStats(this.parseGameStats(data as String));
+    });
   }
 
-  void parseGameStats(String stringifyStats) {
-    // TODO
+  TransportStatsFormat parseGameStats(String stringifyStats) {
+    final parsedData = jsonDecode(stringifyStats);
+    if (parsedData is List<List>) {
+      return parsedData;
+    } else return [];
   }
 
   void unpackStats(TransportStatsFormat stats) {
@@ -145,7 +152,19 @@ class ObservationService extends GetxController {
   }
 
   void handlePlayerGameState() {
-    // TODO
+    this.socketService.onMessage(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, (data) {
+      final playerCGI = PlayerCurrentGameInterface.fromJson(data);
+      this.gameInterfaceManagementService.isBonus = playerCGI.isBonus;
+      this.gameInterfaceManagementService.isGameOver = this.hostInterfaceManagementService.isGameOver;
+      this.gameInterfaceManagementService.playerScore = playerCGI.playerScore;
+      // this.gameInterfaceManagementService.timerText = this.hostInterfaceManagementService.timerText;
+      this.gameInterfaceManagementService.players = playerCGI.players;
+      this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
+      this.gameService.obsQreAnswer = playerCGI.qreAnswer;
+      this.gameService.obsQrlAnswer = playerCGI.qrlAnswer;
+      this.gameService.qrlAnswer = playerCGI.qrlAnswer;
+      this.gameInterfaceManagementService.getScore();
+    });
   }
 
   void setUpGameState(HostCurrentGameInterface data) {
