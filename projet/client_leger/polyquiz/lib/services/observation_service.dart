@@ -141,4 +141,12 @@ class ObservationService extends GetxController {
     }
   }
 
+  void handleLastQRLAnswerReception() {
+    // TODO
+  }
+
+  void reset(BuildContext context) {
+    this.hostInterfaceManagementService.reset(context);
+    this.gameInterfaceManagementService.reset();
+  }
 }
