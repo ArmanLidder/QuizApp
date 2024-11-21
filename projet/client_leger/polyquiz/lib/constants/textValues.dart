@@ -546,6 +546,10 @@ const frenchTextValues = {
     "CURRENT_POINTS": "Pointage",
     "BONUS_RECEIVED_FEEDBACK": "Vous avez recu des points Bonus!",
     "VALIDATE_BUTTON": "Valider"
+  },
+  "OBSERVER_INTERFACE": {
+    "INACTIVE_PLAYER": "Le joueur est inactif ...",
+    "PLAYER_IS_WRITING": "Le joueur écrit une réponse ...",
   }
 };
 
@@ -1098,5 +1102,9 @@ const englishTextValues = {
     "CURRENT_POINTS": "Points",
     "BONUS_RECEIVED_FEEDBACK": "You received Bonus points!!",
     "VALIDATE_BUTTON": "Validate"
+  },
+  "OBSERVER_INTERFACE": {
+    "INACTIVE_PLAYER": "The player is inactive ...",
+    "PLAYER_IS_WRITING": "The player is typing an answer ...",
   }
 };
