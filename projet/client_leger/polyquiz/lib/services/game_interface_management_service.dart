@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/enums/question_type.dart';
+import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/score.dart';
 import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_service.dart';
@@ -28,7 +29,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
   bool isGameOver = false;
   bool _qcmEnabled = true;
   int playerScore = 0;
-  List<Player> players = [];
+  List<PlayerScore> players = [];
   bool inPanicMode = false;
   List<QuestionStatistics> gameStats = []; // Type a revoir
   String get timerText => timerTransText[isDefaultTimerMessage ? 'TIME_LEFT' : 'FINAL_RESULT'];
@@ -250,11 +251,4 @@ class GameInterfaceManagementService extends ChangeNotifier {
   bool getQcmEnabled() {
     return this._qcmEnabled;
   }
-}
-
-class Player {
-  final String username;
-  final int points;
-
-  Player({required this.username, required this.points});
 }
