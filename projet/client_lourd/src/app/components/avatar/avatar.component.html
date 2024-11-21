@@ -38,7 +38,7 @@
             {{ (currentUser$ | async)?.level || 0 }}
         </div>
 
-        <mat-menu #menu="matMenu">
+        <mat-menu #menu="matMenu" class="customBg">
             <button mat-menu-item (click)="goToProfile()">
                 <mat-icon class="text-gray-500" aria-hidden="true">account_circle</mat-icon>
                 <span>{{'AVATAR_CLICK_MENU.PROFIL' | translate}}</span>
