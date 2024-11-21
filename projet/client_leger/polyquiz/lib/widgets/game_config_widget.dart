@@ -119,6 +119,23 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                   child: Container(
                     color: Color.fromRGBO(240, 240, 240, 1),
                     child: CheckboxListTile(
+                      title: Text(configText['PRIVATE_GAME_LABEL']),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Color.fromRGBO(53, 121, 246, 1),
+                      value: _private,
+                      onChanged: (value) {
+                        setState(() {
+                          _private = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20),
+                Flexible(
+                  child: Container(
+                    color: Color.fromRGBO(240, 240, 240, 1),
+                    child: CheckboxListTile(
                       title: Text(configText['IA_CORRECTION']),
                       controlAffinity: ListTileControlAffinity.leading,
                       activeColor: Color.fromRGBO(53, 121, 246, 1),
@@ -131,23 +148,6 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                     ),
                   ),
                 ),
-                SizedBox(width: 20),
-                Flexible(
-                  child: Container(
-                    color: Color.fromRGBO(240, 240, 240, 1),
-                    child: CheckboxListTile(
-                      title: Text(configText['PRIVATE_GAME_LABEL']),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      activeColor: Color.fromRGBO(53, 121, 246, 1),
-                      value: _private,
-                      onChanged: (value) {
-                        setState(() {
-                          _private = value!;
-                        });
-                      },
-                    ),
-                  ),
-                )
               ],
             ),
             SizedBox(height: 20),

@@ -55,6 +55,7 @@ class GameConfigService with ChangeNotifier {
   }
 
   void setIA(bool isAI){
+    print('IA: $isAI');
     this.IA = isAI;
     notifyListeners();
   }

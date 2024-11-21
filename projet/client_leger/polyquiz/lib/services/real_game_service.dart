@@ -43,6 +43,7 @@ class RealGameService extends ChangeNotifier {
   bool _isValidateButtonActive = true;
   bool isSentAnswer = false;
   bool qcmEnabled = false;
+  bool isAION = false;
 
 
   bool get isValidateActive => this._isValidateButtonActive;
@@ -174,6 +175,7 @@ class RealGameService extends ChangeNotifier {
     this.audioPaused = false;
     this.inTimeTransition = false;
     this.isNotified = false;
+    this.isAION = false;
     this._socketService.clearAllListeners();
     this.audio.stop();
   }

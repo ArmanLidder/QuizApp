@@ -12,7 +12,7 @@ class OpenaiService {
   OpenaiService._internal();
 
   void init() {
-    _apiKey = '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';
+    _apiKey = 'ENTER_YOUR_API_HERE';
   }
 
   Future<void> delayRequests() async {
@@ -42,7 +42,6 @@ class OpenaiService {
       );
 
       if (response.statusCode == 200) {
-        print('Response: ${response.body}');
         final decodedBody = utf8.decode(response.bodyBytes);
         return jsonDecode(decodedBody);
       } else if (response.statusCode == 429) {

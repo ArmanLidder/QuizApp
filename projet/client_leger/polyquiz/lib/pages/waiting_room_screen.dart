@@ -81,6 +81,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             widget.quiz.id, widget.gameConfigService!.getGameConfig());
         realGameService.username = 'host';
         realGameService.roomId = waitingRoomService.roomId;
+        realGameService.isAION = widget.gameConfigService!.getGameConfig().IA!;
         setState(() {
           waitingRoomService.gameType = widget.gameConfigService!.gameType;
         });

@@ -69,24 +69,26 @@ class _HostGradingState extends State<HostGrading> {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   // Text('Joueur: ${_qrlEvaluationService.currentUsername}',
                   //     style: TextStyle(fontSize: 16)),
-                    Text(
-                      'Correction IA',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Row(
-                      children: [
-                        Icon(Icons.smart_toy),
-                        SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            AIcorrectionText,
-                            softWrap: true,
-                            overflow: TextOverflow.visible,
+                    if (hostInterfaceManagementService.gameService.realGameService.isAION) ...[
+                      Text(
+                        'Correction IA',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.smart_toy),
+                          SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              AIcorrectionText,
+                              softWrap: true,
+                              overflow: TextOverflow.visible,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Text('Points : $AIscore'),
+                        ],
+                      ),
+                      Text('Points : $AIscore'),
+                    ],
                   Text('Réponse: ${_qrlEvaluationService.currentAnswer}',
                       style: TextStyle(fontSize: 16)),
                   SizedBox(height: 20.0),

@@ -52,7 +52,7 @@ class QrlEvaluationService extends ChangeNotifier {
     this.isCorrectionFinished = false;
     hostInterfaceManagementService.qrlCallback = this.initializePlayerAnswers;
     this.initializePlayerAnswers(qrlAnswers);
-    if (this.gameConfigs.IA) {
+    if (this.hostInterfaceManagementService.gameService.realGameService.isAION) {
       this.openai.init();
     }
     this.nextAnswer();

@@ -52,9 +52,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
-  GameConfigService gameConfig = GameConfigService();
   OpenaiService openIA = OpenaiService();
-  // QrlEvaluationService evaluationQRLService = QrlEvaluationService();
 
 
   void set qrlCallback(Function(Map<String, ResponseData>) callback) {
@@ -377,8 +375,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.responsesQRL = transformIntoResponsesQrl(decodedAnswers);
       print("Just received the user answers with a length of ${this.responsesQRL.length}");
       if (_qrlCallback != null) _qrlCallback!(this.responsesQRL);
-      if (true) {
-        print('IA IS TRUE');
+      if (gameService.realGameService.isAION) {
+        print('IA IS TRUE ${gameService.realGameService.isAION}');
         this.openIA.init();
         this.responsesQRL.forEach((key, value) {
           this.openIA.correctAnswer(value.answers, this.gameService.question?.text ?? "", TranslationService.instance.currentLanguageAbbr)
