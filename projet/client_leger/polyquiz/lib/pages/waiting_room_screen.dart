@@ -59,13 +59,12 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     //_leaveRoom();
     // waitingRoomService.cancelListeners();
     // waitingRoomService.disconnect();
-    if(!waitingRoomService.isTransition) {
+    if (!waitingRoomService.isTransition) {
       if (widget.isHost) {
-          this.waitingRoomService.userLeft(roomId, SocketEvent.HOST_LEFT);
-          this.waitingRoomService.deleteRoom(roomId);
-      }
-      else{
-          this.waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
+        this.waitingRoomService.userLeft(roomId, SocketEvent.HOST_LEFT);
+        this.waitingRoomService.deleteRoom(roomId);
+      } else {
+        this.waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
       }
     }
     waitingRoomService.players = [];
@@ -291,22 +290,26 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                               username)
                                         TextButton(
                                             style: TextButton.styleFrom(
-                                                backgroundColor: Color.fromRGBO(
-                                                    53, 121, 246, 1)),
-                                            onPressed: () {
-                                              waitingRoomService.joinTeam(
-                                                  waitingRoomService
-                                                      .teamsForInterface[index]
-                                                      .name);
-                                            },
-                                            child: Text(
-                                                waitRoomText['JOIN_TEAM'],
+                                                backgroundColor: !waitingRoomService.isTransition
+                                                    ? Color.fromRGBO(
+                                                        53, 121, 246, 1)
+                                                    : Color.fromRGBO(
+                                                        200, 200, 200, 1)),
+                                            onPressed:
+                                                waitingRoomService.isTransition
+                                                    ? null
+                                                    : () {
+                                                        waitingRoomService.joinTeam(
+                                                            waitingRoomService
+                                                                .teamsForInterface[
+                                                                    index]
+                                                                .name);
+                                                      },
+                                            child: Text(waitRoomText['JOIN_TEAM'],
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        255, 255, 255, 1),
+                                                    color: Color.fromRGBO(255, 255, 255, 1),
                                                     fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.normal))),
+                                                    fontWeight: FontWeight.normal))),
                                     ],
                                   ),
                                   SizedBox(height: 10),
@@ -399,11 +402,13 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                               ? SizedBox.shrink()
                               : TextButton(
                                   style: TextButton.styleFrom(
-                                    backgroundColor: (!this.onlyOneMember())
+                                    backgroundColor: (!this.onlyOneMember() &&
+                                            !waitingRoomService.isTransition)
                                         ? Color.fromRGBO(53, 121, 246, 1)
                                         : Color.fromRGBO(200, 200, 200, 1),
                                   ),
-                                  onPressed: this.onlyOneMember() == true
+                                  onPressed: this.onlyOneMember() == true ||
+                                          waitingRoomService.isTransition
                                       ? null
                                       : () {
                                           waitingRoomService.sendCreateTeam();
