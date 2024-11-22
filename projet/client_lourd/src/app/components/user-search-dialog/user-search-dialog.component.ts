@@ -25,7 +25,8 @@ export class UserSearchDialogComponent implements OnInit {
     hasPendingRequest$: Observable<boolean>;
 
     allUsers: { user: User; hasPending: boolean }[] = []; // Pre-loaded users
-    filteredUsers: { user: User; hasPending: boolean }[] = []; // Filtered users
+    searchTerm: string = ''; // Add this property to store the search term
+
 
     ngOnInit() {
         this.currentUser$ = this.usersService.currentUserProfile$;
@@ -37,14 +38,16 @@ export class UserSearchDialogComponent implements OnInit {
 
                     const preFilteredUsers = allUsers.filter(
                         (user) =>
-                            user.uid !== currentUser.uid && // Exclude current user
-                            !currentUser.friends.includes(user.uid) // Exclude friends
+
+                            user.uid !== currentUser.uid &&
+                            !currentUser.friends.includes(user.uid)
                     );
 
-                    // Check pending status for each user
                     return combineLatest(
                         preFilteredUsers.map((user) =>
+
                             this.friendService
+
                                 .hasPendingRequest(of(user))
                                 .pipe(map((hasPending) => ({ user, hasPending })))
                         )
@@ -52,25 +55,26 @@ export class UserSearchDialogComponent implements OnInit {
                 })
             )
             .subscribe((usersWithPendingStatus) => {
-                this.allUsers = usersWithPendingStatus; // Pre-load all users with pending status
-                this.filteredUsers = this.allUsers; // Initially, show all users
-                this.applyFilter();
+                this.allUsers = usersWithPendingStatus;
             });
+
+        // Update `searchTerm` whenever the search control changes
 
         this.searchControl.valueChanges
+
             .pipe(startWith(''), debounceTime(30), distinctUntilChanged())
             .subscribe((searchTerm) => {
-                this.applyFilter();
+                this.searchTerm = (searchTerm ?? '').toLowerCase(); // Ensure it's a string
+
             });
     }
 
-    applyFilter() {
-        const searchTerm = this.searchControl.value ?? '';
-        const str = searchTerm.toLowerCase();
-        this.filteredUsers = this.allUsers.filter((userData) =>
-            userData.user.username.toLowerCase().includes(str)
-        );
+    applyFilter(user: { user: User; hasPending: boolean }): boolean {
+        if (!this.searchTerm) return true; // Show all users if no search term
+
+        return user.user.username.toLowerCase().includes(this.searchTerm);
     }
+
 
     trackByUserId(index: number, item: { user: User; hasPending: boolean }): string {
         return item.user.uid;
