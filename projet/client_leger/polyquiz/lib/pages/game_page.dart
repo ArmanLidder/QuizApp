@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
@@ -16,6 +17,8 @@ import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
+
+import '../models/user.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -363,7 +366,7 @@ class ResultPage extends StatelessWidget {
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
-
+  final TranslationService transService = TranslationService.instance;
   ResultPage({
     required this.gameService,
     this.interactiveListService,
@@ -372,25 +375,30 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          gameText['GAME_FINISHED'] + " , " + gameText["PLAYERS_RESULT"],
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        PlayersDataTable(
-          isHost: false,
-        ),
-        StatisticZone(gameStats : this.gameInterfaceManagementService!.gameStats),
-        QuitBtn(
-          isHost: false,
-          roomId: gameService.realGameService.roomId,
-          gameService: gameService,
-          interactiveListService: interactiveListService,
-          gameInterfaceManagementService: gameInterfaceManagementService,
-        ),
-      ],
-    );
+    return Obx((){
+      //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
+      Language uselessShit = transService.languageValue.value;
+
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            gameText['GAME_FINISHED'] + " , " + gameText["PLAYERS_RESULT"],
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          PlayersDataTable(
+            isHost: false,
+          ),
+          StatisticZone(gameStats : this.gameInterfaceManagementService!.gameStats),
+          QuitBtn(
+            isHost: false,
+            roomId: gameService.realGameService.roomId,
+            gameService: gameService,
+            interactiveListService: interactiveListService,
+            gameInterfaceManagementService: gameInterfaceManagementService,
+          ),
+        ],
+      );
+    });
   }
 }
