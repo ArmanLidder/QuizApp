@@ -3,7 +3,7 @@
   .ngx-slider .ngx-slider-pointer {
     width: 16px !important;
     height: 16px !important;
-    background-color: #3b82f6 !important;
+    background-color: var(--color-bg-button) !important;
     border-radius: 50% !important;
     top: -5px !important;
     &:after {
@@ -13,28 +13,28 @@
   ngx-slider[disabled] .slider-pointer {
     transition: none !important;
   }
-
+  .ngx-slider .ngx-slider-bubble {
+    color: var(--color-primary) !important; /* Change bubble text color */
+  }
 }
 
 .enter {
   margin-left: 10px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--color-bg-button);
+  color: var(--color-secondary);
   flex: 0 0 auto;
-  border: 4px solid #007bff;
 }
 
 .enter:hover {
-  background-color: white;
-  color: #007bff;
+  opacity: 0.75;
   transition: 0.3s;
 }
 
-.enter:active {
-  background-color: #007bff;
-  color: black;
-  flex: 0 0 auto;
-  border: 4px solid black;
+.enter:disabled {
+  background-color: gray;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.35;
 }
 
 .enter:disabled {

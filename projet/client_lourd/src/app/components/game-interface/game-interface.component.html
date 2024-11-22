@@ -1,6 +1,6 @@
 <div class="grid-container mt-6" *ngIf='gameInterfaceManagementService.isGameOver'>
-    <h2>{{'GAME_INTERFACE.GAME_FINISHED'| translate}}!</h2>
-    <p>{{'GAME_INTERFACE.FINAL_SCORE'| translate}} {{ score }}</p>
+    <h2 class="text-primary">{{'GAME_INTERFACE.GAME_FINISHED'| translate}}!</h2>
+    <p class="text-primary">{{'GAME_INTERFACE.FINAL_SCORE'| translate}} {{ score }}</p>
     <app-leave-boutton></app-leave-boutton>
 </div>
 <div class="result-container" *ngIf="gameInterfaceManagementService.isGameOver">
@@ -21,18 +21,18 @@
 </div>
 <div *ngIf='!gameInterfaceManagementService.isGameOver' class="grid-container w-full">
     <div id="flex-container">
-        <div class="circle">
-            <span>{{gameInterfaceManagementService.timerText}}</span>
-            <span>{{gameInterfaceManagementService.gameService.timer}}</span>
+        <div class="circle text-primary">
+            <span class="text-primary">{{gameInterfaceManagementService.timerText}}</span>
+            <span class="text-primary">{{gameInterfaceManagementService.gameService.timer}}</span>
         </div>
         <section id="question-field">
-            <div>
+            <div class="text-primary">
                 <h2>Question {{ gameInterfaceManagementService.gameService.questionNumber }}</h2>
                 <h3>{{ 'GAME_INTERFACE.QUESTION_INFO.VALUE' | translate }} : {{ gameInterfaceManagementService.gameService.question?.points }} points</h3>
                 <h1>{{ gameInterfaceManagementService.gameService.question?.text }}</h1>
             </div>
         </section>
-        <div class='points'>
+        <div class='points text-primary'>
             <p>{{ 'GAME_INTERFACE.CURRENT_POINTS' | translate }}: {{ score }}</p>
             <p *ngIf = 'bonusStatus && !gameInterfaceManagementService.gameService.observerMode'> {{ 'GAME_INTERFACE.BONUS_RECEIVED_FEEDBACK' | translate }} </p>
         </div>

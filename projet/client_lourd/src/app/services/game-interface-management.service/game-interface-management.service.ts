@@ -70,6 +70,7 @@ export class GameInterfaceManagementService {
         this.handleGameStatusDistribution();
     }
 
+
     private resetData() {
         if (!this.gameService.observingHost) {
             this.gameService.audio.pause();
@@ -129,6 +130,7 @@ export class GameInterfaceManagementService {
 
     private handleTimeTransition() {
         this.socketService.on(SocketEvent.TIME_TRANSITION, (timeValue: number) => {
+            this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.NEXT');
             if (!this.gameService.observerMode) {
                 this.gameService.gameRealService.timer = timeValue;
                 if (this.gameService.timer === 0) {

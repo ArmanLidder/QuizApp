@@ -19,7 +19,7 @@ textarea {
 }
 
 small {
-    color: #888;
+    color: var(--color-primary);;
 }
 
 .btn-container {
@@ -31,9 +31,6 @@ small {
     margin-top: 20px;
 }
 
-button:hover {
-    background-color: #45a049;
-}
 
 button:disabled {
     background-color: #ddd;
@@ -42,21 +39,20 @@ button:disabled {
 
 .enter {
     margin-left: 10px;
-    background-color: #007bff;
-    color: white;
-    border: 4px solid #007bff;
+    background-color: var(--color-bg-button);
+    color: var(--color-secondary);
 }
 
 .enter:hover {
-    background-color: white;
-    color: #007bff;
+    opacity: 0.75;
     transition: 0.3s;
 }
 
-.enter:active {
-    background-color: #007bff;
-    color: black;
-    border: 4px solid black;
+.enter:disabled {
+    background-color: gray;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.35;
 }
 
 .enter:disabled {
@@ -95,5 +91,5 @@ button {
 }
 
 #responseInput {
-    border: 4px solid black;
+    border: 4px solid var(--color-primary);;
 }
