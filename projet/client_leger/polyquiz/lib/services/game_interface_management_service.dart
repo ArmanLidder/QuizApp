@@ -20,6 +20,8 @@ class GameInterfaceManagementService extends ChangeNotifier {
   GameInterfaceManagementService._internal();
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get timerTransText => gameText['TIMER_TEXT'];
+  Map get observerText => TranslationService.instance.text['OBSERVER_INTERFACE'];
+
 
   factory GameInterfaceManagementService() {
     return _instance;
@@ -115,7 +117,24 @@ class GameInterfaceManagementService extends ChangeNotifier {
   }
 
   void obsHandleEndQuestion() {
-    // TODO
+    if (!this.gameService.isObservingHost) {
+      this.gameService.audio.pause();
+      this.gameService.audio.seek(Duration.zero);
+      this.gameService.realGameService.audioPaused = true;
+    }
+    this.inPanicMode = false;
+    switch (this.gameService.question?.type) {
+      case QuestionType.QCM:
+      case QuestionType.QRE:
+        this.getScore();
+        this.gameService.realGameService.validated = true;
+        break;
+      case QuestionType.QRL:
+      default:
+        this.gameService.qrlAnswer = observerText['INACTIVE_PLAYER'];
+        if (!this.gameService.isObservingHost) this.gameService.realGameService.validated = true;
+    }
+    notifyListeners();
   }
 
   void handleEvaluationOver() {
