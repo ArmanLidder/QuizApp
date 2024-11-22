@@ -63,7 +63,10 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
 
   Widget getPlayerTile(String uid) {
     Widget observeButton = TextButton(
-        onPressed: () { observationService.observeOtherPlayer(uid); },
+        onPressed: () { 
+            this.observationService.observedUid = uid;
+            observationService.observeOtherPlayer(uid); 
+          },
         child: Text(observeButtonText)
     );
 
@@ -96,6 +99,7 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
       List<String> newList = [];
       newList.add(this.observationService.gameConfigs!.hostUserId);
       data.forEach((player) => newList.add(player.toString()));
+      newList.remove(this.observationService.observedUid);
       this.observationService.playerList.value = newList;
       print(newList);
     });

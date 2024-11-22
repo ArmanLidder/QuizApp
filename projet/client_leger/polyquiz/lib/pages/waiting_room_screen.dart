@@ -121,16 +121,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     waitingRoomService.toggleRoomLock();
   }
 
-  void _leaveRoom() {
-    if (widget.isHost) {
-      print('Host left Deleting room $roomId');
-      waitingRoomService.deleteRoom(roomId);
-    } else {
-      print('Player left');
-      waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
-    }
-  }
-
   bool onlyOneMember() {
     bool result = false;
     this.waitingRoomService.teamsForInterface.forEach((team) {
