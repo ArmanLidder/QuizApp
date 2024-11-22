@@ -25,12 +25,6 @@ class _StatisticZoneState extends State<StatisticZone> {
   ThemeService _themeService = ThemeService.instance;
   Map get transText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get qreValueText => transText['QRE_HISTOGRAM_X_VAL'];
-  final validateButtonStyle = TextButton.styleFrom(
-    textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white),
-    splashFactory: NoSplash.splashFactory,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-    backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-  );
 
   @override
   void initState() {
@@ -140,9 +134,18 @@ class _StatisticZoneState extends State<StatisticZone> {
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: ElevatedButton(
                   onPressed: previous,
-                  child:
-                      Text('Précédent', style: TextStyle(color: Colors.white)),
-                  style: validateButtonStyle,
+                  child: Text('Précédent',
+                      style: TextStyle(
+                          color: _themeService.secondaryAccent.value)),
+                  style: TextButton.styleFrom(
+                    textStyle: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: _themeService.secondaryAccent.value),
+                    splashFactory: NoSplash.splashFactory,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    backgroundColor: _themeService.secondaryBackground.value,
+                  ),
                 ),
               ),
             if (!isEnd())
@@ -150,8 +153,18 @@ class _StatisticZoneState extends State<StatisticZone> {
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: ElevatedButton(
                   onPressed: next,
-                  child: Text('Suivant', style: TextStyle(color: Colors.white)),
-                  style: validateButtonStyle,
+                  child: Text('Suivant',
+                      style: TextStyle(
+                          color: _themeService.secondaryAccent.value)),
+                  style: TextButton.styleFrom(
+                    textStyle: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: _themeService.secondaryAccent.value),
+                    splashFactory: NoSplash.splashFactory,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0)),
+                    backgroundColor: _themeService.secondaryBackground.value,
+                  ),
                 ),
               ),
           ],

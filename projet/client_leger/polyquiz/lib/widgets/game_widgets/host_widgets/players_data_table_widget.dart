@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/player_status.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/waiting_room_service.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
@@ -28,6 +29,7 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
   int currentColumnSort = 0;
   InteractiveListService _interactiveListService = InteractiveListService();
   WaitingRoomService _waitingRoomService = WaitingRoomService();
+  ThemeService _themeService = ThemeService.instance;
 
   void onSort(int columnIndex, bool isAscending) {
     if (columnIndex == 0) {
@@ -150,41 +152,45 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                   children: [
                     TextButton(
                       style: TextButton.styleFrom(
-                          backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+                          backgroundColor:
+                              _themeService.secondaryBackground.value),
                       onPressed: sortByName,
                       child: Text(sortText['SORT_BY_NAME'],
                           style: TextStyle(
-                              color: Colors.white,
+                              color: _themeService.secondaryAccent.value,
                               fontWeight: FontWeight.normal)),
                     ),
                     SizedBox(width: 10),
                     TextButton(
                       style: TextButton.styleFrom(
-                          backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+                          backgroundColor:
+                              _themeService.secondaryBackground.value),
                       onPressed: sortByPoints,
                       child: Text(sortText['SORT_BY_SCORE'],
                           style: TextStyle(
-                              color: Colors.white,
+                              color: _themeService.secondaryAccent.value,
                               fontWeight: FontWeight.normal)),
                     ),
                     SizedBox(width: 10),
                     TextButton(
                       style: TextButton.styleFrom(
-                          backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+                          backgroundColor:
+                              _themeService.secondaryBackground.value),
                       onPressed: sortByStatus,
                       child: Text(sortText['SORT_BY_STATUS'],
                           style: TextStyle(
-                              color: Colors.white,
+                              color: _themeService.secondaryAccent.value,
                               fontWeight: FontWeight.normal)),
                     ),
                     SizedBox(width: 10),
                     TextButton(
                       style: TextButton.styleFrom(
-                          backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+                          backgroundColor:
+                              _themeService.secondaryBackground.value),
                       onPressed: changeAscending,
                       child: Icon(
                         isAscending ? Icons.arrow_upward : Icons.arrow_downward,
-                        color: Colors.white,
+                        color: _themeService.secondaryAccent.value,
                       ),
                     ),
                   ],
@@ -193,9 +199,9 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                   scrollDirection: Axis.vertical,
                   child: DataTable(
                     headingRowColor: WidgetStateProperty.all(
-                        Color.fromRGBO(53, 121, 246, 1)),
+                        _themeService.secondaryBackground.value),
                     headingTextStyle: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 1),
+                        color: _themeService.secondaryAccent.value,
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                     border: TableBorder.all(),

@@ -86,7 +86,7 @@ class _QuizListPageState extends State<QuizListPage> {
                         width: double.infinity,
                         margin: EdgeInsets.symmetric(horizontal: 50),
                         decoration: BoxDecoration(
-                            color: Color.fromRGBO(53, 121, 246, 1),
+                            color: themeService.secondaryBackground.value,
                             border: Border.all(
                                 color: themeService.mainAccent.value,
                                 width: 1.0)),
@@ -277,12 +277,12 @@ class _QuizListPageState extends State<QuizListPage> {
                             },
                             child: Text(text['GAME_ADMIN']['PLAY'],
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: themeService.secondaryAccent.value,
                                     fontWeight: FontWeight.normal,
                                     fontSize: 20)),
                             style: TextButton.styleFrom(
                               backgroundColor: selectedQuiz != null
-                                  ? Color.fromRGBO(53, 121, 246, 1)
+                                  ? themeService.secondaryBackground.value
                                   : Color.fromRGBO(200, 200, 200, 1),
                             ),
                           ),

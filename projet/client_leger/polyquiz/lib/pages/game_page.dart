@@ -354,7 +354,7 @@ class _MyWidgetState extends State<GamePage> {
               child: Text(
                 gameText['VALIDATE_BUTTON'],
                 style: TextStyle(
-                  color: Colors.white,
+                  color: themeService.secondaryAccent.value,
                   fontSize: 20,
                 ),
               )),

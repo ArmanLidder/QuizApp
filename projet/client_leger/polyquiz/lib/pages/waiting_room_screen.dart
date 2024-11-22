@@ -207,7 +207,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   contentPadding: EdgeInsets.symmetric(horizontal: 220),
                   activeColor: Color.fromRGBO(255, 255, 255, 1),
                   inactiveThumbColor: Color.fromRGBO(255, 255, 255, 1),
-                  activeTrackColor: Color.fromRGBO(53, 121, 246, 1),
+                  activeTrackColor: themeService.secondaryBackground.value,
                   inactiveTrackColor: Color.fromRGBO(217, 217, 218, 1),
                   onChanged: !this.waitingRoomService.isTransition
                       ? (bool value) => _toggleRoomLock()
@@ -305,8 +305,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                         TextButton(
                                             style: TextButton.styleFrom(
                                                 backgroundColor: !waitingRoomService.isTransition
-                                                    ? Color.fromRGBO(
-                                                        53, 121, 246, 1)
+                                                    ? themeService
+                                                        .secondaryBackground
+                                                        .value
                                                     : Color.fromRGBO(
                                                         164, 164, 164, 1)),
                                             onPressed:
@@ -321,7 +322,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                                       },
                                             child: Text(waitRoomText['JOIN_TEAM'],
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                                    color: themeService.secondaryAccent.value,
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.normal))),
                                     ],
@@ -391,7 +392,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                           return TextButton(
                             style: TextButton.styleFrom(
                               backgroundColor: (!this.validationBeforeEntry())
-                                  ? Color.fromRGBO(53, 121, 246, 1)
+                                  ? themeService.secondaryBackground.value
                                   : Color.fromRGBO(164, 164, 164, 1),
                             ),
                             onPressed: !this.validationBeforeEntry()
@@ -403,7 +404,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                 : null,
                             child: Text(waitRoomText['START_BUTTON'],
                                 style: TextStyle(
-                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                    color: themeService.secondaryAccent.value,
                                     fontSize: 20,
                                     fontWeight: FontWeight.normal)),
                           );
@@ -418,7 +419,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                   style: TextButton.styleFrom(
                                     backgroundColor: (!this.onlyOneMember() &&
                                             !waitingRoomService.isTransition)
-                                        ? Color.fromRGBO(53, 121, 246, 1)
+                                        ? themeService.secondaryBackground.value
                                         : Color.fromRGBO(164, 164, 164, 1),
                                   ),
                                   onPressed: this.onlyOneMember() == true ||
@@ -429,8 +430,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                         },
                                   child: Text(waitRoomText['CREATE_TEAM'],
                                       style: TextStyle(
-                                          color:
-                                              Color.fromRGBO(255, 255, 255, 1),
+                                          color: themeService
+                                              .secondaryAccent.value,
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal)));
                         }),

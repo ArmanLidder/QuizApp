@@ -139,7 +139,7 @@ class _HostGradingState extends State<HostGrading> {
                       TextButton(
                           style: ButtonStyle(
                               backgroundColor: WidgetStatePropertyAll(
-                                  Color.fromRGBO(53, 121, 246, 1))),
+                                  _themeService.secondaryBackground.value)),
                           onPressed: () {
                             if (_qrlEvaluationService.inputPoint != -1)
                               _qrlEvaluationService

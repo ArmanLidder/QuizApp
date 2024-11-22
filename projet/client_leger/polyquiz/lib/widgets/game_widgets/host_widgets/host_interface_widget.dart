@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/enums/question_type.dart';
-import 'package:polyquiz/models/question_statistics.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_grading_widget.dart';
@@ -133,6 +133,7 @@ class HostHeader extends StatelessWidget {
   final HostInterfaceManagementService hostInterfaceManagementService;
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
+  ThemeService _themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get gameText => text['GAME_INTERFACE'];
 
@@ -172,7 +173,10 @@ class HostHeader extends StatelessWidget {
       return null;
     return Text(
       "✅ : ${currentQuestion.answer} ± ${currentQuestion.margin}",
-      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+      style: TextStyle(
+          fontWeight: FontWeight.normal,
+          fontSize: 16,
+          color: _themeService.mainAccent.value),
     );
   }
 
@@ -185,7 +189,7 @@ class HostHeader extends StatelessWidget {
       backgroundColor:
           this.hostInterfaceManagementService.NextQuestionBtnDisabled
               ? Colors.grey
-              : Color.fromRGBO(53, 121, 246, 1),
+              : _themeService.secondaryBackground.value,
     );
     return Stack(children: [
       Column(
@@ -219,7 +223,7 @@ class HostHeader extends StatelessWidget {
                       ? gameText['SHOW_RESULT']
                       : gameText['NEXT_QUESTION'],
                   style: TextStyle(
-                      color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
+                      color: _themeService.secondaryAccent.value, fontSize: 20),
                 ),
                 style: validateButtonStyle,
               ),
@@ -311,6 +315,7 @@ class ResultPage extends StatelessWidget {
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
   final HostInterfaceManagementService hostInterfaceManagementService;
+  ThemeService _themeService = ThemeService.instance;
 
   ResultPage({
     required this.gameService,
@@ -326,7 +331,10 @@ class ResultPage extends StatelessWidget {
       children: [
         Text(
           'Le jeux est terminé! voici les résultats.',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: _themeService.mainAccent.value),
         ),
         PlayersDataTableLegend(),
         PlayersDataTable(

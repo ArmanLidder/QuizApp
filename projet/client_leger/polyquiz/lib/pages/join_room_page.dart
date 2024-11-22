@@ -317,12 +317,12 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
               child: Text(
                 waitPageText['JOIN_PUBLIC_GAME'],
                 style: TextStyle(
-                  color: Color.fromRGBO(255, 255, 255, 1),
+                  color: themeService.secondaryAccent.value,
                   fontSize: 20,
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                backgroundColor: themeService.secondaryBackground.value,
               ),
             ),
           ),
@@ -362,12 +362,13 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                                 onPressed: _joinRoomField,
                                 child: Text(roomPromptText['VALIDATE_BUTTON'],
                                     style: TextStyle(
-                                        color: Colors.white,
+                                        color:
+                                            themeService.secondaryAccent.value,
                                         fontWeight: FontWeight.normal,
                                         fontSize: 20)),
                                 style: TextButton.styleFrom(
-                                    backgroundColor:
-                                        Color.fromRGBO(53, 121, 246, 1))),
+                                    backgroundColor: themeService
+                                        .secondaryBackground.value)),
                             CancelBtn()
                           ],
                         ),

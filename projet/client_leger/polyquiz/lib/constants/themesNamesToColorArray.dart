@@ -4,13 +4,13 @@ Map<String, List<Color>> themeColors = {
   "default": [
     Colors.white, // mainBackground
     Colors.black, // mainAccent
-    Colors.blue[500]!, // secondaryBackground
+    Color.fromRGBO(53, 121, 246, 1), // secondaryBackground
     Colors.white, // secondaryAccent
   ],
   "dark": [
     Color.fromRGBO(43, 48, 59, 1), // mainBackground
     Colors.white, // mainAccent
-    Colors.blue[500]!, // secondaryBackground
+    Color.fromRGBO(53, 121, 246, 1), // secondaryBackground
     Colors.black, // secondaryAccent
   ],
   "disco": [

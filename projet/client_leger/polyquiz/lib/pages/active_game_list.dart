@@ -225,9 +225,9 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 24,
-              color: Color.fromRGBO(255, 255, 255, 1)),
+              color: themeService.secondaryAccent.value),
         ),
-        backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+        backgroundColor: themeService.secondaryBackground.value,
       ),
       backgroundColor: themeService.mainBackground.value,
       body: FutureBuilder<void>(
@@ -245,12 +245,12 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                     child: Text(
                       text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                       style: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 1),
+                        color: themeService.secondaryAccent.value,
                         fontSize: 20,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                      backgroundColor: themeService.secondaryBackground.value,
                     ),
                   ),
                 ),
@@ -270,13 +270,13 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                     child: Text(
                       text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                       style: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 1),
+                        color: themeService.secondaryAccent.value,
                         fontSize: 20,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                    ),
+                        backgroundColor:
+                            themeService.secondaryBackground.value),
                   ),
                 ),
                 Center(child: Text('Error: ${snapshot.error}')),
@@ -298,12 +298,13 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                           child: Text(
                             text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                             style: TextStyle(
-                              color: Color.fromRGBO(255, 255, 255, 1),
+                              color: themeService.secondaryAccent.value,
                               fontSize: 20,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                            backgroundColor:
+                                themeService.secondaryBackground.value,
                           ),
                         ),
                       ),
@@ -323,12 +324,13 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                           child: Text(
                             text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                             style: TextStyle(
-                              color: Color.fromRGBO(255, 255, 255, 1),
+                              color: themeService.secondaryAccent.value,
                               fontSize: 20,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                            backgroundColor:
+                                themeService.secondaryBackground.value,
                           ),
                         ),
                       ),
@@ -347,12 +349,13 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                           child: Text(
                             text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                             style: TextStyle(
-                              color: Color.fromRGBO(255, 255, 255, 1),
+                              color: themeService.secondaryAccent.value,
                               fontSize: 20,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                            backgroundColor:
+                                themeService.secondaryBackground.value,
                           ),
                         ),
                       ),
@@ -381,12 +384,13 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                           child: Text(
                             text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
                             style: TextStyle(
-                              color: Color.fromRGBO(255, 255, 255, 1),
+                              color: themeService.secondaryAccent.value,
                               fontSize: 20,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+                            backgroundColor:
+                                themeService.secondaryBackground.value,
                           ),
                         ),
                       ),

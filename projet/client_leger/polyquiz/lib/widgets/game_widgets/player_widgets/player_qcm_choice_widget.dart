@@ -36,8 +36,8 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     if (gameInterfaceManagementService.getQcmEnabled()) {
       if (lastQuestionIndex !=
               gameInterfaceManagementService.gameService.questionNumber &&
-          textBtnColor != _themeService.mainAccent.value) {
-        textBtnColor = _themeService.mainAccent.value;
+          textBtnColor != Color.fromRGBO(0, 0, 0, 0)) {
+        textBtnColor = Color.fromRGBO(0, 0, 0, 0);
         lastQuestionIndex =
             gameInterfaceManagementService.gameService.questionNumber;
       } else {
@@ -63,7 +63,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
                 .isValidateActive) {
           gameInterfaceManagementService.getQcmEnabled()
               ? setState(() {
-                  textBtnColor = changeColor(textBtnColor);
+                  textBtnColor = changeColor(textBtnColor, _themeService);
                   if (gameInterfaceManagementService
                       .gameService.isOfflineMode) {
                     gameInterfaceManagementService.gameService
@@ -94,9 +94,9 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   }
 }
 
-Color changeColor(Color textBtnColor) {
+Color changeColor(Color textBtnColor, ThemeService themeService) {
   textBtnColor = textBtnColor == Color.fromRGBO(0, 0, 0, 0)
-      ? Color.fromRGBO(53, 121, 246, 1)
+      ? themeService.secondaryBackground.value
       : Color.fromRGBO(0, 0, 0, 0);
   return textBtnColor;
 }

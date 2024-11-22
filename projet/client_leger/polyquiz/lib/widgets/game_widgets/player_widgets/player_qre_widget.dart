@@ -191,8 +191,9 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
 
   Widget getButtons() {
     final validTextStyle = TextButton.styleFrom(
-      backgroundColor: isValidated ? Colors.grey : Colors.blueAccent,
-      foregroundColor: Colors.white,
+      backgroundColor:
+          isValidated ? Colors.grey : _themeService.secondaryBackground.value,
+      foregroundColor: _themeService.secondaryAccent.value,
     );
     final quitTextStyle = TextButton.styleFrom(
         backgroundColor: Colors.red, foregroundColor: Colors.white);

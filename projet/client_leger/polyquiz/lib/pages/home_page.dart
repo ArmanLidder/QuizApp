@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.mainAccent.value,
+                  foregroundColor: this.themeService.secondaryAccent.value,
                 ),
                 child: Text(mainPageText['JOIN_GAME']),
               ),
@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.mainAccent.value,
+                  foregroundColor: this.themeService.secondaryAccent.value,
                 ),
                 child: Text(mainPageText['CREATE_GAME']),
               ),
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         this.themeService.secondaryBackground.value,
-                    foregroundColor: this.themeService.mainAccent.value,
+                    foregroundColor: this.themeService.secondaryAccent.value,
                   ),
                   child: Text(mainPageText['SHOP'])),
               ChatPopup(),

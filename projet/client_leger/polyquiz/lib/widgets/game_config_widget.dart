@@ -122,7 +122,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       child: CheckboxListTile(
                         title: Text(configText['FRIENDS_ONLY_LABEL']),
                         controlAffinity: ListTileControlAffinity.leading,
-                        activeColor: Color.fromRGBO(53, 121, 246, 1),
+                        activeColor: themeService.secondaryBackground.value,
                         value: _friendsOnly,
                         onChanged: (value) {
                           setState(() {
@@ -139,7 +139,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       child: CheckboxListTile(
                         title: Text(configText['PRIVATE_GAME_LABEL']),
                         controlAffinity: ListTileControlAffinity.leading,
-                        activeColor: Color.fromRGBO(53, 121, 246, 1),
+                        activeColor: themeService.secondaryBackground.value,
                         value: _private,
                         onChanged: (value) {
                           setState(() {
@@ -156,7 +156,7 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                       child: CheckboxListTile(
                         title: Text(configText['IA_CORRECTION']),
                         controlAffinity: ListTileControlAffinity.leading,
-                        activeColor: Color.fromRGBO(53, 121, 246, 1),
+                        activeColor: themeService.secondaryBackground.value,
                         value: _IsAIOn,
                         onChanged: (value) {
                           setState(() {
@@ -248,7 +248,8 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                     style: TextButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5)),
-                        backgroundColor: Color.fromRGBO(53, 121, 246, 1)),
+                        backgroundColor:
+                            themeService.secondaryBackground.value),
                     onPressed: () {
                       this.userData = this.loggedInUserService.getUser();
                       if (_formKey.currentState!.validate()) {
@@ -279,7 +280,8 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                     },
                     child: Text(
                       configText['CREATE_GAME_BUTTON'],
-                      style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+                      style:
+                          TextStyle(color: themeService.secondaryAccent.value),
                     ),
                   ),
                 ],
