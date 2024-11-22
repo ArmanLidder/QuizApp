@@ -496,7 +496,8 @@
       "NAME": "Name",
       "SCORE": "Score",
       "VALIDATE": "Validate",
-      "OBS_HOST_EVAL": "The host is currently evaluating..."
+      "OBS_HOST_EVAL": "The host is currently evaluating...",
+      "AI_GENERATING": "The response is being generated..."
     },
     "HISTOGRAM": {
       "LEGEND_HEADER": "Histogram legend:",
