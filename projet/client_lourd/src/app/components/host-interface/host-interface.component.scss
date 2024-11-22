@@ -33,13 +33,13 @@
 }
 
 .circle span:first-child {
-    color: black;
+    color: var(--color-primary);
     font-size: 14px;
     margin-bottom: 5px;
 }
 
 .circle span:nth-child(2) {
-    color: #000000;
+    color: var(--color-primary);
     font-size: 35px;
     margin-bottom: 5px;
 }
@@ -49,7 +49,7 @@
     height: 20px;
     width: 20px;
     cursor: pointer;
-    color: black;
+    color: var(--color-primary);
     margin: 5px;
 }
 
@@ -140,27 +140,18 @@
 
 .enter {
     margin-left: 10px;
-    background-color: #007bff;
-    color: white;
-    border: 4px solid #007bff;
+    background-color: var(--color-bg-button);
+    color: var(--color-secondary);
 }
 
 .enter:hover {
-    background-color: white;
-    color: #007bff;
+    opacity: 0.75;
     transition: 0.3s;
-}
-
-.enter:active {
-    background-color: #007bff;
-    color: black;
-    border: 4px solid black;
 }
 
 .enter:disabled {
     background-color: gray;
     color: white;
-    border: 4px solid gray;
     cursor: not-allowed;
     opacity: 0.35;
 }

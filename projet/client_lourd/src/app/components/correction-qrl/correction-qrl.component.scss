@@ -1,105 +1,6 @@
-//.correction-qrl-container {
-//    border: 1px solid #ccc;
-//    padding: 20px;
-//    margin: 10px;
-//    display: flex;
-//    flex-direction: column;
-//    align-items: center;
-//  }
-//
-//  .correction-qrl-container h3 {
-//    font-size: 1.5rem;
-//    margin-bottom: 10px;
-//  }
-//
-//  .correction-qrl-container p {
-//    font-size: 1.2rem;
-//    margin-bottom: 15px;
-//  }
-//
-//  .correction-qrl-container select {
-//    padding: 8px;
-//    font-size: 1rem;
-//    margin-bottom: 10px;
-//  }
-//
-//
-//  .correction-qrl-container p.error-message {
-//    color: red;
-//    font-size: 1rem;
-//    margin-top: 10px;
-//  }
-//
-//button {
-//    margin: 5px;
-//    border-radius: 20px;
-//    padding: 5px 10px;
-//    font-size: 20px;
-//    cursor: pointer;
-//}
-//
-//.enter {
-//    margin-left: 10px;
-//    background-color: #007bff;
-//    color: white;
-//    border: 4px solid #007bff;
-//}
-//
-//.enter:hover {
-//    background-color: white;
-//    color: #007bff;
-//    transition: 0.3s;
-//}
-//
-//.enter:active {
-//    background-color: #007bff;
-//    color: black;
-//    border: 4px solid black;
-//}
-//
-//.enter:disabled {
-//    background-color: gray;
-//    color: white;
-//    border: 4px solid gray;
-//    cursor: not-allowed;
-//    opacity: 0.35;
-//}
-//
-//.players-container table {
-//    border-collapse: collapse;
-//    width: 80%;
-//    align-self: center;
-//    background-color: white;
-//    border: 2px solid black;
-//}
-//
-//.players-container thead th {
-//    background-color: #007bff;
-//    color: white;
-//    border: 2px solid black;
-//    padding: 10px;
-//}
-//
-//.players-container tbody td {
-//    border: 2px solid black;
-//    padding: 10px;
-//    text-align: center;
-//}
-//
-//.players-container {
-//    display: flex;
-//    flex-direction: column;
-//    justify-content: space-between;
-//    align-items: center;
-//    height: 100%;
-//}
-//
-//
-
 .correction-qrl-container {
-  background-color: white;
+  background-color: var(--color-bg-primary);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   padding: 0.75rem;
   margin: 0.5rem auto;
   max-width: 400px;
@@ -113,13 +14,14 @@
 .correction-qrl-container h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-primary);
   margin: 0;
 }
 
 .correction-qrl-container p {
   font-size: 0.85rem;
-  color: #4a4a4a;
+  color: var(--color-primary);
+  opacity: 0.8;
   margin: 0;
   line-height: 1.2;
 }
@@ -149,49 +51,40 @@ button {
 }
 
 .enter {
-    margin-left: 10px;
-    background-color: #007bff;
-    color: white;
-    border: 4px solid #007bff;
+  margin-left: 10px;
+  background-color: var(--color-bg-button);
+  color: var(--color-secondary);
 }
 
 .enter:hover {
-    background-color: white;
-    color: #007bff;
-    transition: 0.3s;
-}
-
-.enter:active {
-    background-color: #007bff;
-    color: black;
-    border: 4px solid black;
+  opacity: 0.75;
+  transition: 0.3s;
 }
 
 .enter:disabled {
-    background-color: gray;
-    color: white;
-    border: 4px solid gray;
-    cursor: not-allowed;
-    opacity: 0.35;
+  background-color: gray;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.35;
 }
 
 .players-container table {
     border-collapse: collapse;
     width: 80%;
     align-self: center;
-    background-color: white;
-    border: 2px solid black;
+    background-color: var(--color-bg-primary);
+    border: 2px solid var(--color-primary);
 }
 
 .players-container thead th {
-    background-color: #007bff;
-    color: white;
-    border: 2px solid black;
+    background-color: var(--color-bg-button);
+    color: var(--color-secondary);
+    border: 2px solid var(--color-primary);
     padding: 10px;
 }
 
 .players-container tbody td {
-    border: 2px solid black;
+    border: 2px solid var(--color-primary);
     padding: 10px;
     text-align: center;
 }

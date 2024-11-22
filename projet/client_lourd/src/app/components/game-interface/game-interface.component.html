@@ -7,7 +7,7 @@
     <app-statistic-zone *ngIf="gameInterfaceManagementService.isGameOver" [gameStats]="gameInterfaceManagementService.gameStats"></app-statistic-zone>
     <div class="players-list">
         <div class="custom-legend">
-            <p>{{'GAME_INTERFACE.PLAYERS_RESULT'| translate}} </p>
+            <p class="text-primary">{{'GAME_INTERFACE.PLAYERS_RESULT'| translate}} </p>
         </div>
         <app-player-list
                 [hidden]='!gameInterfaceManagementService.isGameOver'

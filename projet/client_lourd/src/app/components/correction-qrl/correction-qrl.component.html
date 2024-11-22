@@ -1,21 +1,21 @@
 <div *ngIf='isHostEvaluating && !gameService.observerMode'>
-    <div *ngIf="!qrlEvaluationService.isCorrectionFinished" class="correction-qrl-container">
-        <h3 *ngIf="gameConfigs.IA"> {{ 'GAME_CONFIG_DIALOG.IA_CORRECTION' | translate }} </h3>
-        <p *ngIf="gameConfigs.IA"><mat-icon>smart_toy</mat-icon>: {{AIcorrectionText}}</p>
-        <p *ngIf="gameConfigs.IA">Points : {{AIscore}} </p>
-        <h3> {{ 'GAME_INTERFACE.QRL_CORRECTION.QUESTION_CORRECTION' | translate }} </h3>
-        <p> {{ 'GAME_INTERFACE.QRL_CORRECTION.ANSWER' | translate }} {{ qrlEvaluationService.currentAnswer }} </p>
+    <div *ngIf="!qrlEvaluationService.isCorrectionFinished" class="correction-qrl-container border border-2 border-primary">
+        <h3 *ngIf="gameConfigs.IA" class="text-primary"> {{ 'GAME_CONFIG_DIALOG.IA_CORRECTION' | translate }} </h3>
+        <p *ngIf="gameConfigs.IA" class="text-primary" ><mat-icon class="text-primary">smart_toy</mat-icon>: {{AIcorrectionText}}</p>
+        <p *ngIf="gameConfigs.IA" class="text-primary">Points : {{AIscore}} </p>
+        <h3 class="text-primary"> {{ 'GAME_INTERFACE.QRL_CORRECTION.QUESTION_CORRECTION' | translate }} </h3>
+        <p class="text-primary"> {{ 'GAME_INTERFACE.QRL_CORRECTION.ANSWER' | translate }} {{ qrlEvaluationService.currentAnswer }} </p>
         <select (change)="switchScore($event)" [(ngModel)]="qrlEvaluationService.inputPoint">
             <option *ngFor="let score of qrlEvaluationService.scores" [value]="score">{{ score }}</option>
         </select>
         <button class="enter" (click)="submitPoint()">
             {{ 'GAME_INTERFACE.QRL_CORRECTION.VALIDATE' | translate }}
         </button>
-        <p *ngIf="!qrlEvaluationService.isValid">{{ 'GAME_INTERFACE.QRL_CORRECTION.SELECT_SCORE' | translate }}</p>
+        <p class="text-primary" *ngIf="!qrlEvaluationService.isValid">{{ 'GAME_INTERFACE.QRL_CORRECTION.SELECT_SCORE' | translate }}</p>
     </div>
     <div *ngIf="qrlEvaluationService.isCorrectionFinished">
         <div class="players-container">
-            <h3> {{ 'GAME_INTERFACE.QRL_CORRECTION.SCORES_TITLE' | translate }} </h3>
+            <h3 class="text-primary"> {{ 'GAME_INTERFACE.QRL_CORRECTION.SCORES_TITLE' | translate }} </h3>
             <table>
                 <thead>
                 <tr>
@@ -25,13 +25,13 @@
                 </thead>
                 <tbody>
                 <tr *ngFor="let score of qrlEvaluationService.points; let i = index">
-                    <td><app-avatar [size]="'medium'" [uid]="qrlEvaluationService.usernames[i]" [isChat]="true"></app-avatar></td>
-                    <td> {{score}} </td>
+                    <td class="text-primary"><app-avatar [size]="'medium'" [uid]="qrlEvaluationService.usernames[i]" [isChat]="true"></app-avatar></td>
+                    <td class="text-primary"> {{score}} </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-<div class="correction-qrl-container" *ngIf='isHostEvaluating && gameService.observerMode'> {{'GAME_INTERFACE.QRL_CORRECTION.OBS_HOST_EVAL' | translate}}</div>
+<div class="correction-qrl-container text-primary" *ngIf='isHostEvaluating && gameService.observerMode'> {{'GAME_INTERFACE.QRL_CORRECTION.OBS_HOST_EVAL' | translate}}</div>
 
