@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/quiz_file_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
@@ -70,163 +71,165 @@ class _QuizListPageState extends State<QuizListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ts.mainBackground.value,
-      appBar:
-        FancyAppBar(context: context, hasBackButton: false),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : errorMessage.isNotEmpty
+    return Obx((){
+
+      return  Scaffold(
+          backgroundColor: ts.mainBackground.value,
+          appBar:
+          FancyAppBar(context: context, hasBackButton: false),
+          body: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : errorMessage.isNotEmpty
               ? Center(child: Text(errorMessage))
               : Stack(children: [
-                  Column(
-                    children: [
-                      Text(quizSelectText['PAGE_TITLE'],
-                          style: TextStyle(fontSize: 16)),
-                      Container(
-                        width: double.infinity,
+            Column(
+              children: [
+                Text(quizSelectText['PAGE_TITLE'],
+                    style: TextStyle(fontSize: 16)),
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.symmetric(horizontal: 50),
+                  decoration: BoxDecoration(
+                      color: ts.secondaryBackground.value,
+                      border: Border.all(
+                          color: ts.mainAccent.value,
+                          width: 1.0)),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(text['GAME_ADMIN']['QUIZZES'],
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: ts.mainBackground.value,
+                              fontSize: 16)),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: quizzes.length,
+                    itemBuilder: (context, index) {
+                      final quiz = quizzes[index];
+                      return Container(
                         margin: EdgeInsets.symmetric(horizontal: 50),
                         decoration: BoxDecoration(
-                            color: ts.secondaryBackground.value,
                             border: Border.all(
                                 color: ts.mainAccent.value,
                                 width: 1.0)),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(text['GAME_ADMIN']['QUIZZES'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: ts.mainBackground.value,
-                                    fontSize: 16)),
+                        child: ListTile(
+                          tileColor: quiz == selectedQuiz
+                              ? Color.alphaBlend(ts.mainBackground.value, ts.secondaryBackground.value)
+                              : ts.mainBackground.value,
+                          title: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(quiz.title,
+                                  style: TextStyle(fontSize: 16)),
+                              if (_areAllQuestionsQCM(quiz))
+                                IconButton(
+                                  iconSize: 35.0,
+                                  onPressed: () async {
+                                    String message =
+                                    await _quizFileService
+                                        .downloadQuiz(quiz);
+                                    showPopup(context, message);
+                                  },
+                                  icon: Icon(Icons.download),
+                                )
+                            ],
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: quizzes.length,
-                          itemBuilder: (context, index) {
-                            final quiz = quizzes[index];
-                            return Container(
-                              margin: EdgeInsets.symmetric(horizontal: 50),
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: ts.mainAccent.value,
-                                      width: 1.0)),
-                              child: ListTile(
-                                tileColor: quiz == selectedQuiz
-                                    ? Color.alphaBlend(ts.mainBackground.value, ts.secondaryBackground.value)
-                                    : ts.mainBackground.value,
-                                title: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(quiz.title,
-                                        style: TextStyle(fontSize: 16)),
-                                    if (_areAllQuestionsQCM(quiz))
-                                      IconButton(
-                                        iconSize: 35.0,
-                                        onPressed: () async {
-                                          String message =
-                                              await _quizFileService
-                                                  .downloadQuiz(quiz);
-                                          showPopup(context, message);
-                                        },
-                                        icon: Icon(Icons.download),
-                                      )
-                                  ],
-                                ),
-                                subtitle: quiz == selectedQuiz
-                                    ? SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(quiz.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
-                                            // Text('Description: ${quiz.description}'),
-                                            RichText(text: TextSpan(
-                                              style: DefaultTextStyle.of(context).style,
-                                              children: <TextSpan>[
-                                                TextSpan(text: "${quizSelectText['DESCRIPTION']}: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                                                TextSpan(text: quiz.description),
-                                              ]
-                                            )),
-                                            // Text('Durée: ${quiz.duration} s'),
-                                            RichText(text: TextSpan(
-                                                style: DefaultTextStyle.of(context).style,
-                                                children: <TextSpan>[
-                                                  TextSpan(text: "${quizSelectText['DURATION']}: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                                                  TextSpan(text: "${quiz.duration} ${quizSelectText['DURATION_SUFFIX']}"),
-                                                ]
-                                            )),
-                                            Text(quizSelectText['QUESTIONS']+":", style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold),),
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(), // Disable inner scrolling
-                                              itemCount: quiz.questions.length,
-                                              itemBuilder: (context, index) {
-                                                return Center(
-                                                  child: Text("•" + quiz
-                                                      .questions[index].text),
-                                                );
-                                              },
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    : SizedBox(),
-                                onTap: () {
-                                  setState(() {
-                                    this.selectedQuiz = quiz;
-                                  });
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextButton(
-                            onPressed: () async {
-                              if (selectedQuiz != null) {
-                                final gameConfigService =
-                                    Provider.of<GameConfigService>(context,
-                                        listen: false);
-
-                                await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Dialog(
-                                      child: GameConfigWidget(
-                                        quiz: selectedQuiz!,
-                                      ),
+                          subtitle: quiz == selectedQuiz
+                              ? SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment:
+                              MainAxisAlignment.center,
+                              children: [
+                                Text(quiz.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                                // Text('Description: ${quiz.description}'),
+                                RichText(text: TextSpan(
+                                    style: DefaultTextStyle.of(context).style,
+                                    children: <TextSpan>[
+                                      TextSpan(text: "${quizSelectText['DESCRIPTION']}: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                                      TextSpan(text: quiz.description),
+                                    ]
+                                )),
+                                // Text('Durée: ${quiz.duration} s'),
+                                RichText(text: TextSpan(
+                                    style: DefaultTextStyle.of(context).style,
+                                    children: <TextSpan>[
+                                      TextSpan(text: "${quizSelectText['DURATION']}: ", style: TextStyle(fontWeight: FontWeight.bold)),
+                                      TextSpan(text: "${quiz.duration} ${quizSelectText['DURATION_SUFFIX']}"),
+                                    ]
+                                )),
+                                Text(quizSelectText['QUESTIONS']+":", style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold),),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics:
+                                  NeverScrollableScrollPhysics(), // Disable inner scrolling
+                                  itemCount: quiz.questions.length,
+                                  itemBuilder: (context, index) {
+                                    return Center(
+                                      child: Text("•" + quiz
+                                          .questions[index].text),
                                     );
                                   },
-                                );
-                              }
-                            },
-                            child: Text(text['GAME_ADMIN']['PLAY'],
-                                style: TextStyle(
-                                    color: ts.secondaryAccent.value ,
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 20)),
-                            style: TextButton.styleFrom(
-                              backgroundColor: selectedQuiz != null
-                                  ? Color.fromRGBO(53, 121, 246, 1)
-                                  : Color.fromRGBO(200, 200, 200, 1),
+                                )
+                              ],
                             ),
-                          ),
-                          SizedBox(width: 40),
-                          CancelBtn(),
-                        ],
-                      ),
-                    ],
+                          )
+                              : SizedBox(),
+                          onTap: () {
+                            setState(() {
+                              this.selectedQuiz = quiz;
+                            });
+                          },
+                        ),
+                      );
+                    },
                   ),
-                  Positioned(bottom: 20, left: 20, child: ChatPopup())
-                ]),
-    );
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        if (selectedQuiz != null) {
+                          final gameConfigService =
+                          Provider.of<GameConfigService>(context,
+                              listen: false);
+
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                child: GameConfigWidget(
+                                  quiz: selectedQuiz!,
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      },
+                      child: Text(text['GAME_ADMIN']['PLAY'],
+                          style: TextStyle(
+                              color: ts.secondaryAccent.value ,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 20)),
+                      style: TextButton.styleFrom(
+                        backgroundColor: selectedQuiz != null
+                            ? Color.fromRGBO(53, 121, 246, 1)
+                            : Color.fromRGBO(200, 200, 200, 1),
+                      ),
+                    ),
+                    SizedBox(width: 40),
+                    CancelBtn(),
+                  ],
+                ),
+              ],
+            ),
+            Positioned(bottom: 20, left: 20, child: ChatPopup())
+          ]));
+    });
   }
 }
