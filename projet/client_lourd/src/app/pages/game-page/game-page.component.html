@@ -1,5 +1,7 @@
-<app-header [showMenu]="false" [observerMode]="gameService.observerMode" [normalPlayer]="!gameService.observerMode"></app-header>
-<div class="bg-bgPrimary min-h-[calc(100vh-120px)]">
-    <app-host-interface *ngIf='(gameService.observerMode && observationService.isHost) || (!gameService.observerMode && isHost)'></app-host-interface>
-    <app-game-interface *ngIf='(gameService.observerMode && !observationService.isHost) || (!gameService.observerMode && !isHost)'></app-game-interface>
+<div class="app-container">
+    <app-header [showMenu]="false" [observerMode]="gameService.observerMode" [normalPlayer]="!gameService.observerMode"></app-header>
+    <div class="scrollable-content bg-bgPrimary min-h-[calc(100vh-120px)]">
+        <app-host-interface *ngIf='(gameService.observerMode && observationService.isHost) || (!gameService.observerMode && isHost)'></app-host-interface>
+        <app-game-interface *ngIf='(gameService.observerMode && !observationService.isHost) || (!gameService.observerMode && !isHost)'></app-game-interface>
+    </div>
 </div>

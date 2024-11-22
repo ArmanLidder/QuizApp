@@ -99,7 +99,10 @@ export class GameCreationService {
                 socket.join(String(data.roomId));
                 socket.join(String(hostId));
                 const count = roomManager.getRoomById(data.roomId).observersCounter.get(HOST_USERNAME)
-                if (count >= 0) sio.to(hostId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
+                if (count >= 0) {
+                    console.log("sending NEW_OBSERVER_GAME");
+                    sio.to(hostId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
+                }
             }
             sio.to(String(hostId)).emit(SocketEvent.REQUEST_HOST_GAME_STATUS);
         });
@@ -128,8 +131,14 @@ export class GameCreationService {
             const dec_count = obsMapCounter.get(observedPlayerId);
             socket.leave(String(observedPlayerSocketId));
             socket.join(String(newObservedPlayerSocketId));
-            if (inc_count >= 0) sio.to(newObservedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, inc_count);
-            if (dec_count >= 0) sio.to(observedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, dec_count);
+            if (inc_count >= 0) {
+                console.log("sending CHANGE_OBSERVED_PLAYER");
+                sio.to(newObservedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, inc_count);
+            }
+            if (dec_count >= 0) {
+                console.log("sending CHANGE_OBSERVED_PLAYER");
+                sio.to(observedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, dec_count);
+            }
             const roomId = data.roomId;
             if (newObservedPlayerId !== HOST_USERNAME) {
                 const room = roomManager.getRoomById(roomId);
@@ -155,9 +164,11 @@ export class GameCreationService {
                 }
                 sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
                 if (game.currentQuizQuestion.type === QuestionType.QCM) {
+                    console.log("sending RECEIVE_PLAYER_GAME_STATUS");
                     sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
                 }
                 if (game.currentQuizQuestion.type === QuestionType.QRL) {
+                    console.log("sending RECEIVE_PLAYER_GAME_STATUS");
                     sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
                 }
             }
@@ -191,6 +202,7 @@ export class GameCreationService {
             const userId = hostUserId === incomingUserId ? HOST_USERNAME : incomingUserId;
             const count = room.observersCounter.get(userId);
             if (count >= 0) {
+                console.log("sending new GET_OBS_COUNT");
                 sio.to(socket.id).emit(SocketEvent.UPDATE_OBS_COUNT, count)
             }
         });
@@ -596,9 +608,11 @@ export class GameCreationService {
         let highestScore = -Infinity;
         let lowestScore = Infinity;
         const highestScorers: string[] = [];
-        let lowestScorers: string[] = [];
-        let nonExtremes: string[] = [];
+        const lowestScorers: string[] = [];
+        const nonExtremes: string[] = [];
+        let total_score_sum = 0
         players.forEach((score: Score, userId: string) => {
+            total_score_sum += score.points
             if (score.points > highestScore) {
                 highestScore = score.points;
                 highestScorers.length = 0;
@@ -616,15 +630,22 @@ export class GameCreationService {
             }
         });
 
-        players.forEach((score: Score, userId: string) => {
-            if (!highestScorers.includes(userId) && !lowestScorers.includes(userId)) {
-                nonExtremes.push(userId);
-            }
-        });
+        if (total_score_sum == 0) {
+            highestScorers.length = 0; nonExtremes.length = 0; lowestScorers.length = 0;
+            players.forEach((score: Score, userId: string) => {
+                lowestScorers.push(userId);
+            });
 
-        if (players.size === 1) {
-            lowestScorers = []
-            nonExtremes = []
+        } else {
+            players.forEach((score: Score, userId: string) => {
+                if (!highestScorers.includes(userId) && !lowestScorers.includes(userId)) {
+                    nonExtremes.push(userId);
+                }
+            });
+            if (players.size === 1) {
+                lowestScorers.length = 0
+                nonExtremes.length = 0
+            }
         }
 
         return {
@@ -640,9 +661,10 @@ export class GameCreationService {
         const highestScorers: number[] = [];
         const lowestScorers: number[] = [];
         const nonExtremes: number[] = [];
-
+        let total_score_sum = 0;
         teamsScore.forEach((score, teamId) => {
             // Check for the highest scoring teams
+            total_score_sum += score
             if (score > highestScore) {
                 highestScore = score;
                 highestScorers.length = 0;
@@ -661,19 +683,25 @@ export class GameCreationService {
             }
         });
 
-        // Populate the non-extreme teams (those not in the highest or lowest scoring groups)
-        teamsScore.forEach((score, teamId) => {
-            if (!highestScorers.includes(teamId) && !lowestScorers.includes(teamId)) {
-                nonExtremes.push(teamId);
+        if (total_score_sum == 0) {
+            highestScorers.length = 0; nonExtremes.length = 0; lowestScorers.length = 0;
+            teamsScore.forEach((score, teamId) => {
+                    lowestScorers.push(teamId);
+            });
+        } else {
+            // Populate the non-extreme teams (those not in the highest or lowest scoring groups)
+            teamsScore.forEach((score, teamId) => {
+                if (!highestScorers.includes(teamId) && !lowestScorers.includes(teamId)) {
+                    nonExtremes.push(teamId);
+                }
+            });
+
+            // If there's only one team, there won't be any lowest or non-extreme teams
+            if (teamsScore.size === 1) {
+                lowestScorers.length = 0;
+                nonExtremes.length = 0;
             }
-        });
-
-        // If there's only one team, there won't be any lowest or non-extreme teams
-        if (teamsScore.size === 1) {
-            lowestScorers.length = 0;
-            nonExtremes.length = 0;
         }
-
         return {
             highestScorers,
             nonExtremes,
