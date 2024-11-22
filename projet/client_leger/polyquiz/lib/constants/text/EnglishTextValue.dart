@@ -307,7 +307,8 @@ const englishTextValues = {
     "CREATE_GAME_BUTTON": "Create Game",
     "GAME_TYPE_REQUIRED": "The game type is required. Please select a type.",
     "PRICE_INVALID": "The price must be an integer greater than or equal to 0.",
-    "PRESTIGE_REQUIRED": "Minimum prestige is required. Please select a minimum prestige."
+    "PRESTIGE_REQUIRED": "Minimum prestige is required. Please select a minimum prestige.",
+    'IA_CORRECTION':"AI correction"
   },
   "WAITING_ROOM_PAGE": {
     "TITLE": "Waiting Room",
