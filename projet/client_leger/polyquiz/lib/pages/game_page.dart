@@ -78,19 +78,8 @@ class _MyWidgetState extends State<GamePage> {
 
   @override
   void dispose() {
-    // Only dispose if we're actually leaving the game
     if (_gameService.isQuitBtn) {
       print('GamePage dispose');
-      // final String socketMessage =
-      //     this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
-      // if (this._socketService.isSocketAlive()) {
-      //   this._socketService.sendMessage(
-      //       socketMessage, this._gameService.realGameService.roomId);
-      // }
-      // _gameService.destroy();
-      // _gameInterfaceManagementService.reset();
-      // _interactiveListService.reset();
-      // Reset local state
       isHost = false;
       isQcm = false;
       isGrading = true;
@@ -161,7 +150,7 @@ class _MyWidgetState extends State<GamePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Waiting for questions to load...',
+                          gameText["LOADING_QUESTIONS"],
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
@@ -373,6 +362,7 @@ class ResultPage extends StatelessWidget {
   final GameService gameService;
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
+  Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
 
   ResultPage({
     required this.gameService,
@@ -386,7 +376,7 @@ class ResultPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Le jeux est terminé! voici les résultats.',
+          gameText['GAME_FINISHED'] + " , " + gameText["PLAYERS_RESULT"],
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         PlayersDataTable(

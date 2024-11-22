@@ -28,7 +28,6 @@ const englishTextValues = {
     "REQUIRES_RECENT_LOGIN": "Please log in again before performing this operation.",
     "UNKNOWN_ERROR": "An unknown error occurred.",
     "OFFLINE_PLAY":"Play offline"
-
   },
   "REGISTER_PAGE": {
     "TITLE": "Sign Up",
@@ -172,8 +171,8 @@ const englishTextValues = {
     "JSON_IMPORT_ERROR": "Error: the JSON file is poorly formatted.({{ error }})",
     "IMPORT_ERROR_HEADER_TEXT": "The file you are trying to import contains the following issue(s):",
     "QUIZ_DELETED": "This quiz has been deleted, please choose another one.",
-    "QUIZ_INVISIBLE": "This quiz is now hidden, please choose another one."
-  },
+    "QUIZ_INVISIBLE": "This quiz is now hidden, please choose another one.",
+},
   "QUIZ_SELECTION": {
     "PAGE_TITLE": "Select one of the available games:",
     "DESCRIPTION": "Description",
@@ -385,7 +384,9 @@ const englishTextValues = {
     "INSUFFICIENT_PRESTIGE": "You do not have the minimum prestige to join this game.",
     "INSUFFICIENT_FUNDS": "You do not have enough money to join this game.",
     "USER_BANNED": "You have been banned from this game.",
-    "ROOM_LOCKED": "The room is currently locked."
+    "ROOM_LOCKED": "The room is currently locked.",
+    "UNKNOWN": "Unknown quiz",
+    "FAILED_TO_JOIN" : "Failed to join room: "
   },
   "PROFILE_POPUP": {
     "ACHIEVEMENTS": "Achievements",
@@ -469,7 +470,8 @@ const englishTextValues = {
       "TIME_LEFT": "Time remaining",
       "FINAL_RESULT": "Final results in ",
       "RESULT_AVAILABLE_IN": "Result in ",
-      "NEXT": "Next question in "
+      "NEXT": "Next question in ",
+      "LOADING_QUESTIONS": "Waiting for questions to load...",
     },
     "QRE_HISTOGRAM_X_VAL": {
       "WITHIN_MARGIN": "Within margin",

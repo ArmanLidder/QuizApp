@@ -57,11 +57,11 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
       games.where((game) => !game.private).forEach((game) {
         quizService.basicGetById(game.quizId).then((quiz) {
           setState(() {
-            quizNameMap[game.quizId] = quiz?.title ?? 'Quiz Inconnu';
+            quizNameMap[game.quizId] = quiz?.title ?? text['UNKNOWN'];
           });
         }).catchError((_) {
           setState(() {
-            quizNameMap[game.quizId] = 'Quiz Inconnu';
+            quizNameMap[game.quizId] = text['UNKNOWN'];
           });
         });
       });
@@ -98,7 +98,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
 
       // Display an error message if joining fails.
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to join room: $e')),
+        SnackBar(content: Text(text['FAILED_TO_JOIN'] + e)),
       );
     }
   }
@@ -131,7 +131,6 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     }
     else{
       if(dataOfRoomValidation['isLocked']){
-        print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(activeText['ROOM_LOCKED'])),
