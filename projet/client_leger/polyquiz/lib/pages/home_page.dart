@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ThemeService themeService = ThemeService.instance;
   final TranslationService transService = TranslationService.instance;
@@ -41,7 +40,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-
       //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
       Language uselessShit = transService.languageValue.value;
 
@@ -51,7 +49,7 @@ class _HomePageState extends State<HomePage> {
       this.userData = this.loggedInUserService.getUser();
       return Scaffold(
         backgroundColor:
-        this.themeService.mainBackground.value, // Set background color
+            this.themeService.mainBackground.value, // Set background color
         appBar: FancyAppBar(
           context: context,
         ),
@@ -74,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
+                  foregroundColor: this.themeService.mainAccent.value,
                 ),
                 child: Text(mainPageText['JOIN_GAME']),
               ),
@@ -85,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
+                  foregroundColor: this.themeService.mainAccent.value,
                 ),
                 child: Text(mainPageText['CREATE_GAME']),
               ),
@@ -95,8 +93,9 @@ class _HomePageState extends State<HomePage> {
                     Navigator.pushReplacementNamed(context, '/store');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: this.themeService.secondaryBackground.value,
-                    foregroundColor: this.themeService.secondaryAccent.value,
+                    backgroundColor:
+                        this.themeService.secondaryBackground.value,
+                    foregroundColor: this.themeService.mainAccent.value,
                   ),
                   child: Text(mainPageText['SHOP'])),
               ChatPopup(),

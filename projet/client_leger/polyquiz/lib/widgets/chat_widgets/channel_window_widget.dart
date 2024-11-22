@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 
 // to be removed once connected to database
@@ -21,10 +22,12 @@ class ChannelWindowWidget extends StatefulWidget {
 
 class _ChannelWindowWidgetState extends State<ChannelWindowWidget> {
   Page currentPage = Page.select;
+  ThemeService themeService = ThemeService.instance;
 
   @override
   Widget build(BuildContext context) {
-    return buildCurrentPage();
+    return Container(
+        color: themeService.mainBackground.value, child: buildCurrentPage());
   }
 
   Widget buildCurrentPage() {
@@ -62,6 +65,7 @@ class ChannelSelectionWidget extends StatefulWidget {
 
 class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
   final channelService = ChannelService.instance;
+  ThemeService themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get chatText => text['CHAT_COMPONENT'];
 
@@ -72,68 +76,69 @@ class _ChannelSelectionWidgetState extends State<ChannelSelectionWidget> {
 
   ButtonStyle get channelModificationStyle {
     return TextButton.styleFrom(
-      backgroundColor: Colors.blueAccent,
-      foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0))
-    );
+        backgroundColor: themeService.secondaryBackground.value,
+        foregroundColor: themeService.secondaryAccent.value,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Row(children: <Widget>[
-        Expanded(
-            child: TextButton(
-                onPressed: () {
-                  widget.changePage(Page.create);
-                },
-                child: Text(chatText['ADD_CHANNEL']),
-              style: channelModificationStyle,
-            )
-        ),
-        SizedBox(width: 10,),
-        Expanded(
-            child: TextButton(
-                onPressed: () {
-                  widget.changePage(Page.join);
-                },
-                child: Text(chatText['JOIN_CHANNEL']),
-                style: channelModificationStyle,
-            )
-        )
-      ]),
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 15),
-        child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
+    return Container(
+      color: themeService.mainBackground.value,
+      child: Column(children: <Widget>[
+        Row(children: <Widget>[
+          Expanded(
+              child: TextButton(
+            onPressed: () {
+              widget.changePage(Page.create);
+            },
+            child: Text(chatText['ADD_CHANNEL']),
+            style: channelModificationStyle,
+          )),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+              child: TextButton(
+            onPressed: () {
+              widget.changePage(Page.join);
+            },
+            child: Text(chatText['JOIN_CHANNEL']),
+            style: channelModificationStyle,
+          ))
+        ]),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 15),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
                 chatText['MY_CHANNELS'],
                 style: TextStyle(
-                  fontSize: 20,
-                ),
-            )
+                    fontSize: 20, color: themeService.mainAccent.value),
+              )),
         ),
-      ),
-      Expanded(child: Obx(() {
-        return channelService.channels.isEmpty
-            ? Text("empty")
-            : ListView.builder(
-                itemCount: channelService.permittedChannels.length,
-                itemBuilder: (context, index) {
-                  final channel = channelService.permittedChannels[index];
-                  return ChannelSelectionButton(
-                      buttonCallback: widget.updateCurrentChannel,
-                      leaveChannelCallback: () {
-                        channelService.leaveChannel(channel.id!);
-                      },
-                      deleteChannelCallback: () {
-                        channelService.deleteChannel(channel.id!);
-                      },
-                      name: channel.name,
-                      id: channel.id ?? "null");
-                });
-      }))
-    ]);
+        Expanded(child: Obx(() {
+          return channelService.channels.isEmpty
+              ? Text("empty")
+              : ListView.builder(
+                  itemCount: channelService.permittedChannels.length,
+                  itemBuilder: (context, index) {
+                    final channel = channelService.permittedChannels[index];
+                    return ChannelSelectionButton(
+                        buttonCallback: widget.updateCurrentChannel,
+                        leaveChannelCallback: () {
+                          channelService.leaveChannel(channel.id!);
+                        },
+                        deleteChannelCallback: () {
+                          channelService.deleteChannel(channel.id!);
+                        },
+                        name: channel.name,
+                        id: channel.id ?? "null");
+                  });
+        }))
+      ]),
+    );
   }
 }
 
@@ -157,9 +162,12 @@ class ChannelSelectionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool shouldHaveLeaveAndDeleteButton = name != 'general' && !name.toLowerCase().contains("room");
+    ThemeService themeService = ThemeService.instance;
 
-    Widget leaveAndDeleteButtons =  SizedBox(
+    bool shouldHaveLeaveAndDeleteButton =
+        name != 'general' && !name.toLowerCase().contains("room");
+
+    Widget leaveAndDeleteButtons = SizedBox(
       width: 100,
       child: Row(children: <Widget>[
         IconButton(
@@ -171,35 +179,32 @@ class ChannelSelectionButton extends StatelessWidget {
             onPressed: () {
               deleteChannelPopup(context);
             },
-            icon: Icon(Icons.delete, color: Colors.red, size: 20)
-        )
+            icon: Icon(Icons.delete, color: Colors.red, size: 20))
       ]),
     );
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5.0),
-      child: TextButton(
-          onPressed: () => buttonCallback(id),
-          style: TextButton.styleFrom(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            minimumSize: Size(double.infinity, 50),
-            backgroundColor: Colors.grey[200],
-            foregroundColor: Colors.black,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0))
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(name),
-              ),
-              if (shouldHaveLeaveAndDeleteButton) leaveAndDeleteButtons,
-            ],
-          )
-      )
-    );
+        padding: EdgeInsets.symmetric(vertical: 5.0),
+        child: TextButton(
+            onPressed: () => buttonCallback(id),
+            style: TextButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                minimumSize: Size(double.infinity, 50),
+                backgroundColor: themeService.mainBackground.value,
+                foregroundColor: themeService.mainAccent.value,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0))),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(name),
+                ),
+                if (shouldHaveLeaveAndDeleteButton) leaveAndDeleteButtons,
+              ],
+            )));
     // return Padding(
     //   padding: const EdgeInsets.all(8.0),
     //   child: ListTile(
@@ -235,28 +240,31 @@ class ChannelSelectionButton extends StatelessWidget {
   }
 
   void deleteChannelPopup(BuildContext context) {
+    ThemeService themeService = ThemeService.instance;
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
               title: Text(chatText['DELETE_WARNING']),
-              content: Text(
-                chatText['DELETE_CONFIRMATION'].toString().replaceAll("{{channelName}}", name)
-              ),
+              content: Text(chatText['DELETE_CONFIRMATION']
+                  .toString()
+                  .replaceAll("{{channelName}}", name)),
               actions: <Widget>[
                 TextButton(
                     onPressed: () {
                       return Navigator.pop(context);
                     },
-                    child: Text(TranslationService.instance.languageValue.value == Language.fr?
-                    "Annuler":
-                    "Cancel"
-                    )),
+                    child: Text(
+                        TranslationService.instance.languageValue.value ==
+                                Language.fr
+                            ? "Annuler"
+                            : "Cancel")),
                 TextButton(
                     onPressed: () {
                       deleteChannelCallback();
                       Navigator.pop(context);
                     },
-                    child: Text(chatText['DELETE']))
+                    child: Text(chatText['DELETE'],
+                        style: TextStyle(color: themeService.mainAccent.value)))
               ],
             ));
   }
@@ -277,10 +285,11 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
   String get query => _query;
   Map get text => TranslationService.instance.text;
   Map get chatText => text['CHAT_COMPONENT'];
+  ThemeService themeService = ThemeService.instance;
 
   void set query(String value) => setState(() {
-    _query = value;
-  });
+        _query = value;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -290,28 +299,31 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
+                    color: themeService.mainAccent.value,
                     onPressed: () {
                       widget.returnCallback();
                     },
                     icon: Icon(Icons.arrow_back)))),
         Expanded(
             child: Align(
-                alignment: Alignment.center, child: Text(chatText['JOIN_CHANNEL'])))
+                alignment: Alignment.center,
+                child: Text(chatText['JOIN_CHANNEL'])))
       ]),
       buildSearchBar(),
       Expanded(
         child: Obx(
           () {
-            final filteredChannels = channelService.joinableChannels.where((channel) =>
-              channel.name.toLowerCase().contains(query.toLowerCase())
-            ).toList();
+            final filteredChannels = channelService.joinableChannels
+                .where((channel) =>
+                    channel.name.toLowerCase().contains(query.toLowerCase()))
+                .toList();
             return ListView.builder(
-              itemCount: filteredChannels.length,
-              itemBuilder: (context, index) {
-                final channel = filteredChannels[index];
-                return buildChannelTile(channel.name, channel.id ?? '');
-              });
-            },
+                itemCount: filteredChannels.length,
+                itemBuilder: (context, index) {
+                  final channel = filteredChannels[index];
+                  return buildChannelTile(channel.name, channel.id ?? '');
+                });
+          },
         ),
       )
     ]);
@@ -321,12 +333,15 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
       child: TextField(
+        style: TextStyle(color: themeService.mainAccent.value),
         onChanged: (value) {
           query = value.trim(); // Update query and refresh the list
         },
         decoration: InputDecoration(
           hintText: chatText['SEARCH_CHANNEL'],
+          hintStyle: TextStyle(color: themeService.mainAccent.value),
           prefixIcon: Icon(Icons.search),
+          prefixIconColor: themeService.mainAccent.value,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
@@ -336,30 +351,28 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
   }
 
   Widget buildChannelTile(String name, String id) {
+    ThemeService themeService = ThemeService.instance;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: TextButton(
-              onPressed: () {
-                channelService.joinChannel(id);
-                widget.returnCallback();
-              },
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(name)
-              ),
-              // style: TextButton.styleFrom(
-              //     alignment: Alignment.centerLeft,
-              //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)
-              // )
-              style: TextButton.styleFrom(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(horizontal: 0),
-                minimumSize: Size(double.infinity, 50),
-                backgroundColor: Colors.grey[200],
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))
-              )
-      ),
+          onPressed: () {
+            channelService.joinChannel(id);
+            widget.returnCallback();
+          },
+          child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20), child: Text(name)),
+          // style: TextButton.styleFrom(
+          //     alignment: Alignment.centerLeft,
+          //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)
+          // )
+          style: TextButton.styleFrom(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: 0),
+              minimumSize: Size(double.infinity, 50),
+              backgroundColor: themeService.mainBackground.value,
+              foregroundColor: themeService.mainAccent.value,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5)))),
     );
   }
 }
@@ -384,11 +397,13 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
   bool get hasTyped => _hasTyped;
 
   void set hasTyped(bool newValue) => setState(() {
-    _hasTyped = newValue;
-  });
+        _hasTyped = newValue;
+      });
 
   @override
   Widget build(BuildContext context) {
+    ThemeService themeService = ThemeService.instance;
+
     return Column(children: <Widget>[
       Row(children: <Widget>[
         Expanded(
@@ -401,7 +416,8 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
                     icon: Icon(Icons.arrow_back)))),
         Expanded(
             child: Align(
-                alignment: Alignment.center, child: Text(chatText['CHANNEL_CREATION'])))
+                alignment: Alignment.center,
+                child: Text(chatText['CHANNEL_CREATION'])))
       ]),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -432,7 +448,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
               backgroundColor: isValidChannelName(_currentName)
                   ? Colors.blue
                   : Colors.grey[400],
-              foregroundColor: Colors.white,
+              foregroundColor: themeService.mainBackground.value,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4))),
         ),
@@ -450,9 +466,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     final errorStyle = TextStyle(color: Colors.red);
     final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
     if (!alphanumeric.hasMatch(name) && name.isNotEmpty)
-      errors.add(Text(
-          chatText['CHANNEL_NAME_PATTERN'],
-          style: errorStyle));
+      errors.add(Text(chatText['CHANNEL_NAME_PATTERN'], style: errorStyle));
     if (name.length > 20)
       errors.add(Text(
         chatText['CHANNEL_NAME_MAX_LENGTH'],
@@ -471,7 +485,8 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: Text("Err${TranslationService.instance.languageValue.value == Language.fr?'eu':'o'}r"),
+              title: Text(
+                  "Err${TranslationService.instance.languageValue.value == Language.fr ? 'eu' : 'o'}r"),
               content: Text(msg),
               actions: <Widget>[
                 TextButton(
@@ -500,8 +515,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
 
     if (canalName.toLowerCase().contains("room")) {
       // Show feedback if the name contains "room"
-      sameChannelNamePopup(context,
-          chatText['ROOM_IN_NAME_UNALLOWED']);
+      sameChannelNamePopup(context, chatText['ROOM_IN_NAME_UNALLOWED']);
       return;
     }
 
@@ -516,8 +530,11 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
           widget.returnCallback();
         } else {
           // Handle duplicate name case
-          sameChannelNamePopup(context,
-              chatText['ROOM_NAME_ALREADY_USED'].toString().replaceAll("{{canalName}}", canalName));
+          sameChannelNamePopup(
+              context,
+              chatText['ROOM_NAME_ALREADY_USED']
+                  .toString()
+                  .replaceAll("{{canalName}}", canalName));
         }
       } catch (error) {
         // Handle any other errors

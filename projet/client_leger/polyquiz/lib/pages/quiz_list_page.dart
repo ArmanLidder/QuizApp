@@ -114,8 +114,8 @@ class _QuizListPageState extends State<QuizListPage> {
                                       width: 1.0)),
                               child: ListTile(
                                 tileColor: quiz == selectedQuiz
-                                    ? const Color.fromRGBO(184, 223, 255, 1)
-                                    : themeService.secondaryAccent.value,
+                                    ? themeService.secondaryBackground.value
+                                    : themeService.mainBackground.value,
                                 title: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -141,69 +141,105 @@ class _QuizListPageState extends State<QuizListPage> {
                                 ),
                                 subtitle: quiz == selectedQuiz
                                     ? SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              quiz.title,
-                                              style: TextStyle(
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            // Text('Description: ${quiz.description}'),
-                                            RichText(
-                                                text: TextSpan(
-                                                    style: DefaultTextStyle.of(
-                                                            context)
-                                                        .style,
-                                                    children: <TextSpan>[
-                                                  TextSpan(
-                                                      text:
-                                                          "${quizSelectText['DESCRIPTION']}: ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: quiz.description),
-                                                ])),
-                                            // Text('Durée: ${quiz.duration} s'),
-                                            RichText(
-                                                text: TextSpan(
-                                                    style: DefaultTextStyle.of(
-                                                            context)
-                                                        .style,
-                                                    children: <TextSpan>[
-                                                  TextSpan(
-                                                      text:
-                                                          "${quizSelectText['DURATION']}: ",
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text:
-                                                          "${quiz.duration} ${quizSelectText['DURATION_SUFFIX']}"),
-                                                ])),
-                                            Text(
-                                              quizSelectText['QUESTIONS'] + ":",
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(), // Disable inner scrolling
-                                              itemCount: quiz.questions.length,
-                                              itemBuilder: (context, index) {
-                                                return Center(
-                                                  child: Text("•" +
-                                                      quiz.questions[index]
-                                                          .text),
-                                                );
-                                              },
-                                            )
-                                          ],
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: themeService
+                                                  .mainBackground.value,
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                quiz.title,
+                                                style: TextStyle(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: themeService
+                                                        .mainAccent.value),
+                                              ),
+                                              // Text('Description: ${quiz.description}'),
+                                              RichText(
+                                                  text: TextSpan(
+                                                      style:
+                                                          DefaultTextStyle.of(
+                                                                  context)
+                                                              .style,
+                                                      children: <TextSpan>[
+                                                    TextSpan(
+                                                        text:
+                                                            "${quizSelectText['DESCRIPTION']}: ",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: themeService
+                                                                .mainAccent
+                                                                .value)),
+                                                    TextSpan(
+                                                        style: TextStyle(
+                                                            color: themeService
+                                                                .mainAccent
+                                                                .value),
+                                                        text: quiz.description),
+                                                  ])),
+                                              // Text('Durée: ${quiz.duration} s'),
+                                              RichText(
+                                                  text: TextSpan(
+                                                      style:
+                                                          DefaultTextStyle.of(
+                                                                  context)
+                                                              .style,
+                                                      children: <TextSpan>[
+                                                    TextSpan(
+                                                        text:
+                                                            "${quizSelectText['DURATION']}: ",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: themeService
+                                                                .mainAccent
+                                                                .value)),
+                                                    TextSpan(
+                                                        style: TextStyle(
+                                                            color: themeService
+                                                                .mainAccent
+                                                                .value),
+                                                        text:
+                                                            "${quiz.duration} ${quizSelectText['DURATION_SUFFIX']}"),
+                                                  ])),
+                                              Text(
+                                                quizSelectText['QUESTIONS'] +
+                                                    ":",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: themeService
+                                                        .mainAccent.value),
+                                              ),
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(), // Disable inner scrolling
+                                                itemCount:
+                                                    quiz.questions.length,
+                                                itemBuilder: (context, index) {
+                                                  return Center(
+                                                    child: Text(
+                                                        "•" +
+                                                            quiz
+                                                                .questions[
+                                                                    index]
+                                                                .text,
+                                                        style: TextStyle(
+                                                            color: themeService
+                                                                .mainAccent
+                                                                .value)),
+                                                  );
+                                                },
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       )
                                     : SizedBox(),
