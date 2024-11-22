@@ -58,11 +58,11 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
       games.where((game) => !game.private).forEach((game) {
         quizService.basicGetById(game.quizId).then((quiz) {
           setState(() {
-            quizNameMap[game.quizId] = quiz?.title ?? 'Quiz Inconnu';
+            quizNameMap[game.quizId] = quiz?.title ?? text['UNKNOWN'];
           });
         }).catchError((_) {
           setState(() {
-            quizNameMap[game.quizId] = 'Quiz Inconnu';
+            quizNameMap[game.quizId] = text['UNKNOWN'];
           });
         });
       });

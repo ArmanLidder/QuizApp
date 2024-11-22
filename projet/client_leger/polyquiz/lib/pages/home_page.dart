@@ -21,10 +21,6 @@ class _HomePageState extends State<HomePage> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ThemeService themeService = ThemeService.instance;
   final TranslationService transService = TranslationService.instance;
-
-  //Map get text => transService.text;
-  //Map get mainPageText => text['MAINPAGE'];
-
   final SocketService _socketService = SocketService();
   User? userData;
 

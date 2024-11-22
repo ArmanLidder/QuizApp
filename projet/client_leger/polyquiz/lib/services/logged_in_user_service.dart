@@ -8,6 +8,7 @@ import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/notification_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'user_service.dart';
 
 class LoggedInUserService extends GetxController {
@@ -32,7 +33,9 @@ class LoggedInUserService extends GetxController {
   // Method to set user info
   void setUser(User? user) {
     setObservable(user);
-    _subscribeToUser();
+    TranslationService.instance.currentLanguage = user!.settings.language;
+
+        _subscribeToUser();
     _subscribeToFriendRequests();
   }
   void setObservable(User? user){
@@ -81,10 +84,8 @@ class LoggedInUserService extends GetxController {
           .update({'isConnected': true});
 
       NotificationService.instance.updateChannelMaps();
-
       DocumentReference userDocRef = _firestore.collection('users').doc(currentUser.uid);
       DocumentSnapshot userSnapshot = await userDocRef.get();
-
       List<dynamic> loginHistory = userSnapshot.get('loginHistory') ?? [];
       Timestamp timestamp = Timestamp.now(); // Get the current timestamp
       loginHistory.add({
@@ -94,6 +95,7 @@ class LoggedInUserService extends GetxController {
       await userDocRef.update({'loginHistory': loginHistory});
       await reloadUser();
       await LanguageService.instance.loadLanguage();
+
     } else {
       print('Login failed: user not found with email $email');
     }

@@ -6,10 +6,8 @@ import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/widgets/store_widgets/storeLists.dart';
-
-import 'package:polyquiz/widgets/store_widgets/storeLists.dart';
-//import 'package:polyquiz/widgets/store_widgets/themeWidget.dart';
 import '../models/user.dart';
+import '../services/theme_service.dart';
 import '../widgets/fancyAppBar.dart';
 
 class Storepage extends StatefulWidget {
@@ -25,6 +23,7 @@ class _StorepageState extends State<Storepage> {
   late String uid;
   User? userData;
   Map get shopText => TranslationService.instance.text['SHOPPING'];
+  final ThemeService ts = ThemeService.instance;
 
   Map<String, List<Map<String, dynamic>>>? storeItems;
 
@@ -48,70 +47,65 @@ class _StorepageState extends State<Storepage> {
     this.userData = this.loggedInUserService.getUser();
 
     return MaterialApp(
-      home: Scaffold(
-          appBar: FancyAppBar(
-            context: context,
-          ),
-          backgroundColor: _themeService.mainBackground.value,
-          body: storeItems == null
-              ? Center(
-                  child:
-                      CircularProgressIndicator()) // Show loading indicator while fetching
-              : SingleChildScrollView(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        MoneyCounter(),
-                        Text(shopText['THEMES'],
-                            style: TextStyle(
-                                color: _themeService.mainAccent.value)),
-                        Wrap(
-                          spacing: 8.0, // Space between items horizontally
-                          runSpacing: 8.0, // Space between items vertically
-                          children: [
-                            ThemeStoreList(
-                                themes: storeItems!['themes']!,
-                                userId: this.uid)
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Text(shopText['IMAGES'],
-                            style: TextStyle(
-                                color: _themeService.mainAccent.value)),
-                        ImageStoreList(
-                            themes: storeItems!['images']!, userId: this.uid),
-                        SizedBox(height: 20),
-                        Text(
-                            TranslationService.instance.languageValue.value ==
-                                    Language.fr
-                                ? "Récompenses: "
-                                : "Prizes: ",
-                            style: TextStyle(
-                                color: _themeService.mainAccent.value)),
-                        RewardImageStoreList(
-                            rewardItems: storeItems!['rewardImages']!,
-                            userId: this.uid),
-                        SizedBox(height: 20),
-                        RewardThemeStoreList(
-                            rewardItems: storeItems!['rewardThemes']!,
-                            userId: this.uid),
-                        SizedBox(height: 20),
-                        Text(
-                            TranslationService.instance.languageValue.value ==
-                                    Language.fr
-                                ? "Récompenses d'exploit: "
-                                : "Achievements rewards: ",
-                            style: TextStyle(
-                                color: _themeService.mainAccent.value)),
-                        RewardCashStoreList(
-                            cashItems: storeItems!['rewardCurrency']!,
-                            userId: this.uid),
-                        SizedBox(height: 20),
-                      ],
+      home: Obx(() {
+        return Scaffold(
+            backgroundColor: ts.mainBackground.value,
+            appBar: FancyAppBar(
+              context: context,
+              hasBackButton: true,
+            ),
+            body: storeItems == null
+                ? Center(
+                    child:
+                        CircularProgressIndicator()) // Show loading indicator while fetching
+                : SingleChildScrollView(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          MoneyCounter(),
+                          Text(shopText['THEMES']),
+                          Wrap(
+                            spacing: 8.0, // Space between items horizontally
+                            runSpacing: 8.0, // Space between items vertically
+                            children: [
+                              ThemeStoreList(
+                                  themes: storeItems!['themes']!,
+                                  userId: this.uid)
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Text(shopText['IMAGES']),
+                          ImageStoreList(
+                              themes: storeItems!['images']!, userId: this.uid),
+                          SizedBox(height: 20),
+                          Text(
+                              TranslationService.instance.languageValue.value ==
+                                      Language.fr
+                                  ? "Récompenses: "
+                                  : "Prizes: "),
+                          RewardImageStoreList(
+                              rewardItems: storeItems!['rewardImages']!,
+                              userId: this.uid),
+                          SizedBox(height: 20),
+                          RewardThemeStoreList(
+                              rewardItems: storeItems!['rewardThemes']!,
+                              userId: this.uid),
+                          SizedBox(height: 20),
+                          Text(
+                              TranslationService.instance.languageValue.value ==
+                                      Language.fr
+                                  ? "Récompenses d'exploit: "
+                                  : "Achievements rewards: "),
+                          RewardCashStoreList(
+                              cashItems: storeItems!['rewardCurrency']!,
+                              userId: this.uid),
+                          SizedBox(height: 20),
+                        ],
+                      ),
                     ),
-                  ),
-                )),
+                  ));
+      }),
     );
   }
 }
