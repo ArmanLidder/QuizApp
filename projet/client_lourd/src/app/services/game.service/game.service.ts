@@ -8,6 +8,7 @@ import {HOST_USERNAME} from '@common/names/host-username';
 import {QuestionType} from "@common/enums/question-type.enum";
 import {Auth} from "@angular/fire/auth";
 import {NextQuestionData} from "@common/interfaces/host.interface";
+import {TranslateService} from "@ngx-translate/core";
 // import {Score} from "@common/interfaces/score.interface";
 // import {QuestionStatistics} from "@common/constants/statistic-zone.component.const";
 
@@ -40,7 +41,8 @@ export class GameService {
         public gameTestService: GameTestService,
         public gameRealService: GameRealService,
         private socketService: SocketClientService,
-        private auth: Auth
+        private auth: Auth,
+        private translate: TranslateService,
     ) {}
 
     get timer() {
@@ -186,7 +188,7 @@ export class GameService {
                     this.qrlAnswer = "";
                     this.gameRealService.qrlAnswer = "";
                 }
-                if (this.observerMode) this.qrlAnswer = "Le joueur est inactif ...";
+                if (this.observerMode) this.qrlAnswer = this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');;
             });
         }
     }

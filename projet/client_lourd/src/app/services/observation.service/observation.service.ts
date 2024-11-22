@@ -25,6 +25,7 @@ import {
     TransportStatsFormat
 } from "@common/constants/host-interface.component.const";
 import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
+import {TranslateService} from "@ngx-translate/core";
 
 @Injectable({
     providedIn: 'root'
@@ -41,6 +42,7 @@ export class ObservationService {
         private hostInterfaceManagementService: HostInterfaceManagementService,
         private gameInterfaceManagementService: GameInterfaceManagementService,
         private router: Router,
+        private translate: TranslateService
     ) {
     }
 
@@ -81,7 +83,7 @@ export class ObservationService {
         // this.observedPlayerId = newUserId;
         this.gameService.gameRealService.username = this.isHost ? HOST_USERNAME : newUserId;
         if (this.gameService.observerMode) {
-            this.gameService.obs_qrl_Answer = "Le joueur est inactif ...";
+            this.gameService.obs_qrl_Answer = this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');
         }
         this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
         if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, {roomId: this.gameConfigs.room, isFirst: false});
@@ -96,7 +98,7 @@ export class ObservationService {
 
     private handleGetQRLInteraction() {
         this.socketService.on(SocketEvent.GET_QRL_INTERACTION, (isActive: boolean) => {
-            this.gameService.qrlAnswer = isActive ? "Le joueur écrit une réponse ..." : "Le joueur est inactif ..."
+            this.gameService.qrlAnswer = isActive ? this.translate.instant('OBSERVER.QRL_PLAYER_ACTIVE') : this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');
         });
     }
 

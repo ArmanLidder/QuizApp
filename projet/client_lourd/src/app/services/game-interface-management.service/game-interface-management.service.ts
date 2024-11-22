@@ -115,7 +115,7 @@ export class GameInterfaceManagementService {
             this.getScore();
             this.gameService.gameRealService.validated = true;
         } else {
-            this.gameService.qrlAnswer = "Le joueur est inactif ...";
+            this.gameService.qrlAnswer = this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');
             if (!this.gameService.observingHost) {
                 this.gameService.gameRealService.validated = true;
             }

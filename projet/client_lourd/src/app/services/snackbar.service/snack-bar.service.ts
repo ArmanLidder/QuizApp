@@ -10,7 +10,7 @@ export class SnackbarService {
 
   show(message: string, action: string = this.translate.instant('POP_UP_MESSAGE.CLOSE'), config: MatSnackBarConfig = {}) {
     this.snackBar.open(message, action, {
-      duration: 5000, // default duration
+      duration: 500000, // default duration
       verticalPosition: 'bottom',
       horizontalPosition: 'center',
       // panelClass: ['my-snack-bar'],

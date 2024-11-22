@@ -2,7 +2,7 @@
     <h2 class="text-primary">{{'GAME_INTERFACE.GAME_FINISHED'| translate}}</h2>
     <app-leave-boutton></app-leave-boutton>
 </div>
-<div class="grid-container" *ngIf='!hostInterfaceManagerService.isGameOver'>
+<div class="grid-container pt-6" *ngIf='!hostInterfaceManagerService.isGameOver'>
     <div id="flex-container">
         <div class="circle">
             <span class="text-primary">{{hostInterfaceManagerService.timerText}}</span>

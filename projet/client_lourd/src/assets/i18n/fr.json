@@ -558,6 +558,8 @@
     "OBSERVE": "Observer",
     "CANCEL": "Annuler",
     "OBSERVATION_MENU": "Menu Observation",
-    "OBSERVING": "Vous observer"
+    "OBSERVING": "Vous observer",
+    "QRL_PLAYER_INACTIVE": "Le joueur est inactif...",
+    "QRL_PLAYER_ACTIVE": "Le joueur écrit une réponse ..."
   }
 }
