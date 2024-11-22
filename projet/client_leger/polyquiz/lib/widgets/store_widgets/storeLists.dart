@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/StoreService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/store_widgets/storeItems.dart';
 
 import '../../models/user.dart';
 import 'BuyButton.dart';
+
 class MoneyCounter extends StatelessWidget {
   final LoggedInUserService loggedInUserService = Get.find();
+  final ThemeService _themeService = ThemeService.instance;
   Map get shopText => TranslationService.instance.text['SHOPPING'];
   Map get profileText => TranslationService.instance.text['PROFILE'];
 
@@ -20,11 +23,10 @@ class MoneyCounter extends StatelessWidget {
       num level = user?.level ?? 0; // Default to 0 if level is null
 
       return Center(
-        child:
-          Text(
-            '${shopText['CURRENCY']} : ${loggedInUserService.observableCurrency.value} \$',
-            style: TextStyle(fontSize: 20, color: Colors.black),
-          ),
+        child: Text(
+          '${shopText['CURRENCY']} : ${loggedInUserService.observableCurrency.value} \$',
+          style: TextStyle(fontSize: 20, color: _themeService.mainAccent.value),
+        ),
       );
     });
   }
@@ -35,7 +37,7 @@ class ThemeStoreList extends StatelessWidget {
   final String userId;
   final StoreService storeService = Get.find();
 
-  ThemeStoreList({ required this.themes, required this.userId});
+  ThemeStoreList({required this.themes, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +46,10 @@ class ThemeStoreList extends StatelessWidget {
       print(item);
       ;
       Widget widget = ThemeItem.ThemeStoreItem(
-          itemId: item["id"],
-          name: item["name"],
-          cost: item["cost"],
-          onBuy: () async =>  {await storeService.buy(userId, item["id"])},
+        itemId: item["id"],
+        name: item["name"],
+        cost: item["cost"],
+        onBuy: () async => {await storeService.buy(userId, item["id"])},
       );
       items.add(widget);
     });
@@ -56,6 +58,7 @@ class ThemeStoreList extends StatelessWidget {
     );
   }
 }
+
 class ImageStoreList extends StatelessWidget {
   final List<Map<String, dynamic>> themes;
   final String userId;
@@ -73,18 +76,20 @@ class ImageStoreList extends StatelessWidget {
         name: item["name"],
         cost: item["cost"],
         source: item["source"], // New field for image source
-        onBuy: () async =>  {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy(userId, item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
         width: 5,
       ));
     });
-    return  Center(child:Wrap(
+    return Center(
+        child: Wrap(
       children: items,
     ));
   }
 }
+
 class RewardImageStoreList extends StatelessWidget {
   final List<Map<String, dynamic>> rewardItems;
   final String userId;
@@ -102,18 +107,20 @@ class RewardImageStoreList extends StatelessWidget {
         cost: item["cost"],
         source: item["source"], // New field for image source
         minLevel: item["minLevel"],
-        onBuy: () async =>  {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy(userId, item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
         width: 5,
       ));
     });
-    return  Center(child:Wrap(
+    return Center(
+        child: Wrap(
       children: items,
     ));
   }
 }
+
 class RewardThemeStoreList extends StatelessWidget {
   final List<Map<String, dynamic>> rewardItems;
   final String userId;
@@ -129,15 +136,16 @@ class RewardThemeStoreList extends StatelessWidget {
         itemId: item["id"],
         name: item["name"],
         cost: item["cost"],
-        achievement : item["achievement"],
-        onBuy: () async =>  {await storeService.buy(userId, item["id"])},
+        achievement: item["achievement"],
+        onBuy: () async => {await storeService.buy(userId, item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
         width: 5,
       ));
     });
-    return  Center(child:Wrap(
+    return Center(
+        child: Wrap(
       children: items,
     ));
   }
@@ -157,17 +165,17 @@ class RewardCashStoreList extends StatelessWidget {
       Widget widget = RewardCashItem(
         itemId: item["id"],
         cost: item["cost"],
-        achievement : item["achievement"],
-        onBuy: () async =>  {await storeService.buy(userId, item["id"])},
+        achievement: item["achievement"],
+        onBuy: () async => {await storeService.buy(userId, item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
         width: 5,
       ));
     });
-    return  Center(child:Wrap(
+    return Center(
+        child: Wrap(
       children: items,
     ));
   }
 }
-

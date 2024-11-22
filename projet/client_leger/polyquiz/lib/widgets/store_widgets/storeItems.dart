@@ -3,14 +3,14 @@ import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/constants/themesNamesToColorArray.dart';
 import 'BuyButton.dart';
 
-
 class ThemeItem extends StatelessWidget {
   final String itemId;
   final String name;
   final num cost;
   final Future<void> Function() onBuy;
+  final ThemeService _themeService = ThemeService.instance;
 
-  const ThemeItem.ThemeStoreItem({
+  ThemeItem.ThemeStoreItem({
     Key? key,
     required this.itemId,
     required this.name,
@@ -35,11 +35,15 @@ class ThemeItem extends StatelessWidget {
         // Item name in white
         Text(
           name,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: _themeService.mainAccent.value),
         ),
         SizedBox(height: 8),
         // Buy button with cost
-        BuyButton(cost: cost, onBuy: onBuy, itemId: itemId,),
+        BuyButton(
+          cost: cost,
+          onBuy: onBuy,
+          itemId: itemId,
+        ),
         SizedBox(height: 20),
       ],
     );
@@ -52,8 +56,9 @@ class ImageItem extends StatelessWidget {
   final num cost;
   final String source; // New field for image source
   final Future<void> Function() onBuy;
+  final ThemeService _themeService = ThemeService.instance;
 
-  const ImageItem({
+  ImageItem({
     Key? key,
     required this.itemId,
     required this.name,
@@ -79,7 +84,7 @@ class ImageItem extends StatelessWidget {
         // Item name in black
         Text(
           name,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: _themeService.mainAccent.value),
         ),
         SizedBox(height: 8),
         // Buy button with cost
@@ -97,8 +102,9 @@ class RewardImageItem extends StatelessWidget {
   final String source; // New field for image source
   final Future<void> Function() onBuy;
   final num minLevel;
+  final ThemeService _themeService = ThemeService.instance;
 
-  const RewardImageItem({
+  RewardImageItem({
     Key? key,
     required this.itemId,
     required this.name,
@@ -124,10 +130,11 @@ class RewardImageItem extends StatelessWidget {
         // Item name in black
         Text(
           name,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: _themeService.mainAccent.value),
         ),
         SizedBox(height: 8),
-        ImageRewardButton(cost: cost, onBuy: onBuy, itemId: itemId, minLevel: this.minLevel),
+        ImageRewardButton(
+            cost: cost, onBuy: onBuy, itemId: itemId, minLevel: this.minLevel),
         SizedBox(height: 20),
       ],
     );
@@ -140,8 +147,9 @@ class RewardThemeItem extends StatelessWidget {
   final num cost;
   final num achievement;
   final Future<void> Function() onBuy;
+  final ThemeService _themeService = ThemeService.instance;
 
-  const RewardThemeItem({
+  RewardThemeItem({
     Key? key,
     required this.itemId,
     required this.name,
@@ -166,16 +174,22 @@ class RewardThemeItem extends StatelessWidget {
         // Item name in white
         Text(
           name,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: _themeService.mainAccent.value),
         ),
         SizedBox(height: 8),
         // Buy button with cost
-        RewardThemeButton(cost: cost, onBuy: onBuy, itemId: itemId, achievement: achievement,),
+        RewardThemeButton(
+          cost: cost,
+          onBuy: onBuy,
+          itemId: itemId,
+          achievement: achievement,
+        ),
         SizedBox(height: 20),
       ],
     );
   }
 }
+
 class RewardCashItem extends StatelessWidget {
   final String itemId;
   final num cost;
@@ -205,7 +219,11 @@ class RewardCashItem extends StatelessWidget {
 
         SizedBox(height: 8),
         // Buy button with cost
-        RewardCashButton(cost: cost, onClaim: onBuy, itemId: itemId, achievement: achievement),
+        RewardCashButton(
+            cost: cost,
+            onClaim: onBuy,
+            itemId: itemId,
+            achievement: achievement),
         SizedBox(height: 20),
       ],
     );
