@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 class PlayerQrl extends StatefulWidget {
   const PlayerQrl({super.key});
@@ -17,6 +18,7 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
   GameInterfaceManagementService _gameInterfaceManagementService =
       GameInterfaceManagementService();
   SocketService _socketService = SocketService();
+  ThemeService _themeService = ThemeService.instance;
 
   void sendActiveNotice() {
     this._gameInterfaceManagementService.gameService.isActive = true;
@@ -69,10 +71,16 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
         child: SizedBox(
           height: 150,
           child: TextField(
+            style: TextStyle(color: _themeService.mainAccent.value),
             decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(),
-                counterText: '${inputText}/200'),
+                enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: _themeService.mainAccent.value)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: _themeService.mainAccent.value)),
+                counterText: '${inputText}/200',
+                counterStyle: TextStyle(color: _themeService.mainAccent.value)),
             expands: true,
             maxLines: null,
             maxLength: 200,

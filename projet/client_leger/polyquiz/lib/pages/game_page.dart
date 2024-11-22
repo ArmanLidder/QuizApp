@@ -209,6 +209,7 @@ class _MyWidgetState extends State<GamePage> {
                               centerTitle: true,
                               backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                             ),
+                            backgroundColor: themeService.mainBackground.value,
                             body: Stack(children: [
                               ListView(shrinkWrap: true, children: [
                                 Visibility(
@@ -250,18 +251,27 @@ class _MyWidgetState extends State<GamePage> {
                                               margin: EdgeInsets.all(5.0),
                                               padding: EdgeInsets.all(10.0),
                                               decoration: BoxDecoration(
-                                                  border: Border.all()),
+                                                  border: Border.all(
+                                                      color: themeService
+                                                          .mainAccent.value)),
                                               child: Column(
                                                 children: [
                                                   Text(
                                                     '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
-                                                    style:
-                                                        TextStyle(fontSize: 20),
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: themeService
+                                                            .mainAccent.value),
                                                   ),
                                                   _gameInterfaceManagementService
                                                           .isBonus
-                                                      ? Text(gameText[
-                                                          'BONUS_RECEIVED_FEEDBACK'])
+                                                      ? Text(
+                                                          gameText[
+                                                              'BONUS_RECEIVED_FEEDBACK'],
+                                                          style: TextStyle(
+                                                              color: themeService
+                                                                  .mainAccent
+                                                                  .value))
                                                       : SizedBox()
                                                 ],
                                               ),
