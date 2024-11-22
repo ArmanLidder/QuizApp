@@ -28,6 +28,9 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     super.initState();
     lastQuestionIndex =
         gameInterfaceManagementService.gameService.questionNumber;
+    if (gameInterfaceManagementService.gameService.isOfflineMode) {
+      this._themeService.setTheme('default');
+    }
   }
 
   Color textBtnColor = Color.fromRGBO(0, 0, 0, 0);
