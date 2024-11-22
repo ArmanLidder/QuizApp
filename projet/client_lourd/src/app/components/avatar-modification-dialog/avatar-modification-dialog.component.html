@@ -1,5 +1,5 @@
-<div class="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-6">
-    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">{{ 'AVATAR_MODIFICATION.TITLE' | translate }}</h2>
+<div class="p-6 max-w-md mx-auto bg-bgPrimary shadow-md space-y-6">
+    <h2 class="text-2xl font-bold text-center text-primary mb-4">{{ 'AVATAR_MODIFICATION.TITLE' | translate }}</h2>
 
     <app-avatar-picker [showOwnedAvatars]="true" (avatarSelected)="onAvatarSelected($event)" class="mb-6"></app-avatar-picker>
 
@@ -17,7 +17,7 @@
             <button
                     [disabled]="!selectedAvatar || isUploading"
                     (click)="confirm()"
-                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="px-4 py-2 border border-transparent rounded-md shadow-sm text-secondary bg-bgButton hover:opacity-75 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {{ 'AVATAR_MODIFICATION.CONFIRM' | translate }}
             </button>

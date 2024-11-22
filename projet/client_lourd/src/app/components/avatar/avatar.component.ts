@@ -20,15 +20,16 @@ export class AvatarComponent implements OnInit{
   @Input() showMenu: boolean = false;
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() hideLevel: boolean = false;
-
   @Input() uid: string; //imporant to pass in
+  @Input() ignoreThemes: boolean = false;
+
 
   currentUser$: Observable<User | undefined>;
 
   isMenuOpen: boolean = false;
   menuEnabled: boolean = false;
   isLoading: boolean = true;
-
+  isProfilePopupOpen: boolean = false;
   constructor(
       private router: Router,
       private authService: AuthService,
@@ -46,15 +47,28 @@ export class AvatarComponent implements OnInit{
   }
 
   openProfileDialog(): void {
-    if (this.uid && this.showProfileOnClick) {
-      this.dialog.open(ProfileViewerComponent, {
+    if (this.uid && this.showProfileOnClick && !this.isProfilePopupOpen) {
+      this.dialog.openDialogs.forEach(dialogRef => {
+        if (dialogRef.componentInstance instanceof ProfileViewerComponent) {
+          dialogRef.close();
+        }
+      });
+      this.isProfilePopupOpen = true;
+
+      const dialogRef = this.dialog.open(ProfileViewerComponent, {
         data: { uid: this.uid },
-        height: 'auto', // Let the height adjust based on content
-        width: '80%',   // Adjust width to ensure it takes up more space
-        maxWidth: '600px' // Optional: set a max width for better control
+        height: 'auto',
+        width: '80%',
+        maxWidth: '600px'
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.isProfilePopupOpen = false;
       });
     }
   }
+
+
 
   private loadUserProfile(uid: string): void {
     this.currentUser$ = this.usersService.getUser(uid) as Observable<User>;

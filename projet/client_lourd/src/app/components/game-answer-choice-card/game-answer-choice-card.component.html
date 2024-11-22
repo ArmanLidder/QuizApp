@@ -1,5 +1,5 @@
 <div
-        class="w-full h-full text-center rounded-lg border-2 border-black flex justify-center items-center"
+        class="w-full h-full text-center rounded-lg border-2 border-primary flex justify-center items-center text-primary"
         [ngClass]='handleHoverEffect()'
         (click)='toggleSelect()'
         [class]='gameService.validatedStatus ? choice.isCorrect ? "bg-green-500 text-black" : "bg-red-500 text-white" : feedbackDisplay'>

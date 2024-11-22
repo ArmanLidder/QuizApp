@@ -1,5 +1,5 @@
-<div class="p-6 mx-auto bg-white rounded-xl shadow-md space-y-6">
-    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">{{ 'USER_SEARCH.TITLE' | translate }}</h2>
+<div class="p-6 mx-auto shadow-md space-y-6 !bg-bgPrimary !text-primary">
+    <h2 class="text-2xl font-bold text-center mb-4">{{ 'USER_SEARCH.TITLE' | translate }}</h2>
 
     <mat-form-field class="w-full">
         <mat-icon matPrefix>search</mat-icon>
@@ -7,20 +7,20 @@
     </mat-form-field>
 
     <div class="mt-4 space-y-2 max-h-80 overflow-y-auto">
-        <div *ngFor="let userData of filteredUsers$ | async" class="bg-gray-100 rounded-lg p-3 flex items-center space-x-3 shadow-sm">
+        <div *ngFor="let userData of filteredUsers$ | async" class="bg-bgSecondary rounded-lg p-3 mx-2 flex items-center space-x-3 shadow-sm">
             <app-avatar class="flex-shrink-0 flex-grow-0" [size]="'small'" [uid]="userData.user.uid"></app-avatar>
             <div class="flex-grow">
-                <h3 class="text-base font-medium text-gray-900">{{ userData.user.username }}</h3>
+                <h3 class="text-primary font-medium">{{ userData.user.username }}</h3>
             </div>
-            <div class="flex items-center space-x-2 mt-4">
+            <div class="flex items-center text-center justify-center">
                 <ng-container *ngIf="!userData.hasPending; else pendingRequestIcon">
                     <button (click)="sendFriendRequest(userData.user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex items-center">
-                        <mat-icon [matTooltip]="'USER_SEARCH.TOOLTIP_SEND_REQUEST' | translate" matTooltipClass="custom-tooltip">person_add</mat-icon>
+                        <mat-icon class="text-primary" [matTooltip]="'USER_SEARCH.TOOLTIP_SEND_REQUEST' | translate" matTooltipClass="custom-tooltip">person_add</mat-icon>
                     </button>
                 </ng-container>
                 <ng-template #pendingRequestIcon>
                     <mat-icon
-                            class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex items-center"
+                            class="text-primary hover:opacity-75 font-semibold transition duration-300 ease-in-out flex items-center"
                             [matTooltip]="'USER_SEARCH.TOOLTIP_PENDING_REQUEST' | translate"
                             matTooltipClass="custom-tooltip"
                     >hourglass_empty</mat-icon>

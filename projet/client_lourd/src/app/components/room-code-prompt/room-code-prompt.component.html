@@ -2,7 +2,7 @@
     <div id="prompt_container">
         <div *ngIf='(!roomValidationService.isRoomIdValid)'>
             <h3>{{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.ENTER_CODE_MESSAGE' | translate }}</h3>
-            <label for="roomId">{{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.ENTER_CODE_LABEL' | translate }}</label>
+            <label class="text-primary" for="roomId">{{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.ENTER_CODE_LABEL' | translate }}</label>
             <input
                     id="roomId"
                     [(ngModel)]="roomValidationService.roomId"

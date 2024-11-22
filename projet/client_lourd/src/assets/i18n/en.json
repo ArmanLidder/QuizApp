@@ -496,7 +496,8 @@
       "NAME": "Name",
       "SCORE": "Score",
       "VALIDATE": "Validate",
-      "OBS_HOST_EVAL": "The host is currently evaluating..."
+      "OBS_HOST_EVAL": "The host is currently evaluating...",
+      "AI_GENERATING": "The response is being generated..."
     },
     "HISTOGRAM": {
       "LEGEND_HEADER": "Histogram legend:",
@@ -558,6 +559,8 @@
     "OBSERVE": "Observe",
     "CANCEL": "Cancel",
     "OBSERVATION_MENU": "Observation Menu",
-    "OBSERVING": "You are observing"
+    "OBSERVING": "You are observing",
+    "QRL_PLAYER_INACTIVE": "The player is inactive...",
+    "QRL_PLAYER_ACTIVE": "The player is writing an answer..."
   }
 }

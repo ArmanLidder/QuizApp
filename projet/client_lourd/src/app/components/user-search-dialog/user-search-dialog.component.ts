@@ -31,7 +31,7 @@ export class UserSearchDialogComponent implements OnInit {
         this.filteredUsers$ = combineLatest([
             this.searchControl.valueChanges.pipe(
                 startWith(''),
-                debounceTime(300),
+                debounceTime(30),
                 distinctUntilChanged()
             ),
             this.currentUser$,

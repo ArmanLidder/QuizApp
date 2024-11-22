@@ -26,23 +26,12 @@ export class AvatarPickerComponent {
     }
 
     async loadAvatars() {
-        this.loading = true; // Start loading
-        // Load default avatars
+        this.loading = true;
         this.avatarService.getDefaultAvatarUrls().subscribe((avatars: string[]) => {
             this.defaultAvatars = avatars;
-            this.checkLoadingStatus();
         });
-        // Load owned avatars
         if (this.showOwnedAvatars) this.ownedAvatars = await this.avatarService.getBoughtAvatars();
-
-        this.checkLoadingStatus();
-    }
-
-    checkLoadingStatus() {
-        // Set loading to false only when both avatar arrays are populated
-        if (this.defaultAvatars.length > 0) {
-            this.loading = false;
-        }
+        this.loading = false;
     }
 
     selectAvatar(avatarUrl: string): void {

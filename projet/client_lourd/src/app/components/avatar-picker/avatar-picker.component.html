@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div class="space-y-6 text-primary">
     <h2 class="text-xl text-center font-semibold">{{ 'AVATAR_MODIFICATION.CHOOSE_AVATAR' | translate }}</h2>
     <div *ngIf="loading" class="flex justify-center my-4">
         <mat-spinner></mat-spinner>
@@ -8,13 +8,13 @@
             <div *ngFor="let avatarUrl of defaultAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
                 <img [src]="avatarUrl" alt="Avatar" class="w-20 h-20 rounded-full mb-2 object-cover"
                      [class.ring-4]="avatarUrl === selectedAvatar"
-                     [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
+                     [ngStyle]="{ '--tw-ring-color': avatarUrl === selectedAvatar ? 'var(--color-bg-button)' : '' }"/>
             </div>
             <ng-container *ngIf="showOwnedAvatars" >
                 <div *ngFor="let avatarUrl of ownedAvatars" (click)="selectAvatar(avatarUrl)" class="avatar-item">
                     <img [src]="avatarUrl" alt="Avatar" class="w-20 h-20 rounded-full mb-2 object-cover"
                          [class.ring-4]="avatarUrl === selectedAvatar"
-                         [class.ring-blue-500]="avatarUrl === selectedAvatar"/>
+                         [ngStyle]="{ '--tw-ring-color': avatarUrl === selectedAvatar ? 'var(--color-bg-button)' : '' }"/>
                 </div>
             </ng-container>
         </ng-container>
@@ -29,7 +29,7 @@
     </div>
 
     <div class="text-center">
-        <label for="custom-avatar" class="block text-center font-medium text-gray-700 mb-3">
+        <label for="custom-avatar" class="block text-center font-medium mb-3">
             {{ 'AVATAR_MODIFICATION.UPLOAD_OWN' | translate }}
         </label>
         <div class="space-y-6">

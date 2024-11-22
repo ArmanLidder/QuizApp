@@ -496,7 +496,8 @@
       "NAME": "Nom",
       "SCORE": "Note",
       "VALIDATE": "Valider",
-      "OBS_HOST_EVAL": "L'hôte évalue actuellement les réponses ..."
+      "OBS_HOST_EVAL": "L'hôte évalue actuellement les réponses ...",
+      "AI_GENERATING": "La réponse est en train d’être générée..."
     },
     "HISTOGRAM": {
       "LEGEND_HEADER": "Légende de l'histogramme:",
@@ -558,6 +559,8 @@
     "OBSERVE": "Observer",
     "CANCEL": "Annuler",
     "OBSERVATION_MENU": "Menu Observation",
-    "OBSERVING": "Vous observez"
+    "OBSERVING": "Vous observez",
+    "QRL_PLAYER_INACTIVE": "Le joueur est inactif...",
+    "QRL_PLAYER_ACTIVE": "Le joueur écrit une réponse ..."
   }
 }

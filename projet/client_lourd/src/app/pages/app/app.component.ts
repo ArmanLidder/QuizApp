@@ -1,6 +1,8 @@
 import {Component, OnDestroy, HostListener} from '@angular/core';
 import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
 import {AuthService} from "@app/services/auth.service/auth.service";
+import {UsersService} from "@app/services/users.service/users.service";
+import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
 
 
 @Component({
@@ -11,8 +13,9 @@ import {AuthService} from "@app/services/auth.service/auth.service";
 export class AppComponent implements OnDestroy {
 
     constructor(private socketService: SocketClientService,
-                private authService: AuthService) {}
-
+                private authService: AuthService,
+                public usersService: UsersService,
+                public settings: UserSettingsService) {}
 
 
     @HostListener('window:beforeunload')

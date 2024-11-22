@@ -2,13 +2,12 @@
   padding: 24px;
   max-width: 500px;
   margin: 0 auto;
-  background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
-  border-radius: 16px;
+  background-color: var(--color-bg-primary);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .dialog-title {
-  color: #007bff;  /* Updated to requested blue */
+  color: var(--color-bg-button);
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 24px;
@@ -40,7 +39,7 @@
 }
 
 .select-field:focus, .number-input:focus {
-  border-color: #007bff;
+  border-color: var(--color-bg-button);
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
 }
 
@@ -85,49 +84,48 @@
 }
 
 .btn-cancel {
-  background: transparent;
-  color: #dc3545;  /* Updated to red */
-  border: 1px solid #dc3545;  /* Added border to make it stand out */
+  background: #dc3545;
+  color:white;
 }
 
 .btn-cancel:hover {
-  background: #dc3545;
-  color: white;
+  opacity: 0.75;
+  transform: translateY(-1px);
 }
 
 .btn-primary {
-  background: #007bff;  /* Updated to requested blue */
-  color: white;
+  background: var(--color-bg-button);
+  color: var(--color-secondary);
 }
 
 .btn-primary:hover {
-  background: #0056b3;  /* Darker shade for hover */
+  opacity: 0.75;  /* Darker shade for hover */
   transform: translateY(-1px);
 }
 
 .btn-primary:disabled {
-  background: #99caff;
+  background: #909090;
   cursor: not-allowed;
   transform: none;
 }
 
 .error-message {
-  color: #dc3545;
-  font-size: 12px;
+  color: var(--color-error);
+  font-size: 16px;
   margin-top: 4px;
 }
 
 .field-container label {
   display: block;
   margin-bottom: 8px;
-  color: #455a64;
+  color: var(--color-primary);
   font-weight: 500;
   transform-origin: left;
   transition: all 0.3s ease;
 }
 
 .field-container:focus-within label {
-  color: #007bff;  /* Updated to match new color scheme */
+  color: var(--color-bg-button);
   transform: scale(1.02);
 }
 
@@ -139,4 +137,8 @@
 }
 .number-input[type=number] {
   -moz-appearance: textfield;
+}
+
+.custom-checkbox input[type="checkbox"]:checked {
+  accent-color: var(--color-bg-button); /* Custom background color when selected */
 }

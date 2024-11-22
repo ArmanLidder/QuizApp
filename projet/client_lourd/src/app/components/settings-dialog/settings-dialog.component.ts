@@ -1,7 +1,7 @@
 import {Component, OnInit,} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
-import {UsersService} from "@app/services/users.service/users.service";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-settings-dialog',
@@ -11,12 +11,11 @@ import {UsersService} from "@app/services/users.service/users.service";
 export class SettingsDialogComponent implements OnInit{
   currentLanguage: 'fr' | 'en';
   currentTheme: string;
-  availableThemes: string[];
+  availableThemes$: Observable<string[]>;
 
   constructor(
       public dialogRef: MatDialogRef<SettingsDialogComponent>,
       private settings: UserSettingsService,
-      private usersService: UsersService,
   ) {}
 
   async ngOnInit() {
@@ -26,7 +25,7 @@ export class SettingsDialogComponent implements OnInit{
     this.settings.currentTheme.subscribe((theme) => {
       this.currentTheme = theme;
     });
-    this.availableThemes = await this.usersService.getAvailableThemes();
+    this.availableThemes$ = this.settings.availableThemes$;
   }
 
   async switchLanguage(event: Event) {

@@ -8,7 +8,7 @@
         <div class="header" (click)="toggleMenu()">
             <p><i class="bi bi-chevron-compact-down"></i>{{ 'OBSERVER.OBSERVATION_MENU' | translate }}</p>
         </div>
-        <p><i class="bi bi-eye"></i> {{ 'OBSERVER.OBSERVING' | translate }}:</p>
+        <p class="text-primary"><i class="bi bi-eye"></i> {{ 'OBSERVER.OBSERVING' | translate }}:</p>
         <app-avatar [isChat]="true" [uid]="observationService.observedPlayerId"></app-avatar>
         <button class="button" (click)="openSelectorDialog()">{{ 'OBSERVER.CHOOSE_PLAYER' | translate }}</button>
     </div>
