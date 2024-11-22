@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 import '../models/quiz.dart';
@@ -29,8 +30,10 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   User? userData;
   final UserService userService = UserService();
   late final GameListService gameListService;
+  final ThemeService themeService = ThemeService.instance;
+
   Map<String, String> quizNameMap = {};
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Map get text => TranslationService.instance.text;
   Map get waitPageText => text['PLAYER_WAITING_PAGE'];
   Map get roomPromptText => waitPageText['ROOM_CODE_PROMPT'];
@@ -84,118 +87,78 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
     roomValidationService.roomId = game.room.toString();
     final isHostFriend = await _validateFriendship(game);
     dynamic dataOfRoomValidation = await roomValidationService.sendRoomId();
-    if(!dataOfRoomValidation['isRoom']){
+    if (!dataOfRoomValidation['isRoom']) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(roomErrorText['GAME_NOT_FOUND'])),
-        );
+        SnackBar(
+            content: Text(roomErrorText['GAME_NOT_FOUND'],
+                style: TextStyle(color: themeService.mainAccent.value))),
+      );
       setState(() {
-          _isJoining = false;
+        _isJoining = false;
       });
-    }
-    else{
-      if(dataOfRoomValidation['isLocked']){
+    } else {
+      if (dataOfRoomValidation['isLocked']) {
         print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(roomErrorText['ROOM_LOCKED'])),
+          SnackBar(content: Text(roomErrorText['ROOM_LOCKED'])),
         );
         setState(() {
           _isJoining = false;
         });
-      }
-        else{
-          if (game.friendsOnly && !isHostFriend) {
+      } else {
+        if (game.friendsOnly && !isHostFriend) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(roomErrorText['FRIENDS_ONLY'])),
+          );
+          setState(() {
+            _isJoining = false;
+          });
+        } else {
+          final isPrestigeValid = await _validatePrestige(game.prestige);
+          if (!isPrestigeValid) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(roomErrorText['FRIENDS_ONLY'])),
+              SnackBar(content: Text(roomErrorText['INSUFFICIENT_PRESTIGE'])),
             );
             setState(() {
               _isJoining = false;
             });
           } else {
-            final isPrestigeValid = await _validatePrestige(game.prestige);
-            if (!isPrestigeValid) {
+            await roomValidationService.verifyUsername();
+            if (!roomValidationService.isUsernameValid) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(
-                        roomErrorText['INSUFFICIENT_PRESTIGE'])),
+                SnackBar(content: Text(roomErrorText['BANNED_USER'])),
               );
               setState(() {
                 _isJoining = false;
               });
             } else {
-              await roomValidationService.verifyUsername();
-              if (!roomValidationService.isUsernameValid) {
+              if (roomValidationService.isLocked) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(roomErrorText['BANNED_USER'])),
+                  SnackBar(content: Text(roomErrorText['ROOM_LOCKED'])),
                 );
                 setState(() {
                   _isJoining = false;
                 });
               } else {
-                if (roomValidationService.isLocked) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(roomErrorText['ROOM_LOCKED'])),
-                  );
-                  setState(() {
-                    _isJoining = false;
-                  });
-                }
-                else{
-                  if(game.price > 0){
-                    if(roomValidationService.userData!.currency < game.price){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(roomErrorText['INSUFFICIENT_FUNDS'])),
-                      );
-                      setState(() {
-                        _isJoining = false;
-                      });
-                    }
-                    else{
-                      final availableMoney = roomValidationService.userData!.currency;
-                      await _firestore.collection('users').doc(roomValidationService.userData!.uid).update({
-                        'currency': availableMoney - game.price,
-                      });
-                      if (!roomValidationService.isLocked &&
-                          roomValidationService.isUsernameValid) {
-                        try {
-                          // Navigate to the WaitingRoomScreen
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => WaitingRoomScreen(
-                                quiz: Quiz(
-                                  id: roomValidationService
-                                      .roomId!, // Pass the room ID to the waiting room.
-                                  title: 'Nothing', // Provide a sample title.
-                                  description: 'Nothing', // Provide a sample description.
-                                  duration: 0, // Provide a sample duration.
-                                  questions: [], // Provide an empty list of questions.
-                                ),
-                                username: this
-                                    .userData!
-                                    .uid, // Pass the username to the waiting room.
-                                isHost: false, // This user is not the host.
-                                isFromActiveList: true,
-                              ),
-                            ),
-                          );
-                        } catch (e) {
-                          setState(() {
-                            _isJoining = false;
-                          });
-
-                          // Display an error message if joining fails.
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Failed to join room: $e')),
-                          );
-                        }
-                      }
-                    }
-                  }
-                  else{
-                  if (!roomValidationService.isLocked &&
+                if (game.price > 0) {
+                  if (roomValidationService.userData!.currency < game.price) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(roomErrorText['INSUFFICIENT_FUNDS'])),
+                    );
+                    setState(() {
+                      _isJoining = false;
+                    });
+                  } else {
+                    final availableMoney =
+                        roomValidationService.userData!.currency;
+                    await _firestore
+                        .collection('users')
+                        .doc(roomValidationService.userData!.uid)
+                        .update({
+                      'currency': availableMoney - game.price,
+                    });
+                    if (!roomValidationService.isLocked &&
                         roomValidationService.isUsernameValid) {
                       try {
                         // Navigate to the WaitingRoomScreen
@@ -207,7 +170,8 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                                 id: roomValidationService
                                     .roomId!, // Pass the room ID to the waiting room.
                                 title: 'Nothing', // Provide a sample title.
-                                description: 'Nothing', // Provide a sample description.
+                                description:
+                                    'Nothing', // Provide a sample description.
                                 duration: 0, // Provide a sample duration.
                                 questions: [], // Provide an empty list of questions.
                               ),
@@ -231,10 +195,48 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                       }
                     }
                   }
+                } else {
+                  if (!roomValidationService.isLocked &&
+                      roomValidationService.isUsernameValid) {
+                    try {
+                      // Navigate to the WaitingRoomScreen
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WaitingRoomScreen(
+                            quiz: Quiz(
+                              id: roomValidationService
+                                  .roomId!, // Pass the room ID to the waiting room.
+                              title: 'Nothing', // Provide a sample title.
+                              description:
+                                  'Nothing', // Provide a sample description.
+                              duration: 0, // Provide a sample duration.
+                              questions: [], // Provide an empty list of questions.
+                            ),
+                            username: this
+                                .userData!
+                                .uid, // Pass the username to the waiting room.
+                            isHost: false, // This user is not the host.
+                            isFromActiveList: true,
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      setState(() {
+                        _isJoining = false;
+                      });
+
+                      // Display an error message if joining fails.
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to join room: $e')),
+                      );
+                    }
+                  }
                 }
               }
             }
           }
+        }
       }
     }
   }
@@ -297,9 +299,13 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(TranslationService.instance.languageValue.value == Language.fr ? 'Joindre une salle' : "Join a room"),
+        title: Text(
+            TranslationService.instance.languageValue.value == Language.fr
+                ? 'Joindre une salle'
+                : "Join a room"),
         automaticallyImplyLeading: false,
       ),
+      backgroundColor: themeService.mainBackground.value,
       body: Column(
         children: [
           Align(
@@ -327,14 +333,16 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                      roomPromptText['ENTER_CODE_MESSAGE'],
-                      style: TextStyle(fontSize: 20)),
+                  Text(roomPromptText['ENTER_CODE_MESSAGE'],
+                      style: TextStyle(
+                          fontSize: 20, color: themeService.mainAccent.value)),
                   SizedBox(height: 16),
                   TextFormField(
                     controller: _roomIdController,
                     decoration: InputDecoration(
                       labelText: roomPromptText['ENTER_CODE_LABEL'],
+                      labelStyle:
+                          TextStyle(color: themeService.mainAccent.value),
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {

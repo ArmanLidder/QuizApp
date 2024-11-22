@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/quiz_file_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
@@ -22,6 +23,7 @@ class _QuizListPageState extends State<QuizListPage> {
   bool isLoading = true;
   String errorMessage = '';
   Quiz? selectedQuiz = null;
+  final ThemeService themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get quizSelectText => text['QUIZ_SELECTION'];
 
@@ -70,6 +72,7 @@ class _QuizListPageState extends State<QuizListPage> {
         title: Text('Quizzes'),
         automaticallyImplyLeading: false,
       ),
+      backgroundColor: themeService.mainBackground.value,
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : errorMessage.isNotEmpty
@@ -85,7 +88,7 @@ class _QuizListPageState extends State<QuizListPage> {
                         decoration: BoxDecoration(
                             color: Color.fromRGBO(53, 121, 246, 1),
                             border: Border.all(
-                                color: const Color.fromRGBO(0, 0, 0, 1),
+                                color: themeService.mainAccent.value,
                                 width: 1.0)),
                         child: Center(
                           child: Padding(
@@ -107,20 +110,24 @@ class _QuizListPageState extends State<QuizListPage> {
                               margin: EdgeInsets.symmetric(horizontal: 50),
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: const Color.fromRGBO(0, 0, 0, 1),
+                                      color: themeService.mainAccent.value,
                                       width: 1.0)),
                               child: ListTile(
                                 tileColor: quiz == selectedQuiz
                                     ? const Color.fromRGBO(184, 223, 255, 1)
-                                    : Colors.white,
+                                    : themeService.secondaryAccent.value,
                                 title: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(quiz.title,
-                                        style: TextStyle(fontSize: 16)),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color:
+                                                themeService.mainAccent.value)),
                                     if (_areAllQuestionsQCM(quiz))
                                       IconButton(
+                                        color: themeService.mainAccent.value,
                                         iconSize: 35.0,
                                         onPressed: () async {
                                           String message =
@@ -138,24 +145,51 @@ class _QuizListPageState extends State<QuizListPage> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            Text(quiz.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                                            Text(
+                                              quiz.title,
+                                              style: TextStyle(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                             // Text('Description: ${quiz.description}'),
-                                            RichText(text: TextSpan(
-                                              style: DefaultTextStyle.of(context).style,
-                                              children: <TextSpan>[
-                                                TextSpan(text: "${quizSelectText['DESCRIPTION']}: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                                                TextSpan(text: quiz.description),
-                                              ]
-                                            )),
+                                            RichText(
+                                                text: TextSpan(
+                                                    style: DefaultTextStyle.of(
+                                                            context)
+                                                        .style,
+                                                    children: <TextSpan>[
+                                                  TextSpan(
+                                                      text:
+                                                          "${quizSelectText['DESCRIPTION']}: ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                  TextSpan(
+                                                      text: quiz.description),
+                                                ])),
                                             // Text('Durée: ${quiz.duration} s'),
-                                            RichText(text: TextSpan(
-                                                style: DefaultTextStyle.of(context).style,
-                                                children: <TextSpan>[
-                                                  TextSpan(text: "${quizSelectText['DURATION']}: ", style: TextStyle(fontWeight: FontWeight.bold)),
-                                                  TextSpan(text: "${quiz.duration} ${quizSelectText['DURATION_SUFFIX']}"),
-                                                ]
-                                            )),
-                                            Text(quizSelectText['QUESTIONS']+":", style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold),),
+                                            RichText(
+                                                text: TextSpan(
+                                                    style: DefaultTextStyle.of(
+                                                            context)
+                                                        .style,
+                                                    children: <TextSpan>[
+                                                  TextSpan(
+                                                      text:
+                                                          "${quizSelectText['DURATION']}: ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                  TextSpan(
+                                                      text:
+                                                          "${quiz.duration} ${quizSelectText['DURATION_SUFFIX']}"),
+                                                ])),
+                                            Text(
+                                              quizSelectText['QUESTIONS'] + ":",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                             ListView.builder(
                                               shrinkWrap: true,
                                               physics:
@@ -163,8 +197,9 @@ class _QuizListPageState extends State<QuizListPage> {
                                               itemCount: quiz.questions.length,
                                               itemBuilder: (context, index) {
                                                 return Center(
-                                                  child: Text("•" + quiz
-                                                      .questions[index].text),
+                                                  child: Text("•" +
+                                                      quiz.questions[index]
+                                                          .text),
                                                 );
                                               },
                                             )
