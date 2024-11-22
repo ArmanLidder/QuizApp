@@ -186,6 +186,7 @@ button {
 }
 
 .action-btn:disabled {
+  color:black;
   background-color: #ccc;
   border-color: #ccc;
   cursor: not-allowed;

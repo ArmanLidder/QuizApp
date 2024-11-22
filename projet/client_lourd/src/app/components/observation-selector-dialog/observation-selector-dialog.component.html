@@ -1,14 +1,15 @@
-<div class="dialog-container">
+<div class="dialog-container bg-bgPrimary">
     <h2 class="dialog-title">{{ 'OBSERVER.CHOOSE_PLAYER' | translate }}</h2>
     <div class="players-list">
         <ul>
-            <li class="player-item" *ngFor="let player of observationService.playersList">
-                <ng-container *ngIf="playerObserved !== player">
+            <ng-container *ngFor="let player of observationService.playersList">
+                <li class="player-item" *ngIf="playerObserved !== player">
                     <app-avatar class="player-name" [size]="'small'" [isChat]="true" [uid]="player"></app-avatar>
                     <button class="btn btn-primary" (click)="observe(player)">{{ 'OBSERVER.OBSERVE' | translate }}</button>
-                </ng-container>
-            </li>
+                </li>
+            </ng-container>
         </ul>
+
     </div>
     <div class="actions">
         <button class="btn btn-cancel" type="button" (click)="closeDialog()">{{ 'OBSERVER.CANCEL' | translate }}</button>
