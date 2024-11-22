@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 class PlayersDataTableLegend extends StatelessWidget {
-  const PlayersDataTableLegend({super.key});
+  PlayersDataTableLegend({super.key});
+  ThemeService _themeService = ThemeService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,9 @@ class PlayersDataTableLegend extends StatelessWidget {
             Icons.square,
             color: Color.fromRGBO(246, 53, 53, 1),
           )),
-          TextSpan(text: 'Inactif', style: TextStyle(color: Colors.black))
+          TextSpan(
+              text: 'Inactif',
+              style: TextStyle(color: _themeService.mainAccent.value))
         ])),
         SizedBox(
           width: 30.0,
@@ -27,7 +31,9 @@ class PlayersDataTableLegend extends StatelessWidget {
             Icons.square,
             color: Color.fromRGBO(255, 226, 108, 1),
           )),
-          TextSpan(text: 'A intéragi', style: TextStyle(color: Colors.black))
+          TextSpan(
+              text: 'A intéragi',
+              style: TextStyle(color: _themeService.mainAccent.value))
         ])),
         SizedBox(
           width: 30.0,
@@ -39,7 +45,9 @@ class PlayersDataTableLegend extends StatelessWidget {
             Icons.square,
             color: Color.fromRGBO(123, 229, 117, 1),
           )),
-          TextSpan(text: 'A validé', style: TextStyle(color: Colors.black))
+          TextSpan(
+              text: 'A validé',
+              style: TextStyle(color: _themeService.mainAccent.value))
         ])),
         SizedBox(
           width: 30.0,
@@ -51,7 +59,9 @@ class PlayersDataTableLegend extends StatelessWidget {
             Icons.square,
             color: Color.fromRGBO(31, 31, 31, 1),
           )),
-          TextSpan(text: 'A quitté', style: TextStyle(color: Colors.black))
+          TextSpan(
+              text: 'A quitté',
+              style: TextStyle(color: _themeService.mainAccent.value))
         ])),
         SizedBox(
           width: 30.0,
@@ -65,7 +75,7 @@ class PlayersDataTableLegend extends StatelessWidget {
           )),
           TextSpan(
               text: 'Fin de partie',
-              style: TextStyle(color: const Color.fromRGBO(26, 26, 26, 1)))
+              style: TextStyle(color: _themeService.mainAccent.value))
         ])),
         SizedBox(
           width: 30.0,

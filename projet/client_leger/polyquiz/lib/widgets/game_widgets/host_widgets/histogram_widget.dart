@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 class Histogram extends StatefulWidget {
   const Histogram({super.key});
@@ -12,6 +13,7 @@ class Histogram extends StatefulWidget {
 class _HistogramWidgetState extends State<Histogram> {
   HostInterfaceManagementService _hostInterfaceManagementService =
       HostInterfaceManagementService();
+  ThemeService _themeService = ThemeService.instance;
 
   Color getColor(int index) {
     print('ENTRIES IN GET COLOR');
@@ -46,13 +48,16 @@ class _HistogramWidgetState extends State<Histogram> {
                     int index = value.toInt();
                     if (_hostInterfaceManagementService
                         .histogramDataValue.isNotEmpty) {
-                      return Text(index <
-                              _hostInterfaceManagementService
-                                  .histogramDataValue.length
-                          ? _hostInterfaceManagementService
-                              .histogramDataValue.keys
-                              .toList()[index]
-                          : '');
+                      return Text(
+                          index <
+                                  _hostInterfaceManagementService
+                                      .histogramDataValue.length
+                              ? _hostInterfaceManagementService
+                                  .histogramDataValue.keys
+                                  .toList()[index]
+                              : '',
+                          style:
+                              TextStyle(color: _themeService.mainAccent.value));
                     } else {
                       return Text('');
                     }

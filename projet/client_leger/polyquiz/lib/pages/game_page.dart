@@ -3,6 +3,7 @@ import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_interface_widget.dart';
@@ -41,6 +42,7 @@ class _MyWidgetState extends State<GamePage> {
   InteractiveListService _interactiveListService = InteractiveListService();
   GameInterfaceManagementService _gameInterfaceManagementService =
       GameInterfaceManagementService();
+  ThemeService themeService = ThemeService.instance;
 
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get timerText => gameText['TIMER_TEXT'];
@@ -122,8 +124,7 @@ class _MyWidgetState extends State<GamePage> {
     }
     return Visibility(
         visible: !this._gameService.realGameService.isHostEvaluating,
-        child: questionWidget
-    );
+        child: questionWidget);
   }
 
   @override
@@ -136,6 +137,7 @@ class _MyWidgetState extends State<GamePage> {
           centerTitle: true,
           backgroundColor: Color.fromRGBO(53, 121, 246, 1),
         ),
+        backgroundColor: themeService.mainBackground.value,
         body: Stack(children: [
           ListView(children: [
             Visibility(
@@ -150,6 +152,7 @@ class _MyWidgetState extends State<GamePage> {
       );
     } else {
       return Container(
+          color: themeService.mainBackground.value,
           child: AnimatedBuilder(
               animation:
                   _gameInterfaceManagementService.gameService.realGameService,
@@ -257,7 +260,8 @@ class _MyWidgetState extends State<GamePage> {
                                                   ),
                                                   _gameInterfaceManagementService
                                                           .isBonus
-                                                      ? Text(gameText['BONUS_RECEIVED_FEEDBACK'])
+                                                      ? Text(gameText[
+                                                          'BONUS_RECEIVED_FEEDBACK'])
                                                       : SizedBox()
                                                 ],
                                               ),
@@ -304,19 +308,19 @@ class _MyWidgetState extends State<GamePage> {
     if (imageUrl == null) return null;
     return Center(
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.25,
-          // height: MediaQuery.of(context).size.height * 0.25,
-          child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5.0),
-                  child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-        ));
+      width: MediaQuery.of(context).size.width * 0.25,
+      // height: MediaQuery.of(context).size.height * 0.25,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5.0),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    ));
   }
 
   Widget getButtons() {
@@ -392,7 +396,8 @@ class ResultPage extends StatelessWidget {
         PlayersDataTable(
           isHost: false,
         ),
-        StatisticZone(gameStats : this.gameInterfaceManagementService!.gameStats),
+        StatisticZone(
+            gameStats: this.gameInterfaceManagementService!.gameStats),
         QuitBtn(
           isHost: false,
           roomId: gameService.realGameService.roomId,

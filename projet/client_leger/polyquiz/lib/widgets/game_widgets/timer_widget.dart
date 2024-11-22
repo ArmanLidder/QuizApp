@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
+
 class TimerWidget extends StatefulWidget {
   final bool isHost;
   final String timeTxt;
@@ -25,6 +27,7 @@ class _TimerWidgetState extends State<TimerWidget> {
       Icons.fireplace_outlined; // Changer pour coherence avec client lourd
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get timerText => gameText['TIMER_TEXT'];
+  ThemeService themeService = ThemeService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -33,18 +36,20 @@ class _TimerWidgetState extends State<TimerWidget> {
       height: 200,
       width: 200,
       decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
+          border: Border.all(color: themeService.mainAccent.value),
           borderRadius: BorderRadius.circular(100.0)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             '${widget.timeTxt}',
-            style: TextStyle(fontSize: 20),
+            style:
+                TextStyle(fontSize: 20, color: themeService.mainAccent.value),
           ),
           Text(
             '${widget.time}',
-            style: TextStyle(fontSize: 28),
+            style:
+                TextStyle(fontSize: 28, color: themeService.mainAccent.value),
           ),
           Visibility(
             visible: widget.isHost,
@@ -52,8 +57,9 @@ class _TimerWidgetState extends State<TimerWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(
+                  color: themeService.mainAccent.value,
                   onPressed: () {
-                    if(widget.hostInterfaceManagementService != null ){
+                    if (widget.hostInterfaceManagementService != null) {
                       widget.hostInterfaceManagementService?.sendPauseTimer();
                       setState(() {
                         timerIcon = changeIcon(timerIcon);
@@ -64,14 +70,18 @@ class _TimerWidgetState extends State<TimerWidget> {
                   iconSize: 35,
                 ),
                 IconButton(
+                  color: themeService.mainAccent.value,
                   onPressed: () {
-                    if(widget.hostInterfaceManagementService != null ){
-                      if (widget.hostInterfaceManagementService?.gameService?.isPanicDisabled() == false) {
+                    if (widget.hostInterfaceManagementService != null) {
+                      if (widget.hostInterfaceManagementService?.gameService
+                              ?.isPanicDisabled() ==
+                          false) {
                         widget.hostInterfaceManagementService?.startPanicMode();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(gameText['TOOLTIP']['TOOLTIP_PANIC_MODE_DISABLED']),
+                            content: Text(gameText['TOOLTIP']
+                                ['TOOLTIP_PANIC_MODE_DISABLED']),
                           ),
                         );
                       }
