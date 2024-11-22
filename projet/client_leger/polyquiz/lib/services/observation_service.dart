@@ -31,7 +31,7 @@ class ObservationService extends GetxController {
   bool isHost = true;
   String observedUid = '';
   GameListItem? gameConfigs;
-  List<String> playerList = [];
+  RxList<String> playerList = <String>[].obs;
 
   void observeGame(GameListItem game, BuildContext context) {
     this.gameConfigs = game;
@@ -61,7 +61,8 @@ class ObservationService extends GetxController {
     this.handleLastQRLAnswerReception();
   }
 
-  void observeOtherPlayer(String oldUid, String newUid) {
+  void observeOtherPlayer(String newUid) {
+    final oldUid = this.observedUid;
     final data = {
       'roomId': this.gameConfigs?.room,
       'oldUserId': oldUid,
