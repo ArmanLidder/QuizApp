@@ -1,18 +1,18 @@
-<div class="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md space-y-6">
-  <h3 class="text-2xl font-bold text-center text-red-600 mb-4">{{ 'CONFIRMATION_DIALOG.WARNING' | translate }}</h3>
+<div class="p-6 max-w-md mx-auto bg-bgPrimary shadow-md space-y-6">
+  <h3 class="text-2xl font-bold text-center text-error mb-4">{{ 'CONFIRMATION_DIALOG.WARNING' | translate }}</h3>
   <div class="space-y-4">
-    <p class="text-gray-700 text-center">{{ data.message }}</p>
+    <p class="text-primary text-center">{{ data.message }}</p>
   </div>
   <div class="flex justify-end space-x-4">
     <button
             (click)="onCancelClick()"
-            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out"
+            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:opacity-75 transition duration-150 ease-in-out"
     >
       {{ 'CONFIRMATION_DIALOG.CANCEL' | translate }}
     </button>
     <button
             (click)="onConfirmClick()"
-            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-bgButton hover:opacity-75 text-secondary transition duration-150 ease-in-out"
     >
       {{ 'CONFIRMATION_DIALOG.CONFIRM' | translate }}
     </button>
