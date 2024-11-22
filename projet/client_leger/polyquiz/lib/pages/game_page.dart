@@ -17,7 +17,8 @@ import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
-import 'package:polyquiz/widgets/observer_widgets/open_observer_list_TO_BE_DELETED.dart';
+import 'package:polyquiz/widgets/observer_widgets/observer_counter.dart';
+import 'package:polyquiz/widgets/observer_widgets/observation_selector.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -137,7 +138,27 @@ class _MyWidgetState extends State<GamePage> {
   Widget build(BuildContext context) {
     if (isHost) {
       return Scaffold(
+        // appBar: AppBar(
+        //   leading: Row(
+        //     children: [
+        //       ObserverCounter(),
+        //       SizedBox(width: 10),
+        //       ObservationSelector(),
+        //       SizedBox(width: 20),
+        //     ],
+        //   ),
+        //   title: const Text('PolyQuiz'),
+        //   automaticallyImplyLeading: false,
+        //   centerTitle: true,
+        //   backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+        // ),
         appBar: AppBar(
+          actions: [
+            ObserverCounter(),
+            SizedBox(width: 10),
+            ObservationSelector(),
+            SizedBox(width: 20),
+          ],
           title: const Text('PolyQuiz'),
           automaticallyImplyLeading: false,
           centerTitle: true,
@@ -145,14 +166,13 @@ class _MyWidgetState extends State<GamePage> {
         ),
         body: Stack(children: [
           ListView(children: [
-            Visibility(
-                visible: isHost,
-                child: HostInterface(
-                    interactiveListService: _interactiveListService,
-                    gameInterfaceManagementService:
-                        _gameInterfaceManagementService))
+        Visibility(
+            visible: isHost,
+            child: HostInterface(
+            interactiveListService: _interactiveListService,
+            gameInterfaceManagementService:
+            _gameInterfaceManagementService))
           ]),
-          Positioned(bottom: 20, left: 20, child: openObservationListButton())
         ]),
       );
     } else {
@@ -185,6 +205,12 @@ class _MyWidgetState extends State<GamePage> {
                         if (_gameInterfaceManagementService.isResultPage) {
                           return Scaffold(
                             appBar: AppBar(
+                              actions: [
+                                ObserverCounter(),
+                                SizedBox(width: 10),
+                                ObservationSelector(),
+                                SizedBox(width: 20),
+                              ],
                               title: const Text('PolyQuiz'),
                               automaticallyImplyLeading: false,
                               centerTitle: true,
@@ -208,6 +234,12 @@ class _MyWidgetState extends State<GamePage> {
                         } else {
                           return Scaffold(
                             appBar: AppBar(
+                              actions: [
+                                ObserverCounter(),
+                                SizedBox(width: 10),
+                                ObservationSelector(),
+                                SizedBox(width: 20),
+                              ],
                               title: const Text('PolyQuiz'),
                               automaticallyImplyLeading: false,
                               centerTitle: true,
@@ -295,8 +327,6 @@ class _MyWidgetState extends State<GamePage> {
                                   ),
                                 ),
                               ]),
-                              Positioned(
-                                  bottom: 0, left: 20, child: openObservationListButton())
                             ]),
                           );
                         }
