@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:polyquiz/constants/text/EnglishTextValue.dart';
-import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/constants/text/FrenchTextValue.dart';
+import 'package:polyquiz/models/user.dart';
 
 class TranslationService extends GetxController {
   static TranslationService get instance => Get.find();
