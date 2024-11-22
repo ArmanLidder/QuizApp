@@ -47,6 +47,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this._socketService.disconnect();
       }
     }
+    if (this.gameService.isObserverMode) return;
     if (this._socketService.isSocketAlive()) {
       this.configureBaseSocketFeatures();
     }
@@ -77,18 +78,25 @@ class GameInterfaceManagementService extends ChangeNotifier {
   }
 
   void resetData() {
-    this.gameService.audio.pause();
-    this.gameService.audio.seek(Duration.zero);
-    this.gameService.realGameService.audioPaused = false;
+    if (!this.gameService.isObservingHost) {
+      this.gameService.audio.pause();
+      this.gameService.audio.seek(Duration.zero);
+      this.gameService.realGameService.audioPaused = false;
+      this.gameService.realGameService.locked = false;
+      this.gameService.realGameService.validated = false;
+    }
     this.inPanicMode = false;
-    this.gameService.realGameService.locked = false;
-    this.gameService.realGameService.validated = false;
     this.isBonus = false;
     this.isDefaultTimerMessage = true;
   }
 
   void handleEndQuestion() {
     this._socketService.onMessage(SocketEvent.END_QUESTION, (_) {
+      if (this.gameService.isObserverMode) {
+        this.obsHandleEndQuestion();
+        notifyListeners();
+        return;
+      }
       this.gameService.audio.pause();
       this.gameService.audio.seek(Duration.zero);
       this.gameService.realGameService.audioPaused = false;
@@ -104,6 +112,10 @@ class GameInterfaceManagementService extends ChangeNotifier {
       this.gameService.realGameService.isValidateActive = false;
       notifyListeners();
     });
+  }
+
+  void obsHandleEndQuestion() {
+    // TODO
   }
 
   void handleEvaluationOver() {
