@@ -146,9 +146,16 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handleTimeTransition() {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
-      this.gameService.realGameService.timer = timeValue;
-      if (this.gameService.timer == 0) {
-        this.resetData();
+      if (!this.gameService.isObserverMode) {
+        this.gameService.realGameService.timer = timeValue;
+        if (this.gameService.timer == 0) {
+          this.resetData();
+        }
+      } else if (!this.gameService.isObservingHost) {
+        this.gameService.realGameService.timer = timeValue;
+        if (this.gameService.timer == 0) {
+          this.resetData();
+        }
       }
       notifyListeners();
     });
@@ -157,16 +164,16 @@ class GameInterfaceManagementService extends ChangeNotifier {
   void handleFinalTimeTransition() {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION,
         (timeValue) {
-      //todo code pour afficher la transition aux resultats finaux
-      this.gameService.realGameService.timer = timeValue;
-      this.isDefaultTimerMessage = false;
-      if (this.gameService.timer == 0) {
-        this.isGameOver = true;
-        this._interactiveListService.isFinal = true;
-        final numberOfPlayers = this._interactiveListService.getPlayersList(this.gameService.realGameService.roomId);
-        this.isResultPage = true;
-      }
-      notifyListeners();
+          //todo code pour afficher la transition aux resultats finaux
+          this.gameService.realGameService.timer = timeValue;
+          this.isDefaultTimerMessage = false;
+          if (this.gameService.timer == 0) {
+            this.isGameOver = true;
+            this._interactiveListService.isFinal = true;
+            final numberOfPlayers = this._interactiveListService.getPlayersList(this.gameService.realGameService.roomId);
+            this.isResultPage = true;
+          }
+          notifyListeners();
     });
   }
 
@@ -192,15 +199,22 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handlePauseTimer() {
     this._socketService.onMessage(SocketEvent.PAUSE_TIMER, (_) {
-      if (this.gameService.realGameService.audioPaused && this.inPanicMode) {
-        this.gameService.audio.play(AssetSource('music.mp3'));
-      } else if (!this.gameService.realGameService.audioPaused &&
-          this.inPanicMode) {
-        this.gameService.audio.pause();
+      final audio = AssetSource('music.mp3');
+      if (!this.gameService.isObserverMode) {
+        if (this.gameService.realGameService.audioPaused && this.inPanicMode) {
+          this.gameService.audio.play(audio);
+        } else if (!this.gameService.realGameService.audioPaused &&
+            this.inPanicMode) {
+          this.gameService.audio.pause();
+        }
+        this.gameService.realGameService.audioPaused =
+        !this.gameService.realGameService.audioPaused;
+        notifyListeners();
+      } else if (!this.gameService.isObservingHost) {
+        if (this.gameService.realGameService.audioPaused && this.inPanicMode) this.gameService.audio.play(audio);
+        else if (!this.gameService.realGameService.audioPaused && this.inPanicMode) this.gameService.audio.pause();
+        this.gameService.realGameService.audioPaused = !this.gameService.realGameService.audioPaused;
       }
-      this.gameService.realGameService.audioPaused =
-          !this.gameService.realGameService.audioPaused;
-      notifyListeners();
     });
   }
 
@@ -244,15 +258,16 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void getScore() {
     if (this.gameService.realGameService.username != 'host') {
+      final username = this.gameService.isObserverMode ? this.gameService.observedUid : this.gameService.realGameService.username;
       this._socketService.sendMessageWithAck(
         SocketEvent.GET_SCORE,
         {
           'roomId': this.gameService.realGameService.roomId,
-          'username': this.gameService.realGameService.username,
+          'username': username,
         },
         (dynamic response) {
           final score = Score.fromJson(response);
-          this.gameService.realGameService.validated = true;
+          if (!this.gameService.isObservingHost) this.gameService.realGameService.validated = true;
           this.updateScore(score.points);
           this.isBonus = score.isBonus;
         },
@@ -263,7 +278,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
   void updateScore(int score) {
     final oldScore = this.playerScore;
     this.playerScore = score;
-    if (this.gameService.question?.type == QuestionType.QRL) {
+    if (this.gameService.question?.type == QuestionType.QRL && !this.gameService.isObserverMode) {
       this.gameService.lastQrlScore = (((playerScore - oldScore) /
                   (gameService.realGameService.question?.points ?? 0)) *
               100)
