@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/widgets/user_widget/friend/smartFriendIcon.dart';
 
 import '../smartAvatar.dart';
+import 'AcceptOrRefuse.dart';
 
 class SingleFriendInteractable extends StatelessWidget {
+  final bool isPending;
   final String userId;
-  const SingleFriendInteractable({Key? key, required this.userId}) : super(key: key);
+  const SingleFriendInteractable({Key? key, required this.userId, this.isPending = false}) : super(key: key);
 
   Future<String> fetchUsername() async {
     try {
@@ -46,9 +48,8 @@ class SingleFriendInteractable extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: SmartFriendIcon(targetUserId: userId),
+                  icon: this.isPending? AcceptOrRefuse(targetUserId: userId): SmartFriendIcon(targetUserId: userId),
                   onPressed: () {
-                    print('Add friend pressed for $username');
                   },
                 ),
               ],

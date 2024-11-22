@@ -62,7 +62,7 @@ class LoginEvenementRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: this.label == 'game'? Colors.green: Colors.red, fontWeight: FontWeight.bold),
+          style: TextStyle(color: this.label == 'win'? Colors.green: Colors.red, fontWeight: FontWeight.bold),
         ),
         Text(" - "),
         Text(date, style: TextStyle(color: themeService.mainAccent.value)),
@@ -82,19 +82,20 @@ class Historique extends StatelessWidget {
 
   Historique({required this.gameHistory, required this.loginHistory});
 
-    List<Event> gameEvents(){
-      return gameHistory.map((game) {
-        String result = resultTypeToString[game.result]!;
-        return Event(eventType: result, timestamp: game.timestamp);
-      }).toList();
-    }
-    List<Event> loginEvents(){
-        return loginHistory.map((login) {
-          DateTime dateTime =  login.timestamp.toDate();
-        String eventType = loginEventTypeToString[login.eventType]!;
-        return Event(eventType: eventType, timestamp: DateFormat('yyyy-MM dd-hh:mm').format(dateTime));
-      }).toList();}
+  List<Event> gameEvents() {
+    return gameHistory.map((game) {
+      String result = resultTypeToString[game.result]!;
+      return Event(eventType: result, timestamp: game.timestamp);
+    }).toList();
+  }
 
+  List<Event> loginEvents() {
+    return loginHistory.map((login) {
+      DateTime dateTime = login.timestamp.toDate();
+      String eventType = loginEventTypeToString[login.eventType]!;
+      return Event(eventType: eventType, timestamp: DateFormat('yyyy-MM-dd HH:mm').format(dateTime));
+    }).toList();
+  }
 
   List<Widget> _generateLoginRows(List<Event> events) {
     return events.map((event) {
@@ -103,7 +104,7 @@ class Historique extends StatelessWidget {
         child: LoginEvenementRow(
           date: event.timestamp,
           label: event.eventType,
-        )
+        ),
       );
     }).toList();
   }
@@ -116,44 +117,42 @@ class Historique extends StatelessWidget {
           date: event.timestamp,
           label: event.eventType,
           gameMode: "Classic", // Replace with actual game mode if available
-        )
+        ),
       );
     }).toList();
   }
-  
-  
-    @override
-    Widget build(BuildContext context) {
-      return Obx(
-            () => Column(
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+          () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            profileText['CONNECTION_HISTORY'],
-            style: TextStyle(
-              color: themeService.mainAccent.value,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+          ExpansionTile(
+            title: Text(
+              profileText['CONNECTION_HISTORY'],
+              style: TextStyle(
+                color: themeService.mainAccent.value,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
-          ),
-          SizedBox(height: 16),
-          Column(
             children: _generateLoginRows(loginEvents()),
           ),
-          Text(
-            profileText['GAME_HISTORY'],
-            style: TextStyle(
-              color: themeService.mainAccent.value,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
           SizedBox(height: 16),
-          Column(
+          ExpansionTile(
+            title: Text(
+              profileText['GAME_HISTORY'],
+              style: TextStyle(
+                color: themeService.mainAccent.value,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
             children: _generateGameRows(gameEvents()),
           ),
         ],
-      ));
-    }
+      ),
+    );
   }
-
+}
