@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 class Histogram extends StatefulWidget {
   final Map<String, bool> responseValue;
@@ -17,6 +18,7 @@ class Histogram extends StatefulWidget {
 }
 
 class _HistogramWidgetState extends State<Histogram> {
+  ThemeService _themeService = ThemeService.instance;
 
   Color getColor(int index) {
     if (widget.responseValue.entries.toList()[index].value) {
@@ -42,9 +44,11 @@ class _HistogramWidgetState extends State<Histogram> {
               getTitlesWidget: (value, meta) {
                 int index = value.toInt();
                 if (widget.responseValue.isNotEmpty) {
-                  return Text(index < widget.responseValue.length
-                      ? widget.responseValue.keys.toList()[index]
-                      : '');
+                  return Text(
+                      index < widget.responseValue.length
+                          ? widget.responseValue.keys.toList()[index]
+                          : '',
+                      style: TextStyle(color: _themeService.mainAccent.value));
                 } else {
                   return Text('');
                 }

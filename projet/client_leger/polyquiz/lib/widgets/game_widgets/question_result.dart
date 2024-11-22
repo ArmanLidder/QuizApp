@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/widgets/game_widgets/histogram_result_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_legend_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/models/typedefs.dart';
-
 
 class StatisticZone extends StatefulWidget {
   final List<QuestionStatistics> gameStats;
@@ -22,13 +22,14 @@ class _StatisticZoneState extends State<StatisticZone> {
   late Map<String, bool> responseValue;
   late Map<String, num> responseNumber;
   QuizQuestion? question;
+  ThemeService _themeService = ThemeService.instance;
   Map get transText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get qreValueText => transText['QRE_HISTOGRAM_X_VAL'];
   final validateButtonStyle = TextButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white),
-      splashFactory: NoSplash.splashFactory,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+    textStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.white),
+    splashFactory: NoSplash.splashFactory,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+    backgroundColor: Color.fromRGBO(53, 121, 246, 1),
   );
 
   @override
@@ -103,7 +104,9 @@ class _StatisticZoneState extends State<StatisticZone> {
   }
 
   bool isEnd() {
-    return widget.gameStats.isNotEmpty ? index == widget.gameStats.length - 1 : true;
+    return widget.gameStats.isNotEmpty
+        ? index == widget.gameStats.length - 1
+        : true;
   }
 
   bool isFirst() {
@@ -113,39 +116,45 @@ class _StatisticZoneState extends State<StatisticZone> {
   void setUpData() {
     this.responseValue = this.currentStat!.responsesValues;
     this.responseNumber = this.currentStat!.responsesNumber;
-    if (this.currentStat!.question != null)
-      {this.question = this.currentStat!.question!;}
+    if (this.currentStat!.question != null) {
+      this.question = this.currentStat!.question!;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('Question ${index + 1}', style: TextStyle(fontSize: 24)),
+        Text('Question ${index + 1}',
+            style:
+                TextStyle(fontSize: 24, color: _themeService.mainAccent.value)),
         if (currentStat!.question != null)
-          Text(currentStat!.question!.text, style: TextStyle(fontSize: 18)),
+          Text(currentStat!.question!.text,
+              style: TextStyle(
+                  fontSize: 18, color: _themeService.mainAccent.value)),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          children: [
             if (!isFirst())
               Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: ElevatedButton(
-          onPressed: previous,
-          child: Text('Précédent', style: TextStyle(color: Colors.white)),
-          style: validateButtonStyle,
-              ),
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: ElevatedButton(
+                  onPressed: previous,
+                  child:
+                      Text('Précédent', style: TextStyle(color: Colors.white)),
+                  style: validateButtonStyle,
+                ),
               ),
             if (!isEnd())
               Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: ElevatedButton(
-          onPressed: next,
-          child: Text('Suivant', style: TextStyle(color: Colors.white)),
-          style: validateButtonStyle,
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: ElevatedButton(
+                  onPressed: next,
+                  child: Text('Suivant', style: TextStyle(color: Colors.white)),
+                  style: validateButtonStyle,
+                ),
               ),
-              ),
-            ],
+          ],
         ),
         HistogramLegend(),
         Histogram(responseValue: responseValue, responseNumber: responseNumber),

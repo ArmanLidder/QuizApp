@@ -186,19 +186,18 @@ class _MyWidgetState extends State<GamePage> {
                               centerTitle: true,
                               backgroundColor: Color.fromRGBO(53, 121, 246, 1),
                             ),
-                            body: Material(
-                              child: ListView(
-                                children: [
-                                  ResultPage(
-                                    gameService: _gameInterfaceManagementService
-                                        .gameService,
-                                    interactiveListService:
-                                        _interactiveListService,
-                                    gameInterfaceManagementService:
-                                        _gameInterfaceManagementService,
-                                  ),
-                                ],
-                              ),
+                            backgroundColor: themeService.mainBackground.value,
+                            body: ListView(
+                              children: [
+                                ResultPage(
+                                  gameService: _gameInterfaceManagementService
+                                      .gameService,
+                                  interactiveListService:
+                                      _interactiveListService,
+                                  gameInterfaceManagementService:
+                                      _gameInterfaceManagementService,
+                                ),
+                              ],
                             ),
                           );
                         } else {
@@ -387,6 +386,7 @@ class ResultPage extends StatelessWidget {
   final GameService gameService;
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
+  final ThemeService _themeService = ThemeService.instance;
 
   ResultPage({
     required this.gameService,
@@ -396,26 +396,32 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Le jeux est terminé! voici les résultats.',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        PlayersDataTable(
-          isHost: false,
-        ),
-        StatisticZone(
-            gameStats: this.gameInterfaceManagementService!.gameStats),
-        QuitBtn(
-          isHost: false,
-          roomId: gameService.realGameService.roomId,
-          gameService: gameService,
-          interactiveListService: interactiveListService,
-          gameInterfaceManagementService: gameInterfaceManagementService,
-        ),
-      ],
+    return Container(
+      color: _themeService.mainBackground.value,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Le jeux est terminé! voici les résultats.',
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: _themeService.mainAccent.value),
+          ),
+          PlayersDataTable(
+            isHost: false,
+          ),
+          StatisticZone(
+              gameStats: this.gameInterfaceManagementService!.gameStats),
+          QuitBtn(
+            isHost: false,
+            roomId: gameService.realGameService.roomId,
+            gameService: gameService,
+            interactiveListService: interactiveListService,
+            gameInterfaceManagementService: gameInterfaceManagementService,
+          ),
+        ],
+      ),
     );
   }
 }
