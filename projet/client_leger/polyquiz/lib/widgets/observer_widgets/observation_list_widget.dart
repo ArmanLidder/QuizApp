@@ -1,11 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/services/observation_service.dart';
+import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 
-class ObservationListWidget extends StatelessWidget {
-  ObservationListWidget({super.key});
+class ObservationListWidget extends StatefulWidget {
+  const ObservationListWidget({super.key});
 
+  @override
+  State<ObservationListWidget> createState() => _ObservationListWidgetState();
+}
+
+class _ObservationListWidgetState extends State<ObservationListWidget> {
   // LES VALEURS DE TEXTES
   final titleText = "Choisir un joueur à observer";
   final observeButtonText = "Observer";
@@ -13,16 +21,25 @@ class ObservationListWidget extends StatelessWidget {
 
   // SERVICES
   final observationService = ObservationService.instance;
+  final socketService = SocketService();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    receivePlayerList();
+    getPlayerList();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
-        children: <Widget>[
-          getTitleWidget(),
-          getPlayerListWidget(),
-          getCancelButton()
-        ]
+          children: <Widget>[
+            getTitleWidget(),
+            getPlayerListWidget(),
+            getCancelButton()
+          ]
       ),
     );
   }
@@ -34,13 +51,16 @@ class ObservationListWidget extends StatelessWidget {
   }
 
   Widget getPlayerListWidget() {
-    final playerList = observationService.playerList;
-    return ListView.builder(
-        itemCount: playerList.length,
-        itemBuilder: (BuildContext context, int index) => getPlayerTile(playerList[index])
-    );
+    return Obx(() {
+      return Expanded(
+        child: ListView.builder(
+            itemCount: observationService.playerList.length,
+            itemBuilder: (BuildContext context, int index) => getPlayerTile(observationService.playerList[index])
+        ),
+      );
+    });
   }
-  
+
   Widget getPlayerTile(String uid) {
     Widget observeButton = TextButton(
         onPressed: () { observationService.observeOtherPlayer(uid); },
@@ -64,4 +84,21 @@ class ObservationListWidget extends StatelessWidget {
       child: TextButton(onPressed: (){}, child: Text(cancelButtonText)),
     );
   }
+
+  void getPlayerList() {
+    this.socketService.sendMessage(SocketEvent.GET_OBSERVER_PLAYER_LIST, this.observationService.gameConfigs!.room);
+  }
+
+  void receivePlayerList() {
+    print("sending socket event");
+    this.socketService.onMessage(SocketEvent.SENDING_OBSERVER_PLAYER_LIST, (data) {
+      print('doing the thing');
+      List<String> newList = [];
+      newList.add(this.observationService.gameConfigs!.hostUserId);
+      data.forEach((player) => newList.add(player.toString()));
+      this.observationService.playerList.value = newList;
+      print(newList);
+    });
+  }
 }
+
