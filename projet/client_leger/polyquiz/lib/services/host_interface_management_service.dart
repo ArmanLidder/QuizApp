@@ -321,15 +321,17 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleEndQuestionAfterRemoval() {
     this._socketService.onMessage(SocketEvent.END_QUESTION_AFTER_REMOVAL, (_) {
-      resetInterface();
+      if (!this.gameService.isObserverMode || this.gameService.isObservingHost) resetInterface();
     });
   }
 
   void handleHostPanicMode() {
     this._socketService.onMessage(SocketEvent.PANIC_MODE, (_) {
-      if (this.gameService.timer > 0 &&
-          !this.gameService.realGameService.audioPaused) {
-        this.gameService.audio.play(AssetSource('music.mp3'));
+      if (!this.gameService.isObserverMode || this.gameService.isObservingHost) {
+        if (this.gameService.timer > 0 &&
+            !this.gameService.realGameService.audioPaused) {
+          this.gameService.audio.play(AssetSource('music.mp3'));
+        }
       }
       this.isPanicMode = true;
     });
@@ -337,14 +339,16 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleHostTimerPause() {
     this._socketService.onMessage(SocketEvent.PAUSE_TIMER, (_) {
-      if (this.gameService.realGameService.audioPaused && this.isPanicMode) {
-        this.gameService.audio.play(AssetSource('music.mp3'));
-      } else if (!this.gameService.realGameService.audioPaused &&
-          this.isPanicMode) {
-        this.gameService.audio.pause();
+      if (!this.gameService.isObserverMode || !this.gameService.isObservingHost) {
+        if (this.gameService.realGameService.audioPaused && this.isPanicMode) {
+          this.gameService.audio.play(AssetSource('music.mp3'));
+        } else if (!this.gameService.realGameService.audioPaused &&
+            this.isPanicMode) {
+          this.gameService.audio.pause();
+        }
+        this.gameService.realGameService.audioPaused =
+        !this.gameService.realGameService.audioPaused;
       }
-      this.gameService.realGameService.audioPaused =
-          !this.gameService.realGameService.audioPaused;
     });
   }
 
