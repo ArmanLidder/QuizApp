@@ -165,13 +165,21 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION,
         (timeValue) {
           //todo code pour afficher la transition aux resultats finaux
-          this.gameService.realGameService.timer = timeValue;
-          this.isDefaultTimerMessage = false;
-          if (this.gameService.timer == 0) {
-            this.isGameOver = true;
-            this._interactiveListService.isFinal = true;
-            final numberOfPlayers = this._interactiveListService.getPlayersList(this.gameService.realGameService.roomId);
-            this.isResultPage = true;
+          if (!this.gameService.isObserverMode) {
+            this.gameService.realGameService.timer = timeValue;
+            this.isDefaultTimerMessage = false;
+            if (this.gameService.timer == 0) {
+              this.isGameOver = true;
+              this._interactiveListService.isFinal = true;
+              this.isResultPage = true;
+            }
+          } else {
+            this.isDefaultTimerMessage = false;
+            if (!this.gameService.isObservingHost) this.gameService.realGameService.timer = timeValue;
+            if (this.gameService.timer == 0) {
+              this.isGameOver = true;
+              this._interactiveListService.isFinal = true;
+            }
           }
           notifyListeners();
     });
@@ -188,9 +196,16 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handlePanicMode() {
     this._socketService.onMessage(SocketEvent.PANIC_MODE, (_) {
-      if (this.gameService.timer > 0 &&
-          !this.gameService.realGameService.audioPaused) {
-        this.gameService.audio.play(AssetSource('music.mp3'));
+      if (!this.gameService.isObserverMode) {
+        if (this.gameService.timer > 0 &&
+            !this.gameService.realGameService.audioPaused) {
+          this.gameService.audio.play(AssetSource('music.mp3'));
+        }
+      } else if (!this.gameService.isObservingHost) {
+        if (this.gameService.timer > 0 &&
+            !this.gameService.realGameService.audioPaused) {
+          this.gameService.audio.play(AssetSource('music.mp3'));
+        }
       }
       this.inPanicMode = true;
       notifyListeners();
