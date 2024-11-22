@@ -2,20 +2,30 @@
     <h2 class="text-2xl font-bold text-center mb-4">{{ 'USER_SEARCH.TITLE' | translate }}</h2>
 
     <mat-form-field class="w-full">
-        <mat-icon matPrefix>search</mat-icon>
+        <mat-icon class="!text-black" matPrefix>search</mat-icon>
         <input matInput [placeholder]="'USER_SEARCH.PLACEHOLDER' | translate" [formControl]="searchControl" />
     </mat-form-field>
 
     <div class="mt-4 space-y-2 max-h-80 overflow-y-auto">
-        <div *ngFor="let userData of filteredUsers$ | async" class="bg-bgSecondary rounded-lg p-3 mx-2 flex items-center space-x-3 shadow-sm">
+        <div
+                *ngFor="let userData of filteredUsers; trackBy: trackByUserId"
+                class="bg-bgSecondary rounded-lg p-3 mx-2 flex items-center space-x-3 shadow-sm"
+        >
             <app-avatar class="flex-shrink-0 flex-grow-0" [size]="'small'" [uid]="userData.user.uid"></app-avatar>
             <div class="flex-grow">
                 <h3 class="text-primary font-medium">{{ userData.user.username }}</h3>
             </div>
             <div class="flex items-center text-center justify-center">
                 <ng-container *ngIf="!userData.hasPending; else pendingRequestIcon">
-                    <button (click)="sendFriendRequest(userData.user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex items-center">
-                        <mat-icon class="text-primary" [matTooltip]="'USER_SEARCH.TOOLTIP_SEND_REQUEST' | translate" matTooltipClass="custom-tooltip">person_add</mat-icon>
+                    <button
+                            (click)="sendFriendRequest(userData.user)"
+                            class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out flex items-center"
+                    >
+                        <mat-icon
+                                class="text-primary"
+                                [matTooltip]="'USER_SEARCH.TOOLTIP_SEND_REQUEST' | translate"
+                                matTooltipClass="custom-tooltip"
+                        >person_add</mat-icon>
                     </button>
                 </ng-container>
                 <ng-template #pendingRequestIcon>
@@ -28,4 +38,5 @@
             </div>
         </div>
     </div>
+
 </div>

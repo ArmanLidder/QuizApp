@@ -24,45 +24,58 @@ export class UserSearchDialogComponent implements OnInit {
     currentUser$: Observable<User | null>;
     hasPendingRequest$: Observable<boolean>;
 
+    allUsers: { user: User; hasPending: boolean }[] = []; // Pre-loaded users
+    filteredUsers: { user: User; hasPending: boolean }[] = []; // Filtered users
+
     ngOnInit() {
         this.currentUser$ = this.usersService.currentUserProfile$;
-        const allUsers$ = this.usersService.getAllUsers();
 
-        this.filteredUsers$ = combineLatest([
-            this.searchControl.valueChanges.pipe(
-                startWith(''),
-                debounceTime(30),
-                distinctUntilChanged()
-            ),
-            this.currentUser$,
-            allUsers$,
-        ]).pipe(
-            switchMap(([searchTerm, currentUser, allUsers]) => {
-                if (!allUsers || !currentUser) return of([]);
+        combineLatest([this.usersService.getAllUsers(), this.currentUser$])
+            .pipe(
+                switchMap(([allUsers, currentUser]) => {
+                    if (!allUsers || !currentUser) return of([]);
 
-                const filteredUsers = allUsers.filter(
-                    (user) =>
-                        user.uid !== currentUser.uid &&
-                        !currentUser.friends.includes(user.uid)
-                );
-
-                const searchedUsers = !searchTerm
-                    ? filteredUsers
-                    : filteredUsers.filter((user) =>
-                        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+                    const preFilteredUsers = allUsers.filter(
+                        (user) =>
+                            user.uid !== currentUser.uid && // Exclude current user
+                            !currentUser.friends.includes(user.uid) // Exclude friends
                     );
 
-                // Check pending status for each user using FriendService's hasPendingRequest function
-                return combineLatest(
-                    searchedUsers.map((user) =>
-                        this.friendService
-                            .hasPendingRequest(of(user))
-                            .pipe(map((hasPending) => ({ user, hasPending })))
-                    )
-                );
-            })
+                    // Check pending status for each user
+                    return combineLatest(
+                        preFilteredUsers.map((user) =>
+                            this.friendService
+                                .hasPendingRequest(of(user))
+                                .pipe(map((hasPending) => ({ user, hasPending })))
+                        )
+                    );
+                })
+            )
+            .subscribe((usersWithPendingStatus) => {
+                this.allUsers = usersWithPendingStatus; // Pre-load all users with pending status
+                this.filteredUsers = this.allUsers; // Initially, show all users
+                this.applyFilter();
+            });
+
+        this.searchControl.valueChanges
+            .pipe(startWith(''), debounceTime(30), distinctUntilChanged())
+            .subscribe((searchTerm) => {
+                this.applyFilter();
+            });
+    }
+
+    applyFilter() {
+        const searchTerm = this.searchControl.value ?? '';
+        const str = searchTerm.toLowerCase();
+        this.filteredUsers = this.allUsers.filter((userData) =>
+            userData.user.username.toLowerCase().includes(str)
         );
     }
+
+    trackByUserId(index: number, item: { user: User; hasPending: boolean }): string {
+        return item.user.uid;
+    }
+
 
     close() {
         this.dialogRef.close();
