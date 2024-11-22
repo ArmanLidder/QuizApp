@@ -6,7 +6,8 @@ const englishTextValues = {
     "EMAIL_PLACEHOLDER": "Enter your email address",
     "EMAIL_REQUIRED": "Email address is required.",
     "EMAIL_INVALID": "Email address is not valid.",
-    "EMAIL_FORMAT_INVALID": "The email address format is invalid. Ex: user@example.com",
+    "EMAIL_FORMAT_INVALID":
+        "The email address format is invalid. Ex: user@example.com",
     "PASSWORD_LABEL": "Password",
     "PASSWORD_PLACEHOLDER": "Enter your password",
     "PASSWORD_REQUIRED": "Password is required.",
@@ -25,9 +26,10 @@ const englishTextValues = {
     "WEAK_PASSWORD": "The password is too weak.",
     "OPERATION_NOT_ALLOWED": "This operation is not allowed.",
     "NETWORK_REQUEST_FAILED": "Network connection failed.",
-    "REQUIRES_RECENT_LOGIN": "Please log in again before performing this operation.",
+    "REQUIRES_RECENT_LOGIN":
+        "Please log in again before performing this operation.",
     "UNKNOWN_ERROR": "An unknown error occurred.",
-    "OFFLINE_PLAY":"Play offline"
+    "OFFLINE_PLAY": "Play offline"
   },
   "REGISTER_PAGE": {
     "TITLE": "Sign Up",
@@ -40,7 +42,8 @@ const englishTextValues = {
     "EMAIL_PLACEHOLDER": "Enter your email address",
     "EMAIL_REQUIRED": "Email address is required.",
     "EMAIL_INVALID": "Email address is not valid.",
-    "EMAIL_FORMAT_INVALID": "The email address format is invalid. Ex: user@example.com",
+    "EMAIL_FORMAT_INVALID":
+        "The email address format is invalid. Ex: user@example.com",
     "PASSWORD_LABEL": "Password",
     "PASSWORD_PLACEHOLDER": "Enter your password",
     "PASSWORD_REQUIRED": "Password is required.",
@@ -58,9 +61,7 @@ const englishTextValues = {
     "ADMIN_GAMES": "Administer Games",
     "SHOP": "Shop"
   },
-  "HEADER": {
-    "TOOLTIP_FRIENDS": "Friends"
-  },
+  "HEADER": {"TOOLTIP_FRIENDS": "Friends"},
   "PROFILE": {
     "LEVEL": "Level",
     "PRESTIGE": "Prestige",
@@ -129,7 +130,8 @@ const englishTextValues = {
     "PLACEHOLDER": "Enter a new username",
     "CANCEL": "Cancel",
     "CONFIRM": "Confirm",
-    "LETTERS_NUMBERS_ONLY": "The username can only contain letters and numbers.",
+    "LETTERS_NUMBERS_ONLY":
+        "The username can only contain letters and numbers.",
     "MAXIMUM_10_CHAR": "The username can contain at most 10 characters.",
     "SUCCESSFUL_MODIFICATION": "Username changed successfully.",
     "ALREADY_USED": "This username is already used.",
@@ -151,8 +153,8 @@ const englishTextValues = {
     "NOT_ENOUGH_FUNDS": "Not enough funds",
     "BUY": "Buy",
     "COST_SUFFIX": "\$",
-    "CLAIM":"claim",
-    "CLAIMED":"claimed"
+    "CLAIM": "claim",
+    "CLAIMED": "claimed"
   },
   "GAME_ADMIN": {
     "TITLE": "Admin Panel: Manage All Quiz Games",
@@ -168,11 +170,13 @@ const englishTextValues = {
     "TOOLTIP_EDIT": "Edit quiz",
     "TOOLTIP_DELETE": "Delete quiz",
     "REFRESH_FEEDBACK": "The quizzes have been refreshed.",
-    "JSON_IMPORT_ERROR": "Error: the JSON file is poorly formatted.({{ error }})",
-    "IMPORT_ERROR_HEADER_TEXT": "The file you are trying to import contains the following issue(s):",
+    "JSON_IMPORT_ERROR":
+        "Error: the JSON file is poorly formatted.({{ error }})",
+    "IMPORT_ERROR_HEADER_TEXT":
+        "The file you are trying to import contains the following issue(s):",
     "QUIZ_DELETED": "This quiz has been deleted, please choose another one.",
     "QUIZ_INVISIBLE": "This quiz is now hidden, please choose another one.",
-},
+  },
   "QUIZ_SELECTION": {
     "PAGE_TITLE": "Select one of the available games:",
     "DESCRIPTION": "Description",
@@ -198,14 +202,17 @@ const englishTextValues = {
     "DESCRIPTION_LABEL": "Description",
     "DESCRIPTION_PLACEHOLDER": "Enter the game description",
     "DESCRIPTION_REQUIRED": "The description is required",
-    "DESCRIPTION_PATTERN": "The description must not be composed of spaces only",
+    "DESCRIPTION_PATTERN":
+        "The description must not be composed of spaces only",
     "CREATE": "Create",
     "EDIT": "Edit",
     "CANCEL": "Cancel",
     "GAME_NO_LONGER_EXISTS": "This game no longer exists.",
-    "GAME_PRIVATED": "This game has been set to private by the creator and cannot be modified/exported/deleted.",
+    "GAME_PRIVATED":
+        "This game has been set to private by the creator and cannot be modified/exported/deleted.",
     "QUIZ_DELETED_BY_OTHER_USER": "This quiz has been deleted by another user.",
-    "QUIZ_VISIBILITY_CHANGED_TO_PRIVATE": "The visibility of this quiz has been changed to private by the owner during editing.",
+    "QUIZ_VISIBILITY_CHANGED_TO_PRIVATE":
+        "The visibility of this quiz has been changed to private by the owner during editing.",
     "TITLE_ALREADY_EXISTS": "The title already exists",
     "QUIZ_UPDATED_SUCCESS": "The quiz was successfully updated",
     "QUIZ_ADDED_SUCCESS": "The quiz was successfully added",
@@ -225,7 +232,8 @@ const englishTextValues = {
       "QUESTION_POINTS_LABEL": "Question Points",
       "QUESTION_POINTS_PLACEHOLDER": "Enter the points",
       "QUESTION_POINTS_REQUIRED": "Points are required",
-      "QUESTION_POINTS_INVALID": "Points must be between 10 and 100 and be a multiple of 10",
+      "QUESTION_POINTS_INVALID":
+          "Points must be between 10 and 100 and be a multiple of 10",
       "IMAGE_OPTIONAL": "Image (optional)",
       "IMAGE_CHOOSE": "Choose an image",
       "IMAGE_PREVIEW_ALT": "Image preview",
@@ -236,7 +244,8 @@ const englishTextValues = {
       "ANSWER_INTERVAL": "Answer Interval:",
       "MINIMUM": "Minimum",
       "MAXIMUM": "Maximum",
-      "MAX_LESS_THAN_MIN_ERROR": "The maximum value must be greater than or equal to the minimum value.",
+      "MAX_LESS_THAN_MIN_ERROR":
+          "The maximum value must be greater than or equal to the minimum value.",
       "MIN_INTEGER_ERROR": "Minimum must be an integer.",
       "MIN_REQUIRED": "Minimum is required.",
       "MAX_INTEGER_ERROR": "Maximum must be an integer.",
@@ -253,9 +262,11 @@ const englishTextValues = {
       "ANSWER_TOO_SMALL": "Answer value is too small (more than 15 digits)",
       "TOLERANCE_MARGIN": "Tolerance Margin:",
       "ENTER_MARGIN": "Enter tolerance margin",
-      "TOLERANCE_MARGIN_TOO_LARGE": "Tolerance margin must be at most 25% of the interval",
+      "TOLERANCE_MARGIN_TOO_LARGE":
+          "Tolerance margin must be at most 25% of the interval",
       "TOLERANCE_MARGIN_REQUIRED": "Tolerance margin is required.",
-      "TOLERANCE_MARGIN_MIN_ERROR": "Margin must be an integer greater than or equal to 0.",
+      "TOLERANCE_MARGIN_MIN_ERROR":
+          "Margin must be an integer greater than or equal to 0.",
       "VALID_INTERVAL_MESSAGE": "The correct answer interval is :",
       "CHOICE": {
         "CHOICE": "Choice",
@@ -307,7 +318,9 @@ const englishTextValues = {
     "CREATE_GAME_BUTTON": "Create Game",
     "GAME_TYPE_REQUIRED": "The game type is required. Please select a type.",
     "PRICE_INVALID": "The price must be an integer greater than or equal to 0.",
-    "PRESTIGE_REQUIRED": "Minimum prestige is required. Please select a minimum prestige."
+    "PRESTIGE_REQUIRED":
+        "Minimum prestige is required. Please select a minimum prestige.",
+    'IA_CORRECTION': "AI correction"
   },
   "WAITING_ROOM_PAGE": {
     "TITLE": "Waiting Room",
@@ -335,10 +348,7 @@ const englishTextValues = {
     "ERRORS_DETECTED": "Errors detected",
     "CLOSE": "Close"
   },
-  "BUTTON": {
-    "QUIT": "Leave",
-    "DELETE": "Delete"
-  },
+  "BUTTON": {"QUIT": "Leave", "DELETE": "Delete"},
   "CONFIRMATION_DIALOG": {
     "WARNING": "Warning!",
     "CANCEL": "Cancel",
@@ -348,7 +358,8 @@ const englishTextValues = {
     "JOIN_PUBLIC_GAME": "Join Public Game",
     "JOIN_PRIVATE_GAME": "Join Private Game",
     "ROOM_CODE_PROMPT": {
-      "ENTER_CODE_MESSAGE": "Please enter the 4-digit code provided by the host",
+      "ENTER_CODE_MESSAGE":
+          "Please enter the 4-digit code provided by the host",
       "ENTER_CODE_LABEL": "Enter Code:",
       "ERROR_MESSAGE": "Invalid code",
       "VALIDATE_BUTTON": "Validate",
@@ -361,11 +372,13 @@ const englishTextValues = {
     "ROOM_CODE_PROMPT_ERRORS": {
       "GAME_NOT_FOUND": "No game matches this code.",
       "FRIENDS_ONLY": "This game is only open to the host's friends.",
-      "INSUFFICIENT_PRESTIGE": "You do not have the required prestige level to join this game.",
+      "INSUFFICIENT_PRESTIGE":
+          "You do not have the required prestige level to join this game.",
       "INSUFFICIENT_FUNDS": "You do not have enough funds to join this game.",
       "BANNED_USER": "You have been banned from this room by the host.",
       "ROOM_LOCKED": "The room is currently locked.",
-      "VALIDATION_CODE_ERROR": "Your code must contain exactly 4 digits (e.g., 1234)"
+      "VALIDATION_CODE_ERROR":
+          "Your code must contain exactly 4 digits (e.g., 1234)"
     }
   },
   "ACTIVE_GAME_LIST": {
@@ -381,12 +394,13 @@ const englishTextValues = {
     "NO_GAMES_AVAILABLE": "No games available",
     "CANCEL": "Cancel",
     "EXCLUSIVE_FRIENDS_GAME": "This game is exclusive to the host's friends.",
-    "INSUFFICIENT_PRESTIGE": "You do not have the minimum prestige to join this game.",
+    "INSUFFICIENT_PRESTIGE":
+        "You do not have the minimum prestige to join this game.",
     "INSUFFICIENT_FUNDS": "You do not have enough money to join this game.",
     "USER_BANNED": "You have been banned from this game.",
     "ROOM_LOCKED": "The room is currently locked.",
     "UNKNOWN": "Unknown quiz",
-    "FAILED_TO_JOIN" : "Failed to join room: "
+    "FAILED_TO_JOIN": "Failed to join room: "
   },
   "PROFILE_POPUP": {
     "ACHIEVEMENTS": "Achievements",
@@ -416,37 +430,44 @@ const englishTextValues = {
     "ENTER_CHANNEL_NAME": "Enter a channel name...",
     "SEARCH_CHANNEL": "Search a channel...",
     "CHANNEL_NAME_REQUIRED": "Channel name is required.",
-    "CHANNEL_NAME_PATTERN": "Channel name must only contain alphanumeric characters.",
-    "CHANNEL_NAME_MAX_LENGTH": "Channel name must contain maximum 20 characters.",
+    "CHANNEL_NAME_PATTERN":
+        "Channel name must only contain alphanumeric characters.",
+    "CHANNEL_NAME_MAX_LENGTH":
+        "Channel name must contain maximum 20 characters.",
     "MESSAGE_MAX_LENGTH": "Message must contain maximum 200 characters",
     "CHANNEL_DELETED": "The channel has been deleted. Please leave. Goodbye!",
     "DELETE_WARNING": "Warning!!!",
-    "DELETE_CONFIRMATION": "This action is irreversible. The channel {{channelName}} will be deleted forever.",
-    "ROOM_IN_NAME_UNALLOWED": "The channel name cannot contain: room. Please choose another name.",
-    "ROOM_NAME_ALREADY_USED": "The name {{canalName}} is already in use. Please choose another name."
+    "DELETE_CONFIRMATION":
+        "This action is irreversible. The channel {{channelName}} will be deleted forever.",
+    "ROOM_IN_NAME_UNALLOWED":
+        "The channel name cannot contain: room. Please choose another name.",
+    "ROOM_NAME_ALREADY_USED":
+        "The name {{canalName}} is already in use. Please choose another name."
   },
-  "AVATAR_CLICK_MENU": {
-    "PROFIL": "Profile",
-    "DISCONNECT": "Logout"
-  },
+  "AVATAR_CLICK_MENU": {"PROFIL": "Profile", "DISCONNECT": "Logout"},
   "IMPORT_ERRORS": {
     "CHOICE_LABEL": "Choice",
     "TITLE_REQUIRED": "Title is required",
     "DESCRIPTION_REQUIRED": "Description is required",
     "INVALID_DURATION": "Duration must be between 10 and 60 seconds",
-    "MINIMUM_NUMBER_OF_QUESTIONS_REQUIRED": "The quiz should contain at least one question",
+    "MINIMUM_NUMBER_OF_QUESTIONS_REQUIRED":
+        "The quiz should contain at least one question",
     "TEXT_REQUIRED": "Text is required",
     "QUESTION_POINTS_REQUIRED": "Question points are required",
     "INVALID_POINTS": "Points must be between 10 and 100",
     "NON_DIVISIBLE_BY_TEN": "Question points must be divisible by 10",
-    "INVALID_NUMBER_OF_CHOICES": "There must be at least two choices and at most four choices",
+    "INVALID_NUMBER_OF_CHOICES":
+        "There must be at least two choices and at most four choices",
     "INVALID_CHOICE": "A choice must be either true or false",
-    "INVALID_QUESTION_CHOICES": "There must be at least one correct answer and one incorrect answer",
+    "INVALID_QUESTION_CHOICES":
+        "There must be at least one correct answer and one incorrect answer",
     "TITLE_MAX_LENGTH": "Title must contain a maximum of 100 characters",
-    "DESCRIPTION_MAX_LENGTH": "Description must contain a maximum of 250 characters",
+    "DESCRIPTION_MAX_LENGTH":
+        "Description must contain a maximum of 250 characters",
     "DESCRIPTION_ONLY_SPACES": "Description must not consist only of spaces",
     "TITLE_ONLY_SPACES": "Title must not consist only of spaces",
-    "QUESTION_TEXT_MAX_LENGTH": "Question text must contain a maximum of 250 characters",
+    "QUESTION_TEXT_MAX_LENGTH":
+        "Question text must contain a maximum of 250 characters",
     "UNSUPPORTED_QUESTION_TYPE": "This question type is not supported",
     "INTEGER_ANSWER_REQUIRED": "Answer must be an integer",
     "INTEGER_MARGIN_REQUIRED": "Margin must be an integer",
@@ -455,7 +476,8 @@ const englishTextValues = {
     "MINIMUM_WITHIN_LIMITS": "Minimum must be between",
     "MAXIMUM_WITHIN_LIMITS": "Maximum must be between",
     "QRE_ANSWER_REQUIRED": "Answer is required for QRE questions",
-    "QRE_INTERVAL_REQUIRED": "Min and max intervals are required for QRE questions",
+    "QRE_INTERVAL_REQUIRED":
+        "Min and max intervals are required for QRE questions",
     "QRE_MARGIN_REQUIRED": "Margin is required for QRE questions",
     "MIN_LESS_THAN_MAX": "Min interval must be less than or equal to max",
     "MARGIN_NON_NEGATIVE": "Tolerance margin must be 0 or higher",
@@ -463,7 +485,8 @@ const englishTextValues = {
     "ANSWER_OUTSIDE_INTERVAL": "Answer must be within the interval",
     "MAX_MARGIN_LIMIT": "Margin must be at most",
     "INTERVAL_25_PERCENT_LIMIT": "(25% of the interval)",
-    "CHOICE_TEXT_MAX_LENGTH": "Choice text must contain a maximum of 50 characters"
+    "CHOICE_TEXT_MAX_LENGTH":
+        "Choice text must contain a maximum of 50 characters"
   },
   "GAME_INTERFACE": {
     "TIMER_TEXT": {
@@ -482,11 +505,10 @@ const englishTextValues = {
       "TOOLTIP_PLAY": "Play",
       "TOOLTIP_PAUSE": "Pause",
       "TOOLTIP_PANIC_MODE": "Activate Panic Mode!",
-      "TOOLTIP_PANIC_MODE_DISABLED": "You can no longer activate the panic mode."
+      "TOOLTIP_PANIC_MODE_DISABLED":
+          "You can no longer activate the panic mode."
     },
-    "QUESTION_INFO": {
-      "VALUE": "Value"
-    },
+    "QUESTION_INFO": {"VALUE": "Value"},
     "QRL_CORRECTION": {
       "QUESTION_CORRECTION": "Question correction:",
       "PLAYER": "Player:",
@@ -534,7 +556,8 @@ const englishTextValues = {
       "CHARACTERS_REMAINING": "Characters remaining: ",
       "ZERO_POINTS": "You received no points for your answer: ",
       "HALF_POINTS": "You received half of the points for your answer: ",
-      "FULL_POINTS": "Congratulations, you received all the points for your answer: ",
+      "FULL_POINTS":
+          "Congratulations, you received all the points for your answer: ",
       "AWAITING_EVALUATION": "The organizer is evaluating your answer"
     },
     "PLAYER_QRE_INTERFACE": {

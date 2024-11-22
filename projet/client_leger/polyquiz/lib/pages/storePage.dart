@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:polyquiz/widgets/store_widgets/storeLists.dart';
 import '../models/user.dart';
 import '../services/theme_service.dart';
+import '../services/theme_service.dart';
 import '../widgets/fancyAppBar.dart';
 
 class Storepage extends StatefulWidget {
@@ -23,7 +24,6 @@ class _StorepageState extends State<Storepage> {
   late String uid;
   User? userData;
   Map get shopText => TranslationService.instance.text['SHOPPING'];
-  final ThemeService ts = ThemeService.instance;
 
   Map<String, List<Map<String, dynamic>>>? storeItems;
 
@@ -49,7 +49,7 @@ class _StorepageState extends State<Storepage> {
     return MaterialApp(
       home: Obx(() {
         return Scaffold(
-            backgroundColor: ts.mainBackground.value,
+            backgroundColor: _themeService.mainBackground.value,
             appBar: FancyAppBar(
               context: context,
               hasBackButton: true,

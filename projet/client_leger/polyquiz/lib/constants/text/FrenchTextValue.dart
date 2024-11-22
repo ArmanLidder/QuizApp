@@ -307,7 +307,7 @@ const frenchTextValues = {
     "CREATE_GAME_BUTTON": "Créer partie",
     "GAME_TYPE_REQUIRED": "Le type de partie est requis. Veuillez sélectionner un type.",
     "PRICE_INVALID": "Le prix doit être un entier supérieur ou égal à 0.",
-    "PRESTIGE_REQUIRED": "Le prestige minimum est requis. Veuillez sélectionner un prestige minimum."
+    "PRESTIGE_REQUIRED": "Le prestige minimum est requis. Veuillez sélectionner un prestige minimum.",
   },
   "WAITING_ROOM_PAGE": {
     "TITLE": "Salle d'attente",
