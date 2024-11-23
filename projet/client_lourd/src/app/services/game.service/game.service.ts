@@ -35,6 +35,7 @@ export class GameService {
 
     // For player QCM, QRL and QRE answers
     obs_qre_Answer: number;
+    obs_qre_interval: string;
     obs_qrl_Answer: string;
 
     constructor(
@@ -188,7 +189,7 @@ export class GameService {
                     this.qrlAnswer = "";
                     this.gameRealService.qrlAnswer = "";
                 }
-                if (this.observerMode) this.qrlAnswer = this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');;
+                if (this.observerMode) this.qrlAnswer = this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');
             });
         }
     }
