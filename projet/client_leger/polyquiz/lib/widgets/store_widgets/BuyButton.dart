@@ -194,6 +194,7 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
   Map get shopText => TranslationService.instance.text['SHOPPING'];
+  List<String> get achievementText => TranslationService.instance.text['PROFILE']['ALL_ACHIEVEMENTS'];
 
   bool alreadyOwns = false;
   bool canAfford = false;
@@ -254,7 +255,9 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
             TranslationService.instance.languageValue.value == Language.fr
                 ? "Débloqué à l'exploit"
                 : "Unlocked at exploit";
-        buttonText = '$content ${widget.achievement}';
+
+
+        buttonText = '$content ${achievementText[widget.achievement as int]}';
         buttonAction = null; // Disable button if achievement not met
       }
 
