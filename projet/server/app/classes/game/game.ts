@@ -3,7 +3,7 @@ import {QuizService} from '@app/services/quiz.service/quiz.service';
 import {Quiz, QuizChoice, QuizQuestion} from '@common/interfaces/quiz.interface';
 import {Score} from '@common/interfaces/score.interface';
 import {BONUS_MULTIPLIER, MAX_PERCENTAGE} from '@common/constants/game.const';
-import {format} from 'date-fns-tz';
+import {format, utcToZonedTime} from 'date-fns-tz';
 import {GameInfo} from '@common/interfaces/game-info.interface';
 import {HistoryService} from '@app/services/history.service/history.service';
 import {QuestionType} from "@common/enums/question-type.enum";
@@ -51,7 +51,10 @@ export class Game {
         this.configurePlayers(usernames);
         this.startTimeCalcul = new Date().getTime();
         this.gameHistoryInfo.playersCount = usernames.length;
-        this.gameHistoryInfo.startTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timeZone: 'America/Montreal' });
+        const timeZone = 'America/Montreal';
+        const zonedDate = utcToZonedTime(new Date(), timeZone);
+        this.gameHistoryInfo.startTime = format(zonedDate, 'yyyy-MM-dd HH:mm:ss', { timeZone });
+        console.log("Saving start time", this.gameHistoryInfo.startTime);
     }
 
     async setup(id: string) {
