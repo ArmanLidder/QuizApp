@@ -121,6 +121,20 @@ class GameService extends ChangeNotifier {
     }
   }
 
+  void obsUpdateChoice(int index, bool isSelected) {
+    if (this.lockedStatus) return;
+    if (isSelected && !this.answers.containsKey(index)) {
+      String? textChoice = this.question?.choices?[index].text;
+      this.answers[index] = textChoice;
+      notifyListeners();
+      return;
+    }
+    if (this.answers.containsKey(index)) {
+      this.answers.remove(index);
+      notifyListeners();
+    }
+  }
+
   void selectQREanswer(int selectedAnswer) {
     if (this.lockedStatus) return;
     this.qreAnswer = selectedAnswer;
