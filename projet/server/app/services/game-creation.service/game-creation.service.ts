@@ -638,10 +638,16 @@ export class GameCreationService {
             players.forEach((score: Score, userId: string) => {
                 lowestScorers.push(userId);
             });
-
         } else {
+
             players.forEach((score: Score, userId: string) => {
-                if (!highestScorers.includes(userId) && !lowestScorers.includes(userId)) {
+                const inHighScorer = highestScorers.includes(userId);
+                const inLowScorer = lowestScorers.includes(userId);
+                if (inHighScorer && inLowScorer) {
+                    const index = lowestScorers.indexOf(userId);
+                    if (index !== -1) lowestScorers.splice(index, 1);
+                }
+                if (!inHighScorer && !inLowScorer) {
                     nonExtremes.push(userId);
                 }
             });
@@ -686,14 +692,25 @@ export class GameCreationService {
             }
         });
 
-        if (total_score_sum == 0) {
-            highestScorers.length = 0; nonExtremes.length = 0; lowestScorers.length = 0;
+        if (total_score_sum === 0) {
+            highestScorers.length = 0;
+            nonExtremes.length = 0;
+            lowestScorers.length = 0;
             teamsScore.forEach((score, teamId) => {
-                    lowestScorers.push(teamId);
+                lowestScorers.push(teamId);
             });
         } else {
             // Populate the non-extreme teams (those not in the highest or lowest scoring groups)
             teamsScore.forEach((score, teamId) => {
+                const inHighScorer = highestScorers.includes(teamId);
+                const inLowScorer = lowestScorers.includes(teamId);
+                // If total score is not 0 which means player got points and that they are in
+                // both high and low it means they have the same points therefore both should
+                // be in high score bracket.
+                if (inHighScorer && inLowScorer) {
+                    const index = lowestScorers.indexOf(teamId);
+                    if (index !== -1) lowestScorers.splice(index, 1);
+                }
                 if (!highestScorers.includes(teamId) && !lowestScorers.includes(teamId)) {
                     nonExtremes.push(teamId);
                 }
