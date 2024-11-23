@@ -370,7 +370,7 @@ class _MyWidgetState extends State<GamePage> {
 
     return Row(
       children: <Widget>[
-        AnimatedBuilder(
+        if (!this._gameService.isObserverMode) AnimatedBuilder(
           animation: this._gameService.realGameService,
           builder: (BuildContext context, Widget? snapshot) => TextButton(
               onPressed: isValidateButtonActive ? onValidate : null,
@@ -383,7 +383,7 @@ class _MyWidgetState extends State<GamePage> {
                 ),
               )),
         ),
-        SizedBox(width: 100.0),
+        if (!this._gameService.isObserverMode) SizedBox(width: 100.0),
         QuitBtn(
           isHost: false,
           roomId: this._gameService.realGameService.roomId,
