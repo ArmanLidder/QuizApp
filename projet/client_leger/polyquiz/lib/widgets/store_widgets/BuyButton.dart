@@ -36,11 +36,9 @@ class _BuyButtonState extends State<BuyButton> {
   }
 
   Future<void> _updateButtonStatus() async {
-    await loggedInUserService.reloadUser();
-    User? user = loggedInUserService.getUser();
-    num availableFunds = user?.currency ?? 0;
+    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
     bool ownsItem = await storeService.isOwned(
-        user?.uid ?? "noIdInButtonWidget", widget.itemId);
+        loggedInUserService.getUid()!, widget.itemId);
     setState(() {
       alreadyOwns = ownsItem;
       canAfford = availableFunds >= widget.cost;
@@ -49,9 +47,9 @@ class _BuyButtonState extends State<BuyButton> {
 
   @override
   Widget build(BuildContext context) {
+    _updateButtonStatus(); // Update status on each change
     return Obx(() {
       storeService.purchaseTrigger;
-      _updateButtonStatus(); // Update status on each change
       Color buttonColor;
       String buttonText;
       VoidCallback? buttonAction;
@@ -114,7 +112,6 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
   }
 
   Future<void> _updateButtonStatus() async {
-    await loggedInUserService.reloadUser();
     num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
     bool ownsItem = await storeService.isOwned(
         loggedInUserService.getUid() ?? "noIdInButtonWidget", widget.itemId);
@@ -130,9 +127,9 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
 
   @override
   Widget build(BuildContext context) {
+    _updateButtonStatus(); // Update status on each change
     return Obx(() {
       storeService.purchaseTrigger;
-      _updateButtonStatus(); // Update status on each change
       Color buttonColor;
       String buttonText;
       VoidCallback? buttonAction;
@@ -208,27 +205,23 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   }
 
   Future<void> _updateButtonStatus() async {
-    await loggedInUserService.reloadUser();
-    final user = loggedInUserService.getUser();
-
-    num availableFunds = user?.currency ?? 0;
     bool ownsItem = await storeService.isOwned(
-        user?.uid ?? "noIdInRewardButtonWidget", widget.itemId);
+        loggedInUserService.getUid()!, widget.itemId);
     bool achievementUnlocked =
-        user?.achievements.contains(widget.achievement) ?? false;
+        loggedInUserService.observableAchievement.value.contains(widget.achievement) ?? false;
 
     setState(() {
       alreadyOwns = ownsItem;
-      canAfford = availableFunds >= widget.cost;
+      canAfford = loggedInUserService.observableCurrency.value >= widget.cost;
       hasAchievement = achievementUnlocked;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    _updateButtonStatus(); // Update status on each change
     return Obx(() {
       storeService.purchaseTrigger;
-      _updateButtonStatus(); // Update status on each change
       Color buttonColor;
       String buttonText;
       VoidCallback? buttonAction;
@@ -259,7 +252,7 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
                 : "Unlocked at exploit";
 
 
-        buttonText = '$content ${achievementText[widget.achievement as int]}';
+        buttonText = '$content ${achievementText[(widget.achievement as int) - 1]}';
         buttonAction = null; // Disable button if achievement not met
       }
 
