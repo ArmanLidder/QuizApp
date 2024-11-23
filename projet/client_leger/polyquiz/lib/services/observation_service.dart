@@ -39,8 +39,7 @@ class ObservationService extends GetxController {
     this.observedUid = this.gameConfigs!.hostUserId;
     this.gameService.isObservingHost = true;
     this.gameService.observedUid = this.observedUid;
-    // this.configureBaseSocketFeatures(context)
-    // ^ TODO
+    this.configureBaseSocketFeatures(context);
     this.socketService.sendMessage(SocketEvent.NEW_OBSERVER_GAME, {
       'roomId': this.gameConfigs!.room,
       'isFirst': true,
@@ -60,6 +59,7 @@ class ObservationService extends GetxController {
     this.handleGameStatusDistribution();
     this.handleHostLeft();
     this.handleLastQRLAnswerReception();
+    this.handleQCMSelection();
   }
 
   void observeOtherPlayer(String newUid) {
@@ -117,7 +117,7 @@ class ObservationService extends GetxController {
     this.socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION, (data) {
       InitialQuestionData questionData = InitialQuestionData(
         question: QuizQuestion.fromJson(data['question']),
-        username: data['username'],
+        username: data['username'] ?? '',
         index: data['index'],
         numberOfQuestions: data['numberOfQuestions'],
       );
@@ -211,6 +211,19 @@ class ObservationService extends GetxController {
         gameService.lastQrlScore = dataMap['lastQRLScore'] ?? 0;
         gameService.obsQrlAnswer = dataMap['qrlAnswer'] ?? "";
       }
+    });
+  }
+
+  void handleQCMSelection() {
+    // TODO: MAKE IT WORK
+    print('Handling: QCM SELECTION');
+    this.socketService.onMessage(SocketEvent.OBS_QCM_INTERACTION, (data) {
+      print("OBS QCM SELECTION EVENT RECEIVED, DOING THE STUFF");
+      final roomId = data['roomId'] as int;
+      final isSelected = data['isSelected'] as bool;
+      final index = data['index'] as int;
+      print('Choosing: $index as $isSelected');
+      this.gameService.obsUpdateChoice(index, isSelected);
     });
   }
 
