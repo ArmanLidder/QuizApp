@@ -78,7 +78,7 @@ class LoggedInUserService extends GetxController {
       if (this.user!.isConnected){ //TODO: disable this false flag
         throw("USER ALREADY CONNECTED");
       }
-      await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser.uid)
           .update({'isConnected': true});
@@ -92,8 +92,8 @@ class LoggedInUserService extends GetxController {
         'eventType': 'login',
         'timestamp': timestamp,
       });
-      await userDocRef.update({'loginHistory': loginHistory});
-      await reloadUser();
+      userDocRef.update({'loginHistory': loginHistory});
+      reloadUser();
       await LanguageService.instance.loadLanguage();
 
     } else {

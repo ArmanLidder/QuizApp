@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 
 import '../constants/themesNamesToColorArray.dart';
 
@@ -7,6 +9,8 @@ class ThemeService extends GetxService{
 
   // Static instance of ThemeService
   static final ThemeService instance = Get.find<ThemeService>();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
 
   final RxString themeName = 'default'.obs;
   // Observable colors
@@ -37,6 +41,11 @@ class ThemeService extends GetxService{
       mainAccent.value = colors[1];
       secondaryBackground.value = colors[2];
       secondaryAccent.value = colors[3];
+      _firestore.collection('users').doc(loggedInUserService.getUid()).update({
+        "settings.theme": themeName,
+      });
+
+
     } else {
       throw ArgumentError('Theme name "$themeName" not found');
     }

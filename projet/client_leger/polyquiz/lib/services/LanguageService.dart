@@ -24,6 +24,7 @@ class LanguageService extends GetxService {
   Future<void> loadLanguage() async {
     ts.currentLanguage = _loggedInUserService.user!.settings.language;
     languageAbr.value = languageToString[_loggedInUserService.user!.settings.language]!;
+    TranslationService.instance.currentLanguageAbbr = languageAbr.value;
   }
 
   Future<void> updateLanguageInFirebaseAbr(String newLanguage) async {
