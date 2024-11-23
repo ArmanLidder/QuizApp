@@ -89,7 +89,9 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
   Widget _buildFriendsList() {
     return Obx(() {
       if (loggedInUserService.friends.isEmpty) {
-        return Center(child: Text(textFriends['EMPTY_FRIENDS_LIST']));
+        return Center(
+            child: Text(textFriends['EMPTY_FRIENDS_LIST'],
+                style: TextStyle(color: themeService.mainAccent.value)));
       }
 
       return ListView.builder(
@@ -109,7 +111,9 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
 
     return Obx(() {
       if (loggedInUserService.friendRequests.isEmpty) {
-        return Center(child: Text(textFriends['EMPTY_FRIENDS_LIST']));
+        return Center(
+            child: Text(textFriends['NO_PENDING_REQUESTS'],
+                style: TextStyle(color: themeService.mainAccent.value)));
       }
 
       return ListView.builder(
