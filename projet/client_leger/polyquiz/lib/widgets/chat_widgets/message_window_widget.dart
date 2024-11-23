@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
@@ -71,6 +70,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
       defaultName = channel.name;
       return channel;
     } on StateError catch (e) {
+      print('Error in getChannel(): ${e}');
       return null;
     }
   }
@@ -163,7 +163,7 @@ class MessageTile extends StatelessWidget {
   String get userId => message.userUid;
   Timestamp get timestamp => message.createdAt;
   MessageTile({required this.message, super.key});
-  ThemeService _themeService = ThemeService.instance;
+  final ThemeService _themeService = ThemeService.instance;
 
   @override
   Widget build(BuildContext context) {

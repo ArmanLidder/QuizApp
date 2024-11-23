@@ -133,7 +133,7 @@ class HostHeader extends StatelessWidget {
   final HostInterfaceManagementService hostInterfaceManagementService;
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
-  ThemeService _themeService = ThemeService.instance;
+  final ThemeService _themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get gameText => text['GAME_INTERFACE'];
 

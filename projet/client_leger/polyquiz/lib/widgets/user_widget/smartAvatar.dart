@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:polyquiz/main.dart';
 import 'package:polyquiz/services/theme_service.dart';
 
@@ -20,7 +19,7 @@ class SmartAvatar extends StatelessWidget {
       this.hasName = false,
       this.applyTheme = true});
 
-  ThemeService _themeService = ThemeService.instance;
+  final ThemeService _themeService = ThemeService.instance;
 
   @override
   Widget build(BuildContext context) {

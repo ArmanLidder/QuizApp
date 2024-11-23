@@ -4,7 +4,7 @@ import 'package:polyquiz/services/translationService.dart';
 
 class HistogramLegend extends StatelessWidget {
   HistogramLegend({super.key});
-  ThemeService _themeService = ThemeService.instance;
+  final ThemeService _themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get gameText => text['GAME_INTERFACE'];
   Map get histogram => gameText['HISTOGRAM'];

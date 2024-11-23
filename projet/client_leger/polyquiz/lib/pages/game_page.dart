@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
@@ -19,9 +18,6 @@ import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
-
-import '../models/user.dart';
-
 import '../models/user.dart';
 
 class GamePage extends StatefulWidget {

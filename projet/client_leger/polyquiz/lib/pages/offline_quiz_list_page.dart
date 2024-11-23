@@ -3,7 +3,6 @@ import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/quiz_file_service.dart';
-import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 
 class OfflineQuizListPage extends StatefulWidget {
   const OfflineQuizListPage({super.key});

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
-import 'package:polyquiz/services/user_service.dart';
-import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 import '../../../services/LanguageService.dart';
 import '../../../services/theme_service.dart';
 import 'friendTabMenu.dart';
 import 'friendsPopup.dart';
+
 class FriendListDisplay extends StatefulWidget {
   final FriendService friendService = FriendService.instance;
   final ThemeService themeService = ThemeService.instance;
@@ -19,7 +17,8 @@ class FriendListDisplay extends StatefulWidget {
   _FriendListDisplayState createState() => _FriendListDisplayState();
 }
 
-class _FriendListDisplayState extends State<FriendListDisplay> with SingleTickerProviderStateMixin {
+class _FriendListDisplayState extends State<FriendListDisplay>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ThemeService themeService = ThemeService.instance;
 
@@ -67,7 +66,8 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
                   },
                 );
               },
-              icon: Icon(Icons.person_add, color: themeService.secondaryAccent.value),
+              icon: Icon(Icons.person_add,
+                  color: themeService.secondaryAccent.value),
               label: Text(
                 widget.ls.addLabel,
                 style: TextStyle(color: themeService.secondaryAccent.value),
@@ -86,5 +86,4 @@ class _FriendListDisplayState extends State<FriendListDisplay> with SingleTicker
       ],
     );
   }
-
 }

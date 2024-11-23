@@ -11,8 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/widgets/game_config_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
-
-import '../services/theme_service.dart';
 import '../widgets/fancyAppBar.dart';
 
 class QuizListPage extends StatefulWidget {

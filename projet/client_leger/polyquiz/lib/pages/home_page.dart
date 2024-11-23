@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
-import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../widgets/fancyAppBar.dart';
-import '../widgets/user_widget/friend/appBarFriendIcon.dart';
 
 class HomePage extends StatefulWidget {
   @override
