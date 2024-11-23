@@ -136,7 +136,7 @@ class GameService extends ChangeNotifier {
   }
 
   void selectQREanswer(int selectedAnswer) {
-    if (this.lockedStatus) return;
+    if (this.lockedStatus || this.isObserverMode) return;
     this.qreAnswer = selectedAnswer;
     this.realGameService.sendQRESelection(selectedAnswer);
   }
