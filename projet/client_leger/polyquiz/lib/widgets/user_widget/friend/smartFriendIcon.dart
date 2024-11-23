@@ -5,11 +5,13 @@ import 'package:polyquiz/services/logged_in_user_service.dart';
 import '../../../services/friendService.dart';
 
 class SmartFriendIcon extends StatefulWidget {
+  final bool canRemoveFriend;
   final String targetUserId;
   final FriendService friendService = FriendService.instance;
   SmartFriendIcon({
     Key? key,
     required this.targetUserId,
+    this.canRemoveFriend = true,
   }) : super(key: key);
 
   @override
@@ -26,10 +28,6 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   Future<void> _checkStatus() async {
-    if (widget.targetUserId == currentUserId) {
-      setState(() {_status = 'self';});
-      return;
-    }
     final status = await widget.friendService.friendshipStatus(
       currentUserId!,
       widget.targetUserId,
@@ -38,7 +36,12 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
       _status = status;
     });
   }
+
   Future<void> _handleIconPressed() async {
+    if (!widget.canRemoveFriend){
+      return;
+    }
+=
     if (_status == 'friends') {
       await widget.friendService.deleteFriendship(
         currentUserId!,
@@ -62,18 +65,22 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   Widget build(BuildContext context) {
     IconData iconData;
     Color iconColor;
-    if (_status == 'self') {
-      // Return an empty widget if target user is the logged-in user
-      return const SizedBox.shrink();
-    }
     switch (_status) {
       case 'friends':
-        iconData = Icons.person_remove;
-        iconColor = Colors.red;
+        if(widget.canRemoveFriend)
+        {
+          iconData = Icons.person_remove;
+          iconColor = Colors.red;
+        }
+        else{
+          iconData = Icons.group;
+          iconColor = Colors.black;
+        }
         break;
+
       case 'sentPending':
         iconData = Icons.hourglass_empty;
-        iconColor = Colors.grey;
+        iconColor = Colors.black;
         break;
       case 'receivedPending':
         iconData = Icons.person_add;
@@ -81,7 +88,7 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
         break;
       case 'notFriends':
         iconData = Icons.person_add;
-        iconColor = Colors.grey;
+        iconColor = Colors.black;
         break;
       default:
         iconData = Icons.hourglass_empty;
@@ -90,8 +97,8 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
 
     return IconButton(
       icon: Icon(iconData, color: iconColor),
-      onPressed: _status == 'sentPending' || _status == 'loading'
-          ? null // Disable button if already sent or still loading
+      onPressed: _status == 'sentPending'
+          ? null // Does nothing if friend request is already sent
           : _handleIconPressed,
     );
   }
