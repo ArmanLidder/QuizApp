@@ -54,7 +54,7 @@ export class Game {
         const timeZone = 'America/Montreal';
         const zonedDate = utcToZonedTime(new Date(), timeZone);
         this.gameHistoryInfo.startTime = format(zonedDate, 'yyyy-MM-dd HH:mm:ss', { timeZone });
-        console.log("Saving start time", this.gameHistoryInfo.startTime);
+        console.log("Game History Info Date: ", this.gameHistoryInfo.startTime);
     }
 
     async setup(id: string) {
