@@ -33,6 +33,14 @@ class QuitBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
+        if (this.gameService?.isObserverMode ?? false) {
+          this._socketService.sendMessage(SocketEvent.OBS_LEFT, {
+            'roomId': this.gameService!.realGameService.roomId,
+            'observedId': this.gameService!.observedUid,
+          });
+          _globalNavigationService.navigateTo('/home');
+          return;
+        }
         if (this.isHost) {
           this._socketService.sendMessage(SocketEvent.HOST_LEFT, roomId);
           print('HOST LEFT');
