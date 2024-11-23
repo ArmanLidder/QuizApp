@@ -174,6 +174,7 @@ class ChannelSelectionButton extends StatelessWidget {
             onPressed: () {
               leaveChannelCallback();
             },
+            color: themeService.mainAccent.value,
             icon: Icon(Icons.logout, size: 20)),
         IconButton(
             onPressed: () {
@@ -191,7 +192,7 @@ class ChannelSelectionButton extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 minimumSize: Size(double.infinity, 50),
-                backgroundColor: themeService.mainBackground.value,
+                backgroundColor: themeService.container.value,
                 foregroundColor: themeService.mainAccent.value,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0))),
@@ -307,7 +308,8 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
         Expanded(
             child: Align(
                 alignment: Alignment.center,
-                child: Text(chatText['JOIN_CHANNEL'])))
+                child: Text(chatText['JOIN_CHANNEL'],
+                    style: TextStyle(color: themeService.mainAccent.value))))
       ]),
       buildSearchBar(),
       Expanded(
@@ -360,7 +362,11 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
             widget.returnCallback();
           },
           child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20), child: Text(name)),
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                name,
+                style: TextStyle(color: themeService.mainAccent.value),
+              )),
           // style: TextButton.styleFrom(
           //     alignment: Alignment.centerLeft,
           //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero)
@@ -369,7 +375,7 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.symmetric(horizontal: 0),
               minimumSize: Size(double.infinity, 50),
-              backgroundColor: themeService.mainBackground.value,
+              backgroundColor: themeService.container.value,
               foregroundColor: themeService.mainAccent.value,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)))),
@@ -410,6 +416,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
+                    color: themeService.mainAccent.value,
                     onPressed: () {
                       widget.returnCallback();
                     },
@@ -417,11 +424,13 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
         Expanded(
             child: Align(
                 alignment: Alignment.center,
-                child: Text(chatText['CHANNEL_CREATION'])))
+                child: Text(chatText['CHANNEL_CREATION'],
+                    style: TextStyle(color: themeService.mainAccent.value))))
       ]),
       Padding(
           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: TextField(
+            style: TextStyle(color: themeService.mainAccent.value),
             controller: inputController,
             onChanged: (content) {
               setState(() {
@@ -430,9 +439,9 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
               });
             },
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: chatText['ENTER_CHANNEL_NAME'],
-            ),
+                border: OutlineInputBorder(),
+                hintText: chatText['ENTER_CHANNEL_NAME'],
+                hintStyle: TextStyle(color: themeService.mainAccent.value)),
           )),
       Column(children: channelErrorMessage(_currentName)),
       Padding(
@@ -443,10 +452,11 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
                   createChannel(context);
                 }
               : null,
-          child: Text(chatText['CREATE']),
+          child: Text(chatText['CREATE'],
+              style: TextStyle(color: themeService.secondaryAccent.value)),
           style: TextButton.styleFrom(
               backgroundColor: isValidChannelName(_currentName)
-                  ? Colors.blue
+                  ? themeService.secondaryBackground.value
                   : Colors.grey[400],
               foregroundColor: themeService.mainBackground.value,
               shape: RoundedRectangleBorder(

@@ -363,7 +363,9 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(activeText['NO_GAMES_AVAILABLE']),
+                            Text(activeText['NO_GAMES_AVAILABLE'],
+                                style: TextStyle(
+                                    color: themeService.mainAccent.value)),
                             SizedBox(height: 100),
                             CancelBtn()
                           ],
@@ -436,8 +438,13 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 16)),
-                                              Text(activeText['ONGOING_GAME'])
+                                                      fontSize: 16,
+                                                      color: themeService
+                                                          .mainAccent.value)),
+                                              Text(activeText['ONGOING_GAME'],
+                                                  style: TextStyle(
+                                                      color: themeService
+                                                          .mainAccent.value))
                                             ]),
                                         Divider()
                                       ],
