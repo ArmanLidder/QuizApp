@@ -177,7 +177,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
           padding: EdgeInsets.all(40.0),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: themeService.mainBackground.value,
+              color: themeService.container.value,
               boxShadow: [
                 BoxShadow(
                   color:
@@ -240,8 +240,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                 children: [
                                   Container(
                                     padding: EdgeInsets.all(5),
-                                    decoration:
-                                        BoxDecoration(color: Colors.white),
+                                    decoration: BoxDecoration(
+                                        color:
+                                            themeService.mainBackground.value),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -251,6 +252,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                               waitingRoomService.players[index],
                                           size: 60,
                                           hasName: true,
+                                          interactible: true,
                                         ),
                                         if (widget.isHost)
                                           IconButton(
@@ -330,8 +332,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                   SizedBox(height: 10),
                                   Container(
                                     padding: EdgeInsets.all(5),
-                                    decoration:
-                                        BoxDecoration(color: Colors.white),
+                                    decoration: BoxDecoration(
+                                        color:
+                                            themeService.mainBackground.value),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -351,6 +354,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                                     .userIds[i],
                                                 size: 60,
                                                 hasName: true,
+                                                interactible: true,
                                               ),
                                               if (widget.isHost)
                                                 IconButton(

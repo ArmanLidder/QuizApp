@@ -41,6 +41,20 @@ class _HistogramWidgetState extends State<Histogram> {
               rightTitles:
                   AxisTitles(sideTitles: SideTitles(showTitles: false)),
               topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  interval: 1,
+                  getTitlesWidget: (value, meta) {
+                    return Text(
+                      value.toInt().toString(),
+                      style: TextStyle(
+                        color: _themeService.mainAccent.value,
+                      ),
+                    );
+                  },
+                ),
+              ),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
@@ -63,6 +77,12 @@ class _HistogramWidgetState extends State<Histogram> {
                     }
                   },
                 ),
+              ),
+            ),
+            borderData: FlBorderData(
+              show: true,
+              border: Border.all(
+                color: const Color.fromARGB(255, 128, 128, 128),
               ),
             ),
             barGroups: _hostInterfaceManagementService

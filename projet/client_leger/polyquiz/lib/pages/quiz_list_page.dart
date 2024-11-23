@@ -81,12 +81,18 @@ class _QuizListPageState extends State<QuizListPage> {
           body: isLoading
               ? Center(child: CircularProgressIndicator())
               : errorMessage.isNotEmpty
-                  ? Center(child: Text(errorMessage))
+                  ? Center(
+                      child: Text(
+                      errorMessage,
+                      style: TextStyle(color: themeService.mainAccent.value),
+                    ))
                   : Stack(children: [
                       Column(
                         children: [
                           Text(quizSelectText['PAGE_TITLE'],
-                              style: TextStyle(fontSize: 16)),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: themeService.mainAccent.value)),
                           Container(
                             width: double.infinity,
                             margin: EdgeInsets.symmetric(horizontal: 50),
