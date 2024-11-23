@@ -38,7 +38,7 @@ export class GameCreationService {
         this.handleRoomCreation(roomManager, socket, sio);
         this.handleJoinGame(roomManager, socket, sio);
         this.handleBanPlayer(roomManager, socket, sio);
-        this.handleToggleRoomLock(roomManager, socket);
+        this.handleToggleRoomLock(roomManager, socket, sio);
         this.handleValidateUsername(roomManager, socket);
         this.handleGatherPlayersUsername(roomManager, socket, sio);
         this.handleValidateRoomId(roomManager, socket);
@@ -239,9 +239,10 @@ export class GameCreationService {
         });
     }
 
-    private handleToggleRoomLock(roomManager: RoomManagingService, socket: io.Socket) {
+    private handleToggleRoomLock(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.TOGGLE_ROOM_LOCK, (roomId: number) => {
             roomManager.changeLockState(roomId);
+            sio.to(String(roomId)).emit(SocketEvent.GET_ROOM_LOCK_UPDATE, roomManager.isRoomLocked(roomId));
         });
     }
 

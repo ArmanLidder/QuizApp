@@ -83,6 +83,12 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             : this.translate.instant('WAITING_ROOM_PAGE.STATUS_UNLOCKED');
     }
 
+    setHostValidationError() {
+        return this.waitingRoomManagementService.gameType !== 'equipe'
+            ? this.translate.instant('WAITING_ROOM_PAGE.CLASSIC_VALIDATION')
+            : this.translate.instant('WAITING_ROOM_PAGE.TEAM_VALIDATION');
+    }
+
     startGame() {
         this.waitingRoomManagementService.sendStartSignal();
     }

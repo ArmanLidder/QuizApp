@@ -328,7 +328,9 @@
     "NO_TEAMS": "Aucune équipe présente",
     "START_BUTTON": "Commencer",
     "CREATE_TEAM": "Créer Équipe",
-    "QUIZ_STARTING_IN": "Quiz commence dans :"
+    "QUIZ_STARTING_IN": "Quiz commence dans :",
+    "TEAM_VALIDATION": "Il faut un minimum de 2 joueurs par équipe et au moins 2 équipes.",
+    "CLASSIC_VALIDATION": "Il faut au moins 1 joueur."
   },
   "POP_UP_MESSAGE": {
     "LEAVE_MESSAGE": "Êtes-vous sûr de vouloir quitter?",

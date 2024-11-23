@@ -10,6 +10,9 @@
                     <span class="slider round"></span>
                 </label>
             </div>
+            <h3 *ngIf='isHost && waitingRoomManagementService.isRoomLocked && validationBeforeEntry()' style="color: red">
+                {{ setHostValidationError() }}
+            </h3>
         </div>
 
         <div class="players-list text-primary">
@@ -36,7 +39,7 @@
                     <div *ngFor="let team of waitingRoomManagementService.teamsForInterface" class="team">
                         <div class="team-header">
                             <span>{{ 'WAITING_ROOM_PAGE.TEAM_LABEL' | translate }} {{ team.name }}</span>
-                            <button *ngIf="!isHost && !team.userIds.members.includes(currentUserId)"
+                            <button *ngIf="!isHost && !team.userIds.members.includes(currentUserId) && !waitingRoomManagementService.isRoomLocked"
                                     class="action-btn"
                                     (click)="waitingRoomManagementService.joinTeam(team.name)">
                                 {{ 'WAITING_ROOM_PAGE.JOIN_TEAM' | translate }}
@@ -63,7 +66,7 @@
                     [disabled]="validationBeforeEntry()">
                 {{ 'WAITING_ROOM_PAGE.START_BUTTON' | translate }}
             </button>
-            <button *ngIf="!isHost && waitingRoomManagementService.gameType === 'equipe'"
+            <button *ngIf="!isHost && waitingRoomManagementService.gameType === 'equipe' && !waitingRoomManagementService.isRoomLocked"
                     [disabled]="onlyOneMember()"
                     class="action-btn"
                     (click)="waitingRoomManagementService.sendCreateTeam()">
