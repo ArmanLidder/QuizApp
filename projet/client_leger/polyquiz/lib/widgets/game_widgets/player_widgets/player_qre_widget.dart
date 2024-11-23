@@ -16,7 +16,12 @@ class PlayerQreWidget extends StatefulWidget {
 class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
   bool get isValidated => !gameInterfaceManagementService.gameService.realGameService.isValidateActive;
-  int currentValue = 0;  // TODO: attach this to gameService maybe
+  int _currentValue = 0;  // TODO: attach this to gameService maybe
+  int get currentValue {
+    if (this.gameInterfaceManagementService.gameService.isObserverMode) return this.gameInterfaceManagementService.gameService.obsQreAnswer;
+    return this.gameInterfaceManagementService.gameService.qreAnswer;
+  }
+  void set currentValue(int value) { this.gameInterfaceManagementService.gameService.qreAnswer = value; }
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get qreText => gameText['PLAYER_QRE_INTERFACE'];
 
@@ -26,6 +31,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     if (question != null && question?.interval != null) {
       final max = question!.interval!.max;
       final min = question!.interval!.min;
+      if (this.gameInterfaceManagementService.gameService.isObserverMode) this.gameInterfaceManagementService.gameService.obsQreAnswer = min.toInt();
       currentValue = ((max + min) / 2).round();
     }
   }
@@ -212,8 +218,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   void changeSliderValue(double value) {
-    if (isValidated) return;
-    gameInterfaceManagementService.gameService.qreAnswer = currentValue;
+    if (isValidated || this.gameInterfaceManagementService.gameService.isObserverMode) return;
     setState(() {
       currentValue = value.round();
     });
@@ -221,11 +226,11 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   bool get canIncrement {
-    return !(isValidated || (currentValue >= this.max));
+    return !(isValidated || (currentValue >= this.max) || this.gameInterfaceManagementService.gameService.isObserverMode);
   }
 
   bool get canDecrement {
-    return !(isValidated || (currentValue <= this.min));
+    return !(isValidated || (currentValue <= this.min) || this.gameInterfaceManagementService.gameService.isObserverMode);
   }
 
   void incrementSlider() {
