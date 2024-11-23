@@ -38,10 +38,10 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   Future<void> _handleIconPressed() async {
-    if (!widget.canRemoveFriend){
+    if (!widget.canRemoveFriend) {
       return;
     }
-=
+
     if (_status == 'friends') {
       await widget.friendService.deleteFriendship(
         currentUserId!,
@@ -67,12 +67,10 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
     Color iconColor;
     switch (_status) {
       case 'friends':
-        if(widget.canRemoveFriend)
-        {
+        if (widget.canRemoveFriend) {
           iconData = Icons.person_remove;
           iconColor = Colors.red;
-        }
-        else{
+        } else {
           iconData = Icons.group;
           iconColor = Colors.black;
         }
