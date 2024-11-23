@@ -315,7 +315,10 @@ export class GameCreationService {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
             // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-            await this.deleteRoomCanal(roomId, roomManager);
+            const teams = roomManager.getRoomById(roomId).teams
+            let teamsIds: number[] = []
+            if (teams) teamsIds = Array.from(teams.keys());
+            await this.deleteRoomCanal(roomId, roomManager, teamsIds);
             // this.sendPlayerListToObserver(roomId, roomManager, sio);
             roomManager.deleteRoom(roomId);
             this.sendUpdateGameList(roomManager, sio);
@@ -550,13 +553,12 @@ export class GameCreationService {
         }
     }
 
-    private async deleteRoomCanal(roomCode: number, roomManager: RoomManagingService) {
+    private async deleteRoomCanal(roomCode: number, roomManager: RoomManagingService, teamsIds: number[]=[]) {
         try {
             const docRef = await this.getDocRef(roomCode);
             await docRef.delete();
-            const teams = roomManager.getRoomById(roomCode).teams;
-            if (teams) {
-                for (const [teamId, _] of teams) {
+            if (teamsIds.length > 0) {
+                for (const teamId of teamsIds) {
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
                     await teamDocRef.delete();
                 }
@@ -696,7 +698,6 @@ export class GameCreationService {
                 }
             });
 
-            // If there's only one team, there won't be any lowest or non-extreme teams
             if (teamsScore.size === 1) {
                 lowestScorers.length = 0;
                 nonExtremes.length = 0;
