@@ -1,43 +1,23 @@
 <div class="center-content">
     <div id="prompt_container">
-        <div *ngIf='(!roomValidationService.isRoomIdValid)'>
-            <h3>{{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.ENTER_CODE_MESSAGE' | translate }}</h3>
-            <label class="text-primary" for="roomId">{{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.ENTER_CODE_LABEL' | translate }}</label>
-            <input
-                    id="roomId"
-                    [(ngModel)]="roomValidationService.roomId"
-                    [class]="inputBorderColor"
-                    type="text"
-                    maxlength='4'>
-            <p [class]="textColor"> {{error}} <p>
-            <div class="justify-content">
-                <button #enterButton class="enter" (click)='validateRoomId()'>
-                    {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.VALIDATE_BUTTON' | translate }}
-                </button>
-                <button class="cancel" routerLink='/home'>
-                    {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.CANCEL_BUTTON' | translate }}
-                </button>
-            </div>
-        </div>
-        <div *ngIf='(roomValidationService.isRoomIdValid)'>
-            <h3 *ngIf='!roomValidationService.isLocked && roomValidationService.isUsernameValid'>
-                {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.JOIN_SUCCESS_MESSAGE' | translate }}
-            </h3>
-            <h3 *ngIf='!roomValidationService.isUsernameValid'>
-                {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.BANNED_MESSAGE' | translate }}
-            </h3>
-            <h3 *ngIf='roomValidationService.isLocked && roomValidationService.isUsernameValid'>
-                {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.ROOM_LOCKED_MESSAGE' | translate }}
-            </h3>
-            <div class="justify-content">
-                <button *ngIf='!roomValidationService.isLocked && roomValidationService.isUsernameValid'
-                        #enterButton class="enter" (click)='joinRoom()'>
-                    {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.JOIN_BUTTON' | translate }}
-                </button>
-                <button class="cancel" routerLink='/home'>
-                    {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.CANCEL_BUTTON' | translate }}
-                </button>
-            </div>
+        <h3>{{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.ENTER_CODE_MESSAGE' | translate }}</h3>
+        <label class="text-primary"
+               for="roomId">{{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.ENTER_CODE_LABEL' | translate }}</label>
+        <input
+                id="roomId"
+                [(ngModel)]="roomValidationService.roomId"
+                [class]="inputBorderColor"
+                type="text"
+                maxlength='4'>
+        <p [class]="textColor"> {{ error }}
+        <p>
+        <div class="justify-content">
+            <button #enterButton class="enter" (click)='validateRoomId()'>
+                {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.VALIDATE_BUTTON' | translate }}
+            </button>
+            <button class="cancel" routerLink='/home'>
+                {{ 'PLAYER_WAITING_PAGE.ROOM_CODE_PROMPT.CANCEL_BUTTON' | translate }}
+            </button>
         </div>
     </div>
 </div>
