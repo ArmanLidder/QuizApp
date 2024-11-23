@@ -165,6 +165,10 @@ class RealGameService extends ChangeNotifier {
     });
   }
 
+  void notifyOnChanged() {
+    notifyListeners();
+  }
+
   void reset() {
     this.username = '';
     this.observerMode = false;
