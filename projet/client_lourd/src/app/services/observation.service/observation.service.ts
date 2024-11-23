@@ -111,6 +111,9 @@ export class ObservationService {
     private handleGetQREAnswer() {
         this.socketService.on(SocketEvent.GET_QRE_ANSWER_FOR_OBS, (qreValue: number) => {
             this.gameService.obs_qre_Answer = qreValue
+            const lowerBound = Math.max(this.gameService.question!.interval!.min!, this.gameService.obs_qre_Answer - this.gameService.question!.margin!);
+            const upperBound = Math.min(this.gameService.question!.interval!.max!, this.gameService.obs_qre_Answer + this.gameService.question!.margin!);
+            this.gameService.obs_qre_interval = `${lowerBound.toString()} - ${upperBound.toString()}`;
         });
     }
 
@@ -157,6 +160,9 @@ export class ObservationService {
             this.gameInterfaceManagementService.players = data.players;
             this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
             this.gameService.obs_qre_Answer = data.qreAnswer;
+            const lowerBound = Math.max(this.gameService.question!.interval!.min!, this.gameService.obs_qre_Answer - this.gameService.question!.margin!);
+            const upperBound = Math.min(this.gameService.question!.interval!.max!, this.gameService.obs_qre_Answer + this.gameService.question!.margin!);
+            this.gameService.obs_qre_interval = `${lowerBound.toString()} - ${upperBound.toString()}`;
             this.gameService.obs_qrl_Answer = data.qrlAnswer;
             this.gameService.qrlAnswer = data.qrlAnswer;
             this.gameInterfaceManagementService['getScore']();
