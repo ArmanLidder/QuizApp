@@ -31,6 +31,14 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   Color textBtnColor = Color.fromRGBO(0, 0, 0, 0);
   @override
   Widget build(BuildContext context) {
+    print("Rebuilding button ${widget.index}");
+    if (this.gameInterfaceManagementService.gameService.answers.containsKey(widget.index)) {
+      textBtnColor = Color.fromRGBO(53, 121, 246, 1);
+      print('Button ${widget.index} is TRUE');
+    } else {
+      textBtnColor = Color.fromRGBO(0, 0, 0, 0);
+      print('Button ${widget.index} is FALSE');
+    }
     if (gameInterfaceManagementService.getQcmEnabled()) {
       if (lastQuestionIndex !=
               gameInterfaceManagementService.gameService.questionNumber &&
@@ -49,8 +57,10 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     }
     return TextButton(
       onPressed: () {
-        if (!this.gameInterfaceManagementService.gameService.realGameService.isHostEvaluating &&
-            this.gameInterfaceManagementService.gameService.realGameService.isValidateActive){
+        bool isButtonsActive = !this.gameInterfaceManagementService.gameService.realGameService.isHostEvaluating &&
+            this.gameInterfaceManagementService.gameService.realGameService.isValidateActive &&
+            !this.gameInterfaceManagementService.gameService.isObserverMode;
+        if (isButtonsActive) {
               gameInterfaceManagementService.getQcmEnabled()
                   ? setState(() {
                       textBtnColor = changeColor(textBtnColor);
