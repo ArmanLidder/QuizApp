@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
 Map<String, List<Color>> themeColors = {
-  "default": [
+  "light": [
     Colors.white, // mainBackground
     Colors.black, // mainAccent
     Color.fromRGBO(53, 121, 246, 1), // secondaryBackground

@@ -214,6 +214,8 @@ class UserSettings {
     Theme theme;
     if (themeValue == 'light') theme = Theme.light;
     else if (themeValue == 'dark') theme = Theme.dark;
+    else if (themeValue == 'disco') theme = Theme.disco;
+    else if (themeValue == 'blueGrey') theme = Theme.blueGrey;
     else theme = Theme.light;
 
     String languageValue = json['language'];
@@ -238,6 +240,14 @@ class UserSettings {
         themeValue = 'dark';
         break;
       case Theme.light:
+        themeValue = 'light';
+        break;
+      case Theme.disco:
+        themeValue = 'disco';
+        break;
+      case Theme.blueGrey:
+        themeValue = 'blueGrey';
+        break;
       default:
         themeValue = 'light';
     }
@@ -268,6 +278,8 @@ class UserSettings {
 enum Theme {
   light,
   dark,
+  disco,
+  blueGrey
 }
 
 enum Language {
