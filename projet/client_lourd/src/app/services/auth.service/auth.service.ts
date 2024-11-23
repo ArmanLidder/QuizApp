@@ -11,6 +11,7 @@ import {AvatarService} from "@app/services/avatar.service/avatar.service";
 import {first, switchMap} from "rxjs";
 import {map} from "rxjs/operators";
 import {TranslateService} from "@ngx-translate/core";
+import {randomDelay} from "../../../utils/random-time-waiter/random-time-waiter";
 
 
 @Injectable({
@@ -40,6 +41,9 @@ export class AuthService {
         const isTaken = await this.usersService.isUsernameTaken(username);
         if (isTaken) throw new Error(this.translate.instant('REGISTER_PAGE.THE_NAME_IS_ALREADY_USED',{name:username}));
         try {
+            //This delay was added because firebase has a bug where two uid's with same
+            //email can be created if both users create an account at the exact same time
+            await randomDelay(0,3000);
             const {user} = await createUserWithEmailAndPassword(this.auth, email, password);
             await this.usersService.addUser({uid: user.uid, email, username});
             await this.avatarService.handleAvatarModification(selectedAvatar);
