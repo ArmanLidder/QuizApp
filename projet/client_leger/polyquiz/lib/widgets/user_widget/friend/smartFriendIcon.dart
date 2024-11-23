@@ -26,6 +26,10 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   Future<void> _checkStatus() async {
+    if (widget.targetUserId == currentUserId) {
+      setState(() {_status = 'self';});
+      return;
+    }
     final status = await widget.friendService.friendshipStatus(
       currentUserId!,
       widget.targetUserId,
@@ -34,7 +38,6 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
       _status = status;
     });
   }
-
   Future<void> _handleIconPressed() async {
     if (_status == 'friends') {
       await widget.friendService.deleteFriendship(
@@ -59,7 +62,10 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   Widget build(BuildContext context) {
     IconData iconData;
     Color iconColor;
-
+    if (_status == 'self') {
+      // Return an empty widget if target user is the logged-in user
+      return const SizedBox.shrink();
+    }
     switch (_status) {
       case 'friends':
         iconData = Icons.person_remove;
@@ -84,8 +90,8 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
 
     return IconButton(
       icon: Icon(iconData, color: iconColor),
-      onPressed: _status == 'sentPending'
-          ? null // Does nothing if friend request is already sent
+      onPressed: _status == 'sentPending' || _status == 'loading'
+          ? null // Disable button if already sent or still loading
           : _handleIconPressed,
     );
   }
