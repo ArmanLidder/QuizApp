@@ -45,55 +45,63 @@ class _HomePageState extends State<HomePage> {
         appBar: FancyAppBar(
           context: context,
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                mainPageText['WELCOME'] +
-                    " " +
-                    loggedInUserService.observableUsername.value,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                    color: this.themeService.mainAccent.value),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/roomList');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
+        body: Stack(children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  mainPageText['WELCOME'] +
+                      " " +
+                      loggedInUserService.observableUsername.value,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: this.themeService.mainAccent.value),
                 ),
-                child: Text(mainPageText['JOIN_GAME']),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/quizz');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
-                ),
-                child: Text(mainPageText['CREATE_GAME']),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
+                ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/store');
+                    Navigator.pushReplacementNamed(context, '/roomList');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         this.themeService.secondaryBackground.value,
                     foregroundColor: this.themeService.secondaryAccent.value,
                   ),
-                  child: Text(mainPageText['SHOP'])),
-              ChatPopup(),
-            ],
+                  child: Text(mainPageText['JOIN_GAME']),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/quizz');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        this.themeService.secondaryBackground.value,
+                    foregroundColor: this.themeService.secondaryAccent.value,
+                  ),
+                  child: Text(mainPageText['CREATE_GAME']),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/store');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          this.themeService.secondaryBackground.value,
+                      foregroundColor: this.themeService.secondaryAccent.value,
+                    ),
+                    child: Text(mainPageText['SHOP'])),
+              ],
+            ),
           ),
-        ),
+          Positioned(
+            child: ChatPopup(),
+            bottom: 20.0,
+            left: 20.0,
+          )
+        ]),
       );
     });
   }
