@@ -12,10 +12,11 @@
         <mat-form-field appearance="fill" class="w-full">
             <mat-label>{{ 'REGISTER_PAGE.USERNAME_LABEL' | translate }}</mat-label>
             <mat-icon matPrefix>person</mat-icon>
-            <input maxlength="10" matInput [placeholder]="'REGISTER_PAGE.USERNAME_PLACEHOLDER' | translate" formControlName="username">
+            <input matInput [placeholder]="'REGISTER_PAGE.USERNAME_PLACEHOLDER' | translate" formControlName="username">
         </mat-form-field>
         <div *ngIf="authForm.get('username')?.invalid && (authForm.get('username')?.touched || authForm.get('username')?.dirty)" class="text-red-600 text-sm mt-0">
             <p *ngIf="authForm.get('username')?.errors?.required">{{ 'REGISTER_PAGE.USERNAME_REQUIRED' | translate }}</p>
+            <p *ngIf="authForm.get('username')?.errors?.maxlength">{{ 'REGISTER_PAGE.MAX_LETTERS_USERNAME' | translate }}</p>
             <p *ngIf="authForm.get('username')?.errors?.invalidUsername">{{ 'REGISTER_PAGE.USERNAME_INVALID' | translate }}</p>
         </div>
 

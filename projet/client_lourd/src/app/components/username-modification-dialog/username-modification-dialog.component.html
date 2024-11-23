@@ -1,32 +1,55 @@
- <div class="p-6 max-w-md mx-auto bg-bgPrimary shadow-md space-y-6">
-    <h2 class="text-2xl font-bold text-center text-primary mb-4">{{ 'USERNAME_MODIFICATION.TITLE' | translate }}</h2>
+<div class="p-6 max-w-md mx-auto bg-bgPrimary shadow-md space-y-6">
+    <h2 class="text-2xl font-bold text-center text-primary mb-4">
+        {{ 'USERNAME_MODIFICATION.TITLE' | translate }}
+    </h2>
 
-    <!-- Form element to enable Enter key submission -->
-    <form (ngSubmit)="confirm()" class="space-y-4">
-        <label for="username" class="block text-sm font-medium text-primary">{{ 'USERNAME_MODIFICATION.NEW_USERNAME' | translate }}</label>
+    <form [formGroup]="usernameForm" (ngSubmit)="confirm()" class="space-y-4">
+        <label for="username" class="block text-sm font-medium text-primary">
+            {{ 'USERNAME_MODIFICATION.NEW_USERNAME' | translate }}
+        </label>
         <input
-                [(ngModel)]="newUsername"
+                formControlName="username"
                 name="username"
                 type="text"
                 id="username"
-                maxlength="10"
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 sm:text-sm"
                 [placeholder]="'USERNAME_MODIFICATION.PLACEHOLDER' | translate"
         />
 
+        <div
+                *ngIf="usernameForm.get('username')?.invalid && (usernameForm.get('username')?.touched || usernameForm.get('username')?.dirty)"
+                class="text-error text-sm mt-2"
+        >
+            <p *ngIf="usernameForm.get('username')?.errors?.required">
+                {{ 'REGISTER_PAGE.USERNAME_REQUIRED' | translate }}
+            </p>
+            <p *ngIf="usernameForm.get('username')?.errors?.maxlength">
+                {{ 'REGISTER_PAGE.MAX_LETTERS_USERNAME' | translate }}
+            </p>
+            <p *ngIf="usernameForm.get('username')?.errors?.pattern">
+                {{ 'REGISTER_PAGE.USERNAME_INVALID' | translate }}
+            </p>
+        </div>
+
         <div class="flex flex-col items-center space-y-4">
             <div class="flex justify-end space-x-4 w-full">
-                <button type="button" (click)="cancel()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out">
+                <button
+                        type="button"
+                        (click)="cancel()"
+                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out"
+                >
                     {{ 'USERNAME_MODIFICATION.CANCEL' | translate }}
                 </button>
 
-                <!-- Set as primary submit button for form submission -->
                 <button
                         type="submit"
-                        [disabled]="!newUsername"
+                        [disabled]="usernameForm.invalid || isLoading"
                         class="px-4 py-2 border border-transparent rounded-md shadow-sm text-secondary bg-bgButton hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {{ 'USERNAME_MODIFICATION.CONFIRM' | translate }}
+                    <span *ngIf="!isLoading">{{ 'USERNAME_MODIFICATION.CONFIRM' | translate }}</span>
+                    <div *ngIf="isLoading" class="flex justify-center items-center">
+                        <mat-spinner [diameter]="20" class="!text-secondary"></mat-spinner>
+                    </div>
                 </button>
             </div>
         </div>

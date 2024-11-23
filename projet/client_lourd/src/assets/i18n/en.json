@@ -48,7 +48,8 @@
     "ALREADY_HAVE_ACCOUNT": "Already have an account?",
     "LOGIN_LINK": "Log In",
     "SUCCESS_REGISTER_POPUP": "Account created",
-    "THE_NAME_IS_ALREADY_USED": "The name \"{{name}}\" is already used"
+    "THE_NAME_IS_ALREADY_USED": "The name \"{{name}}\" is already used",
+    "MAX_LETTERS_USERNAME": "The username must contain at most 10 characters."
   },
   "MAINPAGE": {
     "WELCOME": "Welcome",
