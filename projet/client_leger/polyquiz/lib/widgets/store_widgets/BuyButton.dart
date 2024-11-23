@@ -195,6 +195,7 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   final StoreService storeService = Get.find();
   Map get shopText => TranslationService.instance.text['SHOPPING'];
   List<String> get achievementText => TranslationService.instance.text['PROFILE']['ALL_ACHIEVEMENTS'];
+  final ThemeService _themeService = ThemeService.instance;
 
   bool alreadyOwns = false;
   bool canAfford = false;
@@ -209,6 +210,7 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   Future<void> _updateButtonStatus() async {
     await loggedInUserService.reloadUser();
     final user = loggedInUserService.getUser();
+
     num availableFunds = user?.currency ?? 0;
     bool ownsItem = await storeService.isOwned(
         user?.uid ?? "noIdInRewardButtonWidget", widget.itemId);
@@ -267,7 +269,11 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
           fixedSize: Size(200, 60),
         ),
         onPressed: buttonAction,
-        child: Center(child: Text(buttonText)),
+        child: Center(child: Text(buttonText,
+            style: TextStyle(color: _themeService.mainAccent.value))),
+
+
+
       );
     });
   }
