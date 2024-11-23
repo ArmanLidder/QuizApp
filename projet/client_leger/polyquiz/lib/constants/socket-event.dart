@@ -59,20 +59,20 @@ class SocketEvent {
   static const String CHANGE_OBSERVED_PLAYER = "change_observed_player";
   static const String GET_QRE_ANSWER_FOR_OBS = "get_qre_answer_obs";
   static const String GET_QRL_INTERACTION = "get_qrl_interaction_obs";
-  static const String REQUEST_QRL_INTERACTION = "request_qrl_interaction";
+  static const String REQUEST_QRL_INTERACTION = "request_qrl_interaction"; // TODO
   static const String RECEIVE_LAST_QRL_INTERACTION = "receive_last_qrl_interaction";
   static const String GET_QRL_ANSWER_FOR_OBS = "get_qrl_answer_obs";
   static const String GET_LAST_QRL_STATUS = "get_last_qrl_status";
 
 
-  static const String REQUEST_HOST_GAME_STATUS = "request_host_game_stautus";
+  static const String REQUEST_HOST_GAME_STATUS = "request_host_game_stautus"; // TODO
   static const String RECEIVING_HOST_GAME_STATUS = "receiving_game_status";
-  static const String SENDING_HOST_GAME_STATUS = "sending_host_game_status";
+  static const String SENDING_HOST_GAME_STATUS = "sending_host_game_status"; // TODO
   static const String OBS_QCM_INTERACTION = "obs_qcm_interaction";
   static const String RECEIVE_PLAYER_GAME_STATUS = "receive_player_game_status";
 
-  static const String REQUEST_PAYER_QCM_CHOICES = "request_player_qcm_choices";
-  static const String RECEIVE_PLAYER_QCM_CHOICES = "receive_player_qcm_choices";
+  static const String REQUEST_PAYER_QCM_CHOICES = "request_player_qcm_choices"; // TODO
+  static const String RECEIVE_PLAYER_QCM_CHOICES = "receive_player_qcm_choices"; // TODO
 
   static const String OBS_LEFT = "obs_left";
   static const String GET_OBS_COUNT = "get_obs_count";
