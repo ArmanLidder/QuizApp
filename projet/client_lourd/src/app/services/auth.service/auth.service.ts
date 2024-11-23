@@ -38,8 +38,11 @@ export class AuthService {
     }
 
     async register(username: string, email: string, password: string, selectedAvatar: string | File): Promise<void> {
-        const isTaken = await this.usersService.isUsernameTaken(username);
-        if (isTaken) throw new Error(this.translate.instant('REGISTER_PAGE.THE_NAME_IS_ALREADY_USED',{name:username}));
+        await randomDelay(0,3000);
+        const isTakenOne = await this.usersService.isUsernameTaken(username);
+        await randomDelay(0,3000);
+        const isTakenTwo = await this.usersService.isUsernameTaken(username);
+        if (isTakenOne || isTakenTwo) throw new Error(this.translate.instant('REGISTER_PAGE.THE_NAME_IS_ALREADY_USED',{name:username}));
         try {
             //This delay was added because firebase has a bug where two uid's with same
             //email can be created if both users create an account at the exact same time

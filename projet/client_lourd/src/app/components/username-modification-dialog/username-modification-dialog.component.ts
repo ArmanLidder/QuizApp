@@ -15,7 +15,7 @@ export class UsernameModificationDialogComponent {
     private usersService = inject(UsersService);
     private snackbar = inject(SnackbarService);
     private translate = inject(TranslateService);
-
+    isLoading:boolean= false;
     usernameForm: FormGroup;
 
     constructor(private fb: FormBuilder) {
@@ -41,11 +41,14 @@ export class UsernameModificationDialogComponent {
         const newUsername = this.usernameForm.value.username;
 
         try {
+            this.isLoading = true;
             await this.usersService.updateUsername(newUsername);
             this.snackbar.show(await this.translate.get('USERNAME_MODIFICATION.SUCCESSFUL_MODIFICATION').toPromise());
             this.dialogRef.close({ updatedUsername: newUsername });
         } catch (error: any) {
             this.snackbar.show(error.message);
+        } finally {
+            this.isLoading = false;
         }
     }
 }

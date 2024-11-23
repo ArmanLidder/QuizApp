@@ -16,6 +16,7 @@ import {Auth, authState} from "@angular/fire/auth";
 import {LoginHistory} from "@common/interfaces/user-data.interface";
 import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
 import {TranslateService} from "@ngx-translate/core";
+import {randomDelay} from "../../../utils/random-time-waiter/random-time-waiter";
 
 const defaultUser: User = {
     uid: '',
@@ -117,9 +118,13 @@ export class UsersService {
     }
 
     async updateUsername(newUsername: string): Promise<void> {
-        const isTaken = await this.isUsernameTaken(newUsername);
-        if (isTaken) throw new Error(await firstValueFrom(this.translate.get('USERNAME_MODIFICATION.ALREADY_USED')));
+        await randomDelay(0,3000);
+        const isTakenOne = await this.isUsernameTaken(newUsername);
+        await randomDelay(0,3000);
+        const isTakenTwo = await this.isUsernameTaken(newUsername);
+        if (isTakenOne || isTakenTwo) throw new Error(await firstValueFrom(this.translate.get('USERNAME_MODIFICATION.ALREADY_USED')));
         if (this.auth.currentUser?.uid) {
+            console.log("Updating doc...")
             const userDocRef = doc(this.firestore, `users/${this.auth.currentUser?.uid}`);
             await updateDoc(userDocRef, {username: newUsername});
         }
