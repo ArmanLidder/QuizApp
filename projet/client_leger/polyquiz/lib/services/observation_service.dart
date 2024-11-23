@@ -110,6 +110,7 @@ class ObservationService extends GetxController {
   void handleGetQREAnswer() {
     this.socketService.onMessage(SocketEvent.GET_QRE_ANSWER_FOR_OBS, (value) {
       this.gameService.obsQreAnswer = value as int;
+      this.gameService.realGameService.notifyOnChanged();
     });
   }
 
