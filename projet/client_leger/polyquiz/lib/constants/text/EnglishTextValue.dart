@@ -112,7 +112,7 @@ const englishTextValues = {
     "REMOVE_FRIEND": "Remove Friend",
     "ACCEPT_REQUEST": "Accept",
     "DECLINE_REQUEST": "Decline",
-    "ALREADY_SENT_ERROR": "The friend request was already sent"
+    "ALREADY_SENT_ERROR": "The friend request was already sent",
   },
   "AVATAR_MODIFICATION": {
     "TITLE": "Avatar Modification",
