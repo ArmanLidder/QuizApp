@@ -633,13 +633,12 @@ export class GameCreationService {
             }
         });
 
-        if (total_score_sum == 0) {
+        if (total_score_sum === 0) {
             highestScorers.length = 0; nonExtremes.length = 0; lowestScorers.length = 0;
             players.forEach((score: Score, userId: string) => {
                 lowestScorers.push(userId);
             });
         } else {
-
             players.forEach((score: Score, userId: string) => {
                 const inHighScorer = highestScorers.includes(userId);
                 const inLowScorer = lowestScorers.includes(userId);
