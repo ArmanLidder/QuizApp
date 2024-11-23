@@ -111,7 +111,7 @@ class LoggedInUserService extends GetxController {
   logout() async {
     String? userId = user?.uid;  // Adjust this to match your user object structure
     DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    await _firestore
+    _firestore
         .collection('users')
         .doc(userId)
         .update({'isConnected': false});

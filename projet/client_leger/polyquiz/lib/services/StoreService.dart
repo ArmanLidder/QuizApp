@@ -84,7 +84,6 @@ class StoreService extends GetxController {
       print("item doesnt exist");
       return;
     }
-
     // Extract the item cost
     Map<String, dynamic> itemData = itemDoc.data() as Map<String, dynamic>;
     num itemCost = itemData['cost'] ?? 0;

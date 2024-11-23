@@ -110,7 +110,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
                     ],
                   ),
                   onTap: () async {
-                    await loggedInUserService.logout();
+                    loggedInUserService.logout();
                     Navigator.pushReplacementNamed(widget.context, '/auth');
                   },
                 ),
