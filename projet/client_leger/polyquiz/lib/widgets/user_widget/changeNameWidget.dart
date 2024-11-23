@@ -36,7 +36,7 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: nameText['TITLE'],
+      title: Text(nameText['TITLE']),
       content: TextField(
         controller: _nameController,
         decoration: InputDecoration(
@@ -53,7 +53,7 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: nameText['CANCEL'],
+          child: Text(nameText['CANCEL']),
         ),
         TextButton(
           onPressed: () {
@@ -62,7 +62,7 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
               Navigator.of(context).pop();
             }
           },
-          child: nameText['CONFIRM'],
+          child: Text(nameText['CONFIRM']),
         ),
       ],
     );
