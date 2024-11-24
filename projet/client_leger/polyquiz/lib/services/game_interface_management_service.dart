@@ -131,6 +131,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         break;
       case QuestionType.QRL:
       default:
+        this.gameService.realGameService.isHostEvaluating = true;
         this.gameService.qrlAnswer = observerText['INACTIVE_PLAYER'];
         if (!this.gameService.isObservingHost) this.gameService.realGameService.validated = true;
     }
