@@ -221,11 +221,16 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                         style: TextStyle(color: Colors.red)),
                   ),
               if (!widget.isHost &&
-                  this.waitingRoomService.isRoomLocked &&
                   this.waitingRoomService.gameType != 'classic')
-                Center(
-                    child: Text(waitRoomText['TEAM_NOTICE_LOCK'],
-                        style: TextStyle(color: Colors.red))),
+                AnimatedBuilder(
+                    animation: this.waitingRoomService,
+                    builder: (BuildContext context, Widget? snapshot) {
+                      return this.waitingRoomService.isRoomLocked
+                          ? Center(
+                              child: Text(waitRoomText['TEAM_NOTICE_LOCK'],
+                                  style: TextStyle(color: Colors.red)))
+                          : SizedBox.shrink();
+                    }),
               SizedBox(height: 20.0),
               AnimatedBuilder(
                 animation: waitingRoomService,

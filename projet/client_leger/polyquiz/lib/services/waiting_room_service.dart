@@ -230,6 +230,7 @@ class WaitingRoomService extends ChangeNotifier {
     handleTime();
     handleFinalTransition();
     handleGetTeams();
+    handleRoomLockUpdate();
   }
 
   void handleNewPlayer() {
@@ -297,8 +298,12 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   void handleRoomLockUpdate() {
-    this._socketService.onMessage(SocketEvent.GET_ROOM_LOCK_UPDATE,
-        (isLocked) => {this.isRoomLocked = isLocked});
-    notifyListeners();
+    this._socketService.onMessage(
+        SocketEvent.GET_ROOM_LOCK_UPDATE,
+        (isLocked) => {
+              this.isRoomLocked = isLocked,
+              print('ROOM LOCKED STATUS: ${this.isRoomLocked}'),
+              notifyListeners()
+            });
   }
 }
