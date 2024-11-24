@@ -1,4 +1,4 @@
-<div [formGroup]="parentGroup" class="space-y-6">
+<div [formGroup]="parentGroup" (keydown.enter)="$event.preventDefault()" class="space-y-6">
     <div class="bg-bgPrimary rounded-lg pt-6 space-y-4" formArrayName="questions">
         <p *ngIf="questionsArray?.length !== 0" class="text-lg font-medium text-primary">Questions :</p>
 
