@@ -299,5 +299,6 @@ class WaitingRoomService extends ChangeNotifier {
   void handleRoomLockUpdate() {
     this._socketService.onMessage(SocketEvent.GET_ROOM_LOCK_UPDATE,
         (isLocked) => {this.isRoomLocked = isLocked});
+    notifyListeners();
   }
 }
