@@ -79,7 +79,7 @@ class SmartAvatar extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(
-                              snapshot.data!.level.toString(),
+                              (snapshot.data!.level ~/ 10).toString(),
                               style: TextStyle(
                                 fontSize: size * 0.2,
                                 fontWeight: FontWeight.bold,
