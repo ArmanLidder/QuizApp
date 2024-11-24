@@ -9,21 +9,45 @@
                 id="language-select"
                 (change)="switchLanguage($event)"
                 [(ngModel)]="currentLanguage"
-                class="bg-white text-black rounded p-2 w-1/2">
+                class="bg-white text-black rounded p-2 w-1/2 border-2 border-primary"
+        >
             <option value="fr">Français</option>
             <option value="en">English</option>
         </select>
     </div>
 
     <!-- Theme Selection -->
-    <div class="w-full flex items-center">
-        <label for="theme-select" class="text-sm font-medium text-primary w-1/4 text-right mr-4">Theme</label>
-        <select
-                id="theme-select"
-                (change)="switchTheme($event)"
-                [(ngModel)]="currentTheme"
-                class="bg-white text-black rounded p-2 w-1/2">
-            <option *ngFor="let theme of availableThemes$ | async" [value]="theme">{{ theme }}</option>
-        </select>
+    <div class="w-full flex items-center mb-4">
+        <label class="text-sm font-medium text-primary w-1/4 text-right mr-4">Theme</label>
+        <div class="flex w-1/2">
+            <ng-container *ngFor="let theme of availableThemes$ | async">
+                <div
+                        (click)="switchTheme(theme.name)"
+                        class="flex flex-col items-center cursor-pointer min-w-[60px]"
+                        [class.opacity-50]="currentTheme !== theme.name"
+                        [class.opacity-100]="currentTheme === theme.name"
+                >
+                    <!-- Theme Circle -->
+                    <div class="w-8 h-8 rounded-full border border-gray-300 overflow-hidden mb-1">
+                        <!-- Custom theme with source -->
+                        <img
+                                *ngIf="theme.source"
+                                [src]="theme.source"
+                                [alt]="theme.name"
+                                class="w-full h-full object-cover"
+                        >
+                        <!-- Built-in light/dark themes -->
+                        <div
+                                *ngIf="!theme.source"
+                                class="w-full h-full"
+                                [class.bg-white]="theme.name === 'light'"
+                                [class.bg-gray-900]="theme.name === 'dark'"
+                        ></div>
+                    </div>
+                    <!-- Theme Name -->
+                    <span class="text-sm text-primary text-center">{{theme.name}}</span>
+                </div>
+            </ng-container>
+        </div>
     </div>
 </div>
