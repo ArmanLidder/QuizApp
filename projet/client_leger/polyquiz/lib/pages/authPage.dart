@@ -284,29 +284,18 @@ class _AuthPageState extends State<AuthPage> {
                 }).toList(),
               ),
               SizedBox(height: 12),
-              // Center(
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       setState(() {
-              //         _isCameraOpen = true;
-              //       });
-              //     },
-              //     child: Text('prendre une photo'),
-              //   ),
-              // ),
-              // if (_isCameraOpen)
-                Container(
-                  width: 300,
-                  height: 400,
-                  child: CameraWidget(
-                    onImageCaptured: (imageUrl) {
-                      setState(() {
-                        _selectedAvatar = imageUrl;
-                        _isCameraOpen = false;
-                      });
-                    },
-                  ),
+              Container(
+                width: 300,
+                height: 120,
+                child: CameraWidget(
+                  onImageCaptured: (imageUrl) {
+                    setState(() {
+                      _selectedAvatar = imageUrl;
+                      _isCameraOpen = false;
+                    });
+                  },
                 ),
+              ),
             ],
             SizedBox(height: 24),
             SizedBox(
