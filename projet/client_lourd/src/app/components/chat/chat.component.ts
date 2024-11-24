@@ -65,6 +65,7 @@ export class ChatComponent implements OnInit {
     state: State = State.closed;
     isChatFocused: boolean = false;
 
+    private isLoadingCanalScroll = false;
 
     constructor() {
         this.setUp();
@@ -168,6 +169,7 @@ export class ChatComponent implements OnInit {
 
     async loadCanal(canalId: string) {
         this.toggleIsChat();
+        this.isLoadingCanalScroll = true;
         const uid = (await firstValueFrom(this.user$)).uid;
         this.currentCanal$ = this.canalService.getCanal(canalId);
         this.canalId$.next(canalId);
@@ -183,9 +185,25 @@ export class ChatComponent implements OnInit {
                     this.appRef.tick();
                     this.canalSubscription.unsubscribe();
                 }
+                if (this.isLoadingCanalScroll) {
+                    setTimeout(() => {
+                        this.scrollToBottom();
+                        this.isLoadingCanalScroll = false;
+                    }, 100);
+                }
             });
         this.focusOnForm('input_message');
     }
+
+    private scrollToBottom(): void {
+        const chat = this.scrollContainer.nativeElement;
+        if (chat) {
+            setTimeout(() => {
+                chat.scrollTop = chat.scrollHeight;
+            }, 100);
+        }
+    }
+
 
     async deleteCanal(canalId: string) {
         try {
