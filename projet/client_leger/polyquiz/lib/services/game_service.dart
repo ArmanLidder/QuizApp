@@ -32,7 +32,12 @@ class GameService extends ChangeNotifier {
   String observedUid = '';
 
   int obsQreAnswer = 0;
-  String obsQrlAnswer = '';
+  String _obsQrlAnswer = '';
+  String get obsQrlAnswer => _obsQrlAnswer;
+  void set obsQrlAnswer(String value) {
+    _obsQrlAnswer = value;
+    notifyListeners();
+  }
 
   final OfflineGameService offlineGameService = OfflineGameService();
   final RealGameService realGameService = RealGameService();

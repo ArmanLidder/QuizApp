@@ -97,7 +97,7 @@ class ObservationService extends GetxController {
 
   void handleGetQRLInteraction() {
     this.socketService.onMessage(SocketEvent.GET_QRL_INTERACTION, (isActive) {
-      this.gameService.qreAnswer = isActive as bool ? observerText['PLAYER_IS_WRITING'] : observerText['INACTIVE_PLAYER'];
+      this.gameService.obsQrlAnswer = isActive as bool ? observerText['PLAYER_IS_WRITING'] : observerText['INACTIVE_PLAYER'];
     });
   }
 
