@@ -34,9 +34,11 @@ export class QuestionListComponent implements OnDestroy {
 
     async onImageSelected(event: Event, index: number) {
         const input = event.target as HTMLInputElement;
-        (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(null);
         if (input.files && input.files.length > 0) {
             const file = input.files[0];
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validTypes.includes(file.type)) return;
+            (this.questionsArray?.at(index) as FormGroup).get('imageUrl')?.setValue(null);
             if (file.size > MAX_IMG_SIZE) {
                 this.imageUploadError = await this.translate.get('QUIZ_CREATION.QUESTION_LIST.IMAGE_SIZE_ERROR').toPromise();
                 return;

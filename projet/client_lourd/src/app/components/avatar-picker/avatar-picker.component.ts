@@ -44,6 +44,10 @@ export class AvatarPickerComponent {
         const input = event.target as HTMLInputElement;
         const file = input.files?.[0];
         if (file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg','image/webp'];
+            if (!validTypes.includes(file.type)) {
+                return;
+            }
             this.customAvatarFile = file;
             const reader = new FileReader();
             reader.onload = () => {
