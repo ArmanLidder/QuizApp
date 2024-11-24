@@ -35,7 +35,7 @@
                'w-10 h-10 text-lg': size === 'large'
              }"
              class="absolute bottom-0 right-0 bg-yellow-400 text-blue-800 rounded-full border border-white flex items-center justify-center font-bold">
-            {{ (currentUser$ | async)?.level || 0 }}
+            {{ Math.floor(((currentUser$ | async)?.level || 0) / 10) }}
         </div>
 
         <mat-menu #menu="matMenu" class="customBg">

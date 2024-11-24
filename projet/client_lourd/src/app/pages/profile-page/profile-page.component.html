@@ -6,7 +6,7 @@
                 <div class="p-8 text-white text-center relative">
                     <div class="relative inline-block">
                         <div class="absolute -top-2 -left-0.5 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
-                            {{ user.level }}
+                            {{ Math.floor(user.level / 10) }}
                         </div>
                         <img [src]="user.avatar" alt="Avatar de {{ user.username }}"
                              class="w-32 h-32 rounded-full object-cover mb-4 border-2 shadow-lg"/>

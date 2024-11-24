@@ -88,4 +88,6 @@ export class AvatarComponent implements OnInit{
   onImageLoad(): void {
     this.isLoading = false;
   }
+
+  protected readonly Math = Math;
 }
