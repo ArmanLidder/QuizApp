@@ -8,7 +8,7 @@ import {
     query,
     collection,
     getDocs,
-    where, collectionData,
+    where, collectionData, runTransaction, arrayUnion,
 } from '@angular/fire/firestore';
 import {catchError, firstValueFrom, Observable, of, shareReplay, map, BehaviorSubject, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
@@ -131,17 +131,28 @@ export class UsersService {
     }
 
     async addLogEvent(event: 'login' | 'logout'): Promise<void> {
-        const currentUser = await firstValueFrom(this.currentUserProfile$)
+        const uid = this.auth.currentUser?.uid;
+        if (!uid) throw new Error("Auth error.")
+
+        const userRef = doc(this.firestore, 'users', uid);
         const time = await this.serverTimeService.getServerTime();
         const loginEvent: LoginHistory = {
             eventType: event,
             timestamp: time,
         };
-        await this.updateUser({
-            isConnected: event === 'login',
-            loginHistory: [...currentUser?.loginHistory || [], loginEvent], // Append new login event
+
+        await runTransaction(this.firestore, async (transaction) => {
+            const userSnapshot = await transaction.get(userRef);
+            if (!userSnapshot.exists()) throw new Error('User document does not exist');
+            const userData = userSnapshot.data() as User;
+            if (event === 'login' && userData.isConnected) throw new Error(this.translate.instant('LOGIN_PAGE.USER_ALREADY_CONNECTED'));
+            transaction.update(userRef, {
+                isConnected: event === 'login',
+                loginHistory: arrayUnion(loginEvent),
+            });
         });
     }
+
 
     async getUserByEmail(email: string): Promise<User | undefined> {
         const usersRef = collection(this.firestore, 'users');

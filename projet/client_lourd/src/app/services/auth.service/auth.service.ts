@@ -6,6 +6,7 @@ import {
     createUserWithEmailAndPassword,
 } from '@angular/fire/auth';
 
+import {setPersistence, browserSessionPersistence} from "firebase/auth";
 import {UsersService} from "@app/services/users.service/users.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
 import {first, switchMap} from "rxjs";
@@ -38,15 +39,15 @@ export class AuthService {
     }
 
     async register(username: string, email: string, password: string, selectedAvatar: string | File): Promise<void> {
-        await randomDelay(0,3000);
+        await randomDelay(500,2500);
         const isTakenOne = await this.usersService.isUsernameTaken(username);
-        await randomDelay(0,3000);
+        await randomDelay(500,2500);
         const isTakenTwo = await this.usersService.isUsernameTaken(username);
         if (isTakenOne || isTakenTwo) throw new Error(this.translate.instant('REGISTER_PAGE.THE_NAME_IS_ALREADY_USED',{name:username}));
         try {
             //This delay was added because firebase has a bug where two uid's with same
             //email can be created if both users create an account at the exact same time
-            await randomDelay(0,3000);
+            await randomDelay(500,2500);
             const {user} = await createUserWithEmailAndPassword(this.auth, email, password);
             await this.usersService.addUser({uid: user.uid, email, username});
             await this.avatarService.handleAvatarModification(selectedAvatar);
@@ -68,20 +69,25 @@ export class AuthService {
         if (existingUser?.isConnected) {
             throw new Error(this.translate.instant('LOGIN_PAGE.USER_ALREADY_CONNECTED'));
         }
-
         try {
-            await signInWithEmailAndPassword(this.auth, email, password);
+            setPersistence(this.auth, browserSessionPersistence).then(()=>{
+                return signInWithEmailAndPassword(this.auth, email, password);
+            })
             await this.user$.pipe(
                 map(user => !!user),
                 first(isReady => isReady)  // Wait for first truthy value
             ).toPromise();
-
-            //we can safely add the log event
-            await this.usersService.addLogEvent('login');
         } catch (error: any) {
             console.error('Login error:', error);
             await this.auth.signOut();
             throw new Error(this.mapFirebaseAuthError(error.code));
+        }
+        try {
+            await this.usersService.addLogEvent('login');
+        } catch (error:any) {
+            console.error('Login error:', error);
+            await this.auth.signOut();
+            throw new Error(error.message);
         }
     }
 
