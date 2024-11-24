@@ -211,6 +211,21 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                       ? (bool value) => _toggleRoomLock()
                       : null,
                 ),
+              if (widget.isHost && this.waitingRoomService.isRoomLocked)
+                if (this.validationBeforeEntry())
+                  Center(
+                    child: Text(
+                        this.waitingRoomService.gameType == 'classic'
+                            ? waitRoomText['CLASSIC_VALIDATION']
+                            : waitRoomText['TEAM_VALIDATION'],
+                        style: TextStyle(color: Colors.red)),
+                  ),
+              if (!widget.isHost &&
+                  this.waitingRoomService.isRoomLocked &&
+                  this.waitingRoomService.gameType != 'classic')
+                Center(
+                    child: Text(waitRoomText['TEAM_NOTICE_LOCK'],
+                        style: TextStyle(color: Colors.red))),
               SizedBox(height: 20.0),
               AnimatedBuilder(
                 animation: waitingRoomService,

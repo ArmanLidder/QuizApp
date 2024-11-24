@@ -338,7 +338,11 @@ const englishTextValues = {
     "NO_TEAMS": "No teams present",
     "START_BUTTON": "Start",
     "CREATE_TEAM": "Create Team",
-    "QUIZ_STARTING_IN": "Quiz starts in:"
+    "QUIZ_STARTING_IN": "Quiz starts in:",
+    "TEAM_VALIDATION": "Must have two players per team and at least 2 teams.",
+    "CLASSIC_VALIDATION": "Must have at least 1 player.",
+    "TEAM_NOTICE_LOCK":
+        "The host has locked the room. You can't change your team."
   },
   "POP_UP_MESSAGE": {
     "LEAVE_MESSAGE": "Are you sure you want to leave?",
