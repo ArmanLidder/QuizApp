@@ -37,7 +37,9 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
       child: Column(
           children: <Widget>[
             getTitleWidget(),
+            Divider(),
             getPlayerListWidget(),
+            Divider(),
             getCancelButton()
           ]
       ),
@@ -46,35 +48,52 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
 
   Widget getTitleWidget() {
     return Center(
-      child: Text(titleText),
+      child: Text(
+      titleText,
+      style: TextStyle(
+        color: Colors.blue.shade700,
+        fontWeight: FontWeight.bold,
+      ),
+      ),
     );
   }
 
   Widget getPlayerListWidget() {
     return Obx(() {
       return Expanded(
+      child: Center(
         child: ListView.builder(
-            itemCount: observationService.playerList.length,
-            itemBuilder: (BuildContext context, int index) => getPlayerTile(observationService.playerList[index])
+          itemCount: observationService.playerList.length,
+          itemBuilder: (BuildContext context, int index) => getPlayerTile(observationService.playerList[index])
         ),
+      ),
       );
     });
   }
 
   Widget getPlayerTile(String uid) {
     Widget observeButton = TextButton(
-        onPressed: () { 
-            this.observationService.observedUid = uid;
-            observationService.observeOtherPlayer(uid); 
-          },
-        child: Text(observeButtonText)
+      onPressed: () { 
+        this.observationService.observedUid = uid;
+        observationService.observeOtherPlayer(uid); 
+        Navigator.of(context).pop();
+        },
+      child: Text(
+        observeButtonText,
+        style: TextStyle(color: Colors.white),
+      ),
+      style: TextButton.styleFrom(
+        backgroundColor: Colors.blue.shade700,
+      ),
     );
 
     return Container(
       child: Center(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SmartAvatar(userId: uid, interactible: false, hasName: true,),
+            SizedBox(width: 10),
             observeButton
           ],
         ),
@@ -84,7 +103,16 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
 
   Widget getCancelButton() {
     return Center(
-      child: TextButton(onPressed: (){}, child: Text(cancelButtonText)),
+      child: TextButton(
+      onPressed: (){}, 
+      child: Text(
+        cancelButtonText,
+        style: TextStyle(color: Colors.red),
+      ),
+      style: TextButton.styleFrom(
+        side: BorderSide(color: Colors.red),
+      ),
+      ),
     );
   }
 
