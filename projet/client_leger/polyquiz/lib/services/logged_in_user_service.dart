@@ -1,15 +1,23 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/animation.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/LanguageService.dart';
-import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/notification_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'user_service.dart';
+
+
+const Map <Theme,String> themeEnumToName={
+  Theme.dark: "dark",
+ Theme.light: "light",
+  Theme.disco: 'disco',
+  Theme.blueGrey: "blueGrey",
+};
+
 
 class LoggedInUserService extends GetxController {
   static LoggedInUserService get instance => Get.find();
@@ -42,7 +50,7 @@ class LoggedInUserService extends GetxController {
     this.user = user;
     this.observableCurrency.value = (this.user?.currency ?? 0).round();
     this.observablePrestige.value = (this.user?.prestige ?? 0).round();
-    this.observableLevel.value = (this.user?.level ?? 0).round();
+    this.observableLevel.value = (this.user?.level ?? 0).round() ~/ 10;
     this.observableUsername.value = this.user!.username;
     this.observableAvatar.value = (this.user?.avatar ?? "");
     this.observableAchievement.value = (this.user?.achievements ?? []);
@@ -67,22 +75,16 @@ class LoggedInUserService extends GetxController {
 
   Future<void> login(String email) async {
 
-    // Fetch and set the user by email
     await setUserByEmail(email);
-    // Get the user object (assuming `userService.user` holds the current user)
     User? currentUser = this.user;
-
-    // Check if the user was successfully set
     if (currentUser != null) {
-      // Update the `isOnline` status in Firebase
-      if (this.user!.isConnected){ //TODO: disable this false flag
+      if (this.user!.isConnected){
         throw("USER ALREADY CONNECTED");
       }
-      await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection('users')
           .doc(currentUser.uid)
           .update({'isConnected': true});
-
       NotificationService.instance.updateChannelMaps();
       DocumentReference userDocRef = _firestore.collection('users').doc(currentUser.uid);
       DocumentSnapshot userSnapshot = await userDocRef.get();
@@ -92,10 +94,13 @@ class LoggedInUserService extends GetxController {
         'eventType': 'login',
         'timestamp': timestamp,
       });
-      await userDocRef.update({'loginHistory': loginHistory});
-      await reloadUser();
-      await LanguageService.instance.loadLanguage();
-
+      userDocRef.update({'loginHistory': loginHistory});
+      reloadUser();
+      LanguageService.instance.loadLanguage();
+      Theme? l = this.user?.settings.theme!;
+      String themeName = themeEnumToName[l]!;
+      print("choucroute");
+      ThemeService.instance.setTheme(themeName);
     } else {
       print('Login failed: user not found with email $email');
     }
@@ -103,14 +108,11 @@ class LoggedInUserService extends GetxController {
 
   logout() async {
     String? userId = user?.uid;  // Adjust this to match your user object structure
-
     DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    await _firestore
+    _firestore
         .collection('users')
         .doc(userId)
         .update({'isConnected': false});
-
-
 
     if (userSnapshot.exists) {
       List<dynamic> loginHistory = userSnapshot.get('loginHistory') ?? [];
@@ -119,7 +121,7 @@ class LoggedInUserService extends GetxController {
         'eventType': 'logout',
         'timestamp': timestamp,
       });
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      FirebaseFirestore.instance.collection('users').doc(userId).update({
         'loginHistory': loginHistory,
       });
       print('Logout event added successfully');
@@ -127,8 +129,9 @@ class LoggedInUserService extends GetxController {
       print('User not found.');
     }
   }
+
   Future<void> reloadUser() async {
-    String? uid = await this.getUid();
+    String? uid = this.getUid();
     User? user = await UserService.instance.getUserById(uid ?? '');
     this.setUser(user);
   }

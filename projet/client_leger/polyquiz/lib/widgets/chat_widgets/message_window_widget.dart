@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
 import 'package:polyquiz/services/channelService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
@@ -12,7 +13,8 @@ import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 class MessageWindowWidget extends StatefulWidget {
   final void Function() returnCallback;
   final String channelId;
-  const MessageWindowWidget({required this.channelId, required this.returnCallback, super.key});
+  const MessageWindowWidget(
+      {required this.channelId, required this.returnCallback, super.key});
 
   @override
   State<MessageWindowWidget> createState() => _MessageWindowWidgetState();
@@ -24,6 +26,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
   final TextEditingController _messageController = TextEditingController();
   String defaultName = 'null';
   List<Message> defaultMessages = [];
+  ThemeService _themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get chatText => text['CHAT_COMPONENT'];
 
@@ -32,22 +35,31 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
     return Obx(() {
       List<Message> messages = getChannel()?.messages ?? defaultMessages;
       String channelName = getChannel()?.name ?? defaultName;
-      return Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(child: Align(alignment: Alignment.centerLeft, child: IconButton(onPressed: (){ widget.returnCallback(); }, icon: Icon(Icons.arrow_back)))),
-              Expanded(child: Align(alignment: Alignment.center, child: Text(channelName)))
-            ]
-          ),
-          Expanded(child: MessageListWidget(
-            messages: messages.isEmpty ? [] : messages,
-            scrollController: _scrollController,
-          )),
-          if (getChannel() == null) getDeletedChannelText(),
-          buildInputBox(),
-        ]
-      );
+      return Column(children: <Widget>[
+        Row(children: <Widget>[
+          Expanded(
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                      onPressed: () {
+                        widget.returnCallback();
+                      },
+                      icon: Icon(Icons.arrow_back),
+                      color: _themeService.secondaryBackground.value))),
+          Expanded(
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Text(channelName,
+                      style: TextStyle(color: _themeService.mainAccent.value))))
+        ]),
+        Expanded(
+            child: MessageListWidget(
+          messages: messages.isEmpty ? [] : messages,
+          scrollController: _scrollController,
+        )),
+        if (getChannel() == null) getDeletedChannelText(),
+        buildInputBox(),
+      ]);
     });
   }
 
@@ -58,6 +70,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
       defaultName = channel.name;
       return channel;
     } on StateError catch (e) {
+      print('Error in getChannel(): ${e}');
       return null;
     }
   }
@@ -77,13 +90,14 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
       children: <Widget>[
         Expanded(
           child: TextField(
+            style: TextStyle(color: _themeService.mainAccent.value),
             controller: _messageController,
             decoration: InputDecoration(
               hintText: chatText['ENTER_MESSAGE'],
+              hintStyle: TextStyle(color: _themeService.mainAccent.value),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey, width: 1)
-              ),
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey, width: 1)),
             ),
             enabled: isChannelAvailable,
             onSubmitted: isChannelAvailable ? (value) => sendMessage() : null,
@@ -91,8 +105,10 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
         ),
         IconButton(
             onPressed: isChannelAvailable ? sendMessage : null,
-            icon: Icon(Icons.send, color: isChannelAvailable ? Colors.blue : Colors.grey)
-        )
+            icon: Icon(Icons.send,
+                color: isChannelAvailable
+                    ? _themeService.secondaryBackground.value
+                    : Colors.grey))
       ],
     );
   }
@@ -109,18 +125,16 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
   }
 
   void scrollToBottom() {
-    _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(microseconds: 300),
-        curve: Curves.easeInOut
-    );
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: Duration(microseconds: 300), curve: Curves.easeInOut);
   }
 }
 
 class MessageListWidget extends StatelessWidget {
   final List<Message> messages;
   final ScrollController scrollController;
-  const MessageListWidget({required this.messages, required this.scrollController, super.key});
+  const MessageListWidget(
+      {required this.messages, required this.scrollController, super.key});
   Map get text => TranslationService.instance.text;
   Map get chatText => text['CHAT_COMPONENT'];
 
@@ -130,14 +144,16 @@ class MessageListWidget extends StatelessWidget {
         controller: scrollController,
         itemCount: messages.length,
         itemBuilder: (context, index) {
-          return MessageTile(message: messages[index],);
-        }
-    );
+          return MessageTile(
+            message: messages[index],
+          );
+        });
   }
 }
 
 class MessageTile extends StatelessWidget {
-  final imageUrl = "https://i.pinimg.com/originals/87/a2/d6/87a2d6017b9a7cc38274cef92a45cee3.jpg"; // TODO: Remove and add images
+  final imageUrl =
+      "https://i.pinimg.com/originals/87/a2/d6/87a2d6017b9a7cc38274cef92a45cee3.jpg"; // TODO: Remove and add images
   final username = "Elsa";
   final userService = UserService.instance;
   final loggedInService = LoggedInUserService.instance;
@@ -147,6 +163,7 @@ class MessageTile extends StatelessWidget {
   String get userId => message.userUid;
   Timestamp get timestamp => message.createdAt;
   MessageTile({required this.message, super.key});
+  final ThemeService _themeService = ThemeService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -171,23 +188,28 @@ class MessageTile extends StatelessWidget {
     return DateFormat("MM/dd/yy, hh:mm a").format(dateTime);
   }
 
-  Widget getTimestampText() {
+  Widget getTimestampText(bool userMessage) {
     return Text(
       formatTimestamp(),
       style: TextStyle(
-        fontSize: 10,
-        color: Colors.grey[900]
-      ),
+          fontSize: 10,
+          color: userMessage
+              ? _themeService.secondaryAccent.value
+              : _themeService.mainAccent.value),
     );
   }
 
-  Widget getTextContent() {
+  Widget getTextContent(bool userMessage) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(content),
+        Text(content,
+            style: TextStyle(
+                color: userMessage
+                    ? _themeService.secondaryAccent.value
+                    : _themeService.mainAccent.value)),
         SizedBox(height: 5),
-        getTimestampText(),
+        getTimestampText(userMessage),
       ],
     );
   }
@@ -200,11 +222,10 @@ class MessageTile extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.all(10.0),
             decoration: BoxDecoration(
-              color: Colors.lightBlue,
+              color: _themeService.secondaryBackground.value,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: getTextContent()
-        ),
+            child: getTextContent(true)),
       ),
       trailing: buildUserInfo(),
     );
@@ -217,18 +238,22 @@ class MessageTile extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.all(10.0),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: _themeService.container.value,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: getTextContent()
-        ),
+            child: getTextContent(false)),
       ),
       leading: buildUserInfo(),
     );
   }
 
   Widget buildUserInfo() {
-    return SmartAvatar(userId: userId, size: 42, hasName: true, interactible: true,);
+    return SmartAvatar(
+      userId: userId,
+      size: 42,
+      hasName: true,
+      interactible: true,
+    );
     //
     // Column(
     //   children: <Widget>[
@@ -258,6 +283,7 @@ class MessageTile extends StatelessWidget {
   }
 
   bool isUserSender() {
-    return userId == loggedInService.user?.uid; // TODO: Fix this so it isn't hardcoded
+    return userId ==
+        loggedInService.user?.uid; // TODO: Fix this so it isn't hardcoded
   }
 }

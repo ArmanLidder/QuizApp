@@ -110,7 +110,8 @@ const frenchTextValues = {
     "REMOVE_FRIEND": "Supprimer un ami",
     "ACCEPT_REQUEST": "Accepter",
     "DECLINE_REQUEST": "Refuser",
-    "ALREADY_SENT_ERROR": "La requête d'ami a déja été envoyée"
+    "ALREADY_SENT_ERROR": "La requête d'ami a déja été envoyée",
+    "PENDING_TITLE":"en attente de la liste d'amis"
   },
   "AVATAR_MODIFICATION": {
     "TITLE": "Modification d'avatar",

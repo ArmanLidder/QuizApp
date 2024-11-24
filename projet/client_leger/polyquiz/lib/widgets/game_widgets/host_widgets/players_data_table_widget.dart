@@ -225,7 +225,8 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                           child: SmartAvatar(
                             userId: player.username,
                             hasName: true,
-                            interactible: false,
+                            interactible: true,
+                            applyTheme: false,
                           ),
                         )),
                         DataCell(Center(

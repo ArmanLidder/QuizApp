@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:polyquiz/constants/text/EnglishTextValue.dart';
 import 'package:polyquiz/constants/text/FrenchTextValue.dart';
 import 'package:polyquiz/models/user.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 
 class TranslationService extends GetxController {
   static TranslationService get instance => Get.find();
@@ -36,12 +37,14 @@ class TranslationService extends GetxController {
   }
 
   void set currentLanguageAbbr(String abbr) {
+    LanguageService.instance.updateLanguageInFirebaseAbr(abbr);
     final value = getEnumFromAbbreviation(abbr);
     _currentLanguage = value;
     languageValue.value = value;
   }
 
   void set currentLanguage(Language language) {
+    LanguageService.instance.updateLanguageInFirebaseAbr(language == Language.fr ? "fr":"en");
     _currentLanguage = language;
     languageValue.value = language;
   }

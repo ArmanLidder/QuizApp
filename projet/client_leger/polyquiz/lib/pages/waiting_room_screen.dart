@@ -5,6 +5,7 @@ import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
+import 'package:polyquiz/widgets/fancyAppBar.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../services/waiting_room_service.dart';
@@ -166,10 +167,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(waitRoomText['TITLE']),
-        automaticallyImplyLeading: false,
-      ),
+      appBar: FancyAppBar(context: context),
       backgroundColor: themeService.mainBackground.value,
       body: Stack(children: [
         Container(
@@ -177,7 +175,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
           padding: EdgeInsets.all(40.0),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: themeService.mainBackground.value,
+              color: themeService.container.value,
               boxShadow: [
                 BoxShadow(
                   color:
@@ -240,8 +238,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                 children: [
                                   Container(
                                     padding: EdgeInsets.all(5),
-                                    decoration:
-                                        BoxDecoration(color: Colors.white),
+                                    decoration: BoxDecoration(
+                                        color:
+                                            themeService.mainBackground.value),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -251,6 +250,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                               waitingRoomService.players[index],
                                           size: 60,
                                           hasName: true,
+                                          interactible: true,
                                         ),
                                         if (widget.isHost)
                                           IconButton(
@@ -330,8 +330,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                   SizedBox(height: 10),
                                   Container(
                                     padding: EdgeInsets.all(5),
-                                    decoration:
-                                        BoxDecoration(color: Colors.white),
+                                    decoration: BoxDecoration(
+                                        color:
+                                            themeService.mainBackground.value),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -351,6 +352,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                                     .userIds[i],
                                                 size: 60,
                                                 hasName: true,
+                                                interactible: true,
                                               ),
                                               if (widget.isHost)
                                                 IconButton(

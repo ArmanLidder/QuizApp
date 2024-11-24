@@ -47,6 +47,7 @@ class _ChatWidgetState extends State<ChatWidget> {
       Expanded(
           flex: 9,
           child: Container(
+            color: themeService.mainBackground.value,
             padding: EdgeInsets.all(10.0),
             child: buildCurrentPage(),
           ))
