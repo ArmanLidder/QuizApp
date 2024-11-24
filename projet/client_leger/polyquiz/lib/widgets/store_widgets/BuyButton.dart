@@ -32,7 +32,7 @@ class _BuyButtonState extends State<BuyButton> {
   @override
   void initState() {
     super.initState();
-    _updateButtonStatus();
+    _setupButtonState();
   }
 
   _setupButtonState () async {
@@ -53,7 +53,6 @@ class _BuyButtonState extends State<BuyButton> {
 
   @override
   Widget build(BuildContext context) {
-    _setupButtonState(); // Update status on each change
     return Obx(() {
       storeService.purchaseTrigger;
       Color buttonColor;
@@ -71,7 +70,7 @@ class _BuyButtonState extends State<BuyButton> {
           setState(() {
             alreadyOwns = true;
           });
-          await widget.onBuy(); // Call the purchase function
+          widget.onBuy(); // Call the purchase function
           //_updateButtonStatus();
         };
       } else {
@@ -117,7 +116,7 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
   @override
   void initState() {
     super.initState();
-    _updateButtonStatus();
+    _setupUpdateButton();
   }
 
 
@@ -146,7 +145,6 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
 
   @override
   Widget build(BuildContext context) {
-    _setupUpdateButton(); // Update status on each change
     return Obx(() {
       storeService.purchaseTrigger;
       Color buttonColor;
@@ -195,14 +193,12 @@ class RewardThemeButton extends StatefulWidget {
   final Future<void> Function() onBuy; // Purchase callback
   final String itemId;
   final num achievement; // Achievement to check
-  final Future<void> Function()? onUnlock; // Callback for unlocking
 
   RewardThemeButton({
     required this.cost,
     required this.onBuy,
     required this.itemId,
     required this.achievement,
-    this.onUnlock,
   });
 
   @override
@@ -223,7 +219,7 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   @override
   void initState() {
     super.initState();
-    _updateButtonStatus();
+    _setupButtonStatus();
   }
   Future<void> _setupButtonStatus() async {
     bool ownsItem = await storeService.isOwned(
@@ -249,7 +245,6 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
 
   @override
   Widget build(BuildContext context) {
-    _setupButtonStatus(); // Update status on each change
     return Obx(() {
       storeService.purchaseTrigger;
       Color buttonColor;
@@ -265,6 +260,9 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
           buttonColor = Colors.green;
           buttonText = '${shopText['BUY']} (${widget.cost}) \$';
           buttonAction = () async {
+            setState(() {
+              alreadyOwns = true;
+            });
             await widget.onBuy(); // Call the purchase function
             _updateButtonStatus();
           };
@@ -331,7 +329,7 @@ class _RewardCashButtonState extends State<RewardCashButton> {
   @override
   void initState() {
     super.initState();
-    _updateButtonStatus();
+    _setupButtonStatus();
   }
 
   Future<void> _setupButtonStatus() async {
@@ -359,7 +357,6 @@ class _RewardCashButtonState extends State<RewardCashButton> {
 
   @override
   Widget build(BuildContext context) {
-    _setupButtonStatus(); // Update status on each change
     return Obx(() {
       storeService.purchaseTrigger;
       Color buttonColor;

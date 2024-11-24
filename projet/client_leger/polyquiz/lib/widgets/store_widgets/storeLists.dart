@@ -107,7 +107,7 @@ class RewardImageStoreList extends StatelessWidget {
         cost: item["cost"],
         source: item["source"], // New field for image source
         minLevel: item["minLevel"],
-        onBuy: () async => {storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy(userId, item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
@@ -125,7 +125,6 @@ class RewardThemeStoreList extends StatelessWidget {
   final List<Map<String, dynamic>> rewardItems;
   final String userId;
   final StoreService storeService = Get.find();
-  ThemeService _themeService = ThemeService.instance;
 
   RewardThemeStoreList({required this.rewardItems, required this.userId});
 
