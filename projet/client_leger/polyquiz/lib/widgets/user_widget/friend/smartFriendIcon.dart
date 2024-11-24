@@ -41,7 +41,7 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
     if (!widget.canRemoveFriend){
       return;
     }
-=
+
     if (_status == 'friends') {
       await widget.friendService.deleteFriendship(
         currentUserId!,
