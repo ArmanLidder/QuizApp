@@ -11,6 +11,12 @@
   gap: 0.5rem;
 }
 
+.no-overflow {
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
 .correction-qrl-container h3 {
   font-size: 1rem;
   font-weight: 600;
