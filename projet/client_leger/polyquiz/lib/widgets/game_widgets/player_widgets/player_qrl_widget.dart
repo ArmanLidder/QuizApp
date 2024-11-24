@@ -71,6 +71,7 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
         child: SizedBox(
           height: 150,
           child: TextField(
+            enabled: _gameInterfaceManagementService.gameService.realGameService.isValidateActive,
             style: TextStyle(color: _themeService.mainAccent.value),
             decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(

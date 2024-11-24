@@ -352,8 +352,8 @@ class _MyWidgetState extends State<GamePage> {
     _gameService.realGameService.isValidateActive = false;
     if (_gameInterfaceManagementService.gameService.question?.type ==
         QuestionType.QRL) {
-      _gameInterfaceManagementService
-          .gameService.realGameService.isHostEvaluating = true;
+      // _gameInterfaceManagementService
+      //     .gameService.realGameService.isHostEvaluating = true;
     }
     _gameInterfaceManagementService.gameService.sendAnswer();
   }

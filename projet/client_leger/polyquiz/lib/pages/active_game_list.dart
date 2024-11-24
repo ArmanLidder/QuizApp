@@ -201,7 +201,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   Future<bool> _validateFriendship(GameListItem game) async {
     final roomValidationService =
         Provider.of<RoomValidationService>(context, listen: false);
-    final currentUserId = roomValidationService.userData!.username;
+    final currentUserId = roomValidationService.userData!.uid;
     final hostProfile = await this.userService.getUserById(game.hostUserId);
     return hostProfile?.friends.contains(currentUserId) ?? false;
   }
