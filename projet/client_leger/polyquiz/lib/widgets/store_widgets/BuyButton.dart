@@ -40,7 +40,7 @@ class _BuyButtonState extends State<BuyButton> {
     bool ownsItem = await storeService.isOwned(
         loggedInUserService.getUid()!, widget.itemId);
     setState(() {
-      //alreadyOwns = ownsItem;
+      alreadyOwns = ownsItem;
       canAfford = availableFunds >= widget.cost;
     });
     }
@@ -128,7 +128,7 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
     bool hasRequiredLevel =
         (loggedInUserService.observableLevel.value ?? 0) >= widget.minLevel;
     setState(() {
-      //alreadyOwns = ownsItem;
+      alreadyOwns = ownsItem;
       canAfford = availableFunds >= widget.cost;
       hasLevelNeeded = hasRequiredLevel;
     });
@@ -225,8 +225,7 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
     super.initState();
     _updateButtonStatus();
   }
-
-  Future<void> _updateButtonStatus() async {
+  Future<void> _setupButtonStatus() async {
     bool ownsItem = await storeService.isOwned(
         loggedInUserService.getUid()!, widget.itemId);
     bool achievementUnlocked =
@@ -239,9 +238,18 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
     });
   }
 
+  Future<void> _updateButtonStatus() async {
+    bool achievementUnlocked =
+        loggedInUserService.observableAchievement.value.contains(widget.achievement) ?? false;
+    setState(() {
+      canAfford = loggedInUserService.observableCurrency.value >= widget.cost;
+      hasAchievement = achievementUnlocked;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    _updateButtonStatus(); // Update status on each change
+    _setupButtonStatus(); // Update status on each change
     return Obx(() {
       storeService.purchaseTrigger;
       Color buttonColor;
@@ -336,7 +344,6 @@ class _RewardCashButtonState extends State<RewardCashButton> {
 
     setState(() {
       alreadyClaimed = ownsItem;
-      alreadyClaimed = ownsItem;
       hasAchievement = achievementUnlocked;
     });
   }
@@ -345,14 +352,12 @@ class _RewardCashButtonState extends State<RewardCashButton> {
     final user = loggedInUserService.getUser();
     bool achievementUnlocked =
         user?.achievements.contains(widget.achievement) ?? false;
-
     setState(() {
       hasAchievement = achievementUnlocked;
     });
   }
 
   @override
-
   Widget build(BuildContext context) {
     _setupButtonStatus(); // Update status on each change
     return Obx(() {
@@ -373,7 +378,7 @@ class _RewardCashButtonState extends State<RewardCashButton> {
           setState(() {
             alreadyClaimed = true;
           });
-          await widget.onClaim(); // Call the claim function
+          widget.onClaim(); // Call the claim function
           _updateButtonStatus();
         };
       } else {
