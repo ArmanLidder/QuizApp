@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 import '../../../services/friendService.dart';
 
@@ -20,6 +21,8 @@ class SmartFriendIcon extends StatefulWidget {
 class _SmartFriendIconState extends State<SmartFriendIcon> {
   String _status = 'loading';
   String? currentUserId = LoggedInUserService.instance.getUid();
+  final ThemeService _themeService = ThemeService.instance;
+
   @override
   void initState() {
     super.initState();
@@ -71,13 +74,13 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
           iconColor = Colors.red;
         } else {
           iconData = Icons.group;
-          iconColor = Colors.black;
+          iconColor = _themeService.mainAccent.value;
         }
         break;
 
       case 'sentPending':
         iconData = Icons.hourglass_empty;
-        iconColor = Colors.black;
+        iconColor = _themeService.mainAccent.value;
         break;
       case 'receivedPending':
         iconData = Icons.person_add;
@@ -85,7 +88,7 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
         break;
       case 'notFriends':
         iconData = Icons.person_add;
-        iconColor = Colors.black;
+        iconColor = _themeService.mainAccent.value;
         break;
       default:
         iconData = Icons.hourglass_empty;

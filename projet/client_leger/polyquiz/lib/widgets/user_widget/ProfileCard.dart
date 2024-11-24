@@ -14,8 +14,6 @@ import '../../services/logged_in_user_service.dart';
 import '../../services/theme_service.dart';
 import 'changeNameWidget.dart';
 
-
-
 class ProfileCard extends StatelessWidget {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ImageStorageService imageStorageService = ImageStorageService();
@@ -23,13 +21,15 @@ class ProfileCard extends StatelessWidget {
   final UserService userService = UserService.instance;
   final ValidationService validationService = ValidationService.instance;
 
-  final UserPageCustomisationService userPageCustomisationService = UserPageCustomisationService.instance;
+  final UserPageCustomisationService userPageCustomisationService =
+      UserPageCustomisationService.instance;
   final LanguageService ls = LanguageService.instance;
   Map get profileText => TranslationService.instance.text['PROFILE'];
-  
+
   @override
   Widget build(BuildContext context) {
-    return Obx(() {  // Use Obx to listen to Rx variables
+    return Obx(() {
+      // Use Obx to listen to Rx variables
       String imageUrl = loggedInUserService.observableAvatar.value;
       final String? username = loggedInUserService.observableUsername.value;
       final num? prestige = loggedInUserService.observablePrestige.value;
@@ -38,10 +38,10 @@ class ProfileCard extends StatelessWidget {
         await loggedInUserService.uploadCustomProfilePicture();
       }
 
-
       Future<void> _showImageSelectionPopup() async {
         String? uid = loggedInUserService.getUid();
-        List<String> imageUrls = await userPageCustomisationService.availableImages(uid!) as List<String>;
+        List<String> imageUrls = await userPageCustomisationService
+            .availableImages(uid!) as List<String>;
 
         showDialog(
           context: context,
@@ -69,7 +69,10 @@ class ProfileCard extends StatelessWidget {
                   topRight: Radius.circular(12.0),
                 ),
                 gradient: LinearGradient(
-                  colors: [Colors.blue, Colors.purple],
+                  colors: [
+                    Color.fromRGBO(38, 99, 235, 1),
+                    Color.fromRGBO(167, 85, 246, 1)
+                  ],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                 ),
@@ -84,7 +87,9 @@ class ProfileCard extends StatelessWidget {
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: themeService.mainBackground.value, width: 2),
+                              border: Border.all(
+                                  color: themeService.mainBackground.value,
+                                  width: 2),
                             ),
                             child: CircleAvatar(
                               radius: 75,
@@ -100,11 +105,16 @@ class ProfileCard extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: Colors.yellow,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: themeService.mainBackground.value, width: 2),
+                                border: Border.all(
+                                    color: themeService.mainBackground.value,
+                                    width: 2),
                               ),
                               child: Center(
                                 child: Text(
-                                  loggedInUserService.getUser()!.level.toString(),
+                                  loggedInUserService
+                                      .getUser()!
+                                      .level
+                                      .toString(),
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -129,7 +139,8 @@ class ProfileCard extends StatelessWidget {
                                 child: Center(
                                   child: Icon(
                                     Icons.edit,
-                                    color: themeService.secondaryBackground.value,
+                                    color:
+                                        themeService.secondaryBackground.value,
                                     size: 20,
                                   ),
                                 ),
@@ -151,7 +162,9 @@ class ProfileCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(width: 8), // Add some spacing between the text and the icon
+                          SizedBox(
+                              width:
+                                  8), // Add some spacing between the text and the icon
                           GestureDetector(
                             onTap: () {
                               showDialog(
@@ -162,7 +175,8 @@ class ProfileCard extends StatelessWidget {
                                   );
                                 },
                               );
-                            },                            child: Container(
+                            },
+                            child: Container(
                               width: 30,
                               height: 30,
                               decoration: BoxDecoration(
@@ -198,14 +212,20 @@ class ProfileCard extends StatelessWidget {
                         children: [
                           PrestigeIndicator(prestige: prestige),
                           Chip(
+                            color: WidgetStatePropertyAll(
+                                const Color.fromRGBO(132, 124, 243, 1)),
                             label: Text(
-                              profileText['CURRENCY'] + ": "+  argent.toString(),
-                              style: TextStyle(color: themeService.mainAccent.value),
+                              profileText['CURRENCY'] +
+                                  ": " +
+                                  argent.toString(),
+                              style: TextStyle(color: Colors.white),
                             ),
-                            backgroundColor: themeService.mainBackground.value.withOpacity(0.5),
+                            backgroundColor: themeService.mainBackground.value
+                                .withOpacity(0.5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
-                              side: BorderSide(color: themeService.mainBackground.value),
+                              side: BorderSide(
+                                  color: themeService.mainBackground.value),
                             ),
                           ),
                         ],
@@ -220,5 +240,4 @@ class ProfileCard extends StatelessWidget {
       );
     });
   }
-
 }
