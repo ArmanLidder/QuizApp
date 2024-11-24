@@ -10,7 +10,7 @@ export class OpenaiService {
 
     init() {
         this.openai = new OpenAI({
-            apiKey: "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",
+            apiKey: "YOUR_KEY",
             dangerouslyAllowBrowser: true
         });
     }

@@ -384,9 +384,9 @@ export class HostInterfaceManagementService {
                     this.openIA.
                     correctAnswer(value.answers, this.gameService.question?.text ?? "", this.translate.currentLang).
                     then((response) => {
-                        const res = response?.choices[0].message?.content ?? "No Answer";
+                        const res = response?.choices[0].message?.content ?? "OpenAI down";
                         const score = this.extractScoreFromIAQRL(res);
-                        this.evaluationQRLService.correctedQrlByOpenAi.set(key, [score, response?.choices[0].message?.content ?? "No Answer"])
+                        this.evaluationQRLService.correctedQrlByOpenAi.set(key, [score, response?.choices[0].message?.content ?? "OpenAI down"])
                         this.appRef.tick();
                     });
                 }
