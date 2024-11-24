@@ -60,6 +60,12 @@ class _MyWidgetState extends State<GamePage> {
       _socketService.clearAllListeners();
       _cleanupSocketListeners();
     }
+    if (this._gameService.isObserverMode) {
+      final game = ObservationService.instance.gameConfigs;
+      this._gameService.init(game!.room.toString(), true);
+      this._gameService.realGameService.username = 'host';
+      ObservationService.instance.observeGame(game, context);
+    }
     if (_socketService.isSocketAlive()) {
       if (!isHost) {
         print('I am Here');

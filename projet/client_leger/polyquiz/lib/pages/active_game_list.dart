@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/constants/socket-event.dart';
+import 'package:polyquiz/main.dart';
 import 'package:polyquiz/pages/game_page.dart';
 import 'package:polyquiz/services/game_service.dart';
+import 'package:polyquiz/services/global_navigation_service.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/active_game_info_widget.dart';
@@ -29,6 +33,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   late Future<void> _initializeFuture;
   Map<String, String> quizNameMap = {};
   WaitingRoomService waitingRoomService = WaitingRoomService();
+  GlobalNavigationService _globalNavigationService = GlobalNavigationService();
   GameService gameService = GameService();
   final UserService userService = UserService();
   bool _isJoining = false;
@@ -532,15 +537,13 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   }
 
   void observeGame(GameListItem game, BuildContext context) {
-    this.gameService.init(game.room.toString(), true);
+    this.gameService.isObserverMode = true;
+    // this.gameService.init(game.room.toString(), true);
     this.gameService.realGameService.username = 'host';
-    ObservationService.instance.observeGame(game, context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => GamePage()
-      )
-    );
+    // ObservationService.instance.observeGame(game, context);
+    ObservationService.instance.gameConfigs = game;
+    this._globalNavigationService.navigateTo('/game');
+    this._isJoining = false;
     // setTimeout(() => {this.router.navigate([`game/${game.room}`]);}, 500);
   }
 
