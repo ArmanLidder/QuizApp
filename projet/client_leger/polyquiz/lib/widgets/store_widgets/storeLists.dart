@@ -107,7 +107,7 @@ class RewardImageStoreList extends StatelessWidget {
         cost: item["cost"],
         source: item["source"], // New field for image source
         minLevel: item["minLevel"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {storeService.buy(userId, item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
