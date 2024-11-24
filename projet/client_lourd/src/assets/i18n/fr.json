@@ -98,7 +98,8 @@
     "BRONZE": "Bronze",
     "SILVER": "Argent",
     "GOLD": "Or",
-    "PLATINUM": "Platine"
+    "PLATINUM": "Platine",
+    "NO_GAME_HISTORY": "Aucun historique de parties disponible."
   },
   "FRIENDS": {
     "TITLE": "Amis",

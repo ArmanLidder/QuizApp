@@ -98,14 +98,21 @@
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <ul class="!bg-bgPrimary p-4 rounded-lg !text-primary" style="max-height: 200px; overflow-y: auto;">
-                                <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
-                                <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
-                                    {{ game.result === 'win' ? ('PROFILE.WIN' | translate) : ('PROFILE.LOSS' | translate) }} -
-                                </span>
-                                    {{ game.timestamp }},
-                                    {{ 'PROFILE.GAMEMODE' | translate }} :
-                                    {{ game.gameMode === 'classic' ? ('PROFILE.GAMEMODE_CLASSIC' | translate) : ('PROFILE.GAMEMODE_TEAM' | translate) }}
-                                </li>
+                                <ng-container *ngIf="user.gameHistory && user.gameHistory.length > 0; else noGameHistory">
+                                    <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
+                        <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
+                            {{ game.result === 'win' ? ('PROFILE.WIN' | translate) : ('PROFILE.LOSS' | translate) }} -
+                        </span>
+                                        {{ game.timestamp }},
+                                        {{ 'PROFILE.GAMEMODE' | translate }} :
+                                        {{ game.gameMode === 'classic' ? ('PROFILE.GAMEMODE_CLASSIC' | translate) : ('PROFILE.GAMEMODE_TEAM' | translate) }}
+                                    </li>
+                                </ng-container>
+                                <ng-template #noGameHistory>
+                                    <li class="text-primary">
+                                        {{ 'PROFILE.NO_GAME_HISTORY' | translate }}
+                                    </li>
+                                </ng-template>
                             </ul>
                         </mat-expansion-panel>
                     </mat-accordion>
