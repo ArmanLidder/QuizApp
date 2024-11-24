@@ -299,7 +299,7 @@ class _QuizListPageState extends State<QuizListPage> {
                                         fontSize: 20)),
                                 style: TextButton.styleFrom(
                                   backgroundColor: selectedQuiz != null
-                                      ? Color.fromRGBO(53, 121, 246, 1)
+                                      ? themeService.secondaryBackground.value
                                       : Color.fromRGBO(200, 200, 200, 1),
                                 ),
                               ),
