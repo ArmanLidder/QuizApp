@@ -22,7 +22,9 @@ class _ObservationSelectorState extends State<ObservationSelector> {
 
 
   void openSelectorDialog() {
-    toggleMenu();
+    setState(() {
+      isMenuOpen = !isMenuOpen;
+    });
     showDialog(
         context: context,
         builder: (BuildContext context) =>
@@ -44,47 +46,62 @@ class _ObservationSelectorState extends State<ObservationSelector> {
 
   void open(BuildContext context) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-            Dialog(
-              child: Container(
-                width: 600,
-                height: 200,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Icon(Icons.remove_red_eye),
-                          SizedBox(width: 8.0),
-                            FutureBuilder(
-                            future: userService.getUserById(observationService.observedUid),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                              } else {
-                              return Text('Vous observer : ${snapshot.data!.username}');
-                              }
-                            },
-                            ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: SmartAvatar(userId: observationService.observedUid, interactible: false, hasName: true,),
-                    ),
-                    ElevatedButton(
-                      onPressed: openSelectorDialog,
-                      child: Text('Choisir un joueur'),
-                    ),
-                  ],
-                ),
-              ),
-            )
+      context: context,
+      builder: (BuildContext context) =>
+      Dialog(
+        child: Container(
+        width: 250,
+        height: 180,
+        child: Column(
+        children: [
+        Center(
+          child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.remove_red_eye),
+            SizedBox(width: 8.0),
+            FutureBuilder(
+            future: userService.getUserById(observationService.observedUid),
+            builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+            } else {
+            return Text(
+              'Vous observer :',
+              style: TextStyle(fontSize: 18.0),
+            );
+            }
+            },
+            ),
+          ],
+          ),
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.all(8.0),
+          child: SmartAvatar(userId: observationService.observedUid, interactible: false, hasName: true,),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue.shade700,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+            openSelectorDialog();
+          },
+          child: Text(
+            'Choisir un joueur',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        ],
+        ),
+        ),
+      )
     );
   }
 
@@ -98,22 +115,49 @@ class _ObservationSelectorState extends State<ObservationSelector> {
       ),
       child: Column(
         children: [
-          GestureDetector(
-            onTap: toggleMenu,
-            child: Container(
-              color: Colors.grey,
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  // Icon(isMenuOpen
-                  //     ? Icons.expand_more
-                  //     : Icons.chevron_right),
-                  SizedBox(width: 8.0),
-                  Text('Menu Observation'),
-                ],
+            GestureDetector(
+              onTap: toggleMenu,
+              child: Container(
+              width: 400, // Increased width
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              margin: const EdgeInsets.symmetric(horizontal: 0),
+              decoration: BoxDecoration(
+              gradient: LinearGradient(
+              colors: [Colors.blue.shade700, Colors.blue.shade700],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
               ),
-            ),
-          ),
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8.0, // Reduced blur radius
+                offset: const Offset(0, 2),
+              ),
+              ],
+              ),
+              child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              Text(
+                'Menu Observation',
+                style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.none,
+                ),
+              ),
+              const SizedBox(height: 2.0),
+              Divider(
+                thickness: 1.0,
+                color: Colors.blue.shade100,
+              ),
+              ],
+              ),
+              ),
+            )
         ],
       ),
     );
