@@ -208,7 +208,7 @@ export class QuizValidationService {
 
     async validateQuestionChoices(questionIndex: number, choices?: QuizChoice[]): Promise<string[]> {
         const errors: string[] = [];
-        const choiceLabel = await this.translate.get('CHOICE_LABEL').toPromise();
+        const choiceLabel = await this.translate.get('IMPORT_ERRORS.CHOICE_LABEL').toPromise();
 
         if (!choices || choices.length < MIN_NUMBER_OF_CHOICES || choices.length > MAX_NUMBER_OF_CHOICES) {
             errors.push(`Question ${questionIndex + 1} : ${await this.translate.get('IMPORT_ERRORS.INVALID_NUMBER_OF_CHOICES').toPromise()}`);

@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { MatDialogRef } from "@angular/material/dialog";
-import { UsersService } from "@app/services/users.service/users.service";
-import { SnackbarService } from "@app/services/snackbar.service/snack-bar.service";
-import {TranslateService} from "@ngx-translate/core";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { UsersService } from '@app/services/users.service/users.service';
+import { SnackbarService } from '@app/services/snackbar.service/snack-bar.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-username-modification-dialog',
@@ -14,36 +15,40 @@ export class UsernameModificationDialogComponent {
     private usersService = inject(UsersService);
     private snackbar = inject(SnackbarService);
     private translate = inject(TranslateService);
-    newUsername: string = '';
+    isLoading:boolean= false;
+    usernameForm: FormGroup;
+
+    constructor(private fb: FormBuilder) {
+        this.usernameForm = this.fb.group({
+            username: [
+                '',
+                [
+                    Validators.required,
+                    Validators.maxLength(10),
+                    Validators.pattern(/^[a-zA-Z0-9]+$/)
+                ]
+            ]
+        });
+    }
 
     cancel() {
         this.dialogRef.close();
     }
 
     async confirm() {
-        if (!this.newUsername) return;
+        if (this.usernameForm.invalid) return;
 
-        const usernameRegex = /^[a-zA-Z0-9]+$/;
-        if (!usernameRegex.test(this.newUsername)) {
-            this.snackbar.show(await this.translate.get('USERNAME_MODIFICATION.LETTERS_NUMBERS_ONLY').toPromise());
-            this.newUsername = '';
-            return;
-        }
-
-        if (this.newUsername.length>10) {
-            this.snackbar.show(await this.translate.get('USERNAME_MODIFICATION.MAXIMUM_10_CHAR').toPromise());
-            this.newUsername = '';
-            return;
-        }
+        const newUsername = this.usernameForm.value.username;
 
         try {
-            await this.usersService.updateUsername(this.newUsername);
+            this.isLoading = true;
+            await this.usersService.updateUsername(newUsername);
             this.snackbar.show(await this.translate.get('USERNAME_MODIFICATION.SUCCESSFUL_MODIFICATION').toPromise());
-            this.dialogRef.close({ updatedUsername: this.newUsername });
-            return;
-        } catch (error:any) {
+            this.dialogRef.close({ updatedUsername: newUsername });
+        } catch (error: any) {
             this.snackbar.show(error.message);
-            return;
+        } finally {
+            this.isLoading = false;
         }
     }
 }

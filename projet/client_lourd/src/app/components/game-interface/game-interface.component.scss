@@ -21,10 +21,9 @@
 /* Timer circle adjustments */
 .circle {
     border-radius: 50%;
-    width: 150px;
-    height: 150px;
-    color: #FFF;
-    border: 2px solid #000000;
+    width: 200px;
+    height: 200px;
+    border: 2px solid var(--color-primary);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -42,12 +41,12 @@
 }
 
 .circle span:first-child {
-    color: black;
+    color: var(--color-primary);
     font-size: 14px; /* Retained font size */
 }
 
 .circle span:nth-child(2) {
-    color: #000000;
+    color: var(--color-primary);
     font-size: 60px; /* Retained font size */
 }
 
@@ -95,7 +94,7 @@
 
 .points {
     position: relative;
-    border: 2px solid #000000;
+    border: 2px solid var(--color-primary);;
     width: 180px;
     height: 95px;
     display: flex;

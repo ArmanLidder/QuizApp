@@ -101,4 +101,6 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
   usernameModificationDialog() {
     this.dialog.open(UsernameModificationDialogComponent);
   }
+
+    protected readonly Math = Math;
 }

@@ -10,7 +10,7 @@ export class OpenaiService {
 
     init() {
         this.openai = new OpenAI({
-            apiKey: "API_KEY_HERE",
+            apiKey: "YOUR_KEY",
             dangerouslyAllowBrowser: true
         });
     }

@@ -46,7 +46,7 @@ export class Server {
         try {
             this.socketManager.handleSockets();
         } catch (e) {
-            return e
+            console.log(e);
         }
 
         this.server.listen(Server.appPort);

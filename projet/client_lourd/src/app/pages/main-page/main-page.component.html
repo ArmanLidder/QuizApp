@@ -1,7 +1,7 @@
 <app-header></app-header>
-<div class="h-[calc(100vh-120px)] flex items-center justify-center">
+<div class="h-[calc(100vh-120px)] flex items-center justify-center bg-bgPrimary">
     <div class="flex flex-col items-center gap-8">
-        <h1 class="text-2xl font-bold">{{ 'MAINPAGE.WELCOME' | translate }} {{ username }} !</h1>
+        <h1 class="text-2xl font-bold text-primary">{{ 'MAINPAGE.WELCOME' | translate }} {{ username }} !</h1>
         <div class="flex flex-col gap-4 button-container">
             <button class="button" routerLink="/waiting-room-player-page">
                 {{ 'MAINPAGE.JOIN_GAME' | translate }}

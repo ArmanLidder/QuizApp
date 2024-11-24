@@ -113,10 +113,12 @@ export class FriendService {
             const currentUserDoc = await transaction.get(currentUserDocRef);
             const fromUserDoc = await transaction.get(fromUserDocRef);
 
-            if (!currentUserDoc.exists() || !fromUserDoc.exists()) throw new Error('Un ou les deux utilisateurs n\'existent plus.');
+            if (!currentUserDoc.exists() || !fromUserDoc.exists()) return;
 
             const currentFriendRequests = currentUserDoc.data()?.friendRequests || [];
             const currentFriends = currentUserDoc.data()?.friends || [];
+
+            // if (currentFriends.includes(fromUserId)) return;
 
             const friendRequest = currentFriendRequests.find(
                 (req: any) => req.fromUserId === fromUserId
@@ -130,13 +132,18 @@ export class FriendService {
             const fromUserFriends = fromUserDoc.data()?.friends || [];
 
             transaction.update(currentUserDocRef, {
-                friendRequests: updatedFriendRequests,
-                friends: [...currentFriends, fromUserId]
+                friendRequests: updatedFriendRequests
             });
-
-            transaction.update(fromUserDocRef, {
-                friends: [...fromUserFriends, toUserId]
-            });
+            if (!currentFriends.includes(fromUserId)) {
+                transaction.update(currentUserDocRef, {
+                    friends: [...currentFriends, fromUserId]
+                });
+            }
+            if (!fromUserFriends.includes(toUserId)) {
+                transaction.update(fromUserDocRef, {
+                    friends: [...fromUserFriends, toUserId]
+                });
+            }
         });
     }
 

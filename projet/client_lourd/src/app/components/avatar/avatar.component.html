@@ -35,21 +35,26 @@
                'w-10 h-10 text-lg': size === 'large'
              }"
              class="absolute bottom-0 right-0 bg-yellow-400 text-blue-800 rounded-full border border-white flex items-center justify-center font-bold">
-            {{ (currentUser$ | async)?.level || 0 }}
+            {{ Math.floor(((currentUser$ | async)?.level || 0) / 10) }}
         </div>
 
-        <mat-menu #menu="matMenu">
+        <mat-menu #menu="matMenu" class="customBg">
             <button mat-menu-item (click)="goToProfile()">
-                <mat-icon class="text-gray-500" aria-hidden="true">account_circle</mat-icon>
+                <mat-icon>account_circle</mat-icon>
                 <span>{{'AVATAR_CLICK_MENU.PROFIL' | translate}}</span>
             </button>
             <button mat-menu-item (click)="logout()">
-                <mat-icon class="text-red-500" aria-hidden="true">logout</mat-icon>
+                <mat-icon>logout</mat-icon>
                 <span>{{'AVATAR_CLICK_MENU.DISCONNECT' | translate}}</span>
             </button>
         </mat-menu>
     </div>
 
-    <p *ngIf="isChat" class="text-center mt-1 p-0">{{ (currentUser$ | async)?.username }}</p>
-    <p *ngIf="showMoney" class="text-center"><i class="bi bi-cash-coin"></i> {{ (currentUser$ | async)?.currency }}</p>
+    <p *ngIf="isChat" class="text-center mt-1 p-0" [class.text-primary]="!ignoreThemes">
+        {{ (currentUser$ | async)?.username }}
+    </p>
+    <p *ngIf="showMoney" class="text-center" [class.text-primary]="!ignoreThemes">
+        <i class="bi bi-cash-coin"></i> {{ (currentUser$ | async)?.currency }}
+    </p>
+
 </div>

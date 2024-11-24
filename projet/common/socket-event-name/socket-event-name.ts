@@ -30,6 +30,7 @@ export namespace SocketEvent {
     export const NEW_PLAYER = 'newPlayer';
     export const BAN_PLAYER = 'banPlayer';
     export const TOGGLE_ROOM_LOCK = 'toggleRoomRock';
+    export const GET_ROOM_LOCK_UPDATE = 'getRoomLockUpdate';
     export const START = 'start';
     export const CREATE_ROOM = 'createRoom';
     export const CONNECTION = 'connection';

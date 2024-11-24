@@ -1,60 +1,60 @@
 <app-header></app-header>
-<div class="min-h-screen">
+<div class="min-h-screen bg-bgPrimary">
     <div class="max-w-4xl mx-auto pt-8 pb-16 px-4 sm:px-6 lg:px-8">
         <ng-container *ngIf="currentUser$ | async as user">
             <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-lg shadow-md overflow-hidden">
                 <div class="p-8 text-white text-center relative">
                     <div class="relative inline-block">
                         <div class="absolute -top-2 -left-0.5 z-10 bg-yellow-400 text-blue-800 rounded-full w-10 h-10 flex items-center justify-center border-2 border-white font-bold text-lg">
-                            {{ user.level }}
+                            {{ Math.floor(user.level / 10) }}
                         </div>
                         <img [src]="user.avatar" alt="Avatar de {{ user.username }}"
-                             class="w-32 h-32 rounded-full object-cover mb-4 border-2 border-white shadow-lg"/>
-                        <button class="absolute -bottom-0 -right-0 mb-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-10 h-10"
+                             class="w-32 h-32 rounded-full object-cover mb-4 border-2 shadow-lg"/>
+                        <button class="absolute -bottom-0 -right-0 mb-2 bg-bgPrimary hover:bg-opacity-75 text-blue-600 rounded-full w-10 h-10"
                                 (click)="avatarModificationDialog()">
-                            <mat-icon class="text-xl">edit</mat-icon>
+                            <mat-icon class="text-xl text-bgButton">edit</mat-icon>
                         </button>
                     </div>
                     <div class="mt-4">
                         <div class="flex items-center justify-center">
-                            <h1 class="text-3xl font-bold">{{ user.username }}</h1>
-                            <button class="ml-2 bg-white hover:bg-opacity-75 text-blue-600 rounded-full w-6 h-6"
+                            <h1 class="text-3xl font-bold !text-secondary">{{ user.username }}</h1>
+                            <button class="ml-2 bg-bgPrimary hover:bg-opacity-75 text-blue-600 rounded-full w-6 h-6"
                                     (click)="usernameModificationDialog()">
-                                <mat-icon class="text-base">edit</mat-icon>
+                                <mat-icon class="text-base text-bgButton">edit</mat-icon>
                             </button>
                         </div>
-                        <p class="text-lg mt-2 break-words">{{ user.email }}</p>
+                        <p class="text-lg mt-2 break-words !text-secondary">{{ user.email }}</p>
                     </div>
                     <div class="mt-4 flex justify-center items-center space-x-4">
-                        <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center">
+                        <div class="!text-secondary bg-white bg-opacity-20 px-4 py-2 rounded-full flex items-center !text-secondary">
                             <span class="font-semibold mr-2">{{ 'PROFILE.PRESTIGE' | translate }} :</span>
                             <span class="text-2xl mr-1">{{ prestigeIcon }}</span>
                             {{ prestigeLabel }}
                         </div>
-                        <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full">
-                            <span class="font-semibold">{{ 'PROFILE.CURRENCY' | translate }} :</span> {{ user.currency }}
+                        <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full !text-secondary">
+                            <span class="!text-secondary font-semibold">{{ 'PROFILE.CURRENCY' | translate }} :</span> {{ user.currency }}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white shadow-md rounded-b-lg">
-                <div class="p-8 border-b">
+            <div class="bg-white shadow-md rounded-b-lg !bg-bgPrimary">
+                <div class="p-8 border-b !text-primary">
                     <h2 class="text-2xl font-semibold mb-4">{{ 'PROFILE.STATISTICS' | translate }}</h2>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="p-4 rounded-lg">
                             <p class="font-semibold">{{ 'PROFILE.GAMES_PLAYED' | translate }}</p>
                             <p class="text-2xl">{{ user.stats.gamesPlayed || 0 }}</p>
                         </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="p-4 rounded-lg">
                             <p class="font-semibold">{{ 'PROFILE.GAMES_WON' | translate }}</p>
                             <p class="text-2xl">{{ user.stats.gamesWon || 0}}</p>
                         </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="p-4 rounded-lg">
                             <p class="font-semibold">{{ 'PROFILE.AVG_CORRECT_ANSWERS' | translate }}</p>
                             <p class="text-2xl">{{ user.stats.avgCorrectAnswers || 0}}</p>
                         </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="p-4 rounded-lg">
                             <p class="font-semibold">{{ 'PROFILE.AVG_GAME_TIME' | translate }}</p>
                             <p class="text-2xl">{{ user.stats.avgGameTime || 0}} {{ 'PROFILE.SECONDS' | translate }}</p>
                         </div>
@@ -63,7 +63,7 @@
 
                 <app-friends></app-friends>
 
-                <div class="p-8 border-b">
+                <div class="p-8 border-b !text-primary">
                     <h2 class="text-2xl font-semibold mb-4">{{ 'PROFILE.ACHIEVEMENTS' | translate }}</h2>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <div *ngFor="let achievement of allAchievements; let i = index"
@@ -73,42 +73,50 @@
                         </div>
                     </div>
                 </div>
-
-                <mat-accordion class="mt-8 space-y-4">
-                    <mat-expansion-panel>
-                        <mat-expansion-panel-header class="p-4 ">
-                            <mat-panel-title class="p-4 text-lg font-bold text-gray-700">
-                                {{ 'PROFILE.CONNECTION_HISTORY' | translate }}
-                            </mat-panel-title>
-                        </mat-expansion-panel-header>
-                        <ul class="bg-gray-50 p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
-                            <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
+                <div class="mt-8">
+                    <mat-accordion class="space-y-4">
+                        <mat-expansion-panel>
+                            <mat-expansion-panel-header class="p-4 ">
+                                <mat-panel-title class="p-4 text-lg font-bold !text-primary">
+                                    {{ 'PROFILE.CONNECTION_HISTORY' | translate }}
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <ul class="!bg-bgPrimary !text-primary p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
+                                <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
                                 <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
                                     {{ history.eventType === 'login' ? ('PROFILE.LOGIN' | translate) : ('PROFILE.LOGOUT' | translate) }} -
                                 </span>
-                                {{ history.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }}
-                            </li>
-                        </ul>
-                    </mat-expansion-panel>
+                                    {{ history.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }}
+                                </li>
+                            </ul>
+                        </mat-expansion-panel>
 
-                    <mat-expansion-panel>
-                        <mat-expansion-panel-header class="p-4">
-                            <mat-panel-title class="p-4 text-lg font-bold text-gray-700">
-                                {{ 'PROFILE.GAME_HISTORY' | translate }}
-                            </mat-panel-title>
-                        </mat-expansion-panel-header>
-                        <ul class="bg-gray-50 p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
-                            <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
-                                <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
-                                    {{ game.result === 'win' ? ('PROFILE.WIN' | translate) : ('PROFILE.LOSS' | translate) }} -
-                                </span>
-                                {{ game.timestamp }},
-                                {{ 'PROFILE.GAMEMODE' | translate }} :
-                                {{ game.gameMode === 'classic' ? ('PROFILE.GAMEMODE_CLASSIC' | translate) : ('PROFILE.GAMEMODE_TEAM' | translate) }},
-                            </li>
-                        </ul>
-                    </mat-expansion-panel>
-                </mat-accordion>
+                        <mat-expansion-panel>
+                            <mat-expansion-panel-header class="p-4">
+                                <mat-panel-title class="p-4 text-lg font-bold !text-primary">
+                                    {{ 'PROFILE.GAME_HISTORY' | translate }}
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <ul class="!bg-bgPrimary p-4 rounded-lg !text-primary" style="max-height: 200px; overflow-y: auto;">
+                                <ng-container *ngIf="user.gameHistory && user.gameHistory.length > 0; else noGameHistory">
+                                    <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
+                        <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
+                            {{ game.result === 'win' ? ('PROFILE.WIN' | translate) : ('PROFILE.LOSS' | translate) }} -
+                        </span>
+                                        {{ game.timestamp }},
+                                        {{ 'PROFILE.GAMEMODE' | translate }} :
+                                        {{ game.gameMode === 'classic' ? ('PROFILE.GAMEMODE_CLASSIC' | translate) : ('PROFILE.GAMEMODE_TEAM' | translate) }}
+                                    </li>
+                                </ng-container>
+                                <ng-template #noGameHistory>
+                                    <li class="text-primary">
+                                        {{ 'PROFILE.NO_GAME_HISTORY' | translate }}
+                                    </li>
+                                </ng-template>
+                            </ul>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </div>
             </div>
         </ng-container>
     </div>

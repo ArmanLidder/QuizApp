@@ -4,11 +4,11 @@
              [ngClass]="{'closed': state === 0, 'opened': state === 1, 'outside': state === 2}">
             <div class="chat-header" [ngClass]="{'closed': state === 0, 'opened': state === 1, 'outside': state === 2}"
                  (click)="toggleChatState()">
-                <span><i class="bi bi-chat-dots-fill"></i> {{ 'CHAT_COMPONENT.CHAT' | translate }}</span>
-                <button *ngIf="this.state !== 2" (click)="popOut()"><i class="bi bi-box-arrow-up-right"></i>
+                <span class="!text-secondary"><i class="bi bi-chat-dots-fill"></i> {{ 'CHAT_COMPONENT.CHAT' | translate }}</span>
+                <button *ngIf="this.state !== 2" (click)="popOut()"><i class="bi bi-box-arrow-up-right !text-secondary"></i>
                 </button>
             </div>
-            <ng-container *ngIf="!isJoiningCanal && !isCreateCanal && !isDeleteCanal">
+            <ng-container *ngIf="!isJoiningCanal && !isCreateCanal && !isDeleteCanal" class="!bg-bgPrimary">
                 <div *ngIf="!isChatFocused" class="button-container canal-list">
                     <button (click)="createNewCanal()">{{ 'CHAT_COMPONENT.ADD_CHANNEL' | translate }}</button>
                     <button (click)="joinNewCanal()">{{ 'CHAT_COMPONENT.JOIN_CHANNEL' | translate }}</button>
@@ -25,7 +25,7 @@
                                     <div class="button-group" style="display: flex; gap: 8px;">
                                         <button *ngIf="!this.checkCanalType(canal.name)"
                                                 (click)="leaveChat(canal.id!); $event.stopPropagation()">
-                                            <i style="color: black; display: flex; align-items: center;"
+                                            <i style="color: var(--color-primary); display: flex; align-items: center;"
                                                class="bi bi-box-arrow-right"></i>
                                         </button>
                                         <button *ngIf="!this.checkCanalType(canal.name)"
@@ -43,9 +43,9 @@
                     <ng-container *ngIf="currentCanal$ | async as canal">
                         <div *ngIf="isChatFocused" class="chat-area">
                             <div class="canal-header">
-                                <button (click)="toggleIsChat()"><i style="color:#007bff" class="bi bi-caret-left-fill">{{ 'CHAT_COMPONENT.CHANNELS' | translate }}</i></button>
+                                <button class="text-bgButton" (click)="toggleIsChat()"><i class="bi bi-caret-left-fill">{{ 'CHAT_COMPONENT.CHANNELS' | translate }}</i></button>
 
-                                <h3><strong>{{ canal!.name }}</strong></h3>
+                                <h3 class="text-primary"><strong>{{ canal!.name }}</strong></h3>
                             </div>
                             <div #chatscrollable class="messages" *ngIf="canal">
                                 <ng-container *ngFor="let msg of canal!.messages">
@@ -59,8 +59,8 @@
                                         </ng-container>
                                         <ng-container *ngIf="getMessageClass(msg, user) == 'sent'">
                                             <div class="bubble">
-                                                <span>{{ msg.message }}</span>
-                                                <small style="color:antiquewhite">{{ msg.createdAt.toDate() | date: 'short' }}</small>
+                                                <span class="!text-secondary">{{ msg.message }}</span>
+                                                <small class="!text-secondary">{{ msg.createdAt.toDate() | date: 'short' }}</small>
                                             </div>
                                             <app-avatar [isChat]="true" [uid]="msg.userUid" [size]="'small'"></app-avatar>
                                         </ng-container>
@@ -89,9 +89,9 @@
             </ng-container>
             <div *ngIf="isCreateCanal && !isDeleteCanal" class="container">
                 <div class="canal-header">
-                    <button (click)="returnToMenu()"><i style="color:#007bff"
-                                                        class="bi bi-caret-left-fill">{{ 'CHAT_COMPONENT.BACK' | translate }}</i></button>
-                    <h2>{{ 'CHAT_COMPONENT.CHANNEL_CREATION' | translate }}</h2>
+                    <button class="text-bgButton" (click)="returnToMenu()"><i
+                                                        class="bi bi-caret-left-fill text-bgButton">{{ 'CHAT_COMPONENT.BACK' | translate }}</i></button>
+                    <h2 class="text-primary">{{ 'CHAT_COMPONENT.CHANNEL_CREATION' | translate }}</h2>
                 </div>
                 <form [formGroup]="canalNameForm" (ngSubmit)="createCanal()" class="message-form">
                     <input
@@ -122,25 +122,25 @@
             </div>
             <div *ngIf="isDeleteCanal" class="container">
                 <div class="canal-header">
-                    <button (click)="returnToMenu()"><i style="color:#007bff"
+                    <button class="text-bgButton" (click)="returnToMenu()"><i
                                                         class="bi bi-caret-left-fill">{{ 'CHAT_COMPONENT.BACK' | translate }}</i></button>
-                    <h2>{{ 'CHAT_COMPONENT.CHANNEL_DELETION' | translate }}</h2>
+                    <h2 class="text-primary">{{ 'CHAT_COMPONENT.CHANNEL_DELETION' | translate }}</h2>
                 </div>
-                <div class="message-form">
+                <div class="message-form text-primary">
                     <h3 style="text-align: justify">
                         <strong>{{ 'CHAT_COMPONENT.DELETE_WARNING' | translate }}</strong><br>
                         {{ 'CHAT_COMPONENT.DELETE_CONFIRMATION' | translate: { channelName: canalNameToDelete } }}
                     </h3>
-                    <button style="background: red" (click)="deleteCanal(canalIdToDelete)">
+                    <button style="background: red; color: white" (click)="deleteCanal(canalIdToDelete)">
                         {{ 'CHAT_COMPONENT.DELETE' | translate }}
                     </button>
                 </div>
             </div>
             <div *ngIf="isJoiningCanal && !isDeleteCanal" class="container">
                 <div class="canal-header">
-                    <button (click)="returnToMenu()"><i style="color:#007bff"
+                    <button class="text-bgButton" (click)="returnToMenu()"><i
                                                         class="bi bi-caret-left-fill">{{ 'CHAT_COMPONENT.BACK' | translate }}</i></button>
-                    <h2>{{ 'CHAT_COMPONENT.JOIN_CHANNEL' | translate }}</h2>
+                    <h2 class="text-primary">{{ 'CHAT_COMPONENT.JOIN_CHANNEL' | translate }}</h2>
                 </div>
                 <div class="bg-center flex flex-col h-[500px]">
                     <mat-form-field>
@@ -151,9 +151,9 @@
                     </mat-form-field>
                     <div class="flex-1 mt-4 space-y-2 overflow-y-auto">
                         <div *ngFor="let canal of canalsSearch$ | async"
-                             class="bg-gray-100 rounded-lg p-3 flex items-center space-x-3 shadow-sm">
+                             class="bg-bgSecondary rounded-lg p-3 flex items-center space-x-3 shadow-sm mr-2">
                             <div class="flex-grow" style="cursor: pointer" (click)="joinChat(canal.id!)">
-                                <h3 class="text-base font-medium text-gray-900">{{ canal.name }}</h3>
+                                <h3 class="text-base font-medium text-primary">{{ canal.name }}</h3>
                             </div>
                         </div>
                         <div class="h-4"></div>

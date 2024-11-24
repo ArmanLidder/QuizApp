@@ -114,18 +114,26 @@ export class ActiveGameListComponent implements OnInit {
                     if (isValid) this.sendAllDataToWaitingRoom();
                 }
             }
-        }catch(error:any) {
+        } catch(error:any) {
             console.error("Error joining room:", error);
         } finally {
             this.joiningRoom = false;
         }
     }
 
-    observeGame(game: GameListItem) {
-        this.gameService.init(String(game.room), true);
-        this.gameService.gameRealService.username = HOST_USERNAME;
-        this.observationService.observeGame(game);
-        setTimeout(() => {this.router.navigate([`game/${game.room}`]);}, 500);
+    async observeGame(game: GameListItem) {
+        if (this.joiningRoom) return; // Exit if already processing a join request, fix for spam join
+        this.joiningRoom = true;
+        try {
+            this.gameService.init(String(game.room), true);
+            this.gameService.gameRealService.username = HOST_USERNAME;
+            this.observationService.observeGame(game);
+            await this.router.navigate([`game/${game.room}`]);
+        }  catch(error:any) {
+            console.error("Error joining room:", error);
+        } finally {
+            this.joiningRoom = false;
+        }
     }
 
     private sendAllDataToWaitingRoom() {

@@ -39,20 +39,46 @@ $custom-theme: mat.define-light-theme($theme-config);
 
 // Global MDC SnackBar override with more specific selectors
 .mat-mdc-snack-bar-container {
-  --mdc-snackbar-container-color: #ffffff !important;
-  --mdc-snackbar-supporting-text-color: #000000 !important;
+  --mdc-snackbar-container-color: var(--color-bg-primary) !important;
+  --mdc-snackbar-supporting-text-color: var(--color-primary) !important;
 
   .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled) {
-    --mdc-text-button-label-text-color: #{mat.get-color-from-palette($primary-palette)} !important;
-    color: #{mat.get-color-from-palette($primary-palette)} !important;
+    color: var(--color-bg-button) !important;
+    font-weight: bold;
   }
 }
-
-// Ensure the button uses primary color
-.mat-mdc-snack-bar-action {
-  --mdc-text-button-label-text-color: #{mat.get-color-from-palette($primary-palette)} !important;
-  color: #{mat.get-color-from-palette($primary-palette)} !important;
+/* Style the menu panel background */
+.mat-mdc-menu-panel {
+  background-color: var(--color-bg-secondary) !important; /* Set background color */
 }
+
+/* Style each menu item */
+.mat-mdc-menu-item {
+  color: var(--color-primary) !important; /* Text color for menu items */
+}
+
+/* Style the mat-icon within each menu item */
+.mat-mdc-menu-item mat-icon {
+  color: var(--color-primary) !important; /* Set icon color */
+}
+
+/* Optionally style hover or focus states */
+.mat-mdc-menu-item:hover {
+  opacity: 0.75; /* Add hover effect */
+}
+
+/* Optionally style mat-icon on hover or focus */
+.mat-mdc-menu-item:hover mat-icon,
+.mat-mdc-menu-item:focus mat-icon {
+  opacity: 0.9;
+}
+
+
+//// Ensure the button uses primary color
+//.mat-mdc-snack-bar-action {
+//  --mdc-text-button-label-text-color: #{mat.get-color-from-palette($primary-palette)} !important;
+//  color: #{mat.get-color-from-palette($primary-palette)} !important;
+//}
 
 
 button[mat-icon-button]{
@@ -98,4 +124,73 @@ button[mat-icon-button]{
     }
   }
 }
+
+@layer base {
+  :root {
+    --color-primary: hsl(0, 0%, 0%);
+    --color-secondary: hsl(0, 0%, 100%);
+    --color-bg-primary: hsl(0, 0%, 100%);
+    --color-bg-secondary: hsl(0, 0%, 93%);
+    --color-bg-button: rgb(33, 150, 243);
+    --color-error: rgb(220 38 38);
+  }
+
+  //* {
+  //  @apply transition-colors duration-500 ease-in-out;
+  //}
+
+  /* Default Theme */
+  .theme-light {
+    --color-primary: hsl(0, 0%, 0%);
+    --color-secondary: hsl(0, 0%, 100%);
+    --color-bg-primary: hsl(0, 0%, 100%);
+    --color-bg-secondary: hsl(0, 0%, 93%);
+    --color-bg-button: rgb(33, 150, 243);
+    --color-error: rgb(220 38 38);
+  }
+
+  /* Dark Theme */
+  .theme-dark {
+    --color-primary: hsl(0, 0%, 100%);
+    --color-secondary: hsl(0, 0%, 0%);
+    --color-bg-primary: hsl(220, 15%, 20%);
+    --color-bg-secondary: hsl(0, 0%, 14%);
+    --color-bg-button: rgb(33, 150, 243);
+    --color-error: rgb(255, 102, 102);
+  }
+  //button bg is bgButton, the text inside it is secondary
+  /* Disco Theme */
+  .theme-disco {
+    --color-primary: hsl(60, 100%, 50%);
+    --color-secondary: hsl(0, 100%, 50%); //secondary accent
+    --color-bg-primary: hsl(270, 50%, 50%);
+    --color-bg-secondary: hsl(0, 100%, 50%);
+    --color-bg-button: #000000;
+    --color-error: rgb(220 38 38);
+  }
+
+  /* BlueGrey Theme */
+  .theme-blueGrey {
+    --color-primary: hsl(351, 100%, 96%);
+    --color-secondary: hsl(268, 93%, 88%); //secondary accent
+    --color-bg-primary: hsl(210, 12%, 12%);
+    --color-bg-secondary: hsl(270, 50%, 75%);
+    --color-bg-button: rgb(142, 36, 170);
+    --color-error: rgb(220 38 38);
+  }
+}
+
+.my-snack-bar {
+  background-color: var(--color-bg-primary) !important; /* Snackbar background */
+  color: var(--color-primary) !important;             /* Text color */
+}
+
+.my-snack-bar .mat-button-wrapper {
+  color: var(--color-primary) !important; /* Button text color */
+}
+
+.settingsDialogClass{
+  background-color: var(--color-bg-primary);
+}
+
 

@@ -14,4 +14,5 @@ export const ORDER_ICON_UP = 'fa-solid fa-up-long';
 export const ORDER_ICON_DOWN = 'fa-solid fa-down-long';
 export const PLAYER_NOT_FOUND_INDEX = -1;
 
-export type Player = [string, number, number, string, boolean];
+export type Player = [string, number, number, string, boolean, string?];
+

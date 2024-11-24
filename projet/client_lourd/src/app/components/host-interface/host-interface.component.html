@@ -1,20 +1,20 @@
 <div class="grid-container" *ngIf='hostInterfaceManagerService.isGameOver'>
-    <h2>{{'GAME_INTERFACE.GAME_FINISHED'| translate}}</h2>
+    <h2 class="text-primary">{{'GAME_INTERFACE.GAME_FINISHED'| translate}}</h2>
     <app-leave-boutton></app-leave-boutton>
 </div>
-<div class="grid-container" *ngIf='!hostInterfaceManagerService.isGameOver'>
+<div class="grid-container pt-6" *ngIf='!hostInterfaceManagerService.isGameOver'>
     <div id="flex-container">
         <div class="circle">
-            <span>{{hostInterfaceManagerService.timerText}}</span>
-            <span>{{gameService.timer}}</span>
+            <span class="text-primary">{{hostInterfaceManagerService.timerText}}</span>
+            <span class="text-primary">{{gameService.timer}}</span>
             <div *ngIf="!gameService.observerMode" class="button-container">
-                <mat-icon
+                <mat-icon class="text-primary"
                         matTooltip="{{ (hostInterfaceManagerService.isPaused ? 'GAME_INTERFACE.TOOLTIP.TOOLTIP_PLAY' : 'GAME_INTERFACE.TOOLTIP.TOOLTIP_PAUSE') | translate }}"
                         (click)="hostInterfaceManagerService.sendPauseTimer()">
                     {{ hostInterfaceManagerService.isPaused ? 'play_circle_outline' : 'pause_circle_outline' }}
                 </mat-icon>
 
-                <mat-icon
+                <mat-icon class="text-primary"
                         matTooltip="{{ (gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode ? 'GAME_INTERFACE.TOOLTIP.TOOLTIP_PANIC_MODE_DISABLED' : 'GAME_INTERFACE.TOOLTIP.TOOLTIP_PANIC_MODE') | translate }}"
                         (click)="hostInterfaceManagerService.startPanicMode()"
                         [ngClass]="{'disable': gameService.isPanicDisabled() || hostInterfaceManagerService.isPanicMode}">
@@ -24,7 +24,7 @@
             </div>
         </div>
         <section id="question-field">
-            <div>
+            <div class="text-primary">
                 <h2> Question {{gameService.questionNumber}}</h2>
                 <h3> {{ 'GAME_INTERFACE.QUESTION_INFO.VALUE' | translate }}: {{ gameService.question?.points }} points</h3>
                 <h1>{{ gameService.question?.text }}</h1>
@@ -56,8 +56,8 @@
     <app-statistic-zone *ngIf="hostInterfaceManagerService.isGameOver" [gameStats]="hostInterfaceManagerService.gameStats"></app-statistic-zone>
     <div class="host-players-list">
         <div class="host-players-list">
-            <div class="custom-legend">
-                <h1>{{ 'GAME_INTERFACE.PLAYER_LIST.LEGEND_TITLE' | translate }}</h1>
+            <div class="custom-legend text-primary">
+                <h1 class="text-primary">{{ 'GAME_INTERFACE.PLAYER_LIST.LEGEND_TITLE' | translate }}</h1>
                 <span class="legend-item">
 
             <span class="color-box" style="background-color: #f64343;"></span>
@@ -84,9 +84,7 @@
             [leftPlayers]='hostInterfaceManagerService.leftPlayers'
             [isHost] = 'true'>
         </app-player-list>
-
     </div>
-
 </div>
 
 

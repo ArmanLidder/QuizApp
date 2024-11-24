@@ -1,6 +1,6 @@
-<div class="waiting-room-container">
+<div class="waiting-room-container min-h-[calc(100vh-120px)]">
     <div *ngIf='!waitingRoomManagementService.isTransition' class="waiting-room">
-        <div class="waiting-room-header">
+        <div class="waiting-room-header text-primary">
             <h1>{{ 'WAITING_ROOM_PAGE.TITLE' | translate }}</h1>
             <h2 *ngIf='isHost'>{{ 'WAITING_ROOM_PAGE.ROOM_CODE' | translate }} : {{ waitingRoomManagementService.roomId }}</h2>
             <div *ngIf='isHost'>
@@ -10,42 +10,45 @@
                     <span class="slider round"></span>
                 </label>
             </div>
+            <h3 *ngIf='isHost && waitingRoomManagementService.isRoomLocked && validationBeforeEntry()' style="color: red">
+                {{ setHostValidationError() }}
+            </h3>
         </div>
 
-        <div class="players-list">
+        <div class="players-list text-primary">
             <ng-container *ngIf="waitingRoomManagementService.gameType !== 'equipe'">
                 <h2>{{ 'WAITING_ROOM_PAGE.PLAYERS_TITLE' | translate }}</h2>
                 <ng-container *ngIf="waitingRoomManagementService.players.length > 0; else noPlayers">
                     <ul>
                         <li class="player-item" *ngFor="let player of waitingRoomManagementService.players">
                             <app-avatar class="player-name" [isChat]="true" [uid]="player"></app-avatar>
-                            <div class='icon-container'>
+                            <div class='icon-container ml-3'>
                                 <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' [matTooltip]="'WAITING_ROOM_PAGE.BAN_TOOLTIP' | translate"></i>
                             </div>
                         </li>
                     </ul>
                 </ng-container>
                 <ng-template #noPlayers>
-                    <p class="text-gray-500">{{ 'WAITING_ROOM_PAGE.NO_PLAYERS' | translate }}</p>
+                    <p class="text-primary opacity-80">{{ 'WAITING_ROOM_PAGE.NO_PLAYERS' | translate }}</p>
                 </ng-template>
             </ng-container>
 
             <ng-container *ngIf="waitingRoomManagementService.gameType === 'equipe'">
                 <h2>{{ 'WAITING_ROOM_PAGE.TEAMS_TITLE' | translate }}</h2>
-                <div *ngIf="waitingRoomManagementService.teamsForInterface.length > 0; else noTeams" class="teams-container">
+                <div *ngIf="waitingRoomManagementService.teamsForInterface.length > 0; else noTeams" class="teams-container text-primary">
                     <div *ngFor="let team of waitingRoomManagementService.teamsForInterface" class="team">
                         <div class="team-header">
                             <span>{{ 'WAITING_ROOM_PAGE.TEAM_LABEL' | translate }} {{ team.name }}</span>
-                            <button *ngIf="!isHost && !team.userIds.members.includes(currentUserId)"
+                            <button *ngIf="!isHost && !team.userIds.members.includes(currentUserId) && !waitingRoomManagementService.isRoomLocked"
                                     class="action-btn"
                                     (click)="waitingRoomManagementService.joinTeam(team.name)">
                                 {{ 'WAITING_ROOM_PAGE.JOIN_TEAM' | translate }}
                             </button>
                         </div>
                         <div class="team-players">
-                            <div *ngFor="let player of team.userIds.members" class="team-item">
+                            <div *ngFor="let player of team.userIds.members" class="team-item text-center">
                                 <app-avatar class="team-avatar" [isChat]="true" [uid]="player"></app-avatar>
-                                <div class='icon-container'>
+                                <div class='icon-container text-center'>
                                     <i class='fa fa-ban' (click)="banPlayer(player)" *ngIf='isHost' [matTooltip]="'WAITING_ROOM_PAGE.BAN_TOOLTIP' | translate"></i>
                                 </div>
                             </div>
@@ -53,7 +56,7 @@
                     </div>
                 </div>
                 <ng-template #noTeams>
-                    <p class="text-gray-500">{{ 'WAITING_ROOM_PAGE.NO_TEAMS' | translate }}</p>
+                    <p class="text-primary">{{ 'WAITING_ROOM_PAGE.NO_TEAMS' | translate }}</p>
                 </ng-template>
             </ng-container>
         </div>
@@ -63,7 +66,7 @@
                     [disabled]="validationBeforeEntry()">
                 {{ 'WAITING_ROOM_PAGE.START_BUTTON' | translate }}
             </button>
-            <button *ngIf="!isHost && waitingRoomManagementService.gameType === 'equipe'"
+            <button *ngIf="!isHost && waitingRoomManagementService.gameType === 'equipe' && !waitingRoomManagementService.isRoomLocked"
                     [disabled]="onlyOneMember()"
                     class="action-btn"
                     (click)="waitingRoomManagementService.sendCreateTeam()">
@@ -77,8 +80,8 @@
 
 <div *ngIf='waitingRoomManagementService.isTransition' class='transition'>
     <div class='timer'>
-        <h2>{{ 'WAITING_ROOM_PAGE.QUIZ_STARTING_IN' | translate }}</h2>
-        <div>{{ waitingRoomManagementService.time }}</div>
+        <h2 class="!text-primary">{{ 'WAITING_ROOM_PAGE.QUIZ_STARTING_IN' | translate }}</h2>
+        <div class="!text-primary">{{ waitingRoomManagementService.time }}</div>
     </div>
     <app-leave-boutton></app-leave-boutton>
 </div>

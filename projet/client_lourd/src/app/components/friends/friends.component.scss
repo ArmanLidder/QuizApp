@@ -1,0 +1,6 @@
+::ng-deep mat-tab-body {
+  z-index: unset !important;
+}
+::ng-deep mat-tab-header {
+  z-index: 0 !important;
+}

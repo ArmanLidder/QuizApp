@@ -1,7 +1,9 @@
 <app-header></app-header>
-<div class="justify-content">
-  <div class="center-content">
-    <h1 class="text-3xl font-bold text-center text-gray-800 my-6">{{ 'QUIZ_SELECTION.PAGE_TITLE' | translate }}</h1>
-    <app-games-list [isAdmin]="false"></app-games-list>
+<div class="bg-bgPrimary min-h-[calc(100vh-120px)]">
+  <div class="justify-content">
+    <div class="center-content">
+      <h1 class="text-3xl font-bold text-center text-primary my-6">{{ 'QUIZ_SELECTION.PAGE_TITLE' | translate }}</h1>
+      <app-games-list [isAdmin]="false"></app-games-list>
+    </div>
   </div>
 </div>

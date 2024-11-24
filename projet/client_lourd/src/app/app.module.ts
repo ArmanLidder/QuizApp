@@ -64,7 +64,6 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatListModule} from "@angular/material/list";
 import { FriendsComponent } from './components/friends/friends.component';
 import {MatTabsModule} from "@angular/material/tabs";
-import { AvatarWithLevelComponent } from './components/avatar-with-level/avatar-with-level.component';
 import { PopoutWindowModule } from 'angular-popout-window';
 import { GameConfigDialogComponent } from './components/game-config-dialog/game-config-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
@@ -158,7 +157,6 @@ export function appInitializerFactory(translate: TranslateService, injector: Inj
         AvatarModificationDialogComponent,
         UserSearchDialogComponent,
         FriendsComponent,
-        AvatarWithLevelComponent,
         GameConfigDialogComponent,
         ActiveGameListComponent,
         ErrorDialogComponent,

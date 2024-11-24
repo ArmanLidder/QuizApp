@@ -70,6 +70,7 @@ export class GameInterfaceManagementService {
         this.handleGameStatusDistribution();
     }
 
+
     private resetData() {
         if (!this.gameService.observingHost) {
             this.gameService.audio.pause();
@@ -114,7 +115,7 @@ export class GameInterfaceManagementService {
             this.getScore();
             this.gameService.gameRealService.validated = true;
         } else {
-            this.gameService.qrlAnswer = "Le joueur est inactif ...";
+            this.gameService.qrlAnswer = this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');
             if (!this.gameService.observingHost) {
                 this.gameService.gameRealService.validated = true;
             }
@@ -129,6 +130,7 @@ export class GameInterfaceManagementService {
 
     private handleTimeTransition() {
         this.socketService.on(SocketEvent.TIME_TRANSITION, (timeValue: number) => {
+            this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.NEXT');
             if (!this.gameService.observerMode) {
                 this.gameService.gameRealService.timer = timeValue;
                 if (this.gameService.timer === 0) {

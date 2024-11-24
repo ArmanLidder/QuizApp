@@ -89,16 +89,11 @@ export class ShoppingPageComponent implements OnInit {
   }
 
   meetsRequirements(item: StoreItemWithOwnership): boolean {
-    if (!this.currentUser) {
-      return false;
-    }
+    if (!this.currentUser) return false;
 
-    if (item.minLevel) {
-      return this.currentUser.level >= item.minLevel;
-    }
-    if (item.achievement) {
-      return this.currentUser.achievements.includes(item.achievement);
-    }
+    const currentLevel = Math.floor((this.currentUser.level || 0) / 10);
+    if (item.minLevel) return currentLevel >= item.minLevel;
+    if (item.achievement) return this.currentUser.achievements.includes(item.achievement);
     return true;
   }
 

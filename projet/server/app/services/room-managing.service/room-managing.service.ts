@@ -19,16 +19,19 @@ export class RoomManagingService {
         this.rooms = new Map<number, RoomData>();
     }
     //this function is used to handle random socket disconnects, just to check if they are in a game and if they are, handle it.
-    getUsernameAndRoomBySocketId(socketid: string):[string,number] | undefined {
+
+    getUsernameAndRoomBySocketId(socketid: string): [string, number][] | undefined {
+        let res: [string, number][] = [];
         for (const [roomId, roomData] of this.rooms.entries()) {
             for (const [username, socketId] of roomData.players.entries()) {
                 if (socketId === socketid) {
-                    return [username,roomId];
+                    res.push([username, roomId]);
                 }
             }
         }
-        return undefined;
+        return res.length > 0 ? res : undefined;
     }
+
 
     get roomMap() {
         return this.rooms;

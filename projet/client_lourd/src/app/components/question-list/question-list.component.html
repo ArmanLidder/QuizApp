@@ -1,51 +1,51 @@
-<div [formGroup]="parentGroup" class="space-y-6">
-    <div class="bg-white rounded-lg pt-6 space-y-4" formArrayName="questions">
-        <p *ngIf="questionsArray?.length !== 0" class="text-lg font-medium">Questions :</p>
+<div [formGroup]="parentGroup" (keydown.enter)="$event.preventDefault()" class="space-y-6">
+    <div class="bg-bgPrimary rounded-lg pt-6 space-y-4" formArrayName="questions">
+        <p *ngIf="questionsArray?.length !== 0" class="text-lg font-medium text-primary">Questions :</p>
 
         <ng-container *ngFor="let question of questionsArray?.controls; let i = index">
             <div [formGroupName]="i" class="border rounded-lg p-4 mb-4 shadow-sm">
 
                 <div class="flex gap-2 mb-2 items-center">
                     <div class="flex gap-2">
-                        <button (click)="addQuestion(i)" class="p-2 rounded hover:bg-blue-100" type="button">
+                        <button (click)="addQuestion(i)" class="p-2 rounded hover:opacity-75" type="button">
                             <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.ADD_QUESTION' | translate"
-                                      class="!text-blue-600"
+                                      class="!text-bgButton"
                                       matTooltipClass="custom-tooltip">add
                             </mat-icon>
                         </button>
 
                         <button (click)="modifyQuestion(i)"
-                                *ngIf="!question.get('beingModified')?.value" class="p-2 rounded hover:bg-gray-100"
+                                *ngIf="!question.get('beingModified')?.value" class="p-2 rounded hover:opacity-75"
                                 type="button">
                             <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.MODIFY_QUESTION' | translate"
-                                      class="!text-black"
+                                      class="!text-primary"
                                       matTooltipClass="custom-tooltip">edit
                             </mat-icon>
                         </button>
                     </div>
 
                     <div class="flex gap-2 justify-center flex-1">
-                        <button (click)="moveQuestionUp(i)" *ngIf="i !== 0" class="p-2 rounded hover:bg-gray-100"
+                        <button (click)="moveQuestionUp(i)" *ngIf="i !== 0" class="p-2 rounded hover:opacity-75"
                                 type="button">
                             <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.MOVE_UP' | translate"
-                                      class="!text-gray-600"
+                                      class="!text-primary"
                                       matTooltipClass="custom-tooltip">keyboard_arrow_up
                             </mat-icon>
                         </button>
 
                         <button (click)="moveQuestionDown(i)" *ngIf="i + 1 !== questionsArray?.length"
-                                class="p-2 rounded hover:bg-gray-100"
+                                class="p-2 rounded hover:opacity-75"
                                 type="button">
                             <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.MOVE_DOWN' | translate"
-                                      class="!text-gray-600"
+                                      class="!text-primary"
                                       matTooltipClass="custom-tooltip">keyboard_arrow_down
                             </mat-icon>
                         </button>
                     </div>
 
-                    <button (click)="removeQuestion(i)" class="p-2 rounded hover:bg-red-100" type="button">
+                    <button (click)="removeQuestion(i)" class="p-2 rounded hover:opacity-75" type="button">
                         <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.DELETE_QUESTION' | translate"
-                                  class="!text-red-600"
+                                  class="!text-error"
                                   matTooltipClass="custom-tooltip">delete
                         </mat-icon>
                     </button>
@@ -61,10 +61,10 @@
                         <span [innerHTML]="questionErrors.join('<br>')" class="popuptext"></span>
                     </div>
                     <div [attr.id]="'question' + i" class="space-y-4">
-                        <p class="font-medium text-lg">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_LABEL' | translate }} {{ i + 1 }}
+                        <p class="font-medium text-lg !text-primary">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_LABEL' | translate }} {{ i + 1 }}
                             :</p>
 
-                        <label class="block text-sm font-medium font-semibold" for="type{{ i }}">
+                        <label class="block text-sm font-medium font-semibold !text-primary" for="type{{ i }}">
                             {{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_TYPE_LABEL' | translate }}
                         </label>
                         <select class="w-full p-2 border rounded" formControlName="type" name="type{{ i }}">
@@ -73,11 +73,11 @@
                             <option value="QRE">QRE</option>
                         </select>
                         <p *ngIf="question.get('type')?.hasError('required') && question.get('type')?.touched"
-                           class="text-red-600 text-sm">
+                           class="!text-error text-sm">
                             {{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_TYPE_REQUIRED' | translate }}
                         </p>
 
-                        <label class="block text-sm font-medium" for="text{{ i }}">
+                        <label class="block text-sm font-medium !text-primary" for="text{{ i }}">
                             {{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_TEXT_LABEL' | translate }}
                         </label>
                         <input [attr.id]="'text' + i"
@@ -87,11 +87,11 @@
                                name="text{{ i }}"
                                type="text">
                         <p *ngIf="question.get('text')?.hasError('required') && question.get('text')?.touched"
-                           class="text-red-600 text-sm">
+                           class="!text-error text-sm">
                             {{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_TEXT_REQUIRED' | translate }}
                         </p>
                         <p *ngIf="question.get('text')?.hasError('pattern') && question.get('text')?.touched"
-                           class="text-red-600 text-sm">
+                           class="!text-error text-sm">
                             {{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_TEXT_PATTERN' | translate }}
                         </p>
 
@@ -104,27 +104,27 @@
                                name="points{{ i }}"
                                type="number">
                         <p *ngIf="question.get('points')?.hasError('required') && question.get('points')?.touched"
-                           class="text-red-600 text-sm">
+                           class="!text-error text-sm">
                             {{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_POINTS_REQUIRED' | translate }}
                         </p>
                         <p *ngIf="question.get('points')?.invalid && question.get('points')?.touched"
-                           class="text-red-600 text-sm">
+                           class="!text-error text-sm">
                             {{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_POINTS_INVALID' | translate }}
                         </p>
 
                         <div class="space-y-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <label class="block text-sm font-semibold mb-2">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.IMAGE_OPTIONAL' | translate }}
                             </label>
 
                             <div class="flex flex-col gap-4">
-                                <label class="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 w-fit"
+                                <label class="cursor-pointer inline-flex items-center px-4 py-2 bg-bgSecondary border border-gray-300 rounded-md text-sm font-medium w-fit"
                                        for="imageUpload{{ i }}">
-                                    <mat-icon class="mr-2">upload</mat-icon>
+                                    <mat-icon class="mr-2 text-primary">upload</mat-icon>
                                     {{ 'QUIZ_CREATION.QUESTION_LIST.IMAGE_CHOOSE' | translate }}
                                     <input (change)="onImageSelected($event, i)"
                                            [id]="'imageUpload' + i"
-                                           accept="image/*"
+                                           accept="image/jpeg,image/png,image/jpg,image/webp"
                                            class="hidden"
                                            type="file">
                                 </label>
@@ -137,24 +137,24 @@
                                          class="w-40 h-40 object-cover rounded">
 
                                     <button (click)="removeImage(i)"
-                                            class="inline-flex items-center px-3 py-2 bg-red-50 text-red-700 rounded w-fit hover:bg-red-100">
+                                            class="inline-flex items-center px-3 py-2 bg-red-50 text-red-700 rounded w-fit hover:opacity-75">
                                         <mat-icon class="mr-1">delete</mat-icon>
                                         {{ 'QUIZ_CREATION.QUESTION_LIST.IMAGE_DELETE' | translate }}
                                     </button>
                                 </div>
                             </div>
 
-                            <p *ngIf="imageUploadError" class="text-sm text-red-600">
+                            <p *ngIf="imageUploadError" class="text-sm !text-error">
                                 {{imageUploadError}}
                             </p>
                         </div>
 
-                        <div *ngIf="question.get('type')?.value === 'QCM'" class="space-y-2">
+                        <div *ngIf="question.get('type')?.value === 'QCM'" class="space-y-2 text-primary">
                             <p>{{ 'QUIZ_CREATION.QUESTION_LIST.CHOICES' | translate }}</p>
                             <button (click)="addChoice(i, getChoicesArray(i).controls.length - 1)"
                                     [disabled]="getChoicesArray(i).controls.length !== 0"
                                     [ngClass]="{ 'hidden': getChoicesArray(i).controls.length !== 0 }"
-                                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    class="px-4 py-2 bg-blue-500 text-white rounded hover:opacity-75"
                                     type="button">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.ADD_CHOICE' | translate }}
                             </button>
@@ -172,39 +172,39 @@
                                        type="number">
                             </div>
                             <p *ngIf="question.get('interval')?.hasError('maxLessThanMin')"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MAX_LESS_THAN_MIN_ERROR' | translate }}
                             </p>
                             <p *ngIf="question.get('interval.min')?.hasError('pattern') && question.get('interval.min')?.touched && !question.get('interval.min')?.hasError('max') && !question.get('interval.min')?.hasError('min')"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MIN_INTEGER_ERROR' | translate }}
                             </p>
                             <p *ngIf="question.get('interval.min')?.hasError('required') && question.get('interval.min')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MIN_REQUIRED' | translate }}
                             </p>
                             <p *ngIf="question.get('interval.max')?.hasError('pattern') && question.get('interval.max')?.touched && !question.get('interval.max')?.hasError('max') && !question.get('interval.max')?.hasError('min')"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MAX_INTEGER_ERROR' | translate }}
                             </p>
                             <p *ngIf="question.get('interval.max')?.hasError('required') && question.get('interval.max')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MAX_REQUIRED' | translate }}
                             </p>
                             <p *ngIf="question.get('interval.max')?.hasError('max') && question.get('interval.max')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MAX_TOO_LARGE' | translate }}
                             </p>
                             <p *ngIf="question.get('interval.min')?.hasError('max') && question.get('interval.min')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MIN_TOO_LARGE' | translate }}
                             </p>
                             <p *ngIf="question.get('interval.max')?.hasError('min') && question.get('interval.max')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MAX_TOO_SMALL' | translate }}
                             </p>
                             <p *ngIf="question.get('interval.min')?.hasError('min') && question.get('interval.min')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.MIN_TOO_SMALL' | translate }}
                             </p>
 
@@ -214,19 +214,19 @@
                                    placeholder="{{ 'QUIZ_CREATION.QUESTION_LIST.ENTER_CORRECT_ANSWER' | translate }}"
                                    type="number">
                             <p *ngIf="question.get('answer')?.hasError('answerOutOfRange') && question.get('answer')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.ANSWER_OUT_OF_RANGE' | translate }}
                             </p>
                             <p *ngIf="question.get('answer')?.hasError('pattern') && question.get('answer')?.touched && !question.get('answer')?.hasError('answerOutOfRange')"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.ANSWER_INTEGER_ERROR' | translate }}
                             </p>
                             <p *ngIf="question.get('answer')?.hasError('max') && question.get('answer')?.touched && !question.get('answer')?.hasError('answerOutOfRange')"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.ANSWER_TOO_LARGE' | translate }}
                             </p>
                             <p *ngIf="question.get('answer')?.hasError('min') && question.get('answer')?.touched && !question.get('answer')?.hasError('answerOutOfRange')"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.ANSWER_TOO_SMALL' | translate }}
                             </p>
 
@@ -236,17 +236,16 @@
                                    placeholder="{{ 'QUIZ_CREATION.QUESTION_LIST.ENTER_MARGIN' | translate }}"
                                    type="number">
                             <p *ngIf="question.get('margin')?.hasError('marginTooLarge') && question.get('margin')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.TOLERANCE_MARGIN_TOO_LARGE' | translate }}
-                                ({{ calculateMarginLimit(question.get('interval.min')?.value, question.get('interval.max')?.value) }}
-                                ).
+                                ({{ calculateMarginLimit(question.get('interval.min')?.value, question.get('interval.max')?.value) }}).
                             </p>
                             <p *ngIf="question.get('margin')?.hasError('required') && question.get('margin')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.TOLERANCE_MARGIN_REQUIRED' | translate }}
                             </p>
                             <p *ngIf="question.get('margin')?.hasError('min') && question.get('margin')?.touched"
-                               class="text-red-600 text-sm">
+                               class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.TOLERANCE_MARGIN_MIN_ERROR' | translate }}
                             </p>
 
@@ -275,24 +274,24 @@
                                 <div class="flex gap-2">
                                     <button (click)="moveChoice(itemMovingDirection.DOWN, i, j)"
                                             *ngIf="j !== getChoicesArray(i).controls.length - 1"
-                                            class="p-2 hover:bg-gray-100 rounded"
+                                            class="p-2 hover:opacity-75 rounded"
                                             type="button">
-                                        <mat-icon
+                                        <mat-icon class="!text-primary"
                                                 [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.CHOICE.MOVE_DOWN' | translate"
                                                 matTooltipClass="custom-tooltip">
                                             keyboard_arrow_down
                                         </mat-icon>
                                     </button>
                                     <button (click)="moveChoice(itemMovingDirection.UP, i, j)" *ngIf="j !== 0"
-                                            class="p-2 hover:bg-gray-100 rounded"
+                                            class="p-2 hover:opacity-75 rounded"
                                             type="button">
-                                        <mat-icon
+                                        <mat-icon class="!text-primary"
                                                 [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.CHOICE.MOVE_UP' | translate"
                                                 matTooltipClass="custom-tooltip">
                                             keyboard_arrow_up
                                         </mat-icon>
                                     </button>
-                                    <button (click)="addChoice(i, j)" class="p-2 hover:bg-blue-100 rounded"
+                                    <button (click)="addChoice(i, j)" class="p-2 hover:opacity-75 rounded"
                                             type="button">
                                         <mat-icon
                                                 [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.CHOICE.ADD_CHOICE' | translate"
@@ -300,11 +299,11 @@
                                                 matTooltipClass="custom-tooltip">add
                                         </mat-icon>
                                     </button>
-                                    <button (click)="removeChoice(i, j)" class="p-2 hover:bg-red-100 rounded"
+                                    <button (click)="removeChoice(i, j)" class="p-2 hover:opacity-75 rounded"
                                             type="button">
                                         <mat-icon
                                                 [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.CHOICE.REMOVE_CHOICE' | translate"
-                                                class="text-red-600"
+                                                class="!text-error"
                                                 matTooltipClass="custom-tooltip">remove
                                         </mat-icon>
                                     </button>
@@ -317,7 +316,7 @@
                                    maxlength="50" name="textChoix{{ i }}{{ j }}" required
                                    type="text">
                             <div *ngIf="choix.get('text')?.hasError('required') && choix.get('text')?.touched"
-                                 class="text-red-600 text-sm">
+                                 class="!text-error text-sm">
                                 {{ 'QUIZ_CREATION.QUESTION_LIST.CHOICE.TEXT_REQUIRED' | translate }}
                             </div>
                             <div class="flex gap-4 mt-2">
@@ -340,18 +339,18 @@
 
                 </div>
 
-                <div *ngIf="!question.get('beingModified')?.value" class="space-y-4">
+                <div *ngIf="!question.get('beingModified')?.value" class="space-y-4 text-primary">
                     <p class="font-medium text-lg">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.QUESTION' | translate }} {{i + 1}}:</p>
-                    <p class="text-sm text-gray-600">
+                    <p class="text-sm">
                         <span class="font-semibold">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.QUESTION_TYPE' | translate }}:</span> {{question.get('type')?.value}}
                     </p>
-                    <p class="truncate text-sm text-gray-600">
+                    <p class="truncate text-sm">
                         <span class="font-semibold">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.QUESTION_CONTENT' | translate }}:</span> {{question.get('text')?.value}}
                     </p>
-                    <p class="truncate text-sm text-gray-600">
+                    <p class="truncate text-sm">
                         <span class="font-semibold">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.QUESTION_POINTS' | translate }}:</span> {{question.get('points')?.value}}
                     </p>
-                    <p *ngIf="question.get('imageUrl')?.value" class="text-sm text-gray-600">
+                    <p *ngIf="question.get('imageUrl')?.value" class="text-sm">
                         <span class="font-semibold">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.QUESTION_IMAGE' | translate }}:</span>
                         <img [src]="question.get('imageUrl')?.value" alt="Question Image" class="w-16 h-16 object-cover mt-2 rounded">
                     </p>
@@ -362,29 +361,29 @@
                                  [ngClass]="choice.get('isCorrect')?.value === 'true' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'"
                                  class="border-l-4 p-3 rounded-lg">
 
-                                <p class="text-sm font-medium">
+                                <p class="text-sm font-medium text-black">
                                     {{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.CHOICE' | translate }} {{ j + 1 }}
-                                    <span [ngClass]="choice.get('isCorrect')?.value === 'true' ? 'text-green-600' : 'text-red-600'">
+                                    <span [ngClass]="choice.get('isCorrect')?.value === 'true' ? 'text-green-600' : '!text-error'">
                         ({{ choice.get('isCorrect')?.value === 'true' ? ('QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.TRUE' | translate) : ('QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.FALSE' | translate) }})
                     </span>
                                 </p>
 
-                                <p class="text-gray-700 ml-4">{{ choice.get('text')?.value }}</p>
+                                <p class="ml-4 text-black">{{ choice.get('text')?.value }}</p>
                             </div>
                         </div>
                     </div>
 
 
-                    <div *ngIf="question.get('type')?.value === 'QRE'" class="space-y-2">
-                        <p class="text-sm text-gray-700 font-semibold">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.INTERVAL' | translate }}:</p>
-                        <ul class="list-none text-sm pl-4 bg-gray-50 text-gray-800 p-2 rounded-lg">
+                    <div *ngIf="question.get('type')?.value === 'QRE'" class="space-y-2 !text-primary">
+                        <p class="text-sm font-semibold">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.INTERVAL' | translate }}:</p>
+                        <ul class="list-none text-sm pl-4 bg-bgSecondary p-2 rounded-lg">
                             <li>{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.MIN' | translate }} : {{question.get('interval.min')?.value}}</li>
                             <li>{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.MAX' | translate }} : {{question.get('interval.max')?.value}}</li>
                         </ul>
-                        <p class="truncate text-sm text-gray-600">
+                        <p class="truncate text-sm">
                             <span class="font-semibold">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.CORRECT_ANSWER' | translate }} :</span> {{question.get('answer')?.value}}
                         </p>
-                        <p class="truncate text-sm text-gray-600">
+                        <p class="truncate text-sm">
                             <span class="font-semibold">{{ 'QUIZ_CREATION.QUESTION_LIST.QUESTION_SUMMARY.MARGIN_OF_ERROR' | translate }} :</span> {{question.get('margin')?.value}}
                         </p>
                     </div>
@@ -408,7 +407,7 @@
         <div class="flex justify-center mt-4">
             <button (click)="addQuestion(questionsArray ? questionsArray.length - 1 : 0)"
                     *ngIf='(questionsArray ? questionsArray.length - 1 : 0) < 0'
-                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    class="bg-bgButton text-secondary px-4 py-2 rounded hover:opacity-75"
                     type="button">
                 {{ 'QUIZ_CREATION.QUESTION_LIST.ADD_QUESTION_BUTTON' | translate }}
             </button>

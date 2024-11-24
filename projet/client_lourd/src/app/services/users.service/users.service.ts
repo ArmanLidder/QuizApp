@@ -8,7 +8,7 @@ import {
     query,
     collection,
     getDocs,
-    where, collectionData, getDoc,
+    where, collectionData, runTransaction, arrayUnion,
 } from '@angular/fire/firestore';
 import {catchError, firstValueFrom, Observable, of, shareReplay, map, BehaviorSubject, switchMap} from 'rxjs';
 import {User} from "@app/interfaces/user/user-data.interface";
@@ -16,8 +16,7 @@ import {Auth, authState} from "@angular/fire/auth";
 import {LoginHistory} from "@common/interfaces/user-data.interface";
 import {ServerTimeService} from "@app/services/server-time.service/server-time.service";
 import {TranslateService} from "@ngx-translate/core";
-import {StoreItem} from "@common/interfaces/store.interface";
-
+import {randomDelay} from "../../../utils/random-time-waiter/random-time-waiter";
 
 const defaultUser: User = {
     uid: '',
@@ -43,7 +42,7 @@ const defaultUser: User = {
     friendRequests: [],
     settings: {
         theme: 'light',
-        language: 'en',
+        language: 'fr',
         notificationsEnabled: true,
     },
 };
@@ -59,8 +58,7 @@ export class UsersService {
     constructor(private firestore: Firestore,
                 private auth: Auth,
                 private serverTimeService: ServerTimeService,
-                private translate: TranslateService)
-    {
+                private translate: TranslateService) {
         this.user$.subscribe(async (user) => {
             if (user) {
                 this.userProfile$ = this.createUserProfileObservable(user.uid);
@@ -91,10 +89,10 @@ export class UsersService {
 
     getUser(uid: string): Observable<User | null> {
         const userDocRef = doc(this.firestore, `users/${uid}`);
-        return docData(userDocRef, { idField: 'uid' }) as Observable<User | null>;
+        return docData(userDocRef, {idField: 'uid'}) as Observable<User | null>;
     }
 
-    getAllUsers() : Observable<User[] | null> {
+    getAllUsers(): Observable<User[] | null> {
         const userCollectionRef = collection(this.firestore, `users`);
         return collectionData(userCollectionRef) as Observable<User[] | null>;
     }
@@ -103,11 +101,11 @@ export class UsersService {
         const currentUser = await firstValueFrom(this.user$);
         const uid = currentUser?.uid;
         const ref = doc(this.firestore, 'users', uid as string);
-        await updateDoc(ref, { ...user });
+        await updateDoc(ref, {...user});
     }
 
     async addUser(user: Partial<User>): Promise<void> {
-        const newUser: User = { ...defaultUser, ...user };
+        const newUser: User = {...defaultUser, ...user};
         const ref = doc(this.firestore, 'users', newUser.uid);
         await setDoc(ref, newUser);
     }
@@ -120,26 +118,41 @@ export class UsersService {
     }
 
     async updateUsername(newUsername: string): Promise<void> {
-        const isTaken = await this.isUsernameTaken(newUsername);
-        if (isTaken) throw new Error(await firstValueFrom(this.translate.get('USERNAME_MODIFICATION.ALREADY_USED')));
-        if (this.auth.currentUser?.uid){
+        await randomDelay(500,2500);
+        const isTakenOne = await this.isUsernameTaken(newUsername);
+        await randomDelay(500,2500);
+        const isTakenTwo = await this.isUsernameTaken(newUsername);
+        if (isTakenOne || isTakenTwo) throw new Error(await firstValueFrom(this.translate.get('USERNAME_MODIFICATION.ALREADY_USED')));
+        if (this.auth.currentUser?.uid) {
             const userDocRef = doc(this.firestore, `users/${this.auth.currentUser?.uid}`);
             await updateDoc(userDocRef, {username: newUsername});
         }
     }
 
-    async addLogEvent(event : 'login' | 'logout'): Promise<void> {
-        const currentUser = await firstValueFrom(this.currentUserProfile$)
+    async addLogEvent(event: 'login' | 'logout'): Promise<void> {
+        const uid = this.auth.currentUser?.uid;
+        if (!uid) throw new Error("Auth error.")
+
+        const userRef = doc(this.firestore, 'users', uid);
         const time = await this.serverTimeService.getServerTime();
         const loginEvent: LoginHistory = {
             eventType: event,
             timestamp: time,
         };
-        await this.updateUser({
-            isConnected: event === 'login',
-            loginHistory: [...currentUser?.loginHistory || [], loginEvent], // Append new login event
+
+        await runTransaction(this.firestore, async (transaction) => {
+            const userSnapshot = await transaction.get(userRef);
+            if (!userSnapshot.exists()) throw new Error('User document does not exist');
+            const userData = userSnapshot.data() as User;
+            if (event === 'login' && userData.isConnected) throw new Error(this.translate.instant('LOGIN_PAGE.USER_ALREADY_CONNECTED'));
+            transaction.update(userRef, {
+                isConnected: event === 'login',
+                loginHistory: arrayUnion(loginEvent),
+            });
         });
     }
+
+
     async getUserByEmail(email: string): Promise<User | undefined> {
         const usersRef = collection(this.firestore, 'users');
         const q = query(usersRef, where('email', '==', email));
@@ -149,35 +162,5 @@ export class UsersService {
             const userDoc = querySnapshot.docs[0]; // Assuming email is unique
             return userDoc.data() as User;
         } else return undefined;
-    }
-
-    async getAvailableThemes(): Promise<string[]> {
-        const defaultThemes = ['light', 'dark'];
-        const currentUser = await firstValueFrom(this.currentUserProfile$);
-        if (!currentUser) return defaultThemes;
-
-        const storeProfileRef = doc(this.firestore, 'storeProfiles', currentUser.uid);
-        const storeProfileSnapshot = await getDoc(storeProfileRef);
-
-        if (!storeProfileSnapshot.exists()) return defaultThemes;
-
-        const storeProfileData = storeProfileSnapshot.data() as { ownedItems: string[] };
-        const ownedItemIds = storeProfileData.ownedItems || [];
-        if (ownedItemIds.length === 0) return defaultThemes;
-
-        const storeItemsRef = collection(this.firestore, 'storeItems');
-        const querySnapshot = await getDocs(storeItemsRef);
-
-        const ownedThemes = querySnapshot.docs
-            .filter(doc => ownedItemIds.includes(doc.id))
-            .map(doc => {
-                const data = doc.data() as StoreItem;
-                console.log('Matched Item:', { _id: doc.id, ...data });
-                return data;
-            })
-            .filter(item => item.itemType === 'theme' || item.itemType === 'rewardTheme')
-            .map(item => item.name);
-
-        return Array.from(new Set([...defaultThemes, ...ownedThemes]));
     }
 }

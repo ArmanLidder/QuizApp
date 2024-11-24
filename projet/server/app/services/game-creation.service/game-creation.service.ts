@@ -38,7 +38,7 @@ export class GameCreationService {
         this.handleRoomCreation(roomManager, socket, sio);
         this.handleJoinGame(roomManager, socket, sio);
         this.handleBanPlayer(roomManager, socket, sio);
-        this.handleToggleRoomLock(roomManager, socket);
+        this.handleToggleRoomLock(roomManager, socket, sio);
         this.handleValidateUsername(roomManager, socket);
         this.handleGatherPlayersUsername(roomManager, socket, sio);
         this.handleValidateRoomId(roomManager, socket);
@@ -239,9 +239,10 @@ export class GameCreationService {
         });
     }
 
-    private handleToggleRoomLock(roomManager: RoomManagingService, socket: io.Socket) {
+    private handleToggleRoomLock(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.TOGGLE_ROOM_LOCK, (roomId: number) => {
             roomManager.changeLockState(roomId);
+            sio.to(String(roomId)).emit(SocketEvent.GET_ROOM_LOCK_UPDATE, roomManager.isRoomLocked(roomId));
         });
     }
 
@@ -315,7 +316,10 @@ export class GameCreationService {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
             // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-            await this.deleteRoomCanal(roomId, roomManager);
+            const teams = roomManager.getRoomById(roomId).teams
+            let teamsIds: number[] = []
+            if (teams) teamsIds = Array.from(teams.keys());
+            await this.deleteRoomCanal(roomId, roomManager, teamsIds);
             // this.sendPlayerListToObserver(roomId, roomManager, sio);
             roomManager.deleteRoom(roomId);
             this.sendUpdateGameList(roomManager, sio);
@@ -422,46 +426,49 @@ export class GameCreationService {
     }
 
     public async handleUserDisconnection(roomManager: RoomManagingService, socketId: string, socket: io.Socket, sio: io.Server) {
-        let res = roomManager.getUsernameAndRoomBySocketId(socketId);
-        if (!res) return;
-        const username = res[0];
-        const roomId = res[1];
-        if (username === 'Organisateur') {
-            //This is the exact same code used in HOST_LEFT socket event above in the file
-            socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-            await this.deleteRoomCanal(roomId, roomManager);
-            roomManager.deleteRoom(roomId);
-            this.sendUpdateGameList(roomManager, sio);
-            sio.to(String(roomId)).disconnectSockets(true);
-        } else {
-            //This is the same code used in PLAYER_LEFT socket event above in the file
-            await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
-            const userInfo = roomManager.removeUserBySocketId(socket.id);
-            this.debug_teams("PLayer Left", roomId, roomManager);
-            this.sendUpdateGameList(roomManager, sio);
-            this.sendTeams(roomId, roomManager, sio);
-            if (userInfo) {
-                const game = roomManager.getGameByRoomId(roomId);
-                if (game) {
-                    game.removePlayer(userInfo.username);
-                    if (game.players.size === 0) {
-                        roomManager.clearRoomTimer(roomId);
-                        this.timerService.startTimer({
-                            roomId,
-                            time: TRANSITION_QUESTIONS_DELAY
-                        }, SocketEvent.FINAL_TIME_TRANSITION);
-                    } else if (game.playersAnswers.size === game.players.size) {
-                        roomManager.getGameByRoomId(roomId).updateScores();
-                        roomManager.clearRoomTimer(roomId);
-                        roomManager.getRoomById(roomId).players.forEach((socketId, username) => {
-                            if (username !== HOST_USERNAME) sio.to(socketId).emit(SocketEvent.END_QUESTION);
-                        });
-                        sio.to(String(roomId)).emit(SocketEvent.END_QUESTION_AFTER_REMOVAL);
+        let result = roomManager.getUsernameAndRoomBySocketId(socketId);
+        if (!result || result.length === 0) return;
+        for (const res of result) {
+            const username = res[0];
+            const roomId = res[1];
+            if (username === 'Organisateur') {
+                //This is the exact same code used in HOST_LEFT socket event above in the file
+                socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+                await this.deleteRoomCanal(roomId, roomManager);
+                roomManager.deleteRoom(roomId);
+                this.sendUpdateGameList(roomManager, sio);
+                sio.to(String(roomId)).disconnectSockets(true);
+            } else {
+                //This is the same code used in PLAYER_LEFT socket event above in the file
+                await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
+                const userInfo = roomManager.removeUserBySocketId(socket.id);
+                this.debug_teams("PLayer Left", roomId, roomManager);
+                this.sendUpdateGameList(roomManager, sio);
+                this.sendTeams(roomId, roomManager, sio);
+                if (userInfo) {
+                    const game = roomManager.getGameByRoomId(roomId);
+                    if (game) {
+                        game.removePlayer(userInfo.username);
+                        if (game.players.size === 0) {
+                            roomManager.clearRoomTimer(roomId);
+                            this.timerService.startTimer({
+                                roomId,
+                                time: TRANSITION_QUESTIONS_DELAY
+                            }, SocketEvent.FINAL_TIME_TRANSITION);
+                        } else if (game.playersAnswers.size === game.players.size) {
+                            roomManager.getGameByRoomId(roomId).updateScores();
+                            roomManager.clearRoomTimer(roomId);
+                            roomManager.getRoomById(roomId).players.forEach((socketId, username) => {
+                                if (username !== HOST_USERNAME) sio.to(socketId).emit(SocketEvent.END_QUESTION);
+                            });
+                            sio.to(String(roomId)).emit(SocketEvent.END_QUESTION_AFTER_REMOVAL);
+                        }
                     }
+                    sio.to(String(roomId)).emit(SocketEvent.REMOVED_PLAYER, userInfo.username);
                 }
-                sio.to(String(roomId)).emit(SocketEvent.REMOVED_PLAYER, userInfo.username);
             }
         }
+
     }
 
     private async addUserToRoomCanal(roomCode: number, userId: string) {
@@ -547,13 +554,12 @@ export class GameCreationService {
         }
     }
 
-    private async deleteRoomCanal(roomCode: number, roomManager: RoomManagingService) {
+    private async deleteRoomCanal(roomCode: number, roomManager: RoomManagingService, teamsIds: number[]=[]) {
         try {
             const docRef = await this.getDocRef(roomCode);
             await docRef.delete();
-            const teams = roomManager.getRoomById(roomCode).teams;
-            if (teams) {
-                for (const [teamId, _] of teams) {
+            if (teamsIds.length > 0) {
+                for (const teamId of teamsIds) {
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
                     await teamDocRef.delete();
                 }
@@ -627,15 +633,20 @@ export class GameCreationService {
             }
         });
 
-        if (total_score_sum == 0) {
+        if (total_score_sum === 0) {
             highestScorers.length = 0; nonExtremes.length = 0; lowestScorers.length = 0;
             players.forEach((score: Score, userId: string) => {
                 lowestScorers.push(userId);
             });
-
         } else {
             players.forEach((score: Score, userId: string) => {
-                if (!highestScorers.includes(userId) && !lowestScorers.includes(userId)) {
+                const inHighScorer = highestScorers.includes(userId);
+                const inLowScorer = lowestScorers.includes(userId);
+                if (inHighScorer && inLowScorer) {
+                    const index = lowestScorers.indexOf(userId);
+                    if (index !== -1) lowestScorers.splice(index, 1);
+                }
+                if (!inHighScorer && !inLowScorer) {
                     nonExtremes.push(userId);
                 }
             });
@@ -680,20 +691,30 @@ export class GameCreationService {
             }
         });
 
-        if (total_score_sum == 0) {
-            highestScorers.length = 0; nonExtremes.length = 0; lowestScorers.length = 0;
+        if (total_score_sum === 0) {
+            highestScorers.length = 0;
+            nonExtremes.length = 0;
+            lowestScorers.length = 0;
             teamsScore.forEach((score, teamId) => {
-                    lowestScorers.push(teamId);
+                lowestScorers.push(teamId);
             });
         } else {
             // Populate the non-extreme teams (those not in the highest or lowest scoring groups)
             teamsScore.forEach((score, teamId) => {
+                const inHighScorer = highestScorers.includes(teamId);
+                const inLowScorer = lowestScorers.includes(teamId);
+                // If total score is not 0 which means player got points and that they are in
+                // both high and low it means they have the same points therefore both should
+                // be in high score bracket.
+                if (inHighScorer && inLowScorer) {
+                    const index = lowestScorers.indexOf(teamId);
+                    if (index !== -1) lowestScorers.splice(index, 1);
+                }
                 if (!highestScorers.includes(teamId) && !lowestScorers.includes(teamId)) {
                     nonExtremes.push(teamId);
                 }
             });
 
-            // If there's only one team, there won't be any lowest or non-extreme teams
             if (teamsScore.size === 1) {
                 lowestScorers.length = 0;
                 nonExtremes.length = 0;

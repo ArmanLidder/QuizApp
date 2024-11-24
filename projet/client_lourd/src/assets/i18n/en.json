@@ -48,7 +48,8 @@
     "ALREADY_HAVE_ACCOUNT": "Already have an account?",
     "LOGIN_LINK": "Log In",
     "SUCCESS_REGISTER_POPUP": "Account created",
-    "THE_NAME_IS_ALREADY_USED": "The name \"{{name}}\" is already used"
+    "THE_NAME_IS_ALREADY_USED": "The name \"{{name}}\" is already used",
+    "MAX_LETTERS_USERNAME": "The username must contain at most 10 characters."
   },
   "MAINPAGE": {
     "WELCOME": "Welcome",
@@ -97,7 +98,8 @@
     "BRONZE": "Bronze",
     "SILVER": "Silver",
     "GOLD": "Gold",
-    "PLATINUM": "Platinum"
+    "PLATINUM": "Platinum",
+    "NO_GAME_HISTORY": "No game history available."
   },
   "FRIENDS": {
     "TITLE": "Friends",
@@ -328,7 +330,9 @@
     "NO_TEAMS": "No teams present",
     "START_BUTTON": "Start",
     "CREATE_TEAM": "Create Team",
-    "QUIZ_STARTING_IN": "Quiz starts in:"
+    "QUIZ_STARTING_IN": "Quiz starts in:",
+    "TEAM_VALIDATION": "Must have a minimum of two members per team and at least 2 teams.",
+    "CLASSIC_VALIDATION": "Must have at least 1 player."
   },
   "POP_UP_MESSAGE": {
     "LEAVE_MESSAGE": "Are you sure you want to leave?",
@@ -496,7 +500,8 @@
       "NAME": "Name",
       "SCORE": "Score",
       "VALIDATE": "Validate",
-      "OBS_HOST_EVAL": "The host is currently evaluating..."
+      "OBS_HOST_EVAL": "The host is currently evaluating...",
+      "AI_GENERATING": "The response is being generated..."
     },
     "HISTOGRAM": {
       "LEGEND_HEADER": "Histogram legend:",
@@ -558,6 +563,8 @@
     "OBSERVE": "Observe",
     "CANCEL": "Cancel",
     "OBSERVATION_MENU": "Observation Menu",
-    "OBSERVING": "You are observing"
+    "OBSERVING": "You are observing",
+    "QRL_PLAYER_INACTIVE": "The player is inactive...",
+    "QRL_PLAYER_ACTIVE": "The player is writing an answer..."
   }
 }

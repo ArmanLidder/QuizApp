@@ -6,44 +6,14 @@ import {StoreItem} from "@common/interfaces/store.interface";
 import {catchError, firstValueFrom, Observable, of, switchMap} from "rxjs";
 import {UsersService} from "@app/services/users.service/users.service";
 import {map} from "rxjs/operators";
+import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
 type StoreItemWithOwnership = StoreItem & { isOwned: boolean };
 
 @Injectable({
     providedIn: 'root'
 })
 export class StoreService {
-    constructor(private firestore: Firestore, private usersService: UsersService) {
-    }
-
-    // async addStoreItems() {
-    //     const itemsCollectionRef = collection(this.firestore, 'storeItems');
-    //
-    //     for (let i = 1; i <= 8; i++) {
-    //         const itemData = {
-    //             achievement: i,
-    //             cost: -20 * i,
-    //             itemType: 'rewardCurrency',
-    //             name: `${20 * i} $`,
-    //             source: 'https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/shopGIFS%2FmoneyBag.png?alt=media&token=a991db2c-7dff-435c-83bf-d8d6131e236b',
-    //         };
-    //
-    //         const itemDocRef = doc(itemsCollectionRef);
-    //         try {
-    //             await setDoc(itemDocRef, itemData);
-    //             console.log(`Item ${i} added successfully.`);
-    //         } catch (error) {
-    //             console.error(`Error adding item ${i}:`, error);
-    //         }
-    //     }
-    // }
-
-
-    get allStoreItems(): Observable<StoreItem[]> {
-        const itemsCollectionRef = collection(this.firestore, `storeItems`);
-        return collectionData(itemsCollectionRef, {idField: 'id'}).pipe(map((data) => data as StoreItem[]), catchError((error) => {
-            console.error('Error fetching all store items:', error);
-            return of([]);
-        }));
+    constructor(private firestore: Firestore, private usersService: UsersService, private settings: UserSettingsService) {
     }
 
     get allStoreItemsWithOwnership(): Observable<StoreItemWithOwnership[]> {
@@ -71,23 +41,6 @@ export class StoreService {
                 return of([]);
             })
         );
-    }
-
-    get allUnOwnedStoreItems(): Observable<StoreItem[]> {
-        return this.usersService.currentUserProfile$.pipe(switchMap((user) => {
-            const uid = user?.uid;
-            if (!uid) return of([]);
-
-            const userDocRef = doc(this.firestore, `storeProfiles/${uid}`);
-            return docData(userDocRef).pipe(switchMap((userProfile: any) => {
-                const ownedItems = userProfile?.ownedItems || [];
-                const itemsCollectionRef = collection(this.firestore, `storeItems`);
-                return collectionData(itemsCollectionRef, {idField: 'id'}).pipe(map((data) => (data as StoreItem[]).filter((item) => !ownedItems.includes(item.id))));
-            }));
-        }), catchError((error) => {
-            console.error('Error fetching filtered store items:', error);
-            return of([]);
-        }));
     }
 
     getStoreItemById(id: string): Observable<StoreItem | null> {
@@ -127,12 +80,14 @@ export class StoreService {
             if (!storeItem) throw new Error("Item n'existe pas.")
             if ((currentUser?.currency || 0) < storeItem.cost) throw new Error("Vous n'avez pas assez d'argent.")
             if (storeItem.itemType === 'rewardTheme' || storeItem.itemType === 'rewardImage') {
-                if ((currentUser?.level||0) < (storeItem.minLevel||0)) throw new Error(`Vous n'avez pas le niveau requis pour ce item (${storeItem.minLevel!})}`);
+                const currentLevel = Math.floor((currentUser?.level || 0) / 10);
+                if (currentLevel < (storeItem.minLevel || 0)) throw new Error(`Vous n'avez pas le niveau requis pour ce item (${storeItem.minLevel!})}`);
                 const hasRequiredAchievement = !storeItem.achievement || (currentUser?.achievements || []).includes(storeItem.achievement);
                 if (!hasRequiredAchievement) throw new Error(`Vous n'avez pas le achievement requis pour ce item`);
             }
             await this.addItemToUserProfile(id)
             await this.usersService.updateUser({currency: (currentUser?.currency || 0) - storeItem.cost});
+            await this.settings.refreshAvailableThemes();
         } catch (error: any) {
             console.log(error.message);
             throw new Error("Erreur d'achat")

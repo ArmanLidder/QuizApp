@@ -65,12 +65,18 @@ export class WaitingRoomManagementService {
     }
 
     sendCreateTeam() {
-        this.socketService.send(SocketEvent.CREATE_TEAM, this.roomId);
+        setTimeout(() => {
+            if (!this.isRoomLocked) this.socketService.send(SocketEvent.CREATE_TEAM, this.roomId);
+        }, 500)
     }
 
     joinTeam(newTeamId: string) {
-        const joinTeamData = {roomId: this.roomId, newTeamId: newTeamId as unknown as number} as JoinTeamData
-        this.socketService.send(SocketEvent.JOIN_TEAM, joinTeamData);
+        setTimeout(() => {
+            if (!this.isRoomLocked) {
+                const joinTeamData = {roomId: this.roomId, newTeamId: newTeamId as unknown as number} as JoinTeamData
+                this.socketService.send(SocketEvent.JOIN_TEAM, joinTeamData);
+            }
+        }, 500)
     }
 
     removePlayer(username: string) {
@@ -94,6 +100,7 @@ export class WaitingRoomManagementService {
         this.handleTime();
         this.handleFinalTransition();
         this.handleGetTeams();
+        this.handleRoomLockUpdate();
     }
 
     private handleNewPlayer() {
@@ -142,6 +149,12 @@ export class WaitingRoomManagementService {
             if (this.isTransition) {
                 this.router.navigate(['/']);
             }
+        });
+    }
+
+    private handleRoomLockUpdate() {
+        this.socketService.on(SocketEvent.GET_ROOM_LOCK_UPDATE, (isLocked: boolean) => {
+            this.isRoomLocked = isLocked;
         });
     }
 }

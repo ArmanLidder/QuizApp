@@ -23,7 +23,9 @@ function createWindow() {
         }),
     );
 
-    mainWindow.webContents.setZoomFactor(0.80); // Set zoom factor (1.0 is 100%, 1.25 is 125%, etc.)
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.webContents.setZoomFactor(0.8);
+    });
 
     mainWindow.on('closed', function () {
         mainWindow = null;
