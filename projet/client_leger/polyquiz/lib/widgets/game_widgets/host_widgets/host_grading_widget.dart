@@ -50,6 +50,7 @@ class _HostGradingState extends State<HostGrading> {
     final score = hostInterfaceManagementService
             .correctedQrlByOpenAi[_qrlEvaluationService.currentUsername]?[0] ??
         0;
+    print('Score: $score');
     if (!revokeAIcorrection) _qrlEvaluationService.inputPoint = score;
     return score;
   }
@@ -111,28 +112,21 @@ class _HostGradingState extends State<HostGrading> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      DropdownMenu(
-                        textStyle:
-                            TextStyle(color: _themeService.mainAccent.value),
-                        initialSelection: AIscore,
-                        dropdownMenuEntries: <DropdownMenuEntry<int>>[
-                          DropdownMenuEntry(
-                              value: _qrlEvaluationService.scores[0],
-                              label: '0'),
-                          DropdownMenuEntry(
-                              value: _qrlEvaluationService.scores[1],
-                              label: '50'),
-                          DropdownMenuEntry(
-                              value: _qrlEvaluationService.scores[2],
-                              label: '100')
-                        ],
-                        onSelected: (value) {
+                        DropdownButton<int>(
+                        value: revokeAIcorrection ? _qrlEvaluationService.inputPoint : AIscore,
+                        style: TextStyle(color: _themeService.mainAccent.value),
+                        items: _qrlEvaluationService.scores.map((int score) {
+                          return DropdownMenuItem<int>(
+                          value: score,
+                          child: Text(score.toString()),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
                           if (value != null) {
-                            switchScore(value);
-                            _qrlEvaluationService.inputPoint = value;
+                          switchScore(value);
                           }
                         },
-                      ),
+                        ),
                       SizedBox(
                         width: 20.0,
                       ),
@@ -145,6 +139,7 @@ class _HostGradingState extends State<HostGrading> {
                               _qrlEvaluationService
                                   .submitPoint(widget.gameStats);
                             this.revokeAIcorrection = false;
+                            print('I am here multiple times');
                           },
                           child: Text(
                             'Confirmer',

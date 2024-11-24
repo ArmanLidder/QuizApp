@@ -97,6 +97,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this.changeQcmEnabled(false);
         this.gameService.realGameService.qcmEnabled = false;
       } else {
+        this.gameService.realGameService.isHostEvaluating = true;
         this.gameService.qrlAnswer = '';
         this.gameService.realGameService.validated = true;
       }
@@ -240,6 +241,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
       print("I am Here 444444");
       print(this.gameService.lastQrlScore);
+      notifyListeners();
     }
   }
 
