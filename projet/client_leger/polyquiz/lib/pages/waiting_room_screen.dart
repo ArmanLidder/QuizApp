@@ -316,7 +316,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                           waitingRoomService
                                                   .teamsForInterface[index]
                                                   .userIds[0] !=
-                                              username)
+                                              username &&
+                                          !this.waitingRoomService.isRoomLocked)
                                         TextButton(
                                             style: TextButton.styleFrom(
                                                 backgroundColor: !waitingRoomService.isTransition
@@ -430,7 +431,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                     AnimatedBuilder(
                         animation: waitingRoomService,
                         builder: (BuildContext context, Widget? snapshot) {
-                          return waitingRoomService.gameType == 'classic'
+                          return waitingRoomService.gameType == 'classic' ||
+                                  this.waitingRoomService.isRoomLocked
                               ? SizedBox.shrink()
                               : TextButton(
                                   style: TextButton.styleFrom(
