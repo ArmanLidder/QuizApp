@@ -87,7 +87,7 @@ class Userpage extends StatelessWidget {
               // Positioned text at the bottom-right corner of the screen
               Positioned(
                   bottom: 20.0, // Adjust the position from the bottom
-                  right: 20.0, // Adjust the position from the right
+                  left: 20.0, // Adjust the position from the right
                   child: ChatPopup()),
             ],
           ),
