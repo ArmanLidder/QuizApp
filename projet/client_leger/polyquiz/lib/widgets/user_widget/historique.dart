@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
@@ -10,6 +8,7 @@ import '../../services/theme_service.dart';
 import 'package:intl/intl.dart';
 
 import '../../services/translationService.dart';
+
 class Event {
   final String eventType;
   final String timestamp;
@@ -34,40 +33,44 @@ class LoginEvenementRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: this.label == 'login'? Colors.green: Colors.red, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: this.label == 'login' ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold),
         ),
         Text("   "),
         Text(date, style: TextStyle(color: themeService.mainAccent.value)),
       ],
     );
   }
-
 }
 
-  class GameEvenementRow extends StatelessWidget {
-    final String date;
-    final String label;
-    final Color color;
-    final String gameMode;
-    final ThemeService themeService = ThemeService.instance;
-    GameEvenementRow({
-      required this.date,
-      required this.label,
-      required this.gameMode,
-      this.color = Colors.black,
-    });
+class GameEvenementRow extends StatelessWidget {
+  final String date;
+  final String label;
+  final Color color;
+  final String gameMode;
+  final ThemeService themeService = ThemeService.instance;
+  GameEvenementRow({
+    required this.date,
+    required this.label,
+    required this.gameMode,
+    this.color = Colors.black,
+  });
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Text(
           label,
-          style: TextStyle(color: this.label == 'win'? Colors.green: Colors.red, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: this.label == 'win' ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold),
         ),
         Text(" - "),
         Text(date, style: TextStyle(color: themeService.mainAccent.value)),
-        Text(", Gamemode: "),
-        Text(gameMode)
+        Text(", Gamemode: ",
+            style: TextStyle(color: themeService.mainAccent.value)),
+        Text(gameMode, style: TextStyle(color: themeService.mainAccent.value))
       ],
     );
   }
@@ -93,7 +96,9 @@ class Historique extends StatelessWidget {
     return loginHistory.map((login) {
       DateTime dateTime = login.timestamp.toDate();
       String eventType = loginEventTypeToString[login.eventType]!;
-      return Event(eventType: eventType, timestamp: DateFormat('yyyy-MM-dd HH:mm').format(dateTime));
+      return Event(
+          eventType: eventType,
+          timestamp: DateFormat('yyyy-MM-dd HH:mm').format(dateTime));
     }).toList();
   }
 
@@ -125,7 +130,7 @@ class Historique extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => Column(
+      () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ExpansionTile(

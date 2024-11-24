@@ -11,8 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/widgets/game_config_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
-
-import '../services/theme_service.dart';
 import '../widgets/fancyAppBar.dart';
 
 class QuizListPage extends StatefulWidget {
@@ -301,7 +299,7 @@ class _QuizListPageState extends State<QuizListPage> {
                                         fontSize: 20)),
                                 style: TextButton.styleFrom(
                                   backgroundColor: selectedQuiz != null
-                                      ? Color.fromRGBO(53, 121, 246, 1)
+                                      ? themeService.secondaryBackground.value
                                       : Color.fromRGBO(200, 200, 200, 1),
                                 ),
                               ),

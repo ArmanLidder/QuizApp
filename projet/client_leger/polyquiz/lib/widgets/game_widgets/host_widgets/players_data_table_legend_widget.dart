@@ -3,7 +3,7 @@ import 'package:polyquiz/services/theme_service.dart';
 
 class PlayersDataTableLegend extends StatelessWidget {
   PlayersDataTableLegend({super.key});
-  ThemeService _themeService = ThemeService.instance;
+  final ThemeService _themeService = ThemeService.instance;
 
   @override
   Widget build(BuildContext context) {

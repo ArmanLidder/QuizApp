@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
+import 'package:polyquiz/widgets/fancyAppBar.dart';
 import 'package:polyquiz/widgets/game_widgets/cancel_btn.dart';
 import '../models/quiz.dart';
 import 'waiting_room_screen.dart';
@@ -298,86 +300,84 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-            TranslationService.instance.languageValue.value == Language.fr
-                ? 'Joindre une salle'
-                : "Join a room"),
-        automaticallyImplyLeading: false,
-      ),
+      appBar: FancyAppBar(context: context),
       backgroundColor: themeService.mainBackground.value,
-      body: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/roomList');
-              },
-              child: Text(
-                waitPageText['JOIN_PUBLIC_GAME'],
-                style: TextStyle(
-                  color: themeService.secondaryAccent.value,
-                  fontSize: 20,
+      body: Stack(children: [
+        Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/roomList');
+                },
+                child: Text(
+                  waitPageText['JOIN_PUBLIC_GAME'],
+                  style: TextStyle(
+                    color: themeService.secondaryAccent.value,
+                    fontSize: 20,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: themeService.secondaryBackground.value,
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: themeService.secondaryBackground.value,
-              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(roomPromptText['ENTER_CODE_MESSAGE'],
-                      style: TextStyle(
-                          fontSize: 20, color: themeService.mainAccent.value)),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _roomIdController,
-                    decoration: InputDecoration(
-                      labelText: roomPromptText['ENTER_CODE_LABEL'],
-                      labelStyle:
-                          TextStyle(color: themeService.mainAccent.value),
-                      border: OutlineInputBorder(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(roomPromptText['ENTER_CODE_MESSAGE'],
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: themeService.mainAccent.value)),
+                    SizedBox(height: 16),
+                    TextFormField(
+                      controller: _roomIdController,
+                      decoration: InputDecoration(
+                        labelText: roomPromptText['ENTER_CODE_LABEL'],
+                        labelStyle:
+                            TextStyle(color: themeService.mainAccent.value),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a Room ID';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a Room ID';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 24),
-                  _isJoining
-                      ? CircularProgressIndicator()
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            TextButton(
-                                onPressed: _joinRoomField,
-                                child: Text(roomPromptText['VALIDATE_BUTTON'],
-                                    style: TextStyle(
-                                        color:
-                                            themeService.secondaryAccent.value,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 20)),
-                                style: TextButton.styleFrom(
-                                    backgroundColor: themeService
-                                        .secondaryBackground.value)),
-                            CancelBtn()
-                          ],
-                        ),
-                ],
+                    SizedBox(height: 24),
+                    _isJoining
+                        ? CircularProgressIndicator()
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              TextButton(
+                                  onPressed: _joinRoomField,
+                                  child: Text(roomPromptText['VALIDATE_BUTTON'],
+                                      style: TextStyle(
+                                          color: themeService
+                                              .secondaryAccent.value,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 20)),
+                                  style: TextButton.styleFrom(
+                                      backgroundColor: themeService
+                                          .secondaryBackground.value)),
+                              CancelBtn()
+                            ],
+                          ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+        Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
+      ]),
     );
   }
 }

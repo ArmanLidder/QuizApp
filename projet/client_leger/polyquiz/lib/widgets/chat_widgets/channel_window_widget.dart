@@ -300,7 +300,7 @@ class _ChannelJoiningWidgetState extends State<ChannelJoiningWidget> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                    color: themeService.mainAccent.value,
+                    color: themeService.secondaryBackground.value,
                     onPressed: () {
                       widget.returnCallback();
                     },
@@ -416,7 +416,7 @@ class _ChannelCreationWidgetState extends State<ChannelCreationWidget> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                    color: themeService.mainAccent.value,
+                    color: themeService.secondaryBackground.value,
                     onPressed: () {
                       widget.returnCallback();
                     },

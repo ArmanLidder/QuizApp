@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/models/message.dart';
@@ -46,7 +45,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
                         widget.returnCallback();
                       },
                       icon: Icon(Icons.arrow_back),
-                      color: _themeService.mainAccent.value))),
+                      color: _themeService.secondaryBackground.value))),
           Expanded(
               child: Align(
                   alignment: Alignment.center,
@@ -71,6 +70,7 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
       defaultName = channel.name;
       return channel;
     } on StateError catch (e) {
+      print('Error in getChannel(): ${e}');
       return null;
     }
   }
@@ -163,7 +163,7 @@ class MessageTile extends StatelessWidget {
   String get userId => message.userUid;
   Timestamp get timestamp => message.createdAt;
   MessageTile({required this.message, super.key});
-  ThemeService _themeService = ThemeService.instance;
+  final ThemeService _themeService = ThemeService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -188,21 +188,28 @@ class MessageTile extends StatelessWidget {
     return DateFormat("MM/dd/yy, hh:mm a").format(dateTime);
   }
 
-  Widget getTimestampText() {
+  Widget getTimestampText(bool userMessage) {
     return Text(
       formatTimestamp(),
-      style:
-          TextStyle(fontSize: 10, color: _themeService.secondaryAccent.value),
+      style: TextStyle(
+          fontSize: 10,
+          color: userMessage
+              ? _themeService.secondaryAccent.value
+              : _themeService.mainAccent.value),
     );
   }
 
-  Widget getTextContent() {
+  Widget getTextContent(bool userMessage) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(content),
+        Text(content,
+            style: TextStyle(
+                color: userMessage
+                    ? _themeService.secondaryAccent.value
+                    : _themeService.mainAccent.value)),
         SizedBox(height: 5),
-        getTimestampText(),
+        getTimestampText(userMessage),
       ],
     );
   }
@@ -218,7 +225,7 @@ class MessageTile extends StatelessWidget {
               color: _themeService.secondaryBackground.value,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: getTextContent()),
+            child: getTextContent(true)),
       ),
       trailing: buildUserInfo(),
     );
@@ -231,10 +238,10 @@ class MessageTile extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.all(10.0),
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: _themeService.container.value,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: getTextContent()),
+            child: getTextContent(false)),
       ),
       leading: buildUserInfo(),
     );

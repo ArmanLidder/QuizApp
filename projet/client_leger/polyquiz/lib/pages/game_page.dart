@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
@@ -8,6 +7,7 @@ import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
+import 'package:polyquiz/widgets/fancyAppBar.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_interface_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qre_widget.dart';
@@ -19,9 +19,6 @@ import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
-
-import '../models/user.dart';
-
 import '../models/user.dart';
 
 class GamePage extends StatefulWidget {
@@ -126,12 +123,7 @@ class _MyWidgetState extends State<GamePage> {
   Widget build(BuildContext context) {
     if (isHost) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('PolyQuiz'),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-        ),
+        appBar: FancyAppBar(context: context),
         backgroundColor: themeService.mainBackground.value,
         body: Stack(children: [
           ListView(children: [
@@ -175,12 +167,7 @@ class _MyWidgetState extends State<GamePage> {
                       builder: (BuildContext context, Widget? snapshot) {
                         if (_gameInterfaceManagementService.isResultPage) {
                           return Scaffold(
-                            appBar: AppBar(
-                              title: const Text('PolyQuiz'),
-                              automaticallyImplyLeading: false,
-                              centerTitle: true,
-                              backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                            ),
+                            appBar: FancyAppBar(context: context),
                             backgroundColor: themeService.mainBackground.value,
                             body: ListView(
                               children: [
@@ -197,12 +184,7 @@ class _MyWidgetState extends State<GamePage> {
                           );
                         } else {
                           return Scaffold(
-                            appBar: AppBar(
-                              title: const Text('PolyQuiz'),
-                              automaticallyImplyLeading: false,
-                              centerTitle: true,
-                              backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                            ),
+                            appBar: FancyAppBar(context: context),
                             backgroundColor: themeService.mainBackground.value,
                             body: Stack(children: [
                               ListView(shrinkWrap: true, children: [

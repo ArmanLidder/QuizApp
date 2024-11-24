@@ -5,6 +5,7 @@ import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
+import 'package:polyquiz/widgets/fancyAppBar.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../services/waiting_room_service.dart';
@@ -166,10 +167,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(waitRoomText['TITLE']),
-        automaticallyImplyLeading: false,
-      ),
+      appBar: FancyAppBar(context: context),
       backgroundColor: themeService.mainBackground.value,
       body: Stack(children: [
         Container(
