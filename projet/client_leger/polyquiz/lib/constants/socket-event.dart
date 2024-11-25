@@ -71,8 +71,8 @@ class SocketEvent {
   static const String OBS_QCM_INTERACTION = "obs_qcm_interaction";
   static const String RECEIVE_PLAYER_GAME_STATUS = "receive_player_game_status";
 
-  static const String REQUEST_PAYER_QCM_CHOICES = "request_player_qcm_choices"; // TODO
-  static const String RECEIVE_PLAYER_QCM_CHOICES = "receive_player_qcm_choices"; // TODO
+  static const String REQUEST_PAYER_QCM_CHOICES = "request_player_qcm_choices";
+  static const String RECEIVE_PLAYER_QCM_CHOICES = "receive_player_qcm_choices";
 
   static const String OBS_LEFT = "obs_left";
   static const String GET_OBS_COUNT = "get_obs_count";
