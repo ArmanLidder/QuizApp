@@ -89,6 +89,12 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             : this.translate.instant('WAITING_ROOM_PAGE.TEAM_VALIDATION');
     }
 
+    setPlayerValidationError() {
+        if (this.waitingRoomManagementService.gameType === 'equipe')
+            return this.translate.instant('WAITING_ROOM_PAGE.TEAM_NOTICE_LOCK')
+    }
+
+
     startGame() {
         this.waitingRoomManagementService.sendStartSignal();
     }
@@ -107,9 +113,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             return this.waitingRoomManagementService.players.length===0||!this.waitingRoomManagementService.isRoomLocked;
         let invalidTeamCounter = 0;
         this.waitingRoomManagementService.teamsForInterface.forEach((team: any) => {
-            if (team.userIds.members.length < 2) invalidTeamCounter += 1;
+            if (team.userIds.members.length !== 2) invalidTeamCounter += 1;
         });
-        return invalidTeamCounter > 0 || this.waitingRoomManagementService.teams.size < 2 || !this.waitingRoomManagementService.isRoomLocked
+        return invalidTeamCounter !== 0 || this.waitingRoomManagementService.teams.size < 2 || !this.waitingRoomManagementService.isRoomLocked
     }
 
     private async setUpHost() {
