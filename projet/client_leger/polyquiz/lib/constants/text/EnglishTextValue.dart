@@ -573,5 +573,9 @@ const englishTextValues = {
     "CURRENT_POINTS": "Points",
     "BONUS_RECEIVED_FEEDBACK": "You received Bonus points!!",
     "VALIDATE_BUTTON": "Validate"
+  },
+  "OBSERVER_INTERFACE": {
+    "INACTIVE_PLAYER": "The player is inactive ...",
+    "PLAYER_IS_WRITING": "The player is typing an answer ...",
   }
 };
