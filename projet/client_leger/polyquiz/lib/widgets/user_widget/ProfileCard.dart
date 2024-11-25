@@ -111,14 +111,12 @@ class ProfileCard extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  loggedInUserService
-                                      .getUser()!
-                                      .level
+                                  loggedInUserService.observableLevel
                                       .toString(),
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: themeService.mainAccent.value,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ),

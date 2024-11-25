@@ -6,6 +6,7 @@ import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/constants/defaultAvatars.dart';
+import 'package:polyquiz/widgets/camera_widget.dart';
 
 import '../services/translationService.dart';
 import '../services/userInfoValidation.dart';
@@ -37,6 +38,7 @@ class _AuthPageState extends State<AuthPage> {
   bool _isValidUsername = true;
   bool _isValidEmail = true;
   bool _isValidPassword = true;
+  bool _isCameraOpen = false;
   String? _selectedAvatar;
   Widget languageDropdown() {
     _selectedAvatar = constDefaultAvatars[0];
@@ -280,6 +282,19 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   );
                 }).toList(),
+              ),
+              SizedBox(height: 12),
+              Container(
+                width: 300,
+                height: 120,
+                child: CameraWidget(
+                  onImageCaptured: (imageUrl) {
+                    setState(() {
+                      _selectedAvatar = imageUrl;
+                      _isCameraOpen = false;
+                    });
+                  },
+                ),
               ),
             ],
             SizedBox(height: 24),
