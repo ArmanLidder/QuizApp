@@ -24,7 +24,7 @@ class ObservationService extends GetxController {
   gims.GameInterfaceManagementService gameInterfaceManagementService = gims.GameInterfaceManagementService();
   // TRANSLATION VALUES
   Map get text => TranslationService.instance.text;
-  Map get observerText => text['OBSERVER_INTERFACE'];
+  Map get observerText => text['OBSERVER'];
   Map get qreText => text['GAME_INTERFACE']['QRE_HISTOGRAM_X_VAL'];
   Map get histogramText => text['GAME_INTERFACE']['HISTOGRAM'];
   // RELEVANT ATTRIBUTES
@@ -74,7 +74,7 @@ class ObservationService extends GetxController {
     this.gameService.isObservingHost = this.isHost;
     this.gameService.observedUid = newUid;
     this.gameService.realGameService.username = this.isHost ? 'host' : newUid;
-    if (this.gameService.isObserverMode) this.gameService.obsQrlAnswer = observerText['INACTIVE_PLAYER'];
+    if (this.gameService.isObserverMode) this.gameService.obsQrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
     this.socketService.sendMessage(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
     if (this.isHost) this.socketService.sendMessage(SocketEvent.NEW_OBSERVER_GAME, {
       'roomId': this.gameConfigs?.room,
@@ -97,7 +97,7 @@ class ObservationService extends GetxController {
 
   void handleGetQRLInteraction() {
     this.socketService.onMessage(SocketEvent.GET_QRL_INTERACTION, (isActive) {
-      this.gameService.obsQrlAnswer = isActive as bool ? observerText['PLAYER_IS_WRITING'] : observerText['INACTIVE_PLAYER'];
+      this.gameService.obsQrlAnswer = isActive as bool ? observerText['QRL_PLAYER_ACTIVE'] : observerText['QRL_PLAYER_INACTIVE'];
     });
   }
 

@@ -20,7 +20,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
   GameInterfaceManagementService._internal();
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get timerTransText => gameText['TIMER_TEXT'];
-  Map get observerText => TranslationService.instance.text['OBSERVER_INTERFACE'];
+  Map get observerText => TranslationService.instance.text['OBSERVER'];
 
 
   factory GameInterfaceManagementService() {
@@ -137,7 +137,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
       case QuestionType.QRL:
       default:
         this.gameService.realGameService.isHostEvaluating = true;
-        this.gameService.qrlAnswer = observerText['INACTIVE_PLAYER'];
+        this.gameService.qrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
         if (!this.gameService.isObservingHost) this.gameService.realGameService.validated = true;
     }
     notifyListeners();
