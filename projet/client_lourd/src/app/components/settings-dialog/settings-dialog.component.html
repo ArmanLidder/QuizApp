@@ -1,10 +1,10 @@
 <div class="bg-bgPrimary p-4 flex flex-col items-center justify-center h-full w-full">
     <!-- Settings Header -->
-    <h2 class="text-2xl font-bold text-primary mb-6">Settings</h2>
+    <h2 class="text-2xl font-bold text-primary mb-6">{{'SETTINGS_POPUP.SETTINGS' | translate }}</h2>
 
     <!-- Language Selection -->
     <div class="w-full flex items-center mb-4">
-        <label for="language-select" class="text-sm font-medium text-primary w-1/4 text-right mr-4">Language</label>
+        <label for="language-select" class="text-sm font-medium text-primary w-1/4 text-right mr-4">{{'SETTINGS_POPUP.LANGUAGE' | translate }}</label>
         <select
                 id="language-select"
                 (change)="switchLanguage($event)"
@@ -18,7 +18,7 @@
 
     <!-- Theme Selection -->
     <div class="w-full flex items-center mb-4">
-        <label class="text-sm font-medium text-primary w-1/4 text-right mr-4">Theme</label>
+        <label class="text-sm font-medium text-primary w-1/4 text-right mr-4">{{'SETTINGS_POPUP.THEME' | translate }}</label>
         <div class="flex w-1/2">
             <ng-container *ngFor="let theme of availableThemes$ | async">
                 <div
@@ -45,7 +45,9 @@
                         ></div>
                     </div>
                     <!-- Theme Name -->
-                    <span class="text-sm text-primary text-center">{{theme.name}}</span>
+                    <span *ngIf="theme.name === 'light'" class="text-sm text-primary text-center">{{translate.instant('SETTINGS_POPUP.LIGHT')}}</span>
+                    <span *ngIf="theme.name === 'dark'" class="text-sm text-primary text-center">{{translate.instant('SETTINGS_POPUP.DARK')}}</span>
+                    <span *ngIf="!(theme.name === 'light' || theme.name === 'dark')" class="text-sm text-primary text-center">{{theme.name}}</span>
                 </div>
             </ng-container>
         </div>

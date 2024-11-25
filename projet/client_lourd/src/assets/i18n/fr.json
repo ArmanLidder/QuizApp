@@ -567,5 +567,12 @@
     "OBSERVING": "Vous observez",
     "QRL_PLAYER_INACTIVE": "Le joueur est inactif...",
     "QRL_PLAYER_ACTIVE": "Le joueur écrit une réponse ..."
+  },
+  "SETTINGS_POPUP" : {
+    "SETTINGS": "Paramètres",
+    "LIGHT": "éclairé",
+    "DARK": "sombre",
+    "LANGUAGE": "Langue",
+    "THEME": "Thème"
   }
 }

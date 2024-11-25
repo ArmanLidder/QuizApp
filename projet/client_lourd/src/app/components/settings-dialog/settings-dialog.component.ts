@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UserSettingsService } from '@app/services/user-settings.service/user-settings.service';
 import { Observable } from 'rxjs';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-settings-dialog',
@@ -15,7 +16,8 @@ export class SettingsDialogComponent implements OnInit {
 
   constructor(
       public dialogRef: MatDialogRef<SettingsDialogComponent>,
-      private settings: UserSettingsService
+      private settings: UserSettingsService,
+      public translate: TranslateService
   ) {}
 
   async ngOnInit() {
