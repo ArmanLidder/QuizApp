@@ -188,7 +188,7 @@ class HostHeader extends StatelessWidget {
           Row(
             children: [
               TimerWidget(
-                isHost: true,
+                isHost: !this.gameService.isObserverMode,
                 timeTxt: hostInterfaceManagementService.timerText,
                 time: gameService.realGameService.timer,
                 hostInterfaceManagementService: hostInterfaceManagementService,
