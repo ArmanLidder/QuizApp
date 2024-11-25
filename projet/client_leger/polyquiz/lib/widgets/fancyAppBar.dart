@@ -38,6 +38,28 @@ class _FancyAppBarState extends State<FancyAppBar> {
     else return ObserverCounter();
   }
 
+  Widget getCenterWidget() {
+    return Row(
+      children: [
+      if(widget.isGamePage) getObservationWidget(), 
+      Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(right: 120.0),
+        child: Center(
+          child: Text(
+        "PolyQuiz",
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+          ),
+        ),
+      ),
+    )],
+    );
+  }
+
   Widget getLeadingWidget() {
     Widget mainLeadingWidget = widget.hasBackButton
         ? IconButton(
@@ -52,14 +74,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
       child: mainLeadingWidget,
     );
 
-    if (!widget.isGamePage) return mainLeadingWidget;
-
-    return Row(
-      children: [
-        mainLeadingWidget,
-        getObservationWidget()
-      ],
-    );
+    return mainLeadingWidget;
   }
 
   @override
@@ -76,16 +91,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
         ),
       ),
       child: AppBar(
-        title: Center(
-          child: Text(
-            "PolyQuiz",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
+        title: getCenterWidget(),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: getLeadingWidget(),

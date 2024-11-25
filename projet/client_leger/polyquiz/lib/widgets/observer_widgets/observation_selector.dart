@@ -3,6 +3,7 @@ import 'package:polyquiz/widgets/observer_widgets/observation_list_widget.dart';
 import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import 'package:polyquiz/main.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class ObservationSelector extends StatefulWidget {
   @override
@@ -12,6 +13,10 @@ class ObservationSelector extends StatefulWidget {
 class _ObservationSelectorState extends State<ObservationSelector> {
   bool isMenuOpen = false;
   ObservationService observationService = ObservationService.instance;
+  Map get observerText => TranslationService.instance.text['OBSERVER'];
+  String get menuText => observerText["OBSERVATION_MENU"];
+  String get observText => observerText["OBSERVING"];
+  String get titleText => observerText["CHOOSE_PLAYER"];
 
   void toggleMenu() {
     open(context);
@@ -71,7 +76,7 @@ class _ObservationSelectorState extends State<ObservationSelector> {
             return Text('Error: ${snapshot.error}');
             } else {
             return Text(
-              'Vous observer :',
+              menuText,
               style: TextStyle(fontSize: 18.0),
             );
             }
@@ -94,7 +99,7 @@ class _ObservationSelectorState extends State<ObservationSelector> {
             openSelectorDialog();
           },
           child: Text(
-            'Choisir un joueur',
+            titleText,
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -141,7 +146,7 @@ class _ObservationSelectorState extends State<ObservationSelector> {
               mainAxisSize: MainAxisSize.min,
               children: [
               Text(
-                'Menu Observation',
+                menuText,
                 style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.0,

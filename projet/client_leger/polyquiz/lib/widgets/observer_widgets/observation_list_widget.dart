@@ -5,6 +5,7 @@ import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class ObservationListWidget extends StatefulWidget {
   const ObservationListWidget({super.key});
@@ -15,9 +16,10 @@ class ObservationListWidget extends StatefulWidget {
 
 class _ObservationListWidgetState extends State<ObservationListWidget> {
   // LES VALEURS DE TEXTES
-  final titleText = "Choisir un joueur à observer";
-  final observeButtonText = "Observer";
-  final cancelButtonText = "Annuler";
+  Map get observerText => TranslationService.instance.text['OBSERVER'];
+  String get titleText => observerText["CHOOSE_PLAYER"];
+  String get observeButtonText => observerText["OBSERVE"];
+  String get cancelButtonText => observerText["CANCEL"];
 
   // SERVICES
   final observationService = ObservationService.instance;
@@ -104,7 +106,9 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
   Widget getCancelButton() {
     return Center(
       child: TextButton(
-      onPressed: (){}, 
+      onPressed: () {
+        Navigator.of(context).pop();
+      }, 
       child: Text(
         cancelButtonText,
         style: TextStyle(color: Colors.red),
@@ -121,9 +125,7 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
   }
 
   void receivePlayerList() {
-    print("sending socket event");
     this.socketService.onMessage(SocketEvent.SENDING_OBSERVER_PLAYER_LIST, (data) {
-      print('doing the thing');
       List<String> newList = [];
       newList.add(this.observationService.gameConfigs!.hostUserId);
       data.forEach((player) => newList.add(player.toString()));
