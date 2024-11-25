@@ -405,6 +405,19 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   },
                 ),
               ),
+              AnimatedBuilder(
+                  animation: waitingRoomService,
+                  builder: (BuildContext context, Widget? snapshot) {
+                    return Visibility(
+                      visible: waitingRoomService.isTransition,
+                      child: Text(
+                          '${waitRoomText['QUIZ_STARTING_IN']} ${waitingRoomService.time}',
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: themeService.mainAccent.value)),
+                    );
+                  }),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -463,17 +476,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                       isHost: widget.isHost, roomId: waitingRoomService.roomId),
                 ],
               ),
-              AnimatedBuilder(
-                  animation: waitingRoomService,
-                  builder: (BuildContext context, Widget? snapshot) {
-                    return Visibility(
-                      visible: waitingRoomService.isTransition,
-                      child: Text(
-                          'Game starts in: ${waitingRoomService.time} second(s)',
-                          style:
-                              TextStyle(color: themeService.mainAccent.value)),
-                    );
-                  }),
             ],
           ),
         ),
