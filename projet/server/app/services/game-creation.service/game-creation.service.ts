@@ -96,6 +96,7 @@ export class GameCreationService {
             await this.addUserToRoomCanal(data.roomId, observerId);
             if (data.isFirst) {
                 roomManager.updateObserverCounter(data.roomId, HOST_USERNAME, false);
+                this.sendUpdateGameList(roomManager, sio)
                 socket.join(String(data.roomId));
                 socket.join(String(hostId));
                 const count = roomManager.getRoomById(data.roomId).observersCounter.get(HOST_USERNAME)
@@ -182,12 +183,11 @@ export class GameCreationService {
             if (room) {
                 const ObservedUserId = data.observedId === room.hostUserId ? HOST_USERNAME : data.observedId;
                 roomManager.updateObserverCounter(data.roomId, ObservedUserId, true);
+                this.sendUpdateGameList(roomManager, sio)
                 const count = room.observersCounter.get(ObservedUserId)
                 if (count >= 0) {
                     const socketId = roomManager.getSocketIdByUsername(data.roomId, ObservedUserId)
                     if (socketId) sio.to(socketId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
-
-
                 }
                 this.removeUserFromRoomCanal(data.roomId, userId, roomManager);
             }

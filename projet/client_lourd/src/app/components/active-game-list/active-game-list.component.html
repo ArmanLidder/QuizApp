@@ -28,6 +28,7 @@
                                 </span>
                             </ng-container>
                             <ng-container *ngIf="game.onGoing">
+                                <span class="players"> {{ game.numberOfObs }} <i class="bi bi-eye text-white/80 text-sm"></i> </span>
                                 <span class="players">{{ 'ACTIVE_GAME_LIST.ONGOING_GAME' | translate }}</span>
                             </ng-container>
                         </div>

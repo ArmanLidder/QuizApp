@@ -2,6 +2,7 @@ export interface GameListItem {
     room: number;
     quizId: string;
     numberOfPlayers: number;
+    numberOfObs: number;
     hostUserId: string;
     gameType: string;
     private: boolean; // visbilité de la partie
