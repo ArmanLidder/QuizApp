@@ -34,6 +34,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     if (gameInterfaceManagementService.gameService.isOfflineMode) {
       this._themeService.setTheme('default');
     }
+    this.handleRequestQCMSStatus();
   }
 
   void handleRequestQCMSStatus() {
