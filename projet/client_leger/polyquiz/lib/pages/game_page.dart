@@ -149,7 +149,7 @@ class _MyWidgetState extends State<GamePage> {
             gameInterfaceManagementService:
             _gameInterfaceManagementService))
           ]),
-          Positioned(bottom: 20, left: 20, child: ChatPopup())
+          Positioned(bottom: 20, left: 20, child: ObservationSelector())
         ]),
       );
     } else {
@@ -294,7 +294,7 @@ class _MyWidgetState extends State<GamePage> {
                                 ),
                               ]),
                               Positioned(
-                                  bottom: 0, left: 20, child: ChatPopup())
+                                  bottom: 0, left: 20, child: ObservationSelector())
                             ]),
                           );
                         }
