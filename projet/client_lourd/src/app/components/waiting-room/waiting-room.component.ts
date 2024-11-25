@@ -107,9 +107,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             return this.waitingRoomManagementService.players.length===0||!this.waitingRoomManagementService.isRoomLocked;
         let invalidTeamCounter = 0;
         this.waitingRoomManagementService.teamsForInterface.forEach((team: any) => {
-            if (team.userIds.members.length < 2) invalidTeamCounter += 1;
+            if (team.userIds.members.length !== 2) invalidTeamCounter += 1;
         });
-        return invalidTeamCounter > 0 || this.waitingRoomManagementService.teams.size < 2 || !this.waitingRoomManagementService.isRoomLocked
+        return invalidTeamCounter !== 0 || this.waitingRoomManagementService.teams.size < 2 || !this.waitingRoomManagementService.isRoomLocked
     }
 
     private async setUpHost() {
