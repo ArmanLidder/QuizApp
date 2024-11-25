@@ -131,6 +131,11 @@ class GameInterfaceManagementService extends ChangeNotifier {
     this.inPanicMode = false;
     switch (this.gameService.question?.type) {
       case QuestionType.QCM:
+        this.changeQcmEnabled(false);
+        this.gameService.realGameService.qcmEnabled = false;
+        this.getScore();
+        this.gameService.realGameService.validated = true;
+        break;
       case QuestionType.QRE:
         this.getScore();
         this.gameService.realGameService.validated = true;
