@@ -89,6 +89,12 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             : this.translate.instant('WAITING_ROOM_PAGE.TEAM_VALIDATION');
     }
 
+    setPlayerValidationError() {
+        if (this.waitingRoomManagementService.gameType === 'equipe')
+            return this.translate.instant('WAITING_ROOM_PAGE.TEAM_NOTICE_LOCK')
+    }
+
+
     startGame() {
         this.waitingRoomManagementService.sendStartSignal();
     }
