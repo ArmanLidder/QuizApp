@@ -47,14 +47,16 @@ class _FancyAppBarState extends State<FancyAppBar> {
         })
         : PendingRequestsWidget();
 
+    mainLeadingWidget = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: mainLeadingWidget,
+    );
+
     if (!widget.isGamePage) return mainLeadingWidget;
 
     return Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: mainLeadingWidget,
-        ),
+        mainLeadingWidget,
         getObservationWidget()
       ],
     );
