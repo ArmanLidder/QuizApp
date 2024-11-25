@@ -577,5 +577,15 @@ const englishTextValues = {
   "OBSERVER_INTERFACE": {
     "INACTIVE_PLAYER": "The player is inactive ...",
     "PLAYER_IS_WRITING": "The player is typing an answer ...",
+  },
+  "OBSERVER": {
+    "CHOOSE_PLAYER": "Choose a player to observe",
+    "OBSERVE": "Observe",
+    "CANCEL": "Cancel",
+    "OBSERVATION_MENU": "Observation Menu",
+    "OBSERVING": "You are observing",
+    "QRL_PLAYER_INACTIVE": "The player is inactive...",
+    "QRL_PLAYER_ACTIVE": "The player is writing an answer...",
+    "QRL_PLAYER_ANSWER": "Player answer: ",
   }
 };
