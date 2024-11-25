@@ -209,7 +209,7 @@ class ObservationService extends GetxController {
       final Map<String, dynamic> dataMap = data as Map<String, dynamic>;
 
       if (gameService.observedUid == (dataMap['userId'] as String)) {
-        gameService.lastQrlScore = dataMap['lastQRLScore'] ?? 0;
+        gameService.lastQrlScore = dataMap['lastQRLScore'] ?? null;
         gameService.obsQrlAnswer = dataMap['qrlAnswer'] ?? "";
       }
     });
