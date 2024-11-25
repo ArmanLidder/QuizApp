@@ -115,7 +115,7 @@ class GameService extends ChangeNotifier {
     if (!this.isOfflineMode) {
       configureBaseSockets();
       this.realGameService.roomId = int.parse(pathId);
-      this.realGameService.init();
+      this.realGameService.init(this.isObserverMode);
     } else {
       this.offlineGameService.quizId = pathId;
       this.offlineGameService.init();
