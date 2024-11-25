@@ -65,9 +65,9 @@ class SocketEvent {
   static const String GET_LAST_QRL_STATUS = "get_last_qrl_status";
 
 
-  static const String REQUEST_HOST_GAME_STATUS = "request_host_game_stautus"; // TODO
+  static const String REQUEST_HOST_GAME_STATUS = "request_host_game_stautus";
   static const String RECEIVING_HOST_GAME_STATUS = "receiving_game_status";
-  static const String SENDING_HOST_GAME_STATUS = "sending_host_game_status"; // TODO
+  static const String SENDING_HOST_GAME_STATUS = "sending_host_game_status";
   static const String OBS_QCM_INTERACTION = "obs_qcm_interaction";
   static const String RECEIVE_PLAYER_GAME_STATUS = "receive_player_game_status";
 
