@@ -338,7 +338,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
             'roomId': this.gameService.realGameService.roomId,
             'lastQRLScore': this.gameService.lastQrlScore,
             'qrlAnswer': this.gameService.qrlAnswer,
-            'userId': LoggedInUserService.instance.user?.uid;
+            'userId': LoggedInUserService.instance.user?.uid,
           });
         }
       });
