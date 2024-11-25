@@ -113,7 +113,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   configureBaseSocketFeatures(BuildContext context) {
     if (!this.gameService.isObserverMode) {
       this.reset(context);
-      // this.handleRequestHostGameStatus();
+      this.handleRequestHostGameStatus();
     }
     this.handleTimeTransition();
     this.handleEndQuestion();
@@ -129,6 +129,44 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.handleHostPanicMode();
     this.handleHostTimerPause();
     isAlreadyInit = true;
+  }
+
+  void handleRequestHostGameStatus() {
+    this._socketService.onMessage(SocketEvent.REQUEST_HOST_GAME_STATUS, (_) {
+      List<int> histogramDataChangingResponses = [];
+
+      switch (this.gameService.realGameService.question?.type) {
+        case QuestionType.QRE:
+          histogramDataChangingResponses = [
+            this.histogramDataChangingResponses[qreValueText['WITHIN_MARGIN']] ?? 0,
+            this.histogramDataChangingResponses[qreValueText['EXACT_ANSWER']] ?? 0,
+            this.histogramDataChangingResponses[qreValueText['INCORRECT_ANSWER']] ?? 0
+          ];
+          break;
+        default:
+          histogramDataChangingResponses = [
+            this.histogramDataChangingResponses['actif'] ?? 0,
+            this.histogramDataChangingResponses['inactif'] ?? 0,
+          ];
+          break;
+      }
+
+      final gameStatus = {
+      "roomId": this.roomId,
+      "timerText": this.timerText,
+      "currentTime": this.gameService.realGameService.timer,
+      "isGameOver": this.isGameOver,
+      "leftPlayers": this.leftPlayers,
+      "players": this.interactiveListService.players,
+      "histogramDataChangingResponses": this.gameService.realGameService.question?.type == QuestionType.QCM ? [1000] : histogramDataChangingResponses,
+      "isHostEvaluating": this.isHostEvaluating,
+      "gameStats": this.stringifyStats(),
+      "isPaused": this.isPaused,
+      "isPanicMode": this.isPanicMode,
+      "isValidated": this.gameService.realGameService.validated
+      };
+      this._socketService.sendMessage(SocketEvent.SENDING_HOST_GAME_STATUS, gameStatus);
+    });
   }
 
   void handleTimeTransition() {
