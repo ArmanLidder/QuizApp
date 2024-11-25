@@ -49,6 +49,8 @@ class RealGameService extends ChangeNotifier {
   bool isAION = false;
   bool observerMode = false;
   String obsQrlAnswer = '';
+  Map<int, String?> obsAnswers = {};
+
 
 
   bool get isValidateActive => this._isValidateButtonActive;
@@ -127,29 +129,32 @@ class RealGameService extends ChangeNotifier {
     });
 
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) {
-      if (observerMode) this.obsQrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
-      NextQuestionData nextQuestionData = NextQuestionData(
-          question: QuizQuestion.fromJson(data['question']),
-          index: data['index'],
-          isLast: data['isLast']);
-      this.qcmEnabled = true;
-      // this._gameInterfaceManagementService.changeQcmEnabled(true);
-      if (!isNotified) {
-        notifyListeners();
-        isNotified = true;
+      if (observerMode) {
+        this.obsQrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
+        this.obsAnswers.clear();
       }
+        NextQuestionData nextQuestionData = NextQuestionData(
+            question: QuizQuestion.fromJson(data['question']),
+            index: data['index'],
+            isLast: data['isLast']);
+        this.qcmEnabled = true;
+        // this._gameInterfaceManagementService.changeQcmEnabled(true);
+        if (!isNotified) {
+          notifyListeners();
+          isNotified = true;
+        }
 
-      this.isHostEvaluating = false;
-      this.isSentAnswer = false;
-      this.question = nextQuestionData.question;
-      this.oldQuestion = this.question!;
-      this.questionNumber = nextQuestionData.index;
-      this.isLast = nextQuestionData.isLast;
-      this.validated = false;
-      this.locked = false;
-      this.isValidateActive = true;
-    });
-  }
+        this.isHostEvaluating = false;
+        this.isSentAnswer = false;
+        this.question = nextQuestionData.question;
+        this.oldQuestion = this.question!;
+        this.questionNumber = nextQuestionData.index;
+        this.isLast = nextQuestionData.isLast;
+        this.validated = false;
+        this.locked = false;
+        this.isValidateActive = true;
+      });
+    }
 
   void sendSelection(int index, bool isSelected) {
     if (_socketService.isSocketAlive()) {

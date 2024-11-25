@@ -34,7 +34,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     if (gameInterfaceManagementService.gameService.isOfflineMode) {
       this._themeService.setTheme('default');
     }
-    this.handleRequestQCMSStatus();
+    if(!this.gameInterfaceManagementService.gameService.isObserverMode) this.handleRequestQCMSStatus();
   }
 
   void handleRequestQCMSStatus() {
@@ -61,6 +61,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
       textBtnColor = Color.fromRGBO(0, 0, 0, 0);
       print('Button ${widget.index} is FALSE');
     }
+    print('after rebuilding buttonn, answers are ${this.gameInterfaceManagementService.gameService.answers}');
     if (gameInterfaceManagementService.getQcmEnabled()) {
       if (lastQuestionIndex !=
               gameInterfaceManagementService.gameService.questionNumber &&

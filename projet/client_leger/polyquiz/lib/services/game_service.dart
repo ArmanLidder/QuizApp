@@ -18,7 +18,7 @@ class GameService extends ChangeNotifier {
 
   bool isOfflineMode = false;
   bool isInputFocused = false;
-  Map<int, String?> answers = {};
+  Map<int, String?> _answers = {};
   String qrlAnswer = '';
   bool isActive = false;
   bool hasInteracted = false;
@@ -30,6 +30,16 @@ class GameService extends ChangeNotifier {
   bool isObserverMode = false;
   bool isObservingHost = true;
   String observedUid = '';
+
+  Map<int, String?> get answers {
+    if (!this.isObserverMode) return this._answers;
+    else return this.realGameService.obsAnswers;
+  }
+
+  void set answers(Map<int, String?> value) {
+    if (!this.isObserverMode) this._answers = value;
+    else this.realGameService.obsAnswers = value;
+  }
 
   int obsQreAnswer = 0;
   String get obsQrlAnswer => this.realGameService.obsQrlAnswer;
@@ -131,12 +141,14 @@ class GameService extends ChangeNotifier {
       String? textChoice = this.question?.choices?[index].text;
       this.answers[index] = textChoice;
       notifyListeners();
+      print("After obsUpdateChoice answers are: ${this.answers}");
       return;
     }
     if (this.answers.containsKey(index)) {
       this.answers.remove(index);
       notifyListeners();
     }
+    print("After obsUpdateChoice answers are: ${this.answers}");
   }
 
   void selectQREanswer(int selectedAnswer) {
