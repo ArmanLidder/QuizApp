@@ -1,8 +1,11 @@
 <div *ngIf='isHostEvaluating && !gameService.observerMode'>
     <div *ngIf="!qrlEvaluationService.isCorrectionFinished" class="correction-qrl-container">
+        <h3 *ngIf="gameConfigs.IA"> {{ 'GAME_CONFIG_DIALOG.IA_CORRECTION' | translate }} </h3>
+        <p *ngIf="gameConfigs.IA"><mat-icon>smart_toy</mat-icon>: {{AIcorrectionText}}</p>
+        <p *ngIf="gameConfigs.IA">Points : {{AIscore}} </p>
         <h3> {{ 'GAME_INTERFACE.QRL_CORRECTION.QUESTION_CORRECTION' | translate }} </h3>
         <p> {{ 'GAME_INTERFACE.QRL_CORRECTION.ANSWER' | translate }} {{ qrlEvaluationService.currentAnswer }} </p>
-        <select [(ngModel)]="qrlEvaluationService.inputPoint">
+        <select (change)="switchScore($event)" [(ngModel)]="qrlEvaluationService.inputPoint">
             <option *ngFor="let score of qrlEvaluationService.scores" [value]="score">{{ score }}</option>
         </select>
         <button class="enter" (click)="submitPoint()">

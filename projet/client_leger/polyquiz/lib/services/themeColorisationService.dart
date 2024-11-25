@@ -5,12 +5,12 @@ class ThemeModel {
   final Color color2;
   final Color color3;
   final Color color4;
+  final Color color5;
 
-  ThemeModel({
-    required this.color1,
-    required this.color2,
-    required this.color3,
-    required this.color4,
-  });
+  ThemeModel(
+      {required this.color1,
+      required this.color2,
+      required this.color3,
+      required this.color4,
+      required this.color5});
 }
-

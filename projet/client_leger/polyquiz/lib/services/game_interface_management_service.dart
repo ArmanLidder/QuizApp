@@ -106,7 +106,9 @@ class GameInterfaceManagementService extends ChangeNotifier {
       if (this.gameService.question?.type == QuestionType.QCM) {
         this.getScore();
         this.changeQcmEnabled(false);
+        this.gameService.realGameService.qcmEnabled = false;
       } else {
+        this.gameService.realGameService.isHostEvaluating = true;
         this.gameService.qrlAnswer = '';
         this.gameService.realGameService.validated = true;
       }
@@ -302,6 +304,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
       print("I am Here 444444");
       print(this.gameService.lastQrlScore);
+      notifyListeners();
     }
   }
 
@@ -311,6 +314,9 @@ class GameInterfaceManagementService extends ChangeNotifier {
   }
 
   bool getQcmEnabled() {
+    if(this.gameService.realGameService.qcmEnabled){
+      return true;
+    }
     return this._qcmEnabled;
   }
 }

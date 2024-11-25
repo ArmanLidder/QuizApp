@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart' as Quiz;
 import 'package:polyquiz/services/game_interface_management_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'dart:math' as math;
 
 import 'package:polyquiz/services/translationService.dart';
@@ -14,6 +15,7 @@ class PlayerQreWidget extends StatefulWidget {
 }
 
 class _PlayerQreWidgetState extends State<PlayerQreWidget> {
+  ThemeService _themeService = ThemeService.instance;
   GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
   bool get isValidated => !gameInterfaceManagementService.gameService.realGameService.isValidateActive;
   int _currentValue = 0;  // TODO: attach this to gameService maybe
@@ -63,24 +65,27 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: AnimatedBuilder(
-        animation: gameInterfaceManagementService.gameService.realGameService,
-        builder: (BuildContext context, Widget? snapshot) => Card(
-          elevation: 5.0,
-          margin: EdgeInsets.all(20),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                getMinMaxCard(),
-                // getIncrementalAdjustmentButtons(),
-                getSlider(),
-                getToleranceWidget(),
-                getIntervalWidget(),
-                // getButtons()
-              ],
+    return Container(
+      child: Center(
+        child: AnimatedBuilder(
+          animation: gameInterfaceManagementService.gameService.realGameService,
+          builder: (BuildContext context, Widget? snapshot) => Card(
+            color: _themeService.mainBackground.value,
+            elevation: 5.0,
+            margin: EdgeInsets.all(20),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  getMinMaxCard(),
+                  // getIncrementalAdjustmentButtons(),
+                  getSlider(),
+                  getToleranceWidget(),
+                  getIntervalWidget(),
+                  // getButtons()
+                ],
+              ),
             ),
           ),
         ),
@@ -94,12 +99,14 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: numberPadding),
-          child: Text(this.min.toString()),
+          child: Text(this.min.toString(),
+              style: TextStyle(color: _themeService.mainAccent.value)),
         ),
         Spacer(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: numberPadding),
-          child: Text(this.max.toString()),
+          child: Text(this.max.toString(),
+              style: TextStyle(color: _themeService.mainAccent.value)),
         )
       ],
     );
@@ -111,13 +118,17 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
         IconButton(
           onPressed: canDecrement ? decrementSlider : null,
           icon: Icon(Icons.add),
-          color: canDecrement ? Colors.blueAccent : Colors.grey,
+          color: canDecrement
+              ? _themeService.secondaryBackground.value
+              : Colors.grey,
         ),
         Spacer(),
         IconButton(
           onPressed: canIncrement ? incrementSlider : null,
           icon: Icon(Icons.remove),
-          color: canIncrement ? Colors.blueAccent : Colors.grey,
+          color: canIncrement
+              ? _themeService.secondaryBackground.value
+              : Colors.grey,
         ),
       ],
     );
@@ -129,13 +140,15 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
         IconButton(
           onPressed: canDecrement ? decrementSlider : null,
           icon: Icon(Icons.remove),
-          color: Colors.black,
+          color: _themeService.secondaryAccent.value,
           style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(canDecrement ? Colors.blueAccent : Colors.grey)
-          ),
+              backgroundColor: WidgetStatePropertyAll(canDecrement
+                  ? _themeService.secondaryBackground.value
+                  : Colors.grey)),
         ),
         Expanded(
           child: Slider(
+            activeColor: _themeService.secondaryBackground.value,
             value: currentValue.toDouble(),
             max: this.max.toDouble(),
             min: this.min.toDouble(),
@@ -153,10 +166,10 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
         IconButton(
           onPressed: canIncrement ? incrementSlider : null,
           icon: Icon(Icons.add),
-          color: Colors.black,
+          color: _themeService.secondaryAccent.value,
           style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(canIncrement ? Colors.blueAccent : Colors.grey)
-          ),
+              backgroundColor: WidgetStatePropertyAll(
+                  canIncrement ? Colors.blueAccent : Colors.grey)),
         )
       ],
     );
@@ -164,7 +177,8 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
 
   Widget getToleranceWidget() {
     return Center(
-      child: Text("${qreText['TOLERANCE']}: ±${this.question?.margin ?? 0}"),
+      child: Text("${qreText['TOLERANCE']}: ±${this.question?.margin ?? 0}",
+          style: TextStyle(color: _themeService.mainAccent.value)),
     );
   }
 
@@ -173,32 +187,34 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     final maxValue = math.min(this.max, currentValue + margin);
     final minValue = math.max(this.min, currentValue - margin);
     return Center(
-      child: Text("${qreText['YOUR_ANSWER_INTERVAL']} $minValue - $maxValue"),
+      child: Text("${qreText['YOUR_ANSWER_INTERVAL']} $minValue - $maxValue",
+          style: TextStyle(color: _themeService.mainAccent.value)),
     );
   }
 
   Widget getButtons() {
     final validTextStyle = TextButton.styleFrom(
-      backgroundColor: isValidated ? Colors.grey : Colors.blueAccent,
-      foregroundColor: Colors.white,
+      backgroundColor:
+          isValidated ? Colors.grey : _themeService.secondaryBackground.value,
+      foregroundColor: _themeService.secondaryAccent.value,
     );
     final quitTextStyle = TextButton.styleFrom(
-      backgroundColor: Colors.red,
-      foregroundColor: Colors.white
-    );
+        backgroundColor: Colors.red, foregroundColor: Colors.white);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         TextButton(
-            onPressed: !isValidated ? onValidate : null,
-            child: Text("Valider"),
-            style: validTextStyle,
+          onPressed: !isValidated ? onValidate : null,
+          child: Text("Valider"),
+          style: validTextStyle,
         ),
-        SizedBox(width: 10,),
+        SizedBox(
+          width: 10,
+        ),
         TextButton(
-            onPressed: onQuit,
-            child: Text("Quitter"),
-            style: quitTextStyle,
+          onPressed: onQuit,
+          child: Text("Quitter"),
+          style: quitTextStyle,
         )
       ],
     );

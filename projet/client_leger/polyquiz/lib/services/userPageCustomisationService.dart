@@ -86,6 +86,6 @@ class UserPageCustomisationService extends GetxService {
   Future<List<String>> availableThemes() async {
     String userId = loggedInUserService.getUid()!;
     List<String> themeNames = await this.purchasedThemes(userId);
-    return ["dark", "default", ...themeNames];
+    return ["dark", "light", ...themeNames];
   }
 }

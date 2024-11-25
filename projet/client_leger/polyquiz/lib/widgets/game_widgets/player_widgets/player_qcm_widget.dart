@@ -28,7 +28,6 @@ class _PlayerQcmWidgetState extends State<PlayerQcm> {
     // choices = widget.gameInterfaceManagementService?.gameService.question?.choices ?? [];
   }
 
-  Color textBtnColor = Color.fromRGBO(0, 0, 0, 0);
   @override
   Widget build(BuildContext context) {
     return Container(

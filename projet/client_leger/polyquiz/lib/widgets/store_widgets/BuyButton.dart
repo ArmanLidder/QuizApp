@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:polyquiz/constants/eventNameTomessage.dart';
 import 'package:polyquiz/services/StoreService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 
 import '../../models/user.dart';
-
 
 class BuyButton extends StatefulWidget {
   final num cost;
@@ -21,6 +21,7 @@ class BuyButton extends StatefulWidget {
   @override
   _BuyButtonState createState() => _BuyButtonState();
 }
+
 class _BuyButtonState extends State<BuyButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
@@ -31,16 +32,21 @@ class _BuyButtonState extends State<BuyButton> {
   @override
   void initState() {
     super.initState();
-    _updateButtonStatus();
+    _setupButtonState();
   }
 
-  Future<void> _updateButtonStatus() async {
-    await loggedInUserService.reloadUser();
-    User? user = loggedInUserService.getUser();
-    num availableFunds = user?.currency ?? 0;
-    bool ownsItem = await storeService.isOwned(user?.uid ?? "noIdInButtonWidget", widget.itemId);
+  _setupButtonState () async {
+    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
+    bool ownsItem = await storeService.isOwned(
+        loggedInUserService.getUid()!, widget.itemId);
     setState(() {
       alreadyOwns = ownsItem;
+      canAfford = availableFunds >= widget.cost;
+    });
+    }
+  Future<void> _updateButtonStatus() async {
+    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
+    setState(() {
       canAfford = availableFunds >= widget.cost;
     });
   }
@@ -49,7 +55,6 @@ class _BuyButtonState extends State<BuyButton> {
   Widget build(BuildContext context) {
     return Obx(() {
       storeService.purchaseTrigger;
-      _updateButtonStatus(); // Update status on each change
       Color buttonColor;
       String buttonText;
       VoidCallback? buttonAction;
@@ -62,8 +67,11 @@ class _BuyButtonState extends State<BuyButton> {
         buttonColor = Colors.green;
         buttonText = '${shopText['BUY']} (${widget.cost}) \$';
         buttonAction = () async {
-          await widget.onBuy(); // Call the purchase function
-          _updateButtonStatus();
+          setState(() {
+            alreadyOwns = true;
+          });
+          widget.onBuy(); // Call the purchase function
+          //_updateButtonStatus();
         };
       } else {
         buttonColor = Colors.red;
@@ -75,12 +83,11 @@ class _BuyButtonState extends State<BuyButton> {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
         onPressed: buttonAction,
-        child: Text(buttonText,textAlign: TextAlign.center),
+        child: Text(buttonText, textAlign: TextAlign.center),
       );
     });
   }
 }
-
 
 class ImageRewardButton extends StatefulWidget {
   final num cost;
@@ -98,31 +105,41 @@ class ImageRewardButton extends StatefulWidget {
   _ImageRewardButtonState createState() => _ImageRewardButtonState();
 }
 
-
 class _ImageRewardButtonState extends State<ImageRewardButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
   bool alreadyOwns = false;
   bool canAfford = false;
-  bool meetsPrestigeLevel = false;
+  bool hasLevelNeeded = false;
   Map get shopText => TranslationService.instance.text['SHOPPING'];
 
   @override
   void initState() {
     super.initState();
-    _updateButtonStatus();
+    _setupUpdateButton();
   }
 
-  Future<void> _updateButtonStatus() async {
-    await loggedInUserService.reloadUser();
-    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
-    bool ownsItem = await storeService.isOwned(loggedInUserService.getUid() ?? "noIdInButtonWidget", widget.itemId);
-    bool hasRequiredLevel = (loggedInUserService.observableLevel.value ?? 0) >= widget.minLevel;
 
+  Future<void> _setupUpdateButton() async {
+    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
+    bool ownsItem = await storeService.isOwned(
+        loggedInUserService.getUid() ?? "noIdInButtonWidget", widget.itemId);
+    bool hasRequiredLevel =
+        (loggedInUserService.observableLevel.value ?? 0) >= widget.minLevel;
     setState(() {
       alreadyOwns = ownsItem;
       canAfford = availableFunds >= widget.cost;
-      meetsPrestigeLevel =  hasRequiredLevel;
+      hasLevelNeeded = hasRequiredLevel;
+    });
+  }
+
+    Future<void> _updateButtonStatus() async {
+    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
+    bool hasRequiredLevel =
+        (loggedInUserService.observableLevel.value ?? 0) >= widget.minLevel;
+    setState(() {
+      canAfford = availableFunds >= widget.cost;
+      hasLevelNeeded = hasRequiredLevel;
     });
   }
 
@@ -130,35 +147,42 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
   Widget build(BuildContext context) {
     return Obx(() {
       storeService.purchaseTrigger;
-      _updateButtonStatus(); // Update status on each change
       Color buttonColor;
       String buttonText;
-      VoidCallback? buttonAction;
+      VoidCallback? buttonAction = ()=>{};
 
       if (alreadyOwns) {
         buttonColor = Colors.grey;
         buttonText = shopText['OWNED'];
-        buttonAction = _updateButtonStatus; // Disable button if already owned
-      } else if (canAfford && meetsPrestigeLevel) {
+        //buttonAction = _updateButtonStatus; // Disable button if already owned
+      } else if (canAfford && hasLevelNeeded) {
         buttonColor = Colors.green;
         buttonText = '${shopText['BUY']} (${widget.cost}) \$';
         buttonAction = () async {
+          print("preemptive button change");
+          setState(() {
+            alreadyOwns = true; //Temporaire localement, le set up avant d'avoir confirmation du serveurs
+          });
           await widget.onBuy(); // Call the purchase function
           _updateButtonStatus();
         };
       } else {
         buttonColor = Colors.grey;
-        final content = TranslationService.instance.languageValue.value == Language.fr ? "Débloqué au niveau" : "Unlocked at level";
+        final content =
+            TranslationService.instance.languageValue.value == Language.fr
+                ? "Débloqué au niveau"
+                : "Unlocked at level";
         buttonText = '$content ${widget.minLevel}';
         buttonAction = _updateButtonStatus; // Disable button if requirements not met
       }
 
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: buttonColor,
-          fixedSize: Size(200,60),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          fixedSize: Size(200, 60),
         ),
         onPressed: buttonAction,
-        child: Center(child:Text(buttonText,textAlign: TextAlign.center)),
+        child: Center(child: Text(buttonText, textAlign: TextAlign.center)),
       );
     });
   }
@@ -169,14 +193,12 @@ class RewardThemeButton extends StatefulWidget {
   final Future<void> Function() onBuy; // Purchase callback
   final String itemId;
   final num achievement; // Achievement to check
-  final Future<void> Function()? onUnlock; // Callback for unlocking
 
   RewardThemeButton({
     required this.cost,
     required this.onBuy,
     required this.itemId,
     required this.achievement,
-    this.onUnlock,
   });
 
   @override
@@ -187,6 +209,8 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
   Map get shopText => TranslationService.instance.text['SHOPPING'];
+  List<String> get achievementText => TranslationService.instance.text['PROFILE']['ALL_ACHIEVEMENTS'];
+  final ThemeService _themeService = ThemeService.instance;
 
   bool alreadyOwns = false;
   bool canAfford = false;
@@ -195,19 +219,26 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   @override
   void initState() {
     super.initState();
-    _updateButtonStatus();
+    _setupButtonStatus();
   }
-
-  Future<void> _updateButtonStatus() async {
-    await loggedInUserService.reloadUser();
-    final user = loggedInUserService.getUser();
-    num availableFunds = user?.currency ?? 0;
-    bool ownsItem = await storeService.isOwned(user?.uid ?? "noIdInRewardButtonWidget", widget.itemId);
-    bool achievementUnlocked = user?.achievements.contains(widget.achievement) ?? false;
+  Future<void> _setupButtonStatus() async {
+    bool ownsItem = await storeService.isOwned(
+        loggedInUserService.getUid()!, widget.itemId);
+    bool achievementUnlocked =
+        loggedInUserService.observableAchievement.value.contains(widget.achievement) ?? false;
 
     setState(() {
       alreadyOwns = ownsItem;
-      canAfford = availableFunds >= widget.cost;
+      canAfford = loggedInUserService.observableCurrency.value >= widget.cost;
+      hasAchievement = achievementUnlocked;
+    });
+  }
+
+  Future<void> _updateButtonStatus() async {
+    bool achievementUnlocked =
+        loggedInUserService.observableAchievement.value.contains(widget.achievement) ?? false;
+    setState(() {
+      canAfford = loggedInUserService.observableCurrency.value >= widget.cost;
       hasAchievement = achievementUnlocked;
     });
   }
@@ -216,7 +247,6 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   Widget build(BuildContext context) {
     return Obx(() {
       storeService.purchaseTrigger;
-      _updateButtonStatus(); // Update status on each change
       Color buttonColor;
       String buttonText;
       VoidCallback? buttonAction;
@@ -224,34 +254,45 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
       if (alreadyOwns) {
         buttonColor = Colors.grey;
         buttonText = shopText['OWNED'];
-        buttonAction = null; // Disable button if already owned
+        buttonAction = _updateButtonStatus; // Disable button if already owned
       } else if (hasAchievement) {
         if (canAfford) {
           buttonColor = Colors.green;
           buttonText = '${shopText['BUY']} (${widget.cost}) \$';
           buttonAction = () async {
+            setState(() {
+              alreadyOwns = true;
+            });
             await widget.onBuy(); // Call the purchase function
             _updateButtonStatus();
           };
         } else {
           buttonColor = Colors.red;
-          // buttonText = 'Pas assez de fonds (${widget.cost}) \$';
           buttonText = shopText['NOT_ENOUGH_FUNDS'] + " (${widget.cost}) \$";
-          buttonAction = null; // Disable button if insufficient funds
+          buttonAction = _updateButtonStatus; // Disable button if insufficient funds
         }
       } else {
         buttonColor = Colors.grey;
-        final content = TranslationService.instance.languageValue.value == Language.fr ? "Débloqué à l'exploit" : "Unlocked at exploit";
-        buttonText = '$content ${widget.achievement}';
-        buttonAction = null; // Disable button if achievement not met
+        final content =
+            TranslationService.instance.languageValue.value == Language.fr
+                ? "Débloqué à l'exploit"
+                : "Unlocked at exploit";
+
+        buttonText = '$content ${achievementText[(widget.achievement as int) - 1]}';
+        buttonAction = _updateButtonStatus; // Disable button if achievement not met
       }
 
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: buttonColor,
-          fixedSize: Size(200,60),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          fixedSize: Size(200, 60),
         ),
         onPressed: buttonAction,
-        child: Center(child:Text(buttonText)),
+        child: Center(child: Text(buttonText,
+            style: TextStyle(color: _themeService.mainAccent.value))),
+
+
+
       );
     });
   }
@@ -277,8 +318,10 @@ class RewardCashButton extends StatefulWidget {
 class _RewardCashButtonState extends State<RewardCashButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
+  final ThemeService _themeService = ThemeService.instance;
   Map get shopText => TranslationService.instance.text['SHOPPING'];
-  List<String> get achievementText => TranslationService.instance.text['PROFILE']['ALL_ACHIEVEMENTS'];
+  List<String> get achievementText =>
+      TranslationService.instance.text['PROFILE']['ALL_ACHIEVEMENTS'];
 
   bool alreadyClaimed = false;
   bool hasAchievement = false;
@@ -286,17 +329,28 @@ class _RewardCashButtonState extends State<RewardCashButton> {
   @override
   void initState() {
     super.initState();
-    _updateButtonStatus();
+    _setupButtonStatus();
   }
 
-  Future<void> _updateButtonStatus() async {
+  Future<void> _setupButtonStatus() async {
     await loggedInUserService.reloadUser();
     final user = loggedInUserService.getUser();
-    bool ownsItem = await storeService.isOwned(user?.uid ?? "noIdInRewardCashButtonWidget", widget.itemId);
-    bool achievementUnlocked = user?.achievements.contains(widget.achievement) ?? false;
+    bool ownsItem = await storeService.isOwned(
+        user?.uid ?? "noIdInRewardCashButtonWidget", widget.itemId);
+    bool achievementUnlocked =
+        user?.achievements.contains(widget.achievement) ?? false;
 
     setState(() {
       alreadyClaimed = ownsItem;
+      hasAchievement = achievementUnlocked;
+    });
+  }
+  Future<void> _updateButtonStatus() async {
+    await loggedInUserService.reloadUser();
+    final user = loggedInUserService.getUser();
+    bool achievementUnlocked =
+        user?.achievements.contains(widget.achievement) ?? false;
+    setState(() {
       hasAchievement = achievementUnlocked;
     });
   }
@@ -305,7 +359,6 @@ class _RewardCashButtonState extends State<RewardCashButton> {
   Widget build(BuildContext context) {
     return Obx(() {
       storeService.purchaseTrigger;
-      _updateButtonStatus(); // Update status on each change
       Color buttonColor;
       String buttonText;
       VoidCallback? buttonAction;
@@ -313,29 +366,39 @@ class _RewardCashButtonState extends State<RewardCashButton> {
       if (alreadyClaimed) {
         buttonColor = Colors.grey;
         buttonText = shopText['CLAIMED']; // "Réclamée"
-        buttonAction = null; // Disable button if already claimed
+        buttonAction = _updateButtonStatus; // Disable button if already claimed
+
       } else if (hasAchievement) {
         buttonColor = Colors.green;
         buttonText = shopText['CLAIM']; // "Réclamer"
         buttonAction = () async {
-          await widget.onClaim(); // Call the claim function
+          setState(() {
+            alreadyClaimed = true;
+          });
+          widget.onClaim(); // Call the claim function
           _updateButtonStatus();
         };
       } else {
         buttonColor = Colors.grey;
-        final content = TranslationService.instance.languageValue.value == Language.fr
-            ? "Débloqué à l'exploit  "
-            : "Unlocked at achievement ";
-        buttonText = '$content ${achievementText[(widget.achievement - 1) as int]}';
-        buttonAction = null; // Disable button if achievement not met
+        final content =
+            TranslationService.instance.languageValue.value == Language.fr
+                ? "Débloqué à l'exploit  "
+                : "Unlocked at achievement ";
+        buttonText =
+            '$content ${achievementText[(widget.achievement - 1) as int]}';
+        buttonAction = _updateButtonStatus; // Disable button if achievement not met
       }
 
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: buttonColor,
-        fixedSize: Size(200,60),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonColor,
+          fixedSize: Size(200, 60),
         ),
         onPressed: buttonAction,
-        child:Center(child: Text(buttonText,textAlign: TextAlign.center)),
+        child: Center(
+            child: Text(buttonText,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: _themeService.mainAccent.value))),
       );
     });
   }

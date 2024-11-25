@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
 import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
+import 'package:polyquiz/widgets/fancyAppBar.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_interface_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qre_widget.dart';
@@ -17,6 +20,7 @@ import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
+import '../models/user.dart';
 import 'package:polyquiz/widgets/observer_widgets/observer_counter.dart';
 import 'package:polyquiz/widgets/observer_widgets/observation_selector.dart';
 
@@ -44,6 +48,7 @@ class _MyWidgetState extends State<GamePage> {
   InteractiveListService _interactiveListService = InteractiveListService();
   GameInterfaceManagementService _gameInterfaceManagementService =
       GameInterfaceManagementService();
+  ThemeService themeService = ThemeService.instance;
 
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get timerText => gameText['TIMER_TEXT'];
@@ -92,19 +97,8 @@ class _MyWidgetState extends State<GamePage> {
 
   @override
   void dispose() {
-    // Only dispose if we're actually leaving the game
     if (_gameService.isQuitBtn) {
       print('GamePage dispose');
-      // final String socketMessage =
-      //     this.isHost ? SocketEvent.HOST_LEFT : SocketEvent.PLAYER_LEFT;
-      // if (this._socketService.isSocketAlive()) {
-      //   this._socketService.sendMessage(
-      //       socketMessage, this._gameService.realGameService.roomId);
-      // }
-      // _gameService.destroy();
-      // _gameInterfaceManagementService.reset();
-      // _interactiveListService.reset();
-      // Reset local state
       isHost = false;
       isQcm = false;
       isGrading = true;
@@ -144,32 +138,8 @@ class _MyWidgetState extends State<GamePage> {
   Widget build(BuildContext context) {
     if (isHost) {
       return Scaffold(
-        // appBar: AppBar(
-        //   leading: Row(
-        //     children: [
-        //       ObserverCounter(),
-        //       SizedBox(width: 10),
-        //       ObservationSelector(),
-        //       SizedBox(width: 20),
-        //     ],
-        //   ),
-        //   title: const Text('PolyQuiz'),
-        //   automaticallyImplyLeading: false,
-        //   centerTitle: true,
-        //   backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-        // ),
-        appBar: AppBar(
-          actions: [
-            ObserverCounter(),
-            SizedBox(width: 10),
-            ObservationSelector(),
-            SizedBox(width: 20),
-          ],
-          title: const Text('PolyQuiz'),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-        ),
+        appBar: FancyAppBar(context: context),
+        backgroundColor: themeService.mainBackground.value,
         body: Stack(children: [
           ListView(children: [
         Visibility(
@@ -179,10 +149,12 @@ class _MyWidgetState extends State<GamePage> {
             gameInterfaceManagementService:
             _gameInterfaceManagementService))
           ]),
+          Positioned(bottom: 20, left: 20, child: ChatPopup())
         ]),
       );
     } else {
       return Container(
+          color: themeService.mainBackground.value,
           child: AnimatedBuilder(
               animation:
                   _gameInterfaceManagementService.gameService.realGameService,
@@ -194,7 +166,7 @@ class _MyWidgetState extends State<GamePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Waiting for questions to load...',
+                          gameText["LOADING_QUESTIONS"],
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.bold),
                         ),
@@ -210,47 +182,25 @@ class _MyWidgetState extends State<GamePage> {
                       builder: (BuildContext context, Widget? snapshot) {
                         if (_gameInterfaceManagementService.isResultPage) {
                           return Scaffold(
-                            appBar: AppBar(
-                              actions: [
-                                ObserverCounter(),
-                                SizedBox(width: 10),
-                                ObservationSelector(),
-                                SizedBox(width: 20),
+                            appBar: FancyAppBar(context: context),
+                            backgroundColor: themeService.mainBackground.value,
+                            body: ListView(
+                              children: [
+                                ResultPage(
+                                  gameService: _gameInterfaceManagementService
+                                      .gameService,
+                                  interactiveListService:
+                                      _interactiveListService,
+                                  gameInterfaceManagementService:
+                                      _gameInterfaceManagementService,
+                                ),
                               ],
-                              title: const Text('PolyQuiz'),
-                              automaticallyImplyLeading: false,
-                              centerTitle: true,
-                              backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                            ),
-                            body: Material(
-                              child: ListView(
-                                children: [
-                                  ResultPage(
-                                    gameService: _gameInterfaceManagementService
-                                        .gameService,
-                                    interactiveListService:
-                                        _interactiveListService,
-                                    gameInterfaceManagementService:
-                                        _gameInterfaceManagementService,
-                                  ),
-                                ],
-                              ),
                             ),
                           );
                         } else {
                           return Scaffold(
-                            appBar: AppBar(
-                              actions: [
-                                ObserverCounter(),
-                                SizedBox(width: 10),
-                                ObservationSelector(),
-                                SizedBox(width: 20),
-                              ],
-                              title: const Text('PolyQuiz'),
-                              automaticallyImplyLeading: false,
-                              centerTitle: true,
-                              backgroundColor: Color.fromRGBO(53, 121, 246, 1),
-                            ),
+                            appBar: FancyAppBar(context: context),
+                            backgroundColor: themeService.mainBackground.value,
                             body: Stack(children: [
                               ListView(shrinkWrap: true, children: [
                                 Visibility(
@@ -292,17 +242,27 @@ class _MyWidgetState extends State<GamePage> {
                                               margin: EdgeInsets.all(5.0),
                                               padding: EdgeInsets.all(10.0),
                                               decoration: BoxDecoration(
-                                                  border: Border.all()),
+                                                  border: Border.all(
+                                                      color: themeService
+                                                          .mainAccent.value)),
                                               child: Column(
                                                 children: [
                                                   Text(
                                                     '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
-                                                    style:
-                                                        TextStyle(fontSize: 20),
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: themeService
+                                                            .mainAccent.value),
                                                   ),
                                                   _gameInterfaceManagementService
                                                           .isBonus
-                                                      ? Text(gameText['BONUS_RECEIVED_FEEDBACK'])
+                                                      ? Text(
+                                                          gameText[
+                                                              'BONUS_RECEIVED_FEEDBACK'],
+                                                          style: TextStyle(
+                                                              color: themeService
+                                                                  .mainAccent
+                                                                  .value))
                                                       : SizedBox()
                                                 ],
                                               ),
@@ -333,6 +293,8 @@ class _MyWidgetState extends State<GamePage> {
                                   ),
                                 ),
                               ]),
+                              Positioned(
+                                  bottom: 0, left: 20, child: ChatPopup())
                             ]),
                           );
                         }
@@ -347,19 +309,19 @@ class _MyWidgetState extends State<GamePage> {
     if (imageUrl == null) return null;
     return Center(
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.25,
-          // height: MediaQuery.of(context).size.height * 0.25,
-          child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5.0),
-                  child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-        ));
+      width: MediaQuery.of(context).size.width * 0.25,
+      // height: MediaQuery.of(context).size.height * 0.25,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5.0),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    ));
   }
 
   Widget getButtons() {
@@ -384,7 +346,7 @@ class _MyWidgetState extends State<GamePage> {
               child: Text(
                 gameText['VALIDATE_BUTTON'],
                 style: TextStyle(
-                  color: Colors.white,
+                  color: themeService.secondaryAccent.value,
                   fontSize: 20,
                 ),
               )),
@@ -405,8 +367,8 @@ class _MyWidgetState extends State<GamePage> {
     _gameService.realGameService.isValidateActive = false;
     if (_gameInterfaceManagementService.gameService.question?.type ==
         QuestionType.QRL) {
-      _gameInterfaceManagementService
-          .gameService.realGameService.isHostEvaluating = true;
+      // _gameInterfaceManagementService
+      //     .gameService.realGameService.isHostEvaluating = true;
     }
     _gameInterfaceManagementService.gameService.sendAnswer();
   }
@@ -416,7 +378,9 @@ class ResultPage extends StatelessWidget {
   final GameService gameService;
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
-
+  final ThemeService _themeService = ThemeService.instance;
+  Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
+  final TranslationService transService = TranslationService.instance;
   ResultPage({
     required this.gameService,
     this.interactiveListService,
@@ -425,25 +389,37 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Le jeux est terminé! voici les résultats.',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Obx(() {
+      //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
+      Language uselessShit = transService.languageValue.value;
+
+      return Container(
+        color: _themeService.mainBackground.value,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              gameText['GAME_FINISHED'] + " , " + gameText["PLAYERS_RESULT"],
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: _themeService.mainAccent.value),
+            ),
+            PlayersDataTable(
+              isHost: false,
+            ),
+            StatisticZone(
+                gameStats: this.gameInterfaceManagementService!.gameStats),
+            QuitBtn(
+              isHost: false,
+              roomId: gameService.realGameService.roomId,
+              gameService: gameService,
+              interactiveListService: interactiveListService,
+              gameInterfaceManagementService: gameInterfaceManagementService,
+            ),
+          ],
         ),
-        PlayersDataTable(
-          isHost: false,
-        ),
-        StatisticZone(gameStats : this.gameInterfaceManagementService!.gameStats),
-        QuitBtn(
-          isHost: false,
-          roomId: gameService.realGameService.roomId,
-          gameService: gameService,
-          interactiveListService: interactiveListService,
-          gameInterfaceManagementService: gameInterfaceManagementService,
-        ),
-      ],
-    );
+      );
+    });
   }
 }

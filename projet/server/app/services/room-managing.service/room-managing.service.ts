@@ -83,7 +83,6 @@ export class RoomManagingService {
         if (this.getRoomById(roomId).gameType !== 'classic' && HOST_USERNAME !== username) this.addNewUserInTeam(roomId, username)
         if (HOST_USERNAME !== username && game_price > 0) this.getRoomById(roomId).total_price += game_price
         if (HOST_USERNAME !== username) this.getRoomById(roomId).observersCounter.set(username, 0);
-        console.log(this.getRoomById(roomId).observersCounter);
     }
 
     updateObserverCounter(roomId: number, userId: string, decrement: boolean) {

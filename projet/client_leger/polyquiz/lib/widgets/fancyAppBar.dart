@@ -14,7 +14,8 @@ class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
   _FancyAppBarState createState() => _FancyAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(60.0); // Adjust the height if needed
+  Size get preferredSize =>
+      Size.fromHeight(60.0); // Adjust the height if needed
 }
 
 class _FancyAppBarState extends State<FancyAppBar> {
@@ -24,16 +25,19 @@ class _FancyAppBarState extends State<FancyAppBar> {
   @override
   void initState() {
     super.initState();
-    imageUrl = loggedInUserService.observableAvatar.value; // Initialize with the source image URL
+    imageUrl = loggedInUserService
+        .observableAvatar.value; // Initialize with the source image URL
   }
-
 
   @override
   Widget build(BuildContext barContext) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.blue, Colors.purple],
+          colors: [
+            Color.fromRGBO(38, 99, 235, 1),
+            Color.fromRGBO(167, 85, 246, 1)
+          ],
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
         ),
@@ -51,14 +55,14 @@ class _FancyAppBarState extends State<FancyAppBar> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: widget.hasBackButton ?
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.red),
-            onPressed: () {
-              Navigator.pushReplacementNamed(widget.context, '/home');   }) :
-          PendingRequestsWidget(),
-
-    actions: [
+        leading: widget.hasBackButton
+            ? IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.red),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(widget.context, '/home');
+                })
+            : PendingRequestsWidget(),
+        actions: [
           GestureDetector(
             onTap: () {
               showDialog(
@@ -89,11 +93,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
                   value: 1,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.person),
-                      Text(" Profil"),
-                      Spacer()
-                    ],
+                    children: [Icon(Icons.person), Text(" Profil"), Spacer()],
                   ),
                   onTap: () {
                     Navigator.pushReplacementNamed(widget.context, '/user');
@@ -110,77 +110,80 @@ class _FancyAppBarState extends State<FancyAppBar> {
                     ],
                   ),
                   onTap: () async {
-                    await loggedInUserService.logout();
+                    loggedInUserService.logout();
                     Navigator.pushReplacementNamed(widget.context, '/auth');
                   },
                 ),
               ],
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 36,
-                      width: 40,
-                      child: Stack(
-                        children: [
-                          Obx(() {
-                            return CircleAvatar(
-                              radius: 20,
-                              backgroundImage:
-                              NetworkImage(loggedInUserService.observableAvatar.value),
-                            );
-                          }),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              width: 17.5,
-                              height: 17.5,
-                              decoration: BoxDecoration(
-                                color: Colors.yellow,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  loggedInUserService.observableLevel.toString(),
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 36,
+                    width: 40,
+                    child: Stack(
+                      children: [
+                        Obx(() {
+                          return CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(
+                                loggedInUserService.observableAvatar.value),
+                          );
+                        }),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 17.5,
+                            height: 17.5,
+                            decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                loggedInUserService.observableLevel.toString(),
+                                style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Obx((){
-                      return Row(children: [
+                  ),
+                  Obx(() {
+                    return Row(
+                      children: [
                         Icon(
                           Icons.monetization_on,
                           size: 10.0,
                           color: Colors.white,
                         ),
                         Text(
-                          loggedInUserService.observableCurrency.value.toString(),
+                          loggedInUserService.observableCurrency.value
+                              .toString(),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 10, // Adjust the size as needed
                             fontWeight: FontWeight.bold,
                           ),
-                          overflow: TextOverflow.ellipsis, // Ensure text does not overflow
+                          overflow: TextOverflow
+                              .ellipsis, // Ensure text does not overflow
                           maxLines: 1,
                         ),
-                      ],);
-
-                    })
-
-                  ],
-                ),
+                      ],
+                    );
+                  })
+                ],
               ),
             ),
-        ],      ),
+          ),
+        ],
+      ),
     );
   }
 }

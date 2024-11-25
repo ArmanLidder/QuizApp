@@ -27,6 +27,7 @@ export class AvatarComponent implements OnInit{
 
   isMenuOpen: boolean = false;
   menuEnabled: boolean = false;
+  isLoading: boolean = true;
 
   constructor(
       private router: Router,
@@ -68,5 +69,9 @@ export class AvatarComponent implements OnInit{
     await this.authService.logout();
     await this.router.navigate(['/login']);
     if (this.socketService.isSocketAlive()) this.socketService.disconnect();
+  }
+
+  onImageLoad(): void {
+    this.isLoading = false;
   }
 }

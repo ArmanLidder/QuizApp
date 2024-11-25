@@ -25,6 +25,7 @@ export class ActiveGameListComponent implements OnInit {
     @Output() validationDone: EventEmitter<boolean> = new EventEmitter<boolean>();
     games$: Observable<GameListItem[]>;
     quizNameMap: Map<string, string> = new Map();
+    joiningRoom = false;
 
     constructor(
         private gameListService: GameListService,
@@ -86,29 +87,37 @@ export class ActiveGameListComponent implements OnInit {
 
 
     async joinRoom(game: GameListItem) {
-        this.gameService.observerMode = false;
-        this.roomValidationService.roomId = game.room as unknown as string;
-        const isHostFriend = await this.validateFriendship(game);
-        if (game.friendsOnly && !isHostFriend)  {
-            this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.EXCLUSIVE_FRIENDS_GAME").toPromise());
-        } else {
-            const isPrestigeValid = await this.validatePrestige(game.prestige);
-            const enoughMoney = await this.validateMoney(game.price);
-            if (!isPrestigeValid) {
-                this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.INSUFFICIENT_PRESTIGE").toPromise());
-            } else if (!enoughMoney){
-                this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.INSUFFICIENT_FUNDS").toPromise());
+        if (this.joiningRoom) return; // Exit if already processing a join request, fix for spam join
+        this.joiningRoom = true;
+        try {
+            this.gameService.observerMode = false;
+            this.roomValidationService.roomId = game.room as unknown as string;
+            const isHostFriend = await this.validateFriendship(game);
+            if (game.friendsOnly && !isHostFriend)  {
+                this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.EXCLUSIVE_FRIENDS_GAME").toPromise());
             } else {
-                await this.roomValidationService.verifyUsername();
-                if (!this.roomValidationService.isUsernameValid) {
-                    this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.USER_BANNED").toPromise());
-                } else await this.roomValidationService.sendJoinRoomRequest();
-                if (this.roomValidationService.isLocked) {
-                    this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.ROOM_LOCKED").toPromise());
+                const isPrestigeValid = await this.validatePrestige(game.prestige);
+                const enoughMoney = await this.validateMoney(game.price);
+                if (!isPrestigeValid) {
+                    this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.INSUFFICIENT_PRESTIGE").toPromise());
+                } else if (!enoughMoney){
+                    this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.INSUFFICIENT_FUNDS").toPromise());
+                } else {
+                    await this.roomValidationService.verifyUsername();
+                    if (!this.roomValidationService.isUsernameValid) {
+                        this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.USER_BANNED").toPromise());
+                    } else await this.roomValidationService.sendJoinRoomRequest();
+                    if (this.roomValidationService.isLocked) {
+                        this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.ROOM_LOCKED").toPromise());
+                    }
+                    const isValid = !this.roomValidationService.isLocked && this.roomValidationService.isUsernameValid;
+                    if (isValid) this.sendAllDataToWaitingRoom();
                 }
-                const isValid = !this.roomValidationService.isLocked && this.roomValidationService.isUsernameValid;
-                if (isValid) this.sendAllDataToWaitingRoom();
             }
+        }catch(error:any) {
+            console.error("Error joining room:", error);
+        } finally {
+            this.joiningRoom = false;
         }
     }
 

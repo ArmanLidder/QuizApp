@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/enums/question_type.dart';
-import 'package:polyquiz/models/question_statistics.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/host_grading_widget.dart';
+import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_legend_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
-import 'package:polyquiz/widgets/game_widgets/timer_widget.dart'; 
+import 'package:polyquiz/widgets/game_widgets/timer_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_legend_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
@@ -112,6 +113,7 @@ class _HostInterfaceState extends State<HostInterface> {
                   hostInterfaceManagementService:
                       hostInterfaceManagementService,
                 ),
+                PlayersDataTableLegend(),
                 PlayersDataTable(
                   isHost: true,
                 ),
@@ -131,6 +133,7 @@ class HostHeader extends StatelessWidget {
   final HostInterfaceManagementService hostInterfaceManagementService;
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
+  final ThemeService _themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get gameText => text['GAME_INTERFACE'];
 
@@ -148,30 +151,32 @@ class HostHeader extends StatelessWidget {
     if (imageUrl == null) return null;
     return Center(
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.25,
-          // height: MediaQuery.of(context).size.height * 0.25,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5.0),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
+      width: MediaQuery.of(context).size.width * 0.25,
+      // height: MediaQuery.of(context).size.height * 0.25,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5.0),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
           ),
-        ));
+        ),
+      ),
+    ));
   }
 
   Widget? getQREAnswer() {
     final currentQuestion = this.gameService.realGameService.question;
-    if (currentQuestion == null || this.gameService.realGameService.question?.type != QuestionType.QRE) return null;
+    if (currentQuestion == null ||
+        this.gameService.realGameService.question?.type != QuestionType.QRE)
+      return null;
     return Text(
       "✅ : ${currentQuestion.answer} ± ${currentQuestion.margin}",
       style: TextStyle(
-        fontWeight: FontWeight.normal,
-        fontSize: 16
-      ),
+          fontWeight: FontWeight.normal,
+          fontSize: 16,
+          color: _themeService.mainAccent.value),
     );
   }
 
@@ -193,7 +198,8 @@ class HostHeader extends StatelessWidget {
           if (getQREAnswer() != null) getQREAnswer()!,
           if (getImageWidgetFromQuestion(context) != null)
             getImageWidgetFromQuestion(context)!
-          else SizedBox(height: 40),
+          else
+            SizedBox(height: 40),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -230,7 +236,10 @@ class HostHeader extends StatelessWidget {
       textStyle: TextStyle(fontWeight: FontWeight.normal),
       splashFactory: NoSplash.splashFactory,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      backgroundColor: this.hostInterfaceManagementService.NextQuestionBtnDisabled ? Colors.grey : Color.fromRGBO(53, 121, 246, 1),
+      backgroundColor:
+      this.hostInterfaceManagementService.NextQuestionBtnDisabled
+          ? Colors.grey
+          : _themeService.secondaryBackground.value,
     );
     return Row(
       children: [
@@ -241,7 +250,7 @@ class HostHeader extends StatelessWidget {
                 ? gameText['SHOW_RESULT']
                 : gameText['NEXT_QUESTION'],
             style: TextStyle(
-                color: Color.fromRGBO(255, 255, 255, 1), fontSize: 20),
+                color: _themeService.secondaryAccent.value, fontSize: 20),
           ),
           style: validateButtonStyle,
         ),
@@ -293,9 +302,7 @@ class HostMiddleSection extends StatelessWidget {
       case QuestionType.QCM:
       default:
         returnedWidget = Column(
-          children: [
-            HistogramLegend(), Histogram()
-          ],
+          children: [HistogramLegend(), Histogram()],
         );
         break;
     }
@@ -313,6 +320,7 @@ class ResultPage extends StatelessWidget {
   final InteractiveListService? interactiveListService;
   final GameInterfaceManagementService? gameInterfaceManagementService;
   final HostInterfaceManagementService hostInterfaceManagementService;
+  ThemeService _themeService = ThemeService.instance;
 
   ResultPage({
     required this.gameService,
@@ -328,12 +336,16 @@ class ResultPage extends StatelessWidget {
       children: [
         Text(
           'Le jeux est terminé! voici les résultats.',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: _themeService.mainAccent.value),
         ),
+        PlayersDataTableLegend(),
         PlayersDataTable(
           isHost: true,
         ),
-        StatisticZone(gameStats : this.hostInterfaceManagementService.gameStats),
+        StatisticZone(gameStats: this.hostInterfaceManagementService.gameStats),
         QuitBtn(
           isHost: true,
           roomId: gameService.realGameService.roomId,

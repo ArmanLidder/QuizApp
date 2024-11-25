@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/pages/game_page.dart';
-import 'package:polyquiz/pages/login-page.dart';
 import 'package:polyquiz/pages/offline_game_page.dart';
 import 'package:polyquiz/pages/offline_quiz_list_page.dart';
 import 'package:polyquiz/pages/waiting_room_screen.dart';
@@ -22,7 +21,6 @@ import 'pages/quiz_list_page.dart';
 import 'pages/join_room_page.dart';
 import 'pages/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/user_service.dart';
@@ -34,12 +32,9 @@ import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/game_list_item.dart';
 import 'package:polyquiz/pages/active_game_list.dart';
 import 'package:polyquiz/services/socket_service.dart';
-import 'package:polyquiz/services/user_service.dart';
-import 'package:polyquiz/pages/active_game_list.dart';
 import 'package:polyquiz/services/quiz_service.dart';
 import 'package:polyquiz/services/room_validation_service.dart';
 import 'package:polyquiz/services/snack_bar_service.dart';
-import 'services/theme_service.dart';
 
 final socketService = SocketService();
 final userService = UserService();
@@ -148,7 +143,6 @@ class MyApp extends StatelessWidget {
       },
     );
   }
-
 
   // @override
   // Widget build(BuildContext context) {

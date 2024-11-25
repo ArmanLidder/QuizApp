@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
+import 'package:polyquiz/widgets/fancyAppBar.dart';
 import 'package:polyquiz/widgets/game_widgets/quit_btn.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../services/waiting_room_service.dart';
@@ -38,6 +40,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   bool showPopup = false;
   WaitingRoomService waitingRoomService = WaitingRoomService();
   RealGameService realGameService = RealGameService();
+  ThemeService themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get waitRoomText => text['WAITING_ROOM_PAGE'];
 
@@ -59,12 +62,12 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     //_leaveRoom();
     // waitingRoomService.cancelListeners();
     // waitingRoomService.disconnect();
-    if(!waitingRoomService.isTransition) {
+    if (!waitingRoomService.isTransition) {
       if (widget.isHost) {
-          this.waitingRoomService.userLeft(roomId, SocketEvent.HOST_LEFT);
-      }
-      else{
-          this.waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
+        this.waitingRoomService.userLeft(roomId, SocketEvent.HOST_LEFT);
+        this.waitingRoomService.deleteRoom(roomId);
+      } else {
+        this.waitingRoomService.userLeft(roomId, SocketEvent.PLAYER_LEFT);
       }
     }
     waitingRoomService.players = [];
@@ -80,6 +83,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             widget.quiz.id, widget.gameConfigService!.getGameConfig());
         realGameService.username = 'host';
         realGameService.roomId = waitingRoomService.roomId;
+        realGameService.isAION = widget.gameConfigService!.getGameConfig().IA!;
         setState(() {
           waitingRoomService.gameType = widget.gameConfigService!.gameType;
         });
@@ -140,33 +144,32 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     int moreThanTwoMembers = 0;
 
     this.waitingRoomService.teamsForInterface.forEach((team) {
-      if (team.userIds.length > 1) {
+      if (team.userIds.length < 2) {
         moreThanTwoMembers += 1;
       }
     });
 
-    return moreThanTwoMembers < 1 ||
-        this.waitingRoomService.teams.length < 1 ||
+    return moreThanTwoMembers > 0 ||
+        this.waitingRoomService.teams.length < 2 ||
         !this.waitingRoomService.isRoomLocked;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(waitRoomText['TITLE']),
-        automaticallyImplyLeading: false,
-      ),
+      appBar: FancyAppBar(context: context),
+      backgroundColor: themeService.mainBackground.value,
       body: Stack(children: [
         Container(
           margin: EdgeInsets.all(50.0),
           padding: EdgeInsets.all(40.0),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Color.fromRGBO(248, 249, 250, 1),
+              color: themeService.container.value,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
+                  color:
+                      const Color.fromRGBO(128, 128, 128, 1).withOpacity(0.5),
                   spreadRadius: 5,
                   blurRadius: 7,
                   offset: Offset(0, 3),
@@ -175,18 +178,24 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
           child: Column(
             children: [
               Text(waitRoomText['TITLE'],
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      color: themeService.mainAccent.value)),
               SizedBox(height: 20.0),
               Text('${waitRoomText['ROOM_CODE']}: $roomId',
-                  style: TextStyle(fontSize: 18)),
+                  style: TextStyle(
+                      fontSize: 18, color: themeService.mainAccent.value)),
               if (widget.isHost)
                 SwitchListTile(
-                  title: Text(roomState, style: TextStyle(fontSize: 18)),
+                  title: Text(roomState,
+                      style: TextStyle(
+                          fontSize: 18, color: themeService.mainAccent.value)),
                   value: this.waitingRoomService.isRoomLocked,
                   contentPadding: EdgeInsets.symmetric(horizontal: 220),
                   activeColor: Color.fromRGBO(255, 255, 255, 1),
                   inactiveThumbColor: Color.fromRGBO(255, 255, 255, 1),
-                  activeTrackColor: Color.fromRGBO(53, 121, 246, 1),
+                  activeTrackColor: themeService.secondaryBackground.value,
                   inactiveTrackColor: Color.fromRGBO(217, 217, 218, 1),
                   onChanged: !this.waitingRoomService.isTransition
                       ? (bool value) => _toggleRoomLock()
@@ -200,8 +209,10 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                       waitingRoomService.gameType == 'classic'
                           ? waitRoomText['PLAYERS_TITLE']
                           : waitRoomText['TEAMS_TITLE'],
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20));
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: themeService.mainAccent.value));
                 },
               ),
               SizedBox(height: 20),
@@ -217,8 +228,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                 children: [
                                   Container(
                                     padding: EdgeInsets.all(5),
-                                    decoration:
-                                        BoxDecoration(color: Colors.white),
+                                    decoration: BoxDecoration(
+                                        color:
+                                            themeService.mainBackground.value),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -228,6 +240,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                               waitingRoomService.players[index],
                                           size: 60,
                                           hasName: true,
+                                          interactible: true,
                                         ),
                                         if (widget.isHost)
                                           IconButton(
@@ -265,8 +278,10 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '${waitRoomText['TEAM_LABEL']} ${index + 1}',
-                                      ),
+                                          '${waitRoomText['TEAM_LABEL']} ${index + 1}',
+                                          style: TextStyle(
+                                              color: themeService
+                                                  .mainAccent.value)),
                                       if (waitingRoomService
                                                   .teamsForInterface[index]
                                                   .userIds
@@ -279,29 +294,35 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                               username)
                                         TextButton(
                                             style: TextButton.styleFrom(
-                                                backgroundColor: Color.fromRGBO(
-                                                    53, 121, 246, 1)),
-                                            onPressed: () {
-                                              waitingRoomService.joinTeam(
-                                                  waitingRoomService
-                                                      .teamsForInterface[index]
-                                                      .name);
-                                            },
-                                            child: Text(
-                                                waitRoomText['JOIN_TEAM'],
+                                                backgroundColor: !waitingRoomService.isTransition
+                                                    ? themeService
+                                                        .secondaryBackground
+                                                        .value
+                                                    : Color.fromRGBO(
+                                                        164, 164, 164, 1)),
+                                            onPressed:
+                                                waitingRoomService.isTransition
+                                                    ? null
+                                                    : () {
+                                                        waitingRoomService.joinTeam(
+                                                            waitingRoomService
+                                                                .teamsForInterface[
+                                                                    index]
+                                                                .name);
+                                                      },
+                                            child: Text(waitRoomText['JOIN_TEAM'],
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        255, 255, 255, 1),
+                                                    color: themeService.secondaryAccent.value,
                                                     fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.normal))),
+                                                    fontWeight: FontWeight.normal))),
                                     ],
                                   ),
                                   SizedBox(height: 10),
                                   Container(
                                     padding: EdgeInsets.all(5),
-                                    decoration:
-                                        BoxDecoration(color: Colors.white),
+                                    decoration: BoxDecoration(
+                                        color:
+                                            themeService.mainBackground.value),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -321,6 +342,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                                     .userIds[i],
                                                 size: 60,
                                                 hasName: true,
+                                                interactible: true,
                                               ),
                                               if (widget.isHost)
                                                 IconButton(
@@ -362,8 +384,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                           return TextButton(
                             style: TextButton.styleFrom(
                               backgroundColor: (!this.validationBeforeEntry())
-                                  ? Color.fromRGBO(53, 121, 246, 1)
-                                  : Color.fromRGBO(200, 200, 200, 1),
+                                  ? themeService.secondaryBackground.value
+                                  : Color.fromRGBO(164, 164, 164, 1),
                             ),
                             onPressed: !this.validationBeforeEntry()
                                 ? () => setState(() {
@@ -374,7 +396,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                 : null,
                             child: Text(waitRoomText['START_BUTTON'],
                                 style: TextStyle(
-                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                    color: themeService.secondaryAccent.value,
                                     fontSize: 20,
                                     fontWeight: FontWeight.normal)),
                           );
@@ -387,19 +409,21 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                               ? SizedBox.shrink()
                               : TextButton(
                                   style: TextButton.styleFrom(
-                                    backgroundColor: (!this.onlyOneMember())
-                                        ? Color.fromRGBO(53, 121, 246, 1)
-                                        : Color.fromRGBO(200, 200, 200, 1),
+                                    backgroundColor: (!this.onlyOneMember() &&
+                                            !waitingRoomService.isTransition)
+                                        ? themeService.secondaryBackground.value
+                                        : Color.fromRGBO(164, 164, 164, 1),
                                   ),
-                                  onPressed: this.onlyOneMember() == true
+                                  onPressed: this.onlyOneMember() == true ||
+                                          waitingRoomService.isTransition
                                       ? null
                                       : () {
                                           waitingRoomService.sendCreateTeam();
                                         },
                                   child: Text(waitRoomText['CREATE_TEAM'],
                                       style: TextStyle(
-                                          color:
-                                              Color.fromRGBO(255, 255, 255, 1),
+                                          color: themeService
+                                              .secondaryAccent.value,
                                           fontSize: 20,
                                           fontWeight: FontWeight.normal)));
                         }),
@@ -413,7 +437,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                     return Visibility(
                       visible: waitingRoomService.isTransition,
                       child: Text(
-                          'Game starts in: ${waitingRoomService.time} second(s)'),
+                          'Game starts in: ${waitingRoomService.time} second(s)',
+                          style:
+                              TextStyle(color: themeService.mainAccent.value)),
                     );
                   }),
             ],

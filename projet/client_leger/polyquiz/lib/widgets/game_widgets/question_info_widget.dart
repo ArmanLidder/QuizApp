@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/tts_service.dart';
 
 class QuestionInfoWidget extends StatefulWidget {
@@ -21,6 +22,7 @@ class QuestionInfoWidget extends StatefulWidget {
 
 class _MyWidgetState extends State<QuestionInfoWidget> {
   final LoggedInUserService _loggedInUserService = LoggedInUserService.instance;
+  ThemeService themeService = ThemeService.instance;
   TtsService _ttsService = TtsService();
   IconData ttsDisabledIcon = Icons.voice_over_off_outlined;
   IconData ttsEnabledIcon = Icons.record_voice_over_outlined;
@@ -69,17 +71,26 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
         children: [
           Text(
             'Q${widget.questionNum}',
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: themeService.mainAccent.value),
           ),
-          Text('${widget.questionPts} pts', style: TextStyle(fontSize: 16)),
+          Text('${widget.questionPts} pts',
+              style: TextStyle(
+                  fontSize: 16, color: themeService.mainAccent.value)),
           Text(
             '${widget.questionText}',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: themeService.mainAccent.value),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
+                  color: themeService.mainAccent.value,
                   onPressed: () {
                     setState(() {
                       if (ttsStateIcon == ttsDisabledIcon) {
@@ -95,11 +106,13 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
                   },
                   icon: Icon(ttsStateIcon)),
               IconButton(
+                  color: themeService.mainAccent.value,
                   onPressed: () {
                     _ttsService.speak(_currentQuestionText);
                   },
                   icon: Icon(Icons.replay)),
               IconButton(
+                  color: themeService.mainAccent.value,
                   onPressed: () {
                     _ttsService.stop();
                   },

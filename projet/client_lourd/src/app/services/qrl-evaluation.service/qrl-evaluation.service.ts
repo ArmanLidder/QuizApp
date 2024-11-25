@@ -5,6 +5,8 @@ import { FULL, HALF, HALF_SCORE, PERFECT_SCORE, INITIAL_ARRAY_VALUE, NULL, NULL_
 import { QuizQuestion } from '@common/interfaces/quiz.interface';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { QuestionStatistics } from '@common/constants/statistic-zone.component.const';
+import {GameConfigService} from "@app/services/game-config.service/game-config.service";
+import {OpenaiService} from "@app/services/openai.service/openai.service";
 
 @Injectable({
     providedIn: 'root',
@@ -18,6 +20,7 @@ export class QrlEvaluationService {
     isCorrectionFinished: boolean = false;
     isValid: boolean = true;
     points: number[] = [];
+    correctedQrlByOpenAi = new Map<string, [number, string]>();
     private correctedQrlAnswers = new Map<string, number>();
     private answers: string[] = [];
     private indexPlayer: number = INITIAL_ARRAY_VALUE;
@@ -30,12 +33,15 @@ export class QrlEvaluationService {
     constructor(
         private socketClientService: SocketClientService,
         private gameService: GameService,
+        private gameConfigs: GameConfigService,
+        private openai: OpenaiService,
     ) {}
 
     initialize(qrlAnswers: Map<string, { answers: string; time: number }>) {
         this.indexPlayer = -1;
         this.isCorrectionFinished = false;
         this.initializePlayerAnswers(qrlAnswers);
+        if (this.gameConfigs.IA) this.openai.init();
         this.nextAnswer();
     }
 
@@ -43,7 +49,7 @@ export class QrlEvaluationService {
         this.points[this.indexPlayer] = point;
     }
 
-    nextAnswer() {
+    async nextAnswer() {
         this.indexPlayer++;
         if (this.indexPlayer <= this.usernames.length) {
             this.currentAnswer = this.answers[this.indexPlayer];
@@ -64,6 +70,7 @@ export class QrlEvaluationService {
         this.answers.splice(0, this.answers.length);
         this.points.splice(0, this.points.length);
         this.correctedQrlAnswers.clear();
+        this.correctedQrlByOpenAi.clear();
         this.questionStats = new Map<string, number>([
             [NULL_SCORE, 0],
             [HALF_SCORE, 0],

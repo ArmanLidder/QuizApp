@@ -18,15 +18,16 @@ class LanguageService extends GetxService {
   Future<void> setLanguage(String newLanguageName) async {
     ts.currentLanguageAbbr = nameToAbr[newLanguageName] ?? '';
     languageAbr.value = nameToAbr[newLanguageName]!;
-    await _updateLanguageInFirebase(nameToAbr[newLanguageName]!);
+    await updateLanguageInFirebaseAbr(nameToAbr[newLanguageName]!);
   }
 
   Future<void> loadLanguage() async {
     ts.currentLanguage = _loggedInUserService.user!.settings.language;
     languageAbr.value = languageToString[_loggedInUserService.user!.settings.language]!;
+    TranslationService.instance.currentLanguageAbbr = languageAbr.value;
   }
 
-  Future<void> _updateLanguageInFirebase(String newLanguage) async {
+  Future<void> updateLanguageInFirebaseAbr(String newLanguage) async {
     final userId = _loggedInUserService.getUid();
     if (userId == null) {
       throw Exception("User is not logged in.");
@@ -35,6 +36,7 @@ class LanguageService extends GetxService {
       "settings.language": newLanguage,
     });
   }
+
 
   String welcomeMessage(String username) {
     switch (languageAbr.value) {

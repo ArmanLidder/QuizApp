@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/models/user.dart';
-import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../widgets/fancyAppBar.dart';
-import '../widgets/user_widget/friend/appBarFriendIcon.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,14 +14,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   final ThemeService themeService = ThemeService.instance;
   final TranslationService transService = TranslationService.instance;
-
-  //Map get text => transService.text;
-  //Map get mainPageText => text['MAINPAGE'];
-
   final SocketService _socketService = SocketService();
   User? userData;
 
@@ -41,7 +32,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-
       //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
       Language uselessShit = transService.languageValue.value;
 
@@ -51,58 +41,67 @@ class _HomePageState extends State<HomePage> {
       this.userData = this.loggedInUserService.getUser();
       return Scaffold(
         backgroundColor:
-        this.themeService.mainBackground.value, // Set background color
+            this.themeService.mainBackground.value, // Set background color
         appBar: FancyAppBar(
           context: context,
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                mainPageText['WELCOME'] +
-                    " " +
-                    loggedInUserService.observableUsername.value,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                    color: this.themeService.mainAccent.value),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/roomList');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
+        body: Stack(children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  mainPageText['WELCOME'] +
+                      " " +
+                      loggedInUserService.observableUsername.value,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: this.themeService.mainAccent.value),
                 ),
-                child: Text(mainPageText['JOIN_GAME']),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/quizz');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: this.themeService.secondaryBackground.value,
-                  foregroundColor: this.themeService.secondaryAccent.value,
-                ),
-                child: Text(mainPageText['CREATE_GAME']),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
+                ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/store');
+                    Navigator.pushReplacementNamed(context, '/roomList');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: this.themeService.secondaryBackground.value,
+                    backgroundColor:
+                        this.themeService.secondaryBackground.value,
                     foregroundColor: this.themeService.secondaryAccent.value,
                   ),
-                  child: Text(mainPageText['SHOP'])),
-              ChatPopup(),
-            ],
+                  child: Text(mainPageText['JOIN_GAME']),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/quizz');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        this.themeService.secondaryBackground.value,
+                    foregroundColor: this.themeService.secondaryAccent.value,
+                  ),
+                  child: Text(mainPageText['CREATE_GAME']),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/store');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          this.themeService.secondaryBackground.value,
+                      foregroundColor: this.themeService.secondaryAccent.value,
+                    ),
+                    child: Text(mainPageText['SHOP'])),
+              ],
+            ),
           ),
-        ),
+          Positioned(
+            child: ChatPopup(),
+            bottom: 20.0,
+            left: 20.0,
+          )
+        ]),
       );
     });
   }

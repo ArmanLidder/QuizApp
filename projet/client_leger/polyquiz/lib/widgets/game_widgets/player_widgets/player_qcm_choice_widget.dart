@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 class PlayerQcmChoice extends StatefulWidget {
   final int index;
@@ -20,12 +21,16 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   late int lastQuestionIndex;
   GameInterfaceManagementService gameInterfaceManagementService =
       GameInterfaceManagementService();
+  ThemeService _themeService = ThemeService.instance;
 
   @override
   void initState() {
     super.initState();
     lastQuestionIndex =
         gameInterfaceManagementService.gameService.questionNumber;
+    if (gameInterfaceManagementService.gameService.isOfflineMode) {
+      this._themeService.setTheme('default');
+    }
   }
 
   Color textBtnColor = Color.fromRGBO(0, 0, 0, 0);
@@ -63,7 +68,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
         if (isButtonsActive) {
               gameInterfaceManagementService.getQcmEnabled()
                   ? setState(() {
-                      textBtnColor = changeColor(textBtnColor);
+                      textBtnColor = changeColor(textBtnColor, _themeService);
                       if (gameInterfaceManagementService.gameService.isOfflineMode) {
                         gameInterfaceManagementService.gameService
                             .selectChoiceOffline(widget.index);
@@ -76,7 +81,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
             }
       },
       style: TextButton.styleFrom(
-          side: BorderSide(color: Color.fromRGBO(0, 0, 0, 1)),
+          side: BorderSide(color: _themeService.mainAccent.value),
           textStyle: TextStyle(fontWeight: FontWeight.normal),
           splashFactory: NoSplash.splashFactory,
           shape: RoundedRectangleBorder(
@@ -86,16 +91,16 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
       child: Center(
         child: Text(
           '${widget.index + 1}. ${widget.choice.text}',
-          style: TextStyle(fontSize: 20, color: Colors.black),
+          style: TextStyle(fontSize: 20, color: _themeService.mainAccent.value),
         ),
       ),
     );
   }
 }
 
-Color changeColor(Color textBtnColor) {
+Color changeColor(Color textBtnColor, ThemeService themeService) {
   textBtnColor = textBtnColor == Color.fromRGBO(0, 0, 0, 0)
-      ? Color.fromRGBO(53, 121, 246, 1)
+      ? themeService.secondaryBackground.value
       : Color.fromRGBO(0, 0, 0, 0);
   return textBtnColor;
 }

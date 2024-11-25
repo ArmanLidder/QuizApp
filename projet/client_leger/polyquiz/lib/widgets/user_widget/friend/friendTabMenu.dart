@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
-import 'package:polyquiz/services/user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
-import '../../../services/LanguageService.dart';
 import '../../../services/theme_service.dart';
 
 class FriendDisplayBox extends StatefulWidget {
@@ -20,7 +19,7 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
   late TabController _tabController;
   final FriendService friendService = FriendService.instance;
   final ThemeService themeService = ThemeService.instance;
-  final LanguageService ls = LanguageService.instance;
+  final Map textFriends = TranslationService.instance.text['FRIENDS'];
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
 
   @override
@@ -55,29 +54,33 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
               ),
             ],
           ),
-          child: Column(
-            children: [
-              TabBar(
-                controller: _tabController,
-                tabs: [
-                  Tab(text: ls.friendsLabel),
-                  Tab(text: ls.pendingLabel),
-                ],
-                indicatorColor: themeService.secondaryBackground.value,
-                labelColor: themeService.secondaryBackground.value,
-                unselectedLabelColor: themeService.mainAccent.value,
-              ),
-              Expanded(
-                child: TabBarView(
+          child: Obx(() {
+            final Map localMap = TranslationService.instance.text['FRIENDS'];
+
+            return Column(
+              children: [
+                TabBar(
                   controller: _tabController,
-                  children: [
-                    _buildFriendsList(),
-                    _buildPendingRequestsList(),
+                  tabs: [
+                    Tab(text: localMap["TITLE"]),
+                    Tab(text: localMap["PENDING_TITLE"]),
                   ],
+                  indicatorColor: themeService.secondaryBackground.value,
+                  labelColor: themeService.secondaryBackground.value,
+                  unselectedLabelColor: themeService.mainAccent.value,
                 ),
-              ),
-            ],
-          ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildFriendsList(),
+                      _buildPendingRequestsList(),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }),
         );
       }),
     );
@@ -86,7 +89,9 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
   Widget _buildFriendsList() {
     return Obx(() {
       if (loggedInUserService.friends.isEmpty) {
-        return const Center(child: Text('No friends found'));
+        return Center(
+            child: Text(textFriends['EMPTY_FRIENDS_LIST'],
+                style: TextStyle(color: themeService.mainAccent.value)));
       }
 
       return ListView.builder(
@@ -102,9 +107,13 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
   }
 
   Widget _buildPendingRequestsList() {
+    final Map textFriends = TranslationService.instance.text['FRIENDS'];
+
     return Obx(() {
       if (loggedInUserService.friendRequests.isEmpty) {
-        return const Center(child: Text('No pending requests'));
+        return Center(
+            child: Text(textFriends['NO_PENDING_REQUESTS'],
+                style: TextStyle(color: themeService.mainAccent.value)));
       }
 
       return ListView.builder(
@@ -113,6 +122,7 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
           String requestId = loggedInUserService.friendRequests[index];
           return SingleFriendInteractable(
             userId: requestId,
+            isPending: true,
           );
         },
       );

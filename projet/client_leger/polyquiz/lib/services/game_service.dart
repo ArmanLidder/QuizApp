@@ -184,9 +184,9 @@ class GameService extends ChangeNotifier {
 
   bool isPanicDisabled() {
     if (this.question?.type != null) {
-      return this.timer > 20 || this.realGameService.inTimeTransition;
+      return this.timer < 20 || this.realGameService.inTimeTransition;
     } else {
-      return this.timer > 10 || this.realGameService.inTimeTransition;
+      return this.timer < 10 || this.realGameService.inTimeTransition;
     }
   }
 

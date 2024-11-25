@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 
 class ActiveGameInfoWidget extends StatefulWidget {
@@ -24,6 +25,7 @@ class ActiveGameInfoWidget extends StatefulWidget {
 
 class _ActiveGameInfoWidgetState extends State<ActiveGameInfoWidget> {
   Map get activeText => TranslationService.instance.text['ACTIVE_GAME_LIST'];
+  ThemeService themeService = ThemeService.instance;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -37,29 +39,38 @@ class _ActiveGameInfoWidgetState extends State<ActiveGameInfoWidget> {
               Expanded(
                 child: Text(
                   widget.quizTitle,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: themeService.mainAccent.value),
                 ),
               ),
               Expanded(
-                child: Text("${activeText['MINIMUM_PRESTIGE']}: ${widget.minRank}",
-                    style: TextStyle(fontSize: 16)),
+                child: Text(
+                    "${activeText['MINIMUM_PRESTIGE']}: ${widget.minRank}",
+                    style: TextStyle(
+                        fontSize: 16, color: themeService.mainAccent.value)),
               ),
               Expanded(
                   child: Text(widget.allowedPlayers,
-                      style: TextStyle(fontSize: 16))),
+                      style: TextStyle(
+                          fontSize: 16, color: themeService.mainAccent.value))),
               Expanded(
                 child: RichText(
                     text: TextSpan(children: [
                   TextSpan(
                       text: widget.playerNum,
                       style: TextStyle(
-                          fontSize: 16, color: Color.fromRGBO(0, 0, 0, 1))),
-                  WidgetSpan(child: Icon(Icons.people_outline))
+                          fontSize: 16, color: themeService.mainAccent.value)),
+                  WidgetSpan(
+                      child: Icon(Icons.people_outline,
+                          color: themeService.mainAccent.value))
                 ])),
               ),
               Expanded(
                 child: Text("${activeText['GAME_MODE']}: ${widget.gameMode}",
-                    style: TextStyle(fontSize: 16)),
+                    style: TextStyle(
+                        fontSize: 16, color: themeService.mainAccent.value)),
               ),
               Expanded(
                 child: RichText(
@@ -67,8 +78,10 @@ class _ActiveGameInfoWidgetState extends State<ActiveGameInfoWidget> {
                   TextSpan(
                       text: widget.price,
                       style: TextStyle(
-                          fontSize: 16, color: Color.fromRGBO(0, 0, 0, 1))),
-                  WidgetSpan(child: Icon(Icons.monetization_on_outlined))
+                          fontSize: 16, color: themeService.mainAccent.value)),
+                  WidgetSpan(
+                      child: Icon(Icons.monetization_on_outlined,
+                          color: themeService.mainAccent.value))
                 ])),
               ),
             ],

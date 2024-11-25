@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 
 import '../../../services/friendService.dart';
 
 class SmartFriendIcon extends StatefulWidget {
+  final bool canRemoveFriend;
   final String targetUserId;
   final FriendService friendService = FriendService.instance;
   SmartFriendIcon({
     Key? key,
     required this.targetUserId,
+    this.canRemoveFriend = true,
   }) : super(key: key);
 
   @override
@@ -19,6 +21,8 @@ class SmartFriendIcon extends StatefulWidget {
 class _SmartFriendIconState extends State<SmartFriendIcon> {
   String _status = 'loading';
   String? currentUserId = LoggedInUserService.instance.getUid();
+  final ThemeService _themeService = ThemeService.instance;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +40,10 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   Future<void> _handleIconPressed() async {
+    if (!widget.canRemoveFriend) {
+      return;
+    }
+
     if (_status == 'friends') {
       await widget.friendService.deleteFriendship(
         currentUserId!,
@@ -59,15 +67,20 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   Widget build(BuildContext context) {
     IconData iconData;
     Color iconColor;
-
     switch (_status) {
       case 'friends':
-        iconData = Icons.person_remove;
-        iconColor = Colors.red;
+        if (widget.canRemoveFriend) {
+          iconData = Icons.person_remove;
+          iconColor = Colors.red;
+        } else {
+          iconData = Icons.group;
+          iconColor = _themeService.mainAccent.value;
+        }
         break;
+
       case 'sentPending':
         iconData = Icons.hourglass_empty;
-        iconColor = Colors.grey;
+        iconColor = _themeService.mainAccent.value;
         break;
       case 'receivedPending':
         iconData = Icons.person_add;
@@ -75,7 +88,7 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
         break;
       case 'notFriends':
         iconData = Icons.person_add;
-        iconColor = Colors.grey;
+        iconColor = _themeService.mainAccent.value;
         break;
       default:
         iconData = Icons.hourglass_empty;

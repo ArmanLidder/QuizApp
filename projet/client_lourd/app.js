@@ -1,37 +1,42 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, screen } = require('electron');
 const url = require('url');
 const path = require('path');
 
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true
-    },
-  });
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize; // Get screen dimensions
 
-  mainWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "dist/client/index.html"),
-      protocol: 'file:',
-      slashes: true,
-    }),
-  );
+    mainWindow = new BrowserWindow({
+        width: width, // Set to full screen width
+        height: height, // Set to full screen height
+        webPreferences: {
+            nodeIntegration: true,
+        },
+    });
 
-  mainWindow.on('closed', function () {
-    mainWindow = null;
-  });
+    mainWindow.loadURL(
+        url.format({
+            pathname: path.join(__dirname, "dist/client/index.html"),
+            protocol: 'file:',
+            slashes: true,
+        }),
+    );
+
+    mainWindow.webContents.setZoomFactor(0.80); // Set zoom factor (1.0 is 100%, 1.25 is 125%, etc.)
+
+    mainWindow.on('closed', function () {
+        mainWindow = null;
+    });
 }
 
-app.on('ready', createWindow);
+// Wait for the app to be ready before creating the window
+app.whenReady().then(createWindow);
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit();
+    if (process.platform !== 'darwin') app.quit();
 });
 
 app.on('activate', function () {
-  if (mainWindow === null) createWindow();
+    if (mainWindow === null) createWindow();
 });

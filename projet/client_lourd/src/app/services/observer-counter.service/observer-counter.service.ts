@@ -16,12 +16,9 @@ export class ObserverCounterService {
     }
 
     initialize() {
-        // Send initial request
         this.socketService.send(SocketEvent.GET_OBS_COUNT, this.gameService.gameRealService.roomId);
-
-        // Listen for updates
         if (this.socketService.isSocketAlive()) {
-            this.handleUpdateCounter();
+            if (!this.socketService.socket.hasListeners(SocketEvent.UPDATE_OBS_COUNT)) this.handleUpdateCounter();
         }
     }
 

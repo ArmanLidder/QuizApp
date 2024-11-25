@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/models/user.dart';
-import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
-import 'package:polyquiz/widgets/chat_widgets/chat_widget.dart';
 import 'package:polyquiz/widgets/user_widget/friend/FriendListWidget.dart';
 import '../widgets/fancyAppBar.dart';
 import '../widgets/user_widget/ProfileCard.dart';
@@ -45,11 +43,13 @@ class Userpage extends StatelessWidget {
               // Centered FractionallySizedBox with scrollable content
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0), // Shift down by 10px
+                  padding:
+                      const EdgeInsets.only(top: 10.0), // Shift down by 10px
                   child: FractionallySizedBox(
                     widthFactor: 0.8,
                     child: Container(
-                      color: themeService.mainBackground.value, // Set the background color here
+                      color: themeService.mainBackground
+                          .value, // Set the background color here
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
@@ -59,15 +59,16 @@ class Userpage extends StatelessWidget {
                               child: Column(
                                 children: [
                                   StatitisticsBlorb(
-                                    nPlayedGames: userData?.stats.gamesPlayed ?? 0,
+                                    nPlayedGames:
+                                        userData?.stats.gamesPlayed ?? 0,
                                     nWonGames: userData?.stats.gamesWon ?? 0,
-                                    avgGoodAnswers: userData?.stats.avgCorrectAnswers ?? 0,
-                                    avgGameTime: userData?.stats.avgGameTime ?? 0,
+                                    avgGoodAnswers:
+                                        userData?.stats.avgCorrectAnswers ?? 0,
+                                    avgGameTime:
+                                        userData?.stats.avgGameTime ?? 0,
                                   ),
-                                  FriendListDisplay(
-                                  ),
-                                  StarCardGrid(
-                                  ),
+                                  FriendListDisplay(),
+                                  StarCardGrid(),
                                   Historique(
                                     gameHistory: userData?.gameHistory ?? [],
                                     loginHistory: userData?.loginHistory ?? [],
@@ -80,14 +81,14 @@ class Userpage extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),              ),
+                ),
+              ),
 
               // Positioned text at the bottom-right corner of the screen
               Positioned(
-                bottom: 20.0, // Adjust the position from the bottom
-                right: 20.0, // Adjust the position from the right
-                child: ChatPopup()
-                ),
+                  bottom: 20.0, // Adjust the position from the bottom
+                  left: 20.0, // Adjust the position from the right
+                  child: ChatPopup()),
             ],
           ),
         ),

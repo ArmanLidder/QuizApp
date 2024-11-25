@@ -4,6 +4,22 @@
     align-items: center;
 }
 
+.question-image-container {
+    display: flex;
+    justify-content: center;
+    max-height: 20vh; /* Limit image height relative to viewport */
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.responsive-image {
+    max-width: 80%;
+    max-height: 20vh; /* Match container height */
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* Timer circle */
 .circle {
     border-radius: 50%;

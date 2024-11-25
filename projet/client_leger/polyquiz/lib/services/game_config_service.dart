@@ -12,6 +12,7 @@ class GameConfigService with ChangeNotifier {
   bool friendsOnly = false;
   bool private = false;
   int prestige = 0;
+  bool IA = false;
 
   GameConfigService([User? user]) {
     if (user != null) {
@@ -53,6 +54,12 @@ class GameConfigService with ChangeNotifier {
     notifyListeners();
   }
 
+  void setIA(bool isAI){
+    print('IA: $isAI');
+    this.IA = isAI;
+    notifyListeners();
+  }
+
   GameConfig getGameConfig() {
     return GameConfig(
       hostUserId: hostId,
@@ -62,6 +69,7 @@ class GameConfigService with ChangeNotifier {
       price: price,
       friendsOnly: friendsOnly,
       prestige: prestige,
+      IA: IA,
     );
   }
 
