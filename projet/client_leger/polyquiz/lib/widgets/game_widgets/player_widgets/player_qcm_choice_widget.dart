@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
+import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 
 class PlayerQcmChoice extends StatefulWidget {
@@ -22,6 +24,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   GameInterfaceManagementService gameInterfaceManagementService =
       GameInterfaceManagementService();
   ThemeService _themeService = ThemeService.instance;
+  SocketService _socketService = SocketService();
 
   @override
   void initState() {
@@ -30,6 +33,19 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
         gameInterfaceManagementService.gameService.questionNumber;
     if (gameInterfaceManagementService.gameService.isOfflineMode) {
       this._themeService.setTheme('default');
+    }
+  }
+
+  void handleRequestQCMSStatus() {
+    if (this._socketService.isSocketAlive()) {
+      this._socketService.onMessage(SocketEvent.REQUEST_PAYER_QCM_CHOICES, (_) {
+        final data = {
+          'roomId': this.gameInterfaceManagementService.gameService.realGameService.roomId,
+          'isSelected': this.gameInterfaceManagementService.gameService.answers.containsKey(widget.index),
+          'index': widget.index,
+        };
+        this._socketService.sendMessage(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, data);
+      });
     }
   }
 
