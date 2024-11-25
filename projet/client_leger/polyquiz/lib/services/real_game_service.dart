@@ -7,10 +7,13 @@ import 'package:polyquiz/models/next_question_data.dart';
 import 'package:polyquiz/models/player.dart' as player;
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 // import 'package:polyquiz/services/game_interface_management_service.dart';
 
 class RealGameService extends ChangeNotifier {
   static final RealGameService _instance = RealGameService._internal();
+  Map get text => TranslationService.instance.text;
+  Map get observerText => text['OBSERVER'];
 
   RealGameService._internal();
 
@@ -45,6 +48,7 @@ class RealGameService extends ChangeNotifier {
   bool qcmEnabled = false;
   bool isAION = false;
   bool observerMode = false;
+  String obsQrlAnswer = '';
 
 
   bool get isValidateActive => this._isValidateButtonActive;
@@ -123,6 +127,7 @@ class RealGameService extends ChangeNotifier {
     });
 
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) {
+      if (observerMode) this.obsQrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
       NextQuestionData nextQuestionData = NextQuestionData(
           question: QuizQuestion.fromJson(data['question']),
           index: data['index'],
