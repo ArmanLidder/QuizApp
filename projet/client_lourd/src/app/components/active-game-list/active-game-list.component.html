@@ -19,7 +19,7 @@
                                 <span class="friends-only">
                                     {{ game.friendsOnly ? ('ACTIVE_GAME_LIST.FRIENDS_ONLY' | translate) : ('ACTIVE_GAME_LIST.FRIENDS_AND_OTHERS' | translate) }}
                                 </span>
-                                <span class="players">{{ game.numberOfPlayers }} <i class="bi bi-people"></i></span>
+                                <span class="players text-primary">{{ game.numberOfPlayers }} <i class="bi bi-people"></i></span>
                                 <span class="game-type">
                                     {{ 'ACTIVE_GAME_LIST.GAME_MODE' | translate }}: {{ game.gameType == 'classic' ? ('ACTIVE_GAME_LIST.CLASSIC' | translate) : ('ACTIVE_GAME_LIST.TEAM' | translate) }}
                                 </span>
@@ -28,7 +28,7 @@
                                 </span>
                             </ng-container>
                             <ng-container *ngIf="game.onGoing">
-                                <span class="players"> {{ game.numberOfObs }} <i class="bi bi-eye text-white/80 text-sm"></i> </span>
+                                <span class="players"> {{ game.numberOfObs }} <i class="bi bi-eye text-primary text-sm"></i> </span>
                                 <span class="players">{{ 'ACTIVE_GAME_LIST.ONGOING_GAME' | translate }}</span>
                             </ng-container>
                         </div>
