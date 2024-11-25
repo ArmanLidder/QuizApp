@@ -69,27 +69,31 @@ export class AuthService {
         if (existingUser?.isConnected) {
             throw new Error(this.translate.instant('LOGIN_PAGE.USER_ALREADY_CONNECTED'));
         }
+
         try {
-            setPersistence(this.auth, browserSessionPersistence).then(()=>{
-                return signInWithEmailAndPassword(this.auth, email, password);
-            })
+            // Set persistence and sign in
+            await setPersistence(this.auth, browserSessionPersistence);
+            await signInWithEmailAndPassword(this.auth, email, password);
+
             await this.user$.pipe(
                 map(user => !!user),
-                first(isReady => isReady)  // Wait for first truthy value
+                first(isReady => isReady) // Wait for the first truthy value
             ).toPromise();
         } catch (error: any) {
             console.error('Login error:', error);
             await this.auth.signOut();
             throw new Error(this.mapFirebaseAuthError(error.code));
         }
+
         try {
             await this.usersService.addLogEvent('login');
-        } catch (error:any) {
+        } catch (error: any) {
             console.error('Login error:', error);
             await this.auth.signOut();
             throw new Error(error.message);
         }
     }
+
 
     async logout(): Promise<void> {
         await this.usersService.addLogEvent('logout');
