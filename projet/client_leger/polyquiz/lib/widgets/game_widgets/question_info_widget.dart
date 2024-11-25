@@ -8,12 +8,14 @@ class QuestionInfoWidget extends StatefulWidget {
   final int questionNum;
   final int questionPts;
   final String questionText;
+  final bool isOffline;
 
   const QuestionInfoWidget({
     Key? key,
     required this.questionNum,
     required this.questionPts,
     required this.questionText,
+    this.isOffline = false,
   }) : super(key: key);
 
   @override
@@ -45,6 +47,9 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
     }
     _currentQuestionText = widget.questionText;
     _ttsService.speak(_currentQuestionText);
+    if (widget.isOffline) {
+      themeService.setTheme('light');
+    }
   }
 
   @override

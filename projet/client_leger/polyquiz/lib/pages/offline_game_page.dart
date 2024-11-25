@@ -125,7 +125,8 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                                 .gameService.question!.points,
                                         questionText:
                                             gameInterfaceManagementService
-                                                .gameService.question!.text),
+                                                .gameService.question!.text,
+                                        isOffline: true),
                                   if (isTimerTransition || isFinalTransition)
                                     QuestionInfoWidget(
                                         questionNum: isFinalTransition
