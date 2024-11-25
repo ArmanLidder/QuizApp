@@ -138,7 +138,7 @@ class _MyWidgetState extends State<GamePage> {
   Widget build(BuildContext context) {
     if (isHost) {
       return Scaffold(
-        appBar: FancyAppBar(context: context),
+        appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
         backgroundColor: themeService.mainBackground.value,
         body: Stack(children: [
           ListView(children: [
@@ -182,7 +182,7 @@ class _MyWidgetState extends State<GamePage> {
                       builder: (BuildContext context, Widget? snapshot) {
                         if (_gameInterfaceManagementService.isResultPage) {
                           return Scaffold(
-                            appBar: FancyAppBar(context: context),
+                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
                             backgroundColor: themeService.mainBackground.value,
                             body: ListView(
                               children: [
@@ -199,7 +199,7 @@ class _MyWidgetState extends State<GamePage> {
                           );
                         } else {
                           return Scaffold(
-                            appBar: FancyAppBar(context: context),
+                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
                             backgroundColor: themeService.mainBackground.value,
                             body: Stack(children: [
                               ListView(shrinkWrap: true, children: [

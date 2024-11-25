@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/widgets/observer_widgets/observation_selector.dart';
+import 'package:polyquiz/widgets/observer_widgets/observer_counter.dart';
 import 'package:polyquiz/widgets/user_widget/friend/appBarFriendIcon.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool hasBackButton;
+  final bool isGamePage;
+  final bool isObserver;
   final BuildContext context;
-  FancyAppBar({required this.context, this.hasBackButton = false});
+  FancyAppBar({required this.context, this.hasBackButton = false, this.isGamePage = false, this.isObserver = false});
 
   @override
   _FancyAppBarState createState() => _FancyAppBarState();
@@ -27,6 +31,33 @@ class _FancyAppBarState extends State<FancyAppBar> {
     super.initState();
     imageUrl = loggedInUserService
         .observableAvatar.value; // Initialize with the source image URL
+  }
+
+  Widget getObservationWidget() {
+    if (widget.isObserver) return ObservationSelector();
+    else return ObserverCounter();
+  }
+
+  Widget getLeadingWidget() {
+    Widget mainLeadingWidget = widget.hasBackButton
+        ? IconButton(
+        icon: Icon(Icons.arrow_back, color: Colors.red),
+        onPressed: () {
+          Navigator.pushReplacementNamed(widget.context, '/home');
+        })
+        : PendingRequestsWidget();
+
+    if (!widget.isGamePage) return mainLeadingWidget;
+
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: mainLeadingWidget,
+        ),
+        getObservationWidget()
+      ],
+    );
   }
 
   @override
@@ -55,13 +86,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: widget.hasBackButton
-            ? IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.red),
-                onPressed: () {
-                  Navigator.pushReplacementNamed(widget.context, '/home');
-                })
-            : PendingRequestsWidget(),
+        leading: getLeadingWidget(),
         actions: [
           GestureDetector(
             onTap: () {
