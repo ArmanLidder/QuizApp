@@ -5,6 +5,7 @@ class Player {
   final int bonus;
   String status;
   bool canChat;
+  String? name;
 
   Player({
     required this.username,
@@ -12,13 +13,24 @@ class Player {
     required this.bonus,
     required this.status,
     required this.canChat,
+    this.name
   });
 
   factory Player.fromList(List<dynamic> data) {
     // Ensure the list has the expected length and types
-    if (data.length != 5) {
-      throw ArgumentError('Player data must have exactly 5 elements.');
+    print(data);
+    print('the data length is ${data.length}');
+    if (!(data.length == 5 || data.length == 6)) {
+      throw ArgumentError('Player data must have exactly 5 or 6 elements.');
     }
+
+    if (data.length == 5) return Player(
+      username: data[0] as String,
+      score: data[1] as int,
+      bonus: data[2] as int,
+      status: data[3] as String,
+      canChat: data[4] as bool,
+    );
 
     return Player(
       username: data[0] as String,
@@ -26,6 +38,7 @@ class Player {
       bonus: data[2] as int,
       status: data[3] as String,
       canChat: data[4] as bool,
+      name: data[5] as String,
     );
   }
 
