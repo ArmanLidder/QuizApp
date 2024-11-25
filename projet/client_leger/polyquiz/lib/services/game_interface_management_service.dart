@@ -103,14 +103,17 @@ class GameInterfaceManagementService extends ChangeNotifier {
       this.gameService.audio.seek(Duration.zero);
       this.gameService.realGameService.audioPaused = false;
       this.inPanicMode = false;
-      if (this.gameService.question?.type == QuestionType.QCM) {
-        this.getScore();
-        this.changeQcmEnabled(false);
-        this.gameService.realGameService.qcmEnabled = false;
-      } else {
-        this.gameService.realGameService.isHostEvaluating = true;
-        this.gameService.qrlAnswer = '';
-        this.gameService.realGameService.validated = true;
+      switch (this.gameService.question?.type) {
+        case QuestionType.QRL:
+          this.gameService.realGameService.isHostEvaluating = true;
+          this.gameService.qrlAnswer = '';
+          this.gameService.realGameService.validated = true;
+          break;
+        default:
+          this.getScore();
+          this.changeQcmEnabled(false);
+          this.gameService.realGameService.qcmEnabled = false;
+          break;
       }
       this.gameService.realGameService.isNotified = false;
       this.gameService.realGameService.isValidateActive = false;
