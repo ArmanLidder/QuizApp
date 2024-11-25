@@ -59,7 +59,7 @@ class SocketEvent {
   static const String CHANGE_OBSERVED_PLAYER = "change_observed_player";
   static const String GET_QRE_ANSWER_FOR_OBS = "get_qre_answer_obs";
   static const String GET_QRL_INTERACTION = "get_qrl_interaction_obs";
-  static const String REQUEST_QRL_INTERACTION = "request_qrl_interaction"; // TODO
+  static const String REQUEST_QRL_INTERACTION = "request_qrl_interaction";
   static const String RECEIVE_LAST_QRL_INTERACTION = "receive_last_qrl_interaction";
   static const String GET_QRL_ANSWER_FOR_OBS = "get_qrl_answer_obs";
   static const String GET_LAST_QRL_STATUS = "get_last_qrl_status";

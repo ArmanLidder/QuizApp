@@ -9,6 +9,7 @@ import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/models/quiz.dart';
@@ -321,5 +322,26 @@ class GameInterfaceManagementService extends ChangeNotifier {
       return true;
     }
     return this._qcmEnabled;
+  }
+
+  void handleRequestActivityStatus() {
+    if (this._socketService.isSocketAlive() && !this.gameService.isObserverMode) {
+      this._socketService.onMessage(SocketEvent.REQUEST_QRL_INTERACTION, (uid) {
+        if (uid as String == LoggedInUserService.instance.user?.uid) {
+          this._socketService.sendMessage(SocketEvent.SEND_ACTIVITY_STATUS, {
+            'roomId': this.gameService.realGameService.roomId,
+            'isActive': this.gameService.isActive,
+            'forObs': true,
+          });
+
+          this._socketService.sendMessage(SocketEvent.GET_LAST_QRL_STATUS, {
+            'roomId': this.gameService.realGameService.roomId,
+            'lastQRLScore': this.gameService.lastQrlScore,
+            'qrlAnswer': this.gameService.qrlAnswer,
+            'userId': LoggedInUserService.instance.user?.uid;
+          });
+        }
+      });
+    }
   }
 }
