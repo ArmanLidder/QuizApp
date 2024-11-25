@@ -151,15 +151,15 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
           !this.waitingRoomService.isRoomLocked;
     }
 
-    int moreThanTwoMembers = 0;
+    int invalidTeamNumber = 0;
 
     this.waitingRoomService.teamsForInterface.forEach((team) {
-      if (team.userIds.length < 2) {
-        moreThanTwoMembers += 1;
+      if (team.userIds.length != 2) {
+        invalidTeamNumber += 1;
       }
     });
 
-    return moreThanTwoMembers > 0 ||
+    return invalidTeamNumber > 0 ||
         this.waitingRoomService.teams.length < 2 ||
         !this.waitingRoomService.isRoomLocked;
   }
