@@ -11,6 +11,7 @@ import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/notification_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'user_service.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -106,6 +107,7 @@ class LoggedInUserService extends GetxController {
       print("choucroute");
       ThemeService.instance.setTheme(themeName);
       StoreService.instance.setup();
+      UserPageCustomisationService.instance.subscribeToStoreAccount();
     } else {
       print('Login failed: user not found with email $email');
     }
