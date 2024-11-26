@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
@@ -191,67 +192,73 @@ class HostHeader extends StatelessWidget {
               ? Colors.grey
               : _themeService.secondaryBackground.value,
     );
-    return Stack(children: [
-      Column(
-        children: [
-          Row(
-            children: [
-              TimerWidget(
-                isHost: true,
-                timeTxt: hostInterfaceManagementService.timerText,
-                time: gameService.realGameService.timer,
-                hostInterfaceManagementService: hostInterfaceManagementService,
-              )
-            ],
-          ),
-          if (getQREAnswer() != null) getQREAnswer()!,
-          if (getImageWidgetFromQuestion(context) != null)
-            getImageWidgetFromQuestion(context)!
-          else
-            SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 20),
-              TextButton(
-                onPressed:
-                    this.hostInterfaceManagementService.NextQuestionBtnDisabled
-                        ? null
-                        : onNextQuestion,
-                child: Text(
-                  gameService.realGameService.isLast
-                      ? gameText['SHOW_RESULT']
-                      : gameText['NEXT_QUESTION'],
-                  style: TextStyle(
-                      color: _themeService.secondaryAccent.value, fontSize: 20),
-                ),
-                style: validateButtonStyle,
-              ),
-              SizedBox(width: 50),
-              QuitBtn(
+    return Obx(() {
+      //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
+      // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!! (il y a qqn qui delete ces fonctions)
+      //-MAXIME
+      var observationEnablerDONOTDELETE = TranslationService.instance.languageValue.value;
+      return Stack(children: [
+        Column(
+          children: [
+            Row(
+              children: [
+                TimerWidget(
                   isHost: true,
-                  roomId: gameService.realGameService.roomId,
-                  gameService: gameService,
-                  interactiveListService: interactiveListService,
-                  gameInterfaceManagementService:
-                      gameInterfaceManagementService,
-                  hostInterfaceManagementService:
-                      hostInterfaceManagementService),
-            ],
-          )
-        ],
-      ),
-      Positioned.fill(
-        child: Align(
-          alignment: Alignment.center,
-          child: QuestionInfoWidget(
-            questionNum: gameService.questionNumber,
-            questionPts: gameService.question!.points,
-            questionText: gameService.question!.text,
-          ),
+                  timeTxt: TranslationService.instance.text['GAME_INTERFACE']['TIMER_TEXT']['TIME_LEFT'],
+                  time: gameService.realGameService.timer,
+                  hostInterfaceManagementService: hostInterfaceManagementService,
+                )
+              ],
+            ),
+            if (getQREAnswer() != null) getQREAnswer()!,
+            if (getImageWidgetFromQuestion(context) != null)
+              getImageWidgetFromQuestion(context)!
+            else
+              SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 20),
+                TextButton(
+                  onPressed:
+                  this.hostInterfaceManagementService.NextQuestionBtnDisabled
+                      ? null
+                      : onNextQuestion,
+                  child: Text(
+                    gameService.realGameService.isLast
+                        ? gameText['SHOW_RESULT']
+                        : gameText['NEXT_QUESTION'],
+                    style: TextStyle(
+                        color: _themeService.secondaryAccent.value, fontSize: 20),
+                  ),
+                  style: validateButtonStyle,
+                ),
+                SizedBox(width: 50),
+                QuitBtn(
+                    isHost: true,
+                    roomId: gameService.realGameService.roomId,
+                    gameService: gameService,
+                    interactiveListService: interactiveListService,
+                    gameInterfaceManagementService:
+                    gameInterfaceManagementService,
+                    hostInterfaceManagementService:
+                    hostInterfaceManagementService),
+              ],
+            )
+          ],
         ),
-      )
-    ]);
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.center,
+            child: QuestionInfoWidget(
+              questionNum: gameService.questionNumber,
+              questionPts: gameService.question!.points,
+              questionText: gameService.question!.text,
+            ),
+          ),
+        )
+      ]);
+    });
   }
 }
 

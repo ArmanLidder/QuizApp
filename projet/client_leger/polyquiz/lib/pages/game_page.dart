@@ -64,7 +64,6 @@ class _MyWidgetState extends State<GamePage> {
     }
     if (_socketService.isSocketAlive()) {
       if (!isHost) {
-        print('I am Here');
         this._gameInterfaceManagementService.gameService.isOfflineMode = false;
         this
             ._gameInterfaceManagementService
@@ -77,14 +76,12 @@ class _MyWidgetState extends State<GamePage> {
     while (_socketService.getListenerCount() != 0) {
       await Future.delayed(Duration(milliseconds: 100));
     }
-    print('GamePage initState');
     _interactiveListService.configureBaseSocketFeatures();
   }
 
   @override
   void dispose() {
     if (_gameService.isQuitBtn) {
-      print('GamePage dispose');
       isHost = false;
       isQcm = false;
       isGrading = true;
@@ -122,21 +119,28 @@ class _MyWidgetState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     if (isHost) {
-      return Scaffold(
-        appBar: FancyAppBar(context: context),
-        backgroundColor: themeService.mainBackground.value,
-        body: Stack(children: [
-          ListView(children: [
-            Visibility(
-                visible: isHost,
-                child: HostInterface(
-                    interactiveListService: _interactiveListService,
-                    gameInterfaceManagementService:
-                        _gameInterfaceManagementService))
+      return Obx(() {
+        //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
+        // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!! (il y a qqn qui delete ces fonctions)
+        //-MAXIME
+        var observationEnablerDONOTDELETE = TranslationService.instance.languageValue.value;
+
+        return Scaffold(
+          appBar: FancyAppBar(context: context),
+          backgroundColor: themeService.mainBackground.value,
+          body: Stack(children: [
+            ListView(children: [
+              Visibility(
+                  visible: isHost,
+                  child: HostInterface(
+                      interactiveListService: _interactiveListService,
+                      gameInterfaceManagementService:
+                      _gameInterfaceManagementService))
+            ]),
+            Positioned(bottom: 20, left: 20, child: ChatPopup())
           ]),
-          Positioned(bottom: 20, left: 20, child: ChatPopup())
-        ]),
-      );
+        );
+      });
     } else {
       return Container(
           color: themeService.mainBackground.value,
