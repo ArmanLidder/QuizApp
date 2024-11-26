@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 import '../../../services/LanguageService.dart';
+import '../../../services/friendService.dart';
 
 class UserIdsRow extends StatefulWidget {
   const UserIdsRow({Key? key}) : super(key: key);
@@ -16,16 +17,21 @@ class _UserIdsRowState extends State<UserIdsRow> {
   final LanguageService ls = LanguageService.instance;
  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
 
-  // Filters the list of users based on the entered text.
-  List<QueryDocumentSnapshot> _filterUsers(
-
-  List<QueryDocumentSnapshot> users, String filter) {
-    return users
-        .where((doc) {
+  Future<List<QueryDocumentSnapshot>> _filterUsers(List<QueryDocumentSnapshot> users, String filter) async {
+    List<QueryDocumentSnapshot> filteredUsers = [];
+    for (var doc in users) {
       final username = doc['username'] as String? ?? '';
       final userId = doc['uid'] as String? ?? '';
-      return username.toLowerCase().contains(filter.toLowerCase()) && userId != loggedInUserService.getUid();    })
-        .toList();
+      final loggedInUid = loggedInUserService.getUid();
+      if (username.toLowerCase().contains(filter.toLowerCase()) &&
+          userId != loggedInUserService.getUid()) {
+        bool isAlreadyFriends = await FriendService.instance.friendshipStatus(loggedInUid!, userId) == "friends";
+        if (!isAlreadyFriends) {
+          filteredUsers.add(doc);
+        }
+      }
+    }
+    return filteredUsers;
   }
 
   @override
@@ -53,22 +59,29 @@ class _UserIdsRowState extends State<UserIdsRow> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('No users found.'));
-              }
-              final filteredUsers =
-              _filterUsers(snapshot.data!.docs, filterText);
-              return ListView(
-                children: filteredUsers.map((doc) {
-                  final uid = doc['uid'] as String;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: SingleFriendInteractable(userId: uid),
+              return FutureBuilder<List<QueryDocumentSnapshot>>(
+                future: _filterUsers(snapshot.data!.docs, filterText),
+                builder: (context, filteredSnapshot) {
+                  if (filteredSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (filteredSnapshot.hasError) {
+                    return Center(child: Text('Error: ${filteredSnapshot.error}'));
+                  }
+                  final filteredUsers = filteredSnapshot.data ?? [];
+                  if (filteredUsers.isEmpty) {
+                    return const Center(child: Text('No users found.'));
+                  }
+                  return ListView(
+                    children: filteredUsers.map((doc) {
+                      final uid = doc['uid'] as String;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: SingleFriendInteractable(userId: uid),
+                      );
+                    }).toList(),
                   );
-                }).toList(),
+                },
               );
             },
           ),
