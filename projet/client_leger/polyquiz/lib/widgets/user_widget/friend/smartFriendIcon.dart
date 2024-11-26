@@ -38,15 +38,12 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   Future<void> _handleIconPressed() async {
-    if (!widget.canRemoveFriend){
-      return;
-    }
-=
     if (_status == 'friends') {
+      if (widget.canRemoveFriend){
       await widget.friendService.deleteFriendship(
         currentUserId!,
         widget.targetUserId,
-      );
+      );}
     } else if (_status == 'notFriends') {
       await widget.friendService.createFriendRequest(
         currentUserId!,
@@ -92,7 +89,7 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
         break;
       default:
         iconData = Icons.hourglass_empty;
-        iconColor = Colors.grey;
+        iconColor = Colors.black;
     }
 
     return IconButton(
