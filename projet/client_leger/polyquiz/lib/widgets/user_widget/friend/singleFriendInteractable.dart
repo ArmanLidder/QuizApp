@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/widgets/user_widget/friend/smartFriendIcon.dart';
 
+import '../../../services/theme_service.dart';
 import '../smartAvatar.dart';
 import 'AcceptOrRefuse.dart';
 
 class SingleFriendInteractable extends StatelessWidget {
   final bool isPending;
   final String userId;
-  const SingleFriendInteractable({Key? key, required this.userId, this.isPending = false}) : super(key: key);
+  SingleFriendInteractable({Key? key, required this.userId, this.isPending = false}) : super(key: key);
+  final ThemeService _themeService = ThemeService.instance;
 
   Future<String> fetchUsername() async {
     try {
@@ -34,7 +36,7 @@ class SingleFriendInteractable extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: Colors.grey[200]?.withOpacity(0.5),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -44,7 +46,7 @@ class SingleFriendInteractable extends StatelessWidget {
                 Expanded(
                   child: Text(
                     username,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: _themeService.mainAccent.value ),
                   ),
                 ),
                 IconButton(

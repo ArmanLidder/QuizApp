@@ -5,9 +5,12 @@ import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 import '../../../services/LanguageService.dart';
 import '../../../services/friendService.dart';
+import '../../../services/theme_service.dart';
 
 class UserIdsRow extends StatefulWidget {
-  const UserIdsRow({Key? key}) : super(key: key);
+
+  UserIdsRow({Key? key}) : super(key: key);
+  final ThemeService _themeService = ThemeService.instance;
 
   @override
   _UserIdsRowState createState() => _UserIdsRowState();
@@ -17,7 +20,7 @@ class _UserIdsRowState extends State<UserIdsRow> {
   String filterText = ''; // Text input for filtering
   final LanguageService ls = LanguageService.instance;
  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
-
+  Map get text => TranslationService.instance.text['USER_SEARCH'];
   Future<List<QueryDocumentSnapshot>> _filterUsers(List<QueryDocumentSnapshot> users, String filter) async {
     List<QueryDocumentSnapshot> filteredUsers = [];
     for (var doc in users) {
@@ -37,8 +40,11 @@ class _UserIdsRowState extends State<UserIdsRow> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Container(
+      color: widget._themeService.mainBackground.value,
+        child: Column(
       children: [
+        Text(text["TITLE"],style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: widget._themeService.mainAccent.value),),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: TextField(
@@ -48,6 +54,8 @@ class _UserIdsRowState extends State<UserIdsRow> {
               });
             },
             decoration: InputDecoration(
+              filled: true, // Enables background fill
+              fillColor: Colors.white, // Background color
               labelText: TranslationService.instance.text["USER_SEARCH"]["PLACEHOLDER"],
               border: OutlineInputBorder(),
             ),
@@ -88,6 +96,6 @@ class _UserIdsRowState extends State<UserIdsRow> {
           ),
         ),
       ],
-    );
+    ));
   }
 }

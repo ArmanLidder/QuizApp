@@ -65,11 +65,12 @@ class _StorepageState extends State<Storepage> {
                           crossAxisAlignment: CrossAxisAlignment.start, // Align the Column content to the left                          children: [
                           children: [
                             MoneyCounter(),
-                            Text(
+                            Center(child:Text(
                               shopText['THEMES'],
                               style: TextStyle(
+                                  fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),
+                            ),),
                             Wrap(
                               alignment: WrapAlignment.start,
                               spacing: 8.0, // Space between items horizontally
@@ -81,21 +82,26 @@ class _StorepageState extends State<Storepage> {
                               ],
                             ),
                             SizedBox(height: 20),
+                            Center(child:
                             Text(shopText['IMAGES'],
-                                style: TextStyle(
-                                    color: _themeService.mainAccent.value)),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: _themeService.mainAccent.value),
+                            ),),
                             ImageStoreList(
                                 themes: storeItems!['images']!,
                                 userId: this.uid),
                             SizedBox(height: 20),
-                            Text(
+                        Center(child:
+                        Text(
                               TranslationService.instance.languageValue.value ==
                                   Language.fr
                                   ? "Récompenses: "
                                   : "Prizes: ",
                               style: TextStyle(
+                                fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),
+                            ),),
                             RewardImageStoreList(
                                 rewardItems: storeItems!['rewardImages']!,
                                 userId: this.uid),
@@ -104,14 +110,16 @@ class _StorepageState extends State<Storepage> {
                                 rewardItems: storeItems!['rewardThemes']!,
                                 userId: this.uid),
                             SizedBox(height: 20),
-                            Text(
+                        Center(child:
+                        Text(
                               TranslationService.instance.languageValue.value ==
                                   Language.fr
                                   ? "Récompenses d'exploit: "
                                   : "Achievements rewards: ",
                               style: TextStyle(
+                                  fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),
+                            ),),
                             RewardCashStoreList(
                                 cashItems: storeItems!['rewardCurrency']!,
                                 userId: this.uid),
@@ -119,7 +127,6 @@ class _StorepageState extends State<Storepage> {
                           ],
                         ),
                       )
-
 
                       ),
                     Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)

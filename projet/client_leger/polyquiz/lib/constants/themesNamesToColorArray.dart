@@ -16,11 +16,11 @@ Map<String, List<Color>> themeColors = {
     Color.fromRGBO(26, 29, 36, 1), // container
   ],
   "disco": [
-    Colors.purple[500]!, // mainBackground
-    Colors.yellow[500]!, // mainAccent
-    Colors.black, // secondaryBackground
-    Colors.red[500]!, // secondaryAccent
-    Colors.green, // container
+    Colors.deepPurple[900]!, // mainBackground (hsl(250, 50%, 20%))
+    Colors.yellow[300]!, // mainAccent (hsl(45, 100%, 70%))
+    Colors.purple[700]!, // secondaryBackground (hsl(240, 40%, 35%))
+    Colors.cyan[100]!, // secondaryAccent (hsl(190, 100%, 85%))
+    Colors.pink[600]!, // buttonBackground (hsl(330, 60%, 45%))
   ],
   "blueGrey": [
     Colors.blueGrey[900]!, // mainBackground:
