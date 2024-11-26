@@ -30,7 +30,6 @@ class Userpage extends StatelessWidget {
 
     return Obx(() {
       Language uselessShit = transService.languageValue.value;
-
       return MaterialApp(
         home: Scaffold(
           backgroundColor: themeService.mixedMain,

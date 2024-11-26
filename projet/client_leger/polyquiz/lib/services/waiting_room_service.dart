@@ -180,15 +180,19 @@ class WaitingRoomService extends ChangeNotifier {
   }
 
   void sendCreateTeam() {
-    this._socketService.sendMessage(SocketEvent.CREATE_TEAM, this.roomId);
+    if (!this.isRoomLocked) {
+      this._socketService.sendMessage(SocketEvent.CREATE_TEAM, this.roomId);
+    }
   }
 
   void joinTeam(int newTeamId) {
-    JoinTeamData joinTeamData =
-        JoinTeamData(roomId: roomId, newTeamId: newTeamId);
-    this
-        ._socketService
-        .sendMessage(SocketEvent.JOIN_TEAM, joinTeamData.toJson());
+    if (!this.isRoomLocked) {
+      JoinTeamData joinTeamData =
+          JoinTeamData(roomId: roomId, newTeamId: newTeamId);
+      this
+          ._socketService
+          .sendMessage(SocketEvent.JOIN_TEAM, joinTeamData.toJson());
+    }
   }
 
   void removePlayer(String username) {
@@ -226,6 +230,7 @@ class WaitingRoomService extends ChangeNotifier {
     handleTime();
     handleFinalTransition();
     handleGetTeams();
+    handleRoomLockUpdate();
   }
 
   void handleNewPlayer() {
@@ -290,5 +295,15 @@ class WaitingRoomService extends ChangeNotifier {
       }
       notifyListeners();
     });
+  }
+
+  void handleRoomLockUpdate() {
+    this._socketService.onMessage(
+        SocketEvent.GET_ROOM_LOCK_UPDATE,
+        (isLocked) => {
+              this.isRoomLocked = isLocked,
+              print('ROOM LOCKED STATUS: ${this.isRoomLocked}'),
+              notifyListeners()
+            });
   }
 }

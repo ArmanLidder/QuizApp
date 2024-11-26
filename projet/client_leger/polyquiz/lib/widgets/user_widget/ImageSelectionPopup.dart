@@ -25,7 +25,7 @@ class ImageSelectionPopup extends StatelessWidget {
         height: 300,
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 6, //TODO: change peut-etre?
+            crossAxisCount: 6,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
           ),
@@ -39,7 +39,7 @@ class ImageSelectionPopup extends StatelessWidget {
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.add, size: 40),
+                  child: Icon(Icons.camera_alt, size: 40),
                 ),
               );
             }

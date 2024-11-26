@@ -1,4 +1,3 @@
-
 const frenchTextValues = {
   "LOGIN_PAGE": {
     "TITLE": "Connecter",
@@ -7,7 +6,8 @@ const frenchTextValues = {
     "EMAIL_PLACEHOLDER": "Saisissez votre adresse courriel",
     "EMAIL_REQUIRED": "L'adresse courriel est requise.",
     "EMAIL_INVALID": "L'adresse courriel n'est pas valide.",
-    "EMAIL_FORMAT_INVALID": "Le format de l'adresse courriel est invalide. Ex: utilisateur@exemple.com",
+    "EMAIL_FORMAT_INVALID":
+        "Le format de l'adresse courriel est invalide. Ex: utilisateur@exemple.com",
     "PASSWORD_LABEL": "Mot de passe",
     "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
     "PASSWORD_REQUIRED": "Le mot de passe est requis.",
@@ -26,9 +26,10 @@ const frenchTextValues = {
     "WEAK_PASSWORD": "Le mot de passe est trop faible.",
     "OPERATION_NOT_ALLOWED": "Cette opération n'est pas autorisée.",
     "NETWORK_REQUEST_FAILED": "La connexion au réseau a échoué.",
-    "REQUIRES_RECENT_LOGIN": "Veuillez vous reconnecter avant d'effectuer cette opération.",
+    "REQUIRES_RECENT_LOGIN":
+        "Veuillez vous reconnecter avant d'effectuer cette opération.",
     "UNKNOWN_ERROR": "Une erreur inconnue s'est produite.",
-    "OFFLINE_PLAY":"Jouer hors-ligne"
+    "OFFLINE_PLAY": "Jouer hors-ligne"
   },
   "REGISTER_PAGE": {
     "TITLE": "S'inscrire",
@@ -36,12 +37,14 @@ const frenchTextValues = {
     "USERNAME_LABEL": "Nom d'utilisateur",
     "USERNAME_PLACEHOLDER": "Saisissez votre nom d'utilisateur",
     "USERNAME_REQUIRED": "Le nom d'utilisateur est requis.",
-    "USERNAME_INVALID": "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres.",
+    "USERNAME_INVALID":
+        "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres.",
     "EMAIL_LABEL": "Courriel",
     "EMAIL_PLACEHOLDER": "Saisissez votre adresse courriel",
     "EMAIL_REQUIRED": "L'adresse courriel est requise.",
     "EMAIL_INVALID": "L'adresse courriel n'est pas valide.",
-    "EMAIL_FORMAT_INVALID": "Le format de l'adresse courriel est invalide. Ex: utilisateur@exemple.com",
+    "EMAIL_FORMAT_INVALID":
+        "Le format de l'adresse courriel est invalide. Ex: utilisateur@exemple.com",
     "PASSWORD_LABEL": "Mot de passe",
     "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
     "PASSWORD_REQUIRED": "Le mot de passe est requis.",
@@ -50,7 +53,8 @@ const frenchTextValues = {
     "ALREADY_HAVE_ACCOUNT": "Déjà un compte?",
     "LOGIN_LINK": " Se connecter",
     "SUCCESS_REGISTER_POPUP": "Compte créé",
-    "THE_NAME_IS_ALREADY_USED": "Le nom \"{{name}}\" est déjà utilisé"  },
+    "THE_NAME_IS_ALREADY_USED": "Le nom \"{{name}}\" est déjà utilisé"
+  },
   "MAINPAGE": {
     "WELCOME": "Bienvenue",
     "JOIN_GAME": "Joindre une partie",
@@ -58,9 +62,7 @@ const frenchTextValues = {
     "ADMIN_GAMES": "Administrer les jeux",
     "SHOP": "Magasiner"
   },
-  "HEADER": {
-    "TOOLTIP_FRIENDS": "Amis"
-  },
+  "HEADER": {"TOOLTIP_FRIENDS": "Amis"},
   "PROFILE": {
     "LEVEL": "Niveau",
     "PRESTIGE": "Prestige",
@@ -111,7 +113,7 @@ const frenchTextValues = {
     "ACCEPT_REQUEST": "Accepter",
     "DECLINE_REQUEST": "Refuser",
     "ALREADY_SENT_ERROR": "La requête d'ami a déja été envoyée",
-    "PENDING_TITLE":"en attente de la liste d'amis"
+    "PENDING_TITLE": "en attente de la liste d'amis"
   },
   "AVATAR_MODIFICATION": {
     "TITLE": "Modification d'avatar",
@@ -129,8 +131,10 @@ const frenchTextValues = {
     "PLACEHOLDER": "Entrer un nouveau nom d'utilisateur",
     "CANCEL": "Annuler",
     "CONFIRM": "Confirmer",
-    "LETTERS_NUMBERS_ONLY": "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres.",
-    "MAXIMUM_10_CHAR": "Le nom d'utilisateur peut contenir au plus 10 caractères.",
+    "LETTERS_NUMBERS_ONLY":
+        "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres.",
+    "MAXIMUM_10_CHAR":
+        "Le nom d'utilisateur peut contenir au plus 10 caractères.",
     "SUCCESSFUL_MODIFICATION": "Nom d’utilisateur modifié avec succès.",
     "ALREADY_USED": "Ce nom est déja utilisé.",
     "ERROR": "Erreur de modification."
@@ -151,7 +155,7 @@ const frenchTextValues = {
     "NOT_ENOUGH_FUNDS": "Pas assez de fonds",
     "BUY": "Acheter",
     "COST_SUFFIX": "\$",
-    "CLAIM" : "réclamer",
+    "CLAIM": "réclamer",
     "CLAIMED": "réclaméé",
   },
   "GAME_ADMIN": {
@@ -168,8 +172,10 @@ const frenchTextValues = {
     "TOOLTIP_EDIT": "Modifier le questionnaire",
     "TOOLTIP_DELETE": "Supprimer le questionnaire",
     "REFRESH_FEEDBACK": "Les quiz ont été actualisés.",
-    "JSON_IMPORT_FORMAT_ERROR": "Erreur : le fichier JSON est mal formaté.({{ error }})",
-    "IMPORT_ERROR_HEADER_TEXT": "Le fichier que vous tenter d'importer contient le(s) problème(s) suivant(s):",
+    "JSON_IMPORT_FORMAT_ERROR":
+        "Erreur : le fichier JSON est mal formaté.({{ error }})",
+    "IMPORT_ERROR_HEADER_TEXT":
+        "Le fichier que vous tenter d'importer contient le(s) problème(s) suivant(s):",
     "QUIZ_DELETED": "Ce quiz a été supprimé, veuillez choisir un autre.",
     "QUIZ_INVISIBLE": "Ce quiz est maintenant caché, veuillez choisir un autre."
   },
@@ -198,14 +204,18 @@ const frenchTextValues = {
     "DESCRIPTION_LABEL": "Description",
     "DESCRIPTION_PLACEHOLDER": "Entrez la description du jeu",
     "DESCRIPTION_REQUIRED": "La description est requise",
-    "DESCRIPTION_PATTERN": "La description ne doit pas être composée uniquement d'espaces",
+    "DESCRIPTION_PATTERN":
+        "La description ne doit pas être composée uniquement d'espaces",
     "CREATE": "Créer",
     "EDIT": "Modifier",
     "CANCEL": "Annuler",
     "GAME_NO_LONGER_EXISTS": "Ce jeu n'existe plus.",
-    "GAME_PRIVATED": "Ce jeu a été défini comme privé par le créateur et ne peut pas être modifié/exporté/supprimé.",
-    "QUIZ_DELETED_BY_OTHER_USER": "Ce quiz a été supprimé par un autre utilisateur.",
-    "QUIZ_VISIBILITY_CHANGED_TO_PRIVATE": "La visibilité de ce quiz a été modifiée à privée par le propriétaire pendant l'édition.",
+    "GAME_PRIVATED":
+        "Ce jeu a été défini comme privé par le créateur et ne peut pas être modifié/exporté/supprimé.",
+    "QUIZ_DELETED_BY_OTHER_USER":
+        "Ce quiz a été supprimé par un autre utilisateur.",
+    "QUIZ_VISIBILITY_CHANGED_TO_PRIVATE":
+        "La visibilité de ce quiz a été modifiée à privée par le propriétaire pendant l'édition.",
     "TITLE_ALREADY_EXISTS": "Le titre existe déjà",
     "QUIZ_UPDATED_SUCCESS": "Le quiz a été mis à jour avec succès",
     "QUIZ_ADDED_SUCCESS": "Le quiz a été ajouté avec succès",
@@ -221,11 +231,13 @@ const frenchTextValues = {
       "QUESTION_TEXT_LABEL": "Texte de la question",
       "QUESTION_TEXT_PLACEHOLDER": "Saisissez le texte de la question",
       "QUESTION_TEXT_REQUIRED": "Le texte est requis",
-      "QUESTION_TEXT_PATTERN": "Le texte ne doit pas être composé uniquement d'espaces.",
+      "QUESTION_TEXT_PATTERN":
+          "Le texte ne doit pas être composé uniquement d'espaces.",
       "QUESTION_POINTS_LABEL": "Le nombre de points de la question",
       "QUESTION_POINTS_PLACEHOLDER": "Entrez le nombre de points",
       "QUESTION_POINTS_REQUIRED": "Le nombre de points est requis",
-      "QUESTION_POINTS_INVALID": "Le nombre de points doit être entre 10 et 100 et être un multiple de 10",
+      "QUESTION_POINTS_INVALID":
+          "Le nombre de points doit être entre 10 et 100 et être un multiple de 10",
       "IMAGE_OPTIONAL": "Image (optionnel)",
       "IMAGE_CHOOSE": "Choisir une image",
       "IMAGE_PREVIEW_ALT": "Aperçu de l'image",
@@ -236,26 +248,36 @@ const frenchTextValues = {
       "ANSWER_INTERVAL": "Intervalle de réponse:",
       "MINIMUM": "Minimum",
       "MAXIMUM": "Maximum",
-      "MAX_LESS_THAN_MIN_ERROR": "La valeur maximale doit être supérieure ou égale à la valeur minimale.",
+      "MAX_LESS_THAN_MIN_ERROR":
+          "La valeur maximale doit être supérieure ou égale à la valeur minimale.",
       "MIN_INTEGER_ERROR": "Le minimum doit être un nombre entier.",
       "MIN_REQUIRED": "Le minimum est requis.",
       "MAX_INTEGER_ERROR": "La maximum doit être un nombre entier.",
       "MAX_REQUIRED": "La maximum est requis.",
-      "MAX_TOO_LARGE": "La valeur maximale est trop grande (plus que 15 chiffres)",
-      "MIN_TOO_LARGE": "La valeur minimale est trop grande (plus que 15 chiffres)",
-      "MAX_TOO_SMALL": "La valeur maximale est trop petite (plus que 15 chiffres)",
-      "MIN_TOO_SMALL": "La valeur minimale est trop petite (plus que 15 chiffres)",
+      "MAX_TOO_LARGE":
+          "La valeur maximale est trop grande (plus que 15 chiffres)",
+      "MIN_TOO_LARGE":
+          "La valeur minimale est trop grande (plus que 15 chiffres)",
+      "MAX_TOO_SMALL":
+          "La valeur maximale est trop petite (plus que 15 chiffres)",
+      "MIN_TOO_SMALL":
+          "La valeur minimale est trop petite (plus que 15 chiffres)",
       "CORRECT_ANSWER": "Bonne réponse :",
       "ENTER_CORRECT_ANSWER": "Entrez la valeur de la bonne réponse",
-      "ANSWER_OUT_OF_RANGE": "La réponse doit être entre les bornes spécifiées.",
+      "ANSWER_OUT_OF_RANGE":
+          "La réponse doit être entre les bornes spécifiées.",
       "ANSWER_INTEGER_ERROR": "La réponse doit être un nombre entier.",
-      "ANSWER_TOO_LARGE": "La valeur de la réponse est trop grande (plus que 15 chiffres)",
-      "ANSWER_TOO_SMALL": "La valeur de la réponse est trop petite (plus que 15 chiffres)",
+      "ANSWER_TOO_LARGE":
+          "La valeur de la réponse est trop grande (plus que 15 chiffres)",
+      "ANSWER_TOO_SMALL":
+          "La valeur de la réponse est trop petite (plus que 15 chiffres)",
       "TOLERANCE_MARGIN": "Marge de tolérance :",
       "ENTER_MARGIN": "Entrez la marge de tolérance",
-      "TOLERANCE_MARGIN_TOO_LARGE": "La marge de tolérance doit être au maximum 25 % de l'intervalle",
+      "TOLERANCE_MARGIN_TOO_LARGE":
+          "La marge de tolérance doit être au maximum 25 % de l'intervalle",
       "TOLERANCE_MARGIN_REQUIRED": "La marge de tolérance est requise.",
-      "TOLERANCE_MARGIN_MIN_ERROR": "La marge doit être un nombre entier supérieure ou égale à 0.",
+      "TOLERANCE_MARGIN_MIN_ERROR":
+          "La marge doit être un nombre entier supérieure ou égale à 0.",
       "VALID_INTERVAL_MESSAGE": "L'intervalle de bonne réponse est :",
       "CHOICE": {
         "CHOICE": "Choix",
@@ -306,9 +328,11 @@ const frenchTextValues = {
     "PLATINUM": "🏅Platine",
     "CANCEL_BUTTON": "Annuler",
     "CREATE_GAME_BUTTON": "Créer partie",
-    "GAME_TYPE_REQUIRED": "Le type de partie est requis. Veuillez sélectionner un type.",
+    "GAME_TYPE_REQUIRED":
+        "Le type de partie est requis. Veuillez sélectionner un type.",
     "PRICE_INVALID": "Le prix doit être un entier supérieur ou égal à 0.",
-    "PRESTIGE_REQUIRED": "Le prestige minimum est requis. Veuillez sélectionner un prestige minimum.",
+    "PRESTIGE_REQUIRED":
+        "Le prestige minimum est requis. Veuillez sélectionner un prestige minimum.",
   },
   "WAITING_ROOM_PAGE": {
     "TITLE": "Salle d'attente",
@@ -326,7 +350,11 @@ const frenchTextValues = {
     "NO_TEAMS": "Aucune équipe présente",
     "START_BUTTON": "Commencer",
     "CREATE_TEAM": "Créer Équipe",
-    "QUIZ_STARTING_IN": "Quiz commence dans :"
+    "QUIZ_STARTING_IN": "Quiz commence dans :",
+    "TEAM_VALIDATION": "Il faut 2 joueurs par équipe et au moins 2 équipes.",
+    "CLASSIC_VALIDATION": "Il faut au moins 1 joueur.",
+    "TEAM_NOTICE_LOCK":
+        "L'organisateur a vérouillé la salle. Vous ne pouvez pas modifier votre équipe."
   },
   "POP_UP_MESSAGE": {
     "LEAVE_MESSAGE": "Êtes-vous sûr de vouloir quitter?",
@@ -336,10 +364,7 @@ const frenchTextValues = {
     "ERRORS_DETECTED": "Erreurs détectées",
     "CLOSE": "Fermer"
   },
-  "BUTTON": {
-    "QUIT": "Quitter",
-    "DELETE": "Supprimer"
-  },
+  "BUTTON": {"QUIT": "Quitter", "DELETE": "Supprimer"},
   "CONFIRMATION_DIALOG": {
     "WARNING": "Attention!",
     "CANCEL": "Annuler",
@@ -349,7 +374,8 @@ const frenchTextValues = {
     "JOIN_PUBLIC_GAME": "Rejoindre Jeu Public",
     "JOIN_PRIVATE_GAME": "Rejoindre Jeu Privé",
     "ROOM_CODE_PROMPT": {
-      "ENTER_CODE_MESSAGE": "Veuillez saisir le code de 4 chiffres fourni par l'organisateur",
+      "ENTER_CODE_MESSAGE":
+          "Veuillez saisir le code de 4 chiffres fourni par l'organisateur",
       "ENTER_CODE_LABEL": "Saisir le code:",
       "ERROR_MESSAGE": "Code invalide",
       "VALIDATE_BUTTON": "Valider",
@@ -362,11 +388,14 @@ const frenchTextValues = {
     "ROOM_CODE_PROMPT_ERRORS": {
       "GAME_NOT_FOUND": "Il n'y a aucune partie correspondant à ce code.",
       "FRIENDS_ONLY": "Cette partie est exclusive aux amis de l'hôte.",
-      "INSUFFICIENT_PRESTIGE": "Vous n'avez pas le prestige minimum pour rejoindre cette partie.",
-      "INSUFFICIENT_FUNDS": "Vous n'avez pas assez d'argent pour rejoindre cette partie.",
+      "INSUFFICIENT_PRESTIGE":
+          "Vous n'avez pas le prestige minimum pour rejoindre cette partie.",
+      "INSUFFICIENT_FUNDS":
+          "Vous n'avez pas assez d'argent pour rejoindre cette partie.",
       "BANNED_USER": "Vous avez été banni de cette partie par l'hôte.",
       "ROOM_LOCKED": "La salle est actuellement verrouillée.",
-      "VALIDATION_CODE_ERROR": "Votre code doit contenir seulement 4 chiffres (ex: 1234)"
+      "VALIDATION_CODE_ERROR":
+          "Votre code doit contenir seulement 4 chiffres (ex: 1234)"
     }
   },
   "ACTIVE_GAME_LIST": {
@@ -382,8 +411,10 @@ const frenchTextValues = {
     "NO_GAMES_AVAILABLE": "Aucune partie disponible",
     "CANCEL": "Annuler",
     "EXCLUSIVE_FRIENDS_GAME": "Cette partie est exclusive aux amis de l'hôte.",
-    "INSUFFICIENT_PRESTIGE": "Vous n'avez pas le prestige minimum pour rejoindre cette partie.",
-    "INSUFFICIENT_FUNDS": "Vous n'avez pas assez d'argent pour rejoindre cette partie.",
+    "INSUFFICIENT_PRESTIGE":
+        "Vous n'avez pas le prestige minimum pour rejoindre cette partie.",
+    "INSUFFICIENT_FUNDS":
+        "Vous n'avez pas assez d'argent pour rejoindre cette partie.",
     "USER_BANNED": "Vous avez été banni de cette partie.",
     "ROOM_LOCKED": "La partie est actuellement verrouillée."
   },
@@ -415,54 +446,71 @@ const frenchTextValues = {
     "ENTER_CHANNEL_NAME": "Saisir un nom de canal...",
     "SEARCH_CHANNEL": "Chercher un canal...",
     "CHANNEL_NAME_REQUIRED": "Le nom de canal est requis.",
-    "CHANNEL_NAME_PATTERN": "Le nom du canal doit seulement contenir des caractères alphanumériques.",
-    "CHANNEL_NAME_MAX_LENGTH": "Le nom du canal doit contenir 20 caractères maximum.",
-    "MESSAGE_MAX_LENGTH": "Le message doit contenir un maximum de 200 caractères",
+    "CHANNEL_NAME_PATTERN":
+        "Le nom du canal doit seulement contenir des caractères alphanumériques.",
+    "CHANNEL_NAME_MAX_LENGTH":
+        "Le nom du canal doit contenir 20 caractères maximum.",
+    "MESSAGE_MAX_LENGTH":
+        "Le message doit contenir un maximum de 200 caractères",
     "CHANNEL_DELETED": "Le canal a été effacé. Veuillez quitter. Au revoir!",
     "DELETE_WARNING": "Attention !!!",
-    "DELETE_CONFIRMATION": "Cette action est irreversible. Le canal {{channelName}} sera effacé à jamais.",
-    "ROOM_IN_NAME_UNALLOWED": "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom.",
-    "ROOM_NAME_ALREADY_USED": "Le nom {{canalName}} est déjà utilisé. Veuillez choisir un autre nom."
+    "DELETE_CONFIRMATION":
+        "Cette action est irreversible. Le canal {{channelName}} sera effacé à jamais.",
+    "ROOM_IN_NAME_UNALLOWED":
+        "Le nom de canal ne peut pas contenir: room. Veuillez choisir un autre nom.",
+    "ROOM_NAME_ALREADY_USED":
+        "Le nom {{canalName}} est déjà utilisé. Veuillez choisir un autre nom."
   },
-  "AVATAR_CLICK_MENU": {
-    "PROFIL": "Profil",
-    "DISCONNECT": "Déconnexion"
-  },
+  "AVATAR_CLICK_MENU": {"PROFIL": "Profil", "DISCONNECT": "Déconnexion"},
   "IMPORT_ERRORS": {
     "CHOICE_LABEL": "Choix",
     "TITLE_REQUIRED": "Le titre est requis",
     "DESCRIPTION_REQUIRED": "La description est requise",
     "INVALID_DURATION": "La durée doit être comprise entre 10 et 60 secondes",
-    "MINIMUM_NUMBER_OF_QUESTIONS_REQUIRED": "Le quiz devrait contenir au moins une question",
+    "MINIMUM_NUMBER_OF_QUESTIONS_REQUIRED":
+        "Le quiz devrait contenir au moins une question",
     "TEXT_REQUIRED": "le texte est requis",
     "QUESTION_POINTS_REQUIRED": "les points d'une question sont requis",
     "INVALID_POINTS": "les points doivent être entre 10 et 100",
-    "NON_DIVISIBLE_BY_TEN": "les points de la question doivent être divisible par 10",
-    "INVALID_NUMBER_OF_CHOICES": "doit avoir au moins deux choix et au plus quatre choix",
+    "NON_DIVISIBLE_BY_TEN":
+        "les points de la question doivent être divisible par 10",
+    "INVALID_NUMBER_OF_CHOICES":
+        "doit avoir au moins deux choix et au plus quatre choix",
     "INVALID_CHOICE": "un choix doit être soit vrai soit faux",
-    "INVALID_QUESTION_CHOICES": "on doit au moins avoir une bonne réponse et une mauvaise réponse",
+    "INVALID_QUESTION_CHOICES":
+        "on doit au moins avoir une bonne réponse et une mauvaise réponse",
     "TITLE_MAX_LENGTH": "Le titre doit contenir au maximum 100 caractères",
-    "DESCRIPTION_MAX_LENGTH": "La description doit contenir au maximum 250 caractères",
-    "DESCRIPTION_ONLY_SPACES": "La description ne doit pas être composée uniquement d'espaces",
-    "TITLE_ONLY_SPACES": "Le titre ne doit pas être composé uniquement d'espaces",
-    "QUESTION_TEXT_MAX_LENGTH": "le texte de la question doit contenir au maximum 250 caractères",
+    "DESCRIPTION_MAX_LENGTH":
+        "La description doit contenir au maximum 250 caractères",
+    "DESCRIPTION_ONLY_SPACES":
+        "La description ne doit pas être composée uniquement d'espaces",
+    "TITLE_ONLY_SPACES":
+        "Le titre ne doit pas être composé uniquement d'espaces",
+    "QUESTION_TEXT_MAX_LENGTH":
+        "le texte de la question doit contenir au maximum 250 caractères",
     "UNSUPPORTED_QUESTION_TYPE": "ce type de question n'est pas supporté",
     "INTEGER_ANSWER_REQUIRED": "la réponse doit être un nombre entier",
     "INTEGER_MARGIN_REQUIRED": "la marge doit être un nombre entier",
-    "INTEGER_INTERVAL_REQUIRED": "les intervalles doivent être des nombres entiers",
+    "INTEGER_INTERVAL_REQUIRED":
+        "les intervalles doivent être des nombres entiers",
     "ANSWER_WITHIN_LIMITS": "la réponse doit être entre",
     "MINIMUM_WITHIN_LIMITS": "le minimum doit être entre",
     "MAXIMUM_WITHIN_LIMITS": "le maximum doit être entre",
-    "QRE_ANSWER_REQUIRED": "la réponse est requise pour les questions de type QRE",
-    "QRE_INTERVAL_REQUIRED": "l'intervalle min et max sont requis pour les questions de type QRE",
-    "QRE_MARGIN_REQUIRED": "la marge est requise pour les questions de type QRE",
+    "QRE_ANSWER_REQUIRED":
+        "la réponse est requise pour les questions de type QRE",
+    "QRE_INTERVAL_REQUIRED":
+        "l'intervalle min et max sont requis pour les questions de type QRE",
+    "QRE_MARGIN_REQUIRED":
+        "la marge est requise pour les questions de type QRE",
     "MIN_LESS_THAN_MAX": "l'intervalle min doit être inférieur ou égal à max",
     "MARGIN_NON_NEGATIVE": "la marge de tolérance doit être 0 ou plus",
-    "SCIENTIFIC_NOTATION_NOT_ALLOWED": "ne doit pas être en notation scientifique",
+    "SCIENTIFIC_NOTATION_NOT_ALLOWED":
+        "ne doit pas être en notation scientifique",
     "ANSWER_OUTSIDE_INTERVAL": "la réponse doit être inclus dans l'intervalle",
     "MAX_MARGIN_LIMIT": "la marge doit être au maximum",
     "INTERVAL_25_PERCENT_LIMIT": "(25% de l'intervalle)",
-    "CHOICE_TEXT_MAX_LENGTH": "le texte du choix doit contenir au maximum 50 caractères"
+    "CHOICE_TEXT_MAX_LENGTH":
+        "le texte du choix doit contenir au maximum 50 caractères"
   },
   "GAME_INTERFACE": {
     "TIMER_TEXT": {
@@ -480,11 +528,10 @@ const frenchTextValues = {
       "TOOLTIP_PLAY": "Jouer",
       "TOOLTIP_PAUSE": "Pause",
       "TOOLTIP_PANIC_MODE": "Activez le mode panique !",
-      "TOOLTIP_PANIC_MODE_DISABLED": "Vous ne pouvez plus activer le mode panique."
+      "TOOLTIP_PANIC_MODE_DISABLED":
+          "Vous ne pouvez plus activer le mode panique."
     },
-    "QUESTION_INFO": {
-      "VALUE": "Valeur"
-    },
+    "QUESTION_INFO": {"VALUE": "Valeur"},
     "QRL_CORRECTION": {
       "QUESTION_CORRECTION": "Correction de la question:",
       "PLAYER": "Joueur :",
@@ -532,8 +579,10 @@ const frenchTextValues = {
       "CHARACTERS_REMAINING": "Caractères restants: ",
       "ZERO_POINTS": "Vous avez eu aucun point pour votre réponse : ",
       "HALF_POINTS": "Vous avez eu la moitié des points pour votre réponse : ",
-      "FULL_POINTS": "Félicitations, vous avez eu tout les points de la question pour votre réponse : ",
-      "AWAITING_EVALUATION": "L'organisateur est en train d'évaluer votre réponse"
+      "FULL_POINTS":
+          "Félicitations, vous avez eu tout les points de la question pour votre réponse : ",
+      "AWAITING_EVALUATION":
+          "L'organisateur est en train d'évaluer votre réponse"
     },
     "PLAYER_QRE_INTERFACE": {
       "TOLERANCE": "Tolérance",

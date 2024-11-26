@@ -6,15 +6,15 @@
 }
 
 .menu {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-bg-primary);
   padding: 12px;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid  var(--color-primary);
   display: inline-block;
   transition: all 0.3s ease;
 
   &.collapsed {
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--color-bg-primary);
 
     .collapsed-content {
       display: flex;
@@ -43,22 +43,22 @@
     padding: 8px 16px;
     border-radius: 4px;
     border: none;
-    background: #007bff;
-    color: white;
+    background: var(--color-bg-button);
+    color: var(--color-secondary);
     cursor: pointer;
     transition: background 0.2s ease;
     white-space: nowrap; // Prevent button text from wrapping
 
     &:hover {
-      background: #0056b3;
+      opacity: 0.75;
     }
   }
 }
 
 .header {
-  background: #007bff;
-  color: white;
-  border: black solid 2px;
+  background: var(--color-bg-button);
+  color: var(--color-secondary);
+  border: var(--color-primary) solid 2px;
   padding: 12px;
   border-radius: 4px;
   cursor: pointer;

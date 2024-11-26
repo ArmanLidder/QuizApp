@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/services/camera_service.dart';
 import 'dart:io';
 
+import 'package:polyquiz/services/imageStorageService.dart';
+
 class CameraWidget extends StatefulWidget {
   final Function(String) onImageCaptured;
 
@@ -21,7 +23,8 @@ class _CameraWidgetState extends State<CameraWidget> {
       setState(() {
         image = newImage;
       });
-      widget.onImageCaptured(newImage.path);
+      String? firebasePath = await ImageStorageService().uploadImage(image!);
+      widget.onImageCaptured(firebasePath!);
     }
   }
 

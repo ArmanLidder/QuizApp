@@ -20,7 +20,6 @@
         <i [class]='orderIcon'></i>
     </button>
 </div>
-
 <div class="players-container">
     <table>
         <thead>
@@ -36,7 +35,7 @@
         <tbody>
         <tr *ngFor="let player of sortAllPlayers()" [class]='player[3]'>
             <td>
-                <app-avatar [isChat]="true" [uid]="player[0]"></app-avatar>
+                <app-avatar [isChat]="true" [uid]="player[0]" [ignoreThemes]="true"></app-avatar>
             </td>
             <td> {{player[1]}} </td>
             <td> {{player[2]}} </td>

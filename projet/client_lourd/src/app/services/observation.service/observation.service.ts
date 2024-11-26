@@ -25,6 +25,7 @@ import {
     TransportStatsFormat
 } from "@common/constants/host-interface.component.const";
 import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
+import {TranslateService} from "@ngx-translate/core";
 
 @Injectable({
     providedIn: 'root'
@@ -41,6 +42,7 @@ export class ObservationService {
         private hostInterfaceManagementService: HostInterfaceManagementService,
         private gameInterfaceManagementService: GameInterfaceManagementService,
         private router: Router,
+        private translate: TranslateService
     ) {
     }
 
@@ -81,7 +83,7 @@ export class ObservationService {
         // this.observedPlayerId = newUserId;
         this.gameService.gameRealService.username = this.isHost ? HOST_USERNAME : newUserId;
         if (this.gameService.observerMode) {
-            this.gameService.obs_qrl_Answer = "Le joueur est inactif ...";
+            this.gameService.obs_qrl_Answer = this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');
         }
         this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
         if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, {roomId: this.gameConfigs.room, isFirst: false});
@@ -96,7 +98,7 @@ export class ObservationService {
 
     private handleGetQRLInteraction() {
         this.socketService.on(SocketEvent.GET_QRL_INTERACTION, (isActive: boolean) => {
-            this.gameService.qrlAnswer = isActive ? "Le joueur écrit une réponse ..." : "Le joueur est inactif ..."
+            this.gameService.qrlAnswer = isActive ? this.translate.instant('OBSERVER.QRL_PLAYER_ACTIVE') : this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');
         });
     }
 
@@ -109,6 +111,9 @@ export class ObservationService {
     private handleGetQREAnswer() {
         this.socketService.on(SocketEvent.GET_QRE_ANSWER_FOR_OBS, (qreValue: number) => {
             this.gameService.obs_qre_Answer = qreValue
+            const lowerBound = Math.max(this.gameService.question!.interval!.min!, this.gameService.obs_qre_Answer - this.gameService.question!.margin!);
+            const upperBound = Math.min(this.gameService.question!.interval!.max!, this.gameService.obs_qre_Answer + this.gameService.question!.margin!);
+            this.gameService.obs_qre_interval = `${lowerBound.toString()} - ${upperBound.toString()}`;
         });
     }
 
@@ -155,6 +160,9 @@ export class ObservationService {
             this.gameInterfaceManagementService.players = data.players;
             this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
             this.gameService.obs_qre_Answer = data.qreAnswer;
+            const lowerBound = Math.max(this.gameService.question!.interval!.min!, this.gameService.obs_qre_Answer - this.gameService.question!.margin!);
+            const upperBound = Math.min(this.gameService.question!.interval!.max!, this.gameService.obs_qre_Answer + this.gameService.question!.margin!);
+            this.gameService.obs_qre_interval = `${lowerBound.toString()} - ${upperBound.toString()}`;
             this.gameService.obs_qrl_Answer = data.qrlAnswer;
             this.gameService.qrlAnswer = data.qrlAnswer;
             this.gameInterfaceManagementService['getScore']();

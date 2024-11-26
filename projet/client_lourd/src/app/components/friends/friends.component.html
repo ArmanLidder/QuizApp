@@ -1,15 +1,20 @@
-<div class="border-b h-full">
+<div class="border-b h-full !text-primary !bg-bgPrimary">
     <div class="flex items-center justify-between pl-8 pt-4 pb-4 pr-4">
         <h2 class="text-2xl font-semibold">{{ 'FRIENDS.TITLE' | translate }}</h2>
-        <button (click)="openUserSearch()" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center">
-            <mat-icon class="mr-2">person_add</mat-icon>
+        <button (click)="openUserSearch()"
+                class="bg-bgButton text-secondary hover:opacity-75 font-semibold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center">
+            <mat-icon class="mr-2 text-secondary">person_add</mat-icon>
             {{ 'FRIENDS.ADD_FRIEND' | translate }}
         </button>
     </div>
     <div class="min-h-40">
         <mat-tab-group class="h-full">
-            <!-- Friends Tab -->
-            <mat-tab label="{{ 'FRIENDS.FRIENDS_TAB' | translate }}">
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <span class="!text-primary">
+                        {{ 'FRIENDS.FRIENDS_TAB' | translate }}
+                    </span>
+                </ng-template>
                 <div class="p-4 h-60 flex flex-col">
                     <div *ngIf="(friends$ | async) as friends; else noFriends" class="flex-grow overflow-y-auto">
                         <ng-container *ngIf="friends.length > 0; else noFriends">
@@ -19,8 +24,8 @@
                                         <app-avatar [size]="'small'" [uid]="friend.uid"></app-avatar>
                                         <span class="font-medium text-gray-700">{{ friend.username }}</span>
                                     </div>
-                                    <button class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out"
-                                            (click)="removeConfirmDialog(friend.uid)">
+                                    <button (click)="removeConfirmDialog(friend.uid)"
+                                            class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out">
                                         <mat-icon>person_remove</mat-icon>
                                     </button>
                                 </li>
@@ -29,7 +34,7 @@
                     </div>
                     <ng-template #noFriends>
                         <div class="flex justify-center items-center h-full">
-                            <p class="text-center text-gray-600">{{ 'FRIENDS.EMPTY_FRIENDS_LIST' | translate }}</p>
+                            <p class="text-center !text-primary">{{ 'FRIENDS.EMPTY_FRIENDS_LIST' | translate }}</p>
                         </div>
                     </ng-template>
                 </div>
@@ -38,13 +43,16 @@
             <!-- Pending Requests Tab -->
             <mat-tab>
                 <ng-template mat-tab-label>
-                    <span [matBadge]="(pendingRequests$ | async)?.length" [matBadgeSize]="'small'" [matBadgeHidden]="!(pendingRequests$ | async)?.length" matBadgeOverlap="false" matBadgeColor="primary">
+                    <span [matBadgeHidden]="!(pendingRequests$ | async)?.length" [matBadgeSize]="'small'" [matBadge]="(pendingRequests$ | async)?.length"
+                          class="!text-primary" matBadgeColor="primary"
+                          matBadgeOverlap="false">
                         {{ 'FRIENDS.PENDING_REQUESTS_TAB' | translate }}
                     </span>
                 </ng-template>
                 <div class="p-4 h-60 flex flex-col">
-                    <div *ngIf="(pendingRequests$ | async) as requests; else noRequests" class="flex-grow overflow-y-auto">
-                        <ng-container *ngIf="requests.length > 0; else noRequests">
+                    <div *ngIf="(pendingRequests$ | async) as requests; else noRequests"
+                         class="flex-grow overflow-y-auto">
+                        <ng-container *ngIf="requests.length > 0; else noRequests" class="!text-primary">
                             <ul class="bg-white shadow-md rounded-lg divide-y divide-gray-200">
                                 <li *ngFor="let request of requests" class="p-4 flex items-center justify-between">
                                     <div class="flex items-center space-x-4">
@@ -52,12 +60,12 @@
                                         <span class="font-medium text-gray-700">{{ request.username }}</span>
                                     </div>
                                     <div class="flex space-x-2">
-                                        <button class="text-green-600 hover:text-green-700 transition duration-300 ease-in-out"
-                                                (click)="acceptFriendRequest(request.uid)">
+                                        <button (click)="acceptFriendRequest(request.uid)"
+                                                class="text-green-600 hover:text-green-700 transition duration-300 ease-in-out">
                                             <mat-icon>check_circle</mat-icon>
                                         </button>
-                                        <button class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out"
-                                                (click)="denyFriendRequest(request.uid)">
+                                        <button (click)="denyFriendRequest(request.uid)"
+                                                class="text-red-600 hover:text-red-700 transition duration-300 ease-in-out">
                                             <mat-icon>cancel</mat-icon>
                                         </button>
                                     </div>
@@ -67,7 +75,7 @@
                     </div>
                     <ng-template #noRequests>
                         <div class="flex justify-center items-center h-full">
-                            <p class="text-center text-gray-600">{{ 'FRIENDS.NO_PENDING_REQUESTS' | translate }}</p>
+                            <p class="text-center !text-primary">{{ 'FRIENDS.NO_PENDING_REQUESTS' | translate }}</p>
                         </div>
                     </ng-template>
                 </div>

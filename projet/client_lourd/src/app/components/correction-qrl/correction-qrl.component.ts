@@ -3,6 +3,7 @@ import { QuestionStatistics } from '@common/constants/statistic-zone.component.c
 import { QrlEvaluationService } from '@app/services/qrl-evaluation.service/qrl-evaluation.service';
 import { GameService } from "@app/services/game.service/game.service";
 import {GameConfigService} from "@app/services/game-config.service/game-config.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-correction-qrl',
@@ -20,6 +21,7 @@ export class CorrectionQRLComponent implements OnChanges, OnInit, OnDestroy {
         public qrlEvaluationService: QrlEvaluationService,
         public gameService: GameService,
         public gameConfigs: GameConfigService,
+        private translate: TranslateService
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
@@ -44,7 +46,7 @@ export class CorrectionQRLComponent implements OnChanges, OnInit, OnDestroy {
 
     get AIcorrectionText() {
         return this.qrlEvaluationService.correctedQrlByOpenAi
-            ?.get(this.qrlEvaluationService.currentUsername)?.[1] ?? "Open AI is down";
+            ?.get(this.qrlEvaluationService.currentUsername)?.[1] ?? this.translate.instant('GAME_INTERFACE.QRL_CORRECTION.AI_GENERATING');
     }
 
     get AIscore() {

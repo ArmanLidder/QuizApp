@@ -1,10 +1,10 @@
-<div class="p-6 bg-white rounded-lg shadow-md w-full max-w-2xl mx-auto h-fit">
+<div class="p-6 rounded-lg border border-primary w-full max-w-2xl mx-auto h-fit bg-bgPrimary">
 
     <div class="flex items-center space-x-2">
         <button
                 *ngIf="!gameService.observerMode"
                 class="w-10 h-10 rounded-full flex items-center justify-center
-                bg-gray-200 text-gray-700 hover:bg-gray-300
+                bg-bgButton text-secondary hover:opacity-75
                 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 (click)="decrementValue()"
                 [disabled]="gameService.lockedStatus"
@@ -31,7 +31,7 @@
         <button
                 *ngIf="!gameService.observerMode"
                 class="w-10 h-10 rounded-full flex items-center justify-center
-                bg-gray-200 text-gray-700 hover:bg-gray-300
+                bg-bgButton text-secondary hover:opacity-75
                 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
                 (click)="incrementValue()"
                 [disabled]="gameService.lockedStatus"
@@ -40,11 +40,11 @@
         </button>
     </div>
 
-    <div class="flex justify-between text-xs mb-4 text-gray-500">
+    <div class="flex justify-between text-xs mb-4 text-primary">
         <span class="mx-auto font-bold">{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.TOLERANCE' | translate }}: ±{{ gameService.question!.margin! }}</span>
     </div>
-    <div class="mt-4 text-sm text-gray-700 text-center">
-        <p>{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.YOUR_ANSWER_INTERVAL' | translate }} <strong>{{ responseInterval }}</strong></p>
+    <div class="mt-4 text-sm text-primary text-center">
+        <p>{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.YOUR_ANSWER_INTERVAL' | translate }} <strong>{{ gameService.observerMode ? gameService.obs_qre_Answer !== 0 ? gameService.obs_qre_interval : responseInterval : responseInterval }}</strong></p>
         <p *ngIf="gameService.validatedStatus">{{'GAME_INTERFACE.PLAYER_QRE_INTERFACE.GOOD_ANSWER_WAS' | translate }} {{gameService.question?.answer}}</p>
         <div class='btn-container'>
             <button *ngIf="!gameService.observerMode" class='enter' [disabled]='gameService.lockedStatus' (click)='validate()'>{{ 'GAME_INTERFACE.VALIDATE_BUTTON' | translate }}</button>

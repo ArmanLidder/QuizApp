@@ -2,8 +2,10 @@
     text-align: center;
     padding: 20px 75px;
     margin-top: 50px;
-    border: 2px solid black;
+    border: 2px solid;
+    border-color: var(--color-primary);
 }
+
 
 .center-content {
     display: flex;
@@ -13,7 +15,8 @@
 }
 
 .black {
-    border: 2px solid black;
+    border: 2px solid;
+    border-color: var(--color-primary);
 }
 
 .justify-content {
@@ -23,21 +26,14 @@
 
 .enter {
     margin-left: 10px;
-    background-color: #007bff;
-    color: white;
-    border: 4px solid #007bff;
+    background-color: var(--color-bg-button);
+    color: var(--color-secondary);
+    border: 1px solid;
 }
 
 .enter:hover {
-    background-color: white;
-    color: #007bff;
+    opacity: 0.75;
     transition: 0.3s;
-}
-
-.enter:active {
-    background-color: #007bff;
-    color: black;
-    border: 4px solid black;
 }
 
 .cancel {
@@ -48,15 +44,8 @@
 }
 
 .cancel:hover {
-    background-color: white;
-    color: red;
+    opacity: 0.75;
     transition: 0.3s;
-}
-
-.cancel:active {
-    background-color: red;
-    color: black;
-    border: 4px solid black;
 }
 
 .red-border {
@@ -86,7 +75,7 @@ button {
 
 h3 {
     font-size: 22px;
-    color: #333;
+    color: var(--color-primary);;
 }
 
 label {

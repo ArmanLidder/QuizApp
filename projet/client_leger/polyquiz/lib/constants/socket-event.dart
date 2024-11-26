@@ -30,6 +30,7 @@ class SocketEvent {
   static const String NEW_PLAYER = 'newPlayer';
   static const String BAN_PLAYER = 'banPlayer';
   static const String TOGGLE_ROOM_LOCK = 'toggleRoomRock';
+  static const String GET_ROOM_LOCK_UPDATE = 'getRoomLockUpdate';
   static const String START = 'start';
   static const String CREATE_ROOM = 'createRoom';
   static const String CONNECTION = 'connect';

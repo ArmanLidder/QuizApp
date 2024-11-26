@@ -54,10 +54,11 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
 
   @override
   void initState() {
+    super.initState();
     _gameService.offlineGameService.init();
     this.currentTime = this._gameService.offlineGameService.quiz.duration;
     this.handleTimer();
-    super.initState();
+    //super.initState();
   }
 
   @override
@@ -125,7 +126,8 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                                 .gameService.question!.points,
                                         questionText:
                                             gameInterfaceManagementService
-                                                .gameService.question!.text),
+                                                .gameService.question!.text,
+                                        isOffline: true),
                                   if (isTimerTransition || isFinalTransition)
                                     QuestionInfoWidget(
                                         questionNum: isFinalTransition

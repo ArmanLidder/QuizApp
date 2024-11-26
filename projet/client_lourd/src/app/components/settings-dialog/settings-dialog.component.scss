@@ -1,0 +1,34 @@
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.theme-option {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+
+  &.selected {
+    transform: scale(1.1);
+    font-weight: bold;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  .theme-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 0 auto 0.5rem;
+    background-size: cover; /* For themes with images */
+    background-position: center;
+  }
+
+  .theme-name {
+    font-size: 0.9rem;
+  }
+}

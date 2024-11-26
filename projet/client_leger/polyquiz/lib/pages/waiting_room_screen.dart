@@ -141,15 +141,15 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
           !this.waitingRoomService.isRoomLocked;
     }
 
-    int moreThanTwoMembers = 0;
+    int invalidTeamNumber = 0;
 
     this.waitingRoomService.teamsForInterface.forEach((team) {
-      if (team.userIds.length < 2) {
-        moreThanTwoMembers += 1;
+      if (team.userIds.length != 2) {
+        invalidTeamNumber += 1;
       }
     });
 
-    return moreThanTwoMembers > 0 ||
+    return invalidTeamNumber > 0 ||
         this.waitingRoomService.teams.length < 2 ||
         !this.waitingRoomService.isRoomLocked;
   }
@@ -201,6 +201,26 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                       ? (bool value) => _toggleRoomLock()
                       : null,
                 ),
+              if (widget.isHost && this.waitingRoomService.isRoomLocked)
+                if (this.validationBeforeEntry())
+                  Center(
+                    child: Text(
+                        this.waitingRoomService.gameType == 'classic'
+                            ? waitRoomText['CLASSIC_VALIDATION']
+                            : waitRoomText['TEAM_VALIDATION'],
+                        style: TextStyle(color: Colors.red)),
+                  ),
+              if (!widget.isHost &&
+                  this.waitingRoomService.gameType != 'classic')
+                AnimatedBuilder(
+                    animation: this.waitingRoomService,
+                    builder: (BuildContext context, Widget? snapshot) {
+                      return this.waitingRoomService.isRoomLocked
+                          ? Center(
+                              child: Text(waitRoomText['TEAM_NOTICE_LOCK'],
+                                  style: TextStyle(color: Colors.red)))
+                          : SizedBox.shrink();
+                    }),
               SizedBox(height: 20.0),
               AnimatedBuilder(
                 animation: waitingRoomService,
@@ -291,7 +311,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                           waitingRoomService
                                                   .teamsForInterface[index]
                                                   .userIds[0] !=
-                                              username)
+                                              username &&
+                                          !this.waitingRoomService.isRoomLocked)
                                         TextButton(
                                             style: TextButton.styleFrom(
                                                 backgroundColor: !waitingRoomService.isTransition
@@ -374,6 +395,19 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   },
                 ),
               ),
+              AnimatedBuilder(
+                  animation: waitingRoomService,
+                  builder: (BuildContext context, Widget? snapshot) {
+                    return Visibility(
+                      visible: waitingRoomService.isTransition,
+                      child: Text(
+                          '${waitRoomText['QUIZ_STARTING_IN']} ${waitingRoomService.time}',
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: themeService.mainAccent.value)),
+                    );
+                  }),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -405,7 +439,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                     AnimatedBuilder(
                         animation: waitingRoomService,
                         builder: (BuildContext context, Widget? snapshot) {
-                          return waitingRoomService.gameType == 'classic'
+                          return waitingRoomService.gameType == 'classic' ||
+                                  this.waitingRoomService.isRoomLocked
                               ? SizedBox.shrink()
                               : TextButton(
                                   style: TextButton.styleFrom(
@@ -431,17 +466,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                       isHost: widget.isHost, roomId: waitingRoomService.roomId),
                 ],
               ),
-              AnimatedBuilder(
-                  animation: waitingRoomService,
-                  builder: (BuildContext context, Widget? snapshot) {
-                    return Visibility(
-                      visible: waitingRoomService.isTransition,
-                      child: Text(
-                          'Game starts in: ${waitingRoomService.time} second(s)',
-                          style:
-                              TextStyle(color: themeService.mainAccent.value)),
-                    );
-                  }),
             ],
           ),
         ),

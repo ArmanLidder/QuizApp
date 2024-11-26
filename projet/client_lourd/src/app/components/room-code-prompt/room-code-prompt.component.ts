@@ -65,8 +65,8 @@ export class RoomCodePromptComponent implements OnInit {
             this.error = await this.roomValidationService.verifyRoomId();
             if (!this.error) await this.validateUsername();
         }
-
         this.handleError();
+        if (!this.error) await this.joinRoom();
     }
 
 
@@ -81,7 +81,6 @@ export class RoomCodePromptComponent implements OnInit {
             !this.roomValidationService.isLocked && this.roomValidationService.isRoomIdValid && this.roomValidationService.isUsernameValid;
         if (isValid) this.sendAllDataToWaitingRoom();
         else this.handleError();
-
     }
 
     private sendAllDataToWaitingRoom() {

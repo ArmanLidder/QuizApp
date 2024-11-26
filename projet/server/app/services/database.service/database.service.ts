@@ -23,7 +23,10 @@ export class DatabaseService {
             throw new Error('Database connection error');
         }
 
-        if ((await this.db.collection(process.env.DATABASE_COLLECTION_QUIZZES).countDocuments()) === 0) {
+        const collection = this.db.collection(process.env.DATABASE_COLLECTION_QUIZZES);
+        await collection.createIndex({ title: 1 }, { unique: true });
+
+        if ((await collection.countDocuments()) === 0) {
             await this.populateDB(process.env.DATABASE_COLLECTION_QUIZZES);
         }
     }

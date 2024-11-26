@@ -32,7 +32,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     lastQuestionIndex =
         gameInterfaceManagementService.gameService.questionNumber;
     if (gameInterfaceManagementService.gameService.isOfflineMode) {
-      this._themeService.setTheme('default');
+      this._themeService.setTheme('light');
     }
     if(!this.gameInterfaceManagementService.gameService.isObserverMode) this.handleRequestQCMSStatus();
   }

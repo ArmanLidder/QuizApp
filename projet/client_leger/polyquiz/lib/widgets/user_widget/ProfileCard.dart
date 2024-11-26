@@ -40,8 +40,7 @@ class ProfileCard extends StatelessWidget {
 
       Future<void> _showImageSelectionPopup() async {
         String? uid = loggedInUserService.getUid();
-        List<String> imageUrls = await userPageCustomisationService
-            .availableImages(uid!) as List<String>;
+        List<String> imageUrls = await userPageCustomisationService.availableImages(uid!) as List<String>;
 
         showDialog(
           context: context,
@@ -52,7 +51,6 @@ class ProfileCard extends StatelessWidget {
             );
           },
         );
-
         return Future.value(); // Returning a completed Future
       }
 

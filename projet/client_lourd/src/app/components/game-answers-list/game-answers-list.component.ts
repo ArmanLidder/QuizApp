@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { GameService } from '@app/services/game.service/game.service';
 
 @Component({
-    selector: 'app-game-answers-list',
+    selector: ' app-game-answers-list',
     templateUrl: './game-answers-list.component.html',
     styleUrls: ['./game-answers-list.component.scss'],
 })

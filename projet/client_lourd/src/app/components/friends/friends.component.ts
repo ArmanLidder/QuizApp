@@ -1,7 +1,6 @@
-import { Component, Optional } from '@angular/core';
-import { MatDialogRef} from '@angular/material/dialog';
-import { Observable } from "rxjs";
-import { User } from "@common/interfaces/user-data.interface";
+import { Component } from '@angular/core';
+import {firstValueFrom, Observable} from "rxjs";
+import {FriendRequest, User} from "@common/interfaces/user-data.interface";
 import { FriendService } from "@app/services/friend.service/friend.service";
 import { ConfirmationDialogComponent } from "@app/components/confirmation-dialog/confirmation-dialog.component";
 import { MatDialog } from "@angular/material/dialog";
@@ -9,6 +8,7 @@ import { PopUpMessage } from "@common/browser-message/displayable-message/pop-up
 import { SnackbarService } from "@app/services/snackbar.service/snack-bar.service";
 import {UserSearchDialogComponent} from "@app/components/user-search-dialog/user-search-dialog.component";
 import {TranslateService} from "@ngx-translate/core";
+import {UsersService} from "@app/services/users.service/users.service";
 
 @Component({
     selector: 'app-friends',
@@ -24,19 +24,36 @@ export class FriendsComponent {
         private dialog: MatDialog,
         private snackbar: SnackbarService,
         private translate: TranslateService,
-        @Optional() private dialogRef?: MatDialogRef<FriendsComponent>
+        private usersService: UsersService
     ) {}
 
-    ngOnInit(): void {
+    async ngOnInit() {
         this.friends$ = this.friendService.friends$;
         this.pendingRequests$ = this.friendService.friendRequests$;
-    }
 
-    closeDialog(): void {
-        if (this.dialogRef) {
-            this.dialogRef.close();
+        let currentUser = await firstValueFrom(this.usersService.currentUserProfile$);
+
+        //If for some reason the person who sent me a friendRequest has me in their incoming FriendRequests, accept it automatically
+        if (currentUser) {
+            this.pendingRequests$.subscribe((pendingRequests: User[]) => {
+                const matchingRequest = pendingRequests.find((request: User) =>
+                    request.friendRequests.some((friendRequest: FriendRequest) => friendRequest.fromUserId === currentUser?.uid)
+                );
+
+                pendingRequests.forEach(request=>{
+                    if (currentUser?.friends.includes(request.uid)) {
+                        console.log("DENY!!")
+                        this.denyFriendRequest(request.uid);
+                    }
+                })
+
+                if (matchingRequest) {
+                    this.acceptFriendRequest(matchingRequest.uid);
+                }
+            });
         }
     }
+
 
     acceptFriendRequest(userId: string): void {
         this.friendService.acceptFriendRequest(userId).then(() => {}).catch(err => {
@@ -62,7 +79,7 @@ export class FriendsComponent {
 
     openUserSearch() {
         this.dialog.open(UserSearchDialogComponent, {
-            width:'30%',
+            width: 'auto',
             minWidth:'30%'
         });
     }

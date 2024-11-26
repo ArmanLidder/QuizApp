@@ -9,6 +9,7 @@ import { GameService } from '@app/services/game.service/game.service';
 import { QuestionType } from '@common/enums/question-type.enum';
 import { GREEN_INDEX, LIGHTGREEN_COLOR, RED_COLOR, RED_INDEX } from '@common/style/style';
 import {TranslateService} from "@ngx-translate/core";
+import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
 
 @Component({
     selector: 'app-statistic-histogram',
@@ -20,18 +21,40 @@ export class StatisticHistogramComponent implements OnChanges {
     @Input() valueOfResponses: ResponsesValues;
     @Input() isGameOver: boolean = false;
     legendLabels: string[] = [];
-    barChartOptions: ChartConfiguration['options'] = {
-        responsive: true,
-        plugins: {
+    barChartOptions: ChartConfiguration['options'];
+
+    barChartType: ChartType = BAR;
+    barChartData: ChartData<'bar'>;
+
+    constructor(private gameService: GameService,private translate: TranslateService, private settings: UserSettingsService) {
+        this.settings.currentTheme.subscribe(()=>{
+            this.setBabarChartOptions();
+        })
+    }
+
+    setBabarChartOptions() {
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+        this.barChartOptions = {
+            responsive: true,
+                plugins: {
             legend: {
                 display: false,
             },
         },
-    };
-    barChartType: ChartType = BAR;
-    barChartData: ChartData<'bar'>;
-
-    constructor(private gameService: GameService,private translate: TranslateService) {}
+            scales: {
+                x: {
+                    ticks: {
+                        color: primaryColor, // X-axis label color
+                    },
+                },
+                y: {
+                    ticks: {
+                        color: primaryColor, // Y-axis label color
+                    },
+                },
+            },
+        };
+    }
 
     ngOnChanges() {
         const labels = Array.from(this.valueOfResponses.keys());
@@ -60,4 +83,6 @@ export class StatisticHistogramComponent implements OnChanges {
             ],
         };
     }
+
+
 }

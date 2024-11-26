@@ -9,8 +9,8 @@
         </div>
     </div>
     <div *ngIf='gameService.gameRealService.validated && !gameService.isTestMode'>
-        <h3 *ngIf="gameService.observerMode && gameService.obs_qrl_Answer">{{'GAME_INTERFACE.PLAYER_QRL_INTERFACE.OBS_PLAYER_RESPONSE' | translate}} {{gameService.obs_qrl_Answer}}</h3>
-        <div [ngSwitch]="gameService.lastQrlScore">
+        <h3 class="text-primary" *ngIf="gameService.observerMode && gameService.obs_qrl_Answer">{{'GAME_INTERFACE.PLAYER_QRL_INTERFACE.OBS_PLAYER_RESPONSE' | translate}} {{gameService.obs_qrl_Answer}}</h3>
+        <div [ngSwitch]="gameService.lastQrlScore" class="text-primary">
             <h3 *ngSwitchCase="0">{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.ZERO_POINTS' | translate }} {{obtainedPoints()}} points</h3>
             <h3 *ngSwitchCase="50">{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.HALF_POINTS' | translate }} {{obtainedPoints()}} points</h3>
             <h3 *ngSwitchCase="100">{{ 'GAME_INTERFACE.PLAYER_QRL_INTERFACE.FULL_POINTS' | translate }} {{obtainedPoints()}} points</h3>
