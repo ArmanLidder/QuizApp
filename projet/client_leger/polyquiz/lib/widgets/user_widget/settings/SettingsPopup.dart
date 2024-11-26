@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
@@ -15,6 +16,7 @@ class _SettingsPopupState extends State<SettingsPopup> {
   late UserPageCustomisationService userPageCustomisationService;
   final TranslationService translationService = TranslationService.instance;
   late ThemeService themeService;
+  Map get settingsText=> TranslationService.instance.text['SETTINGS'];
   late String _selectedTheme;
   List<String> listOfThemeNames = []; // Initialize with an empty list
 
@@ -54,17 +56,25 @@ class _SettingsPopupState extends State<SettingsPopup> {
       ],
     ))
         .toList();
-    return Padding(
+    return Obx(() => Container(
+      color: themeService.mainBackground.value,
+        child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Text(settingsText["TITLE"],
+            style: TextStyle(fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: themeService.mainAccent.value),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Language',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                settingsText["LANGUAGE"],
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,
+                    color: themeService.mainAccent.value
+                ),
               ),
               DropdownButton<String>(
                 value: translationService.currentLanguageAbbr,
@@ -85,14 +95,16 @@ class _SettingsPopupState extends State<SettingsPopup> {
             ],
           ),
           SizedBox(height: 24.0),
-
           // Theme selection
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Theme',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                settingsText["THEME"],
+                style: TextStyle(fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: themeService.mainAccent.value,
+                ),
               ),
               Flexible(
                 child: SingleChildScrollView(
@@ -104,6 +116,6 @@ class _SettingsPopupState extends State<SettingsPopup> {
           ),
         ],
       ),
-    );
+    )));
   }
 }

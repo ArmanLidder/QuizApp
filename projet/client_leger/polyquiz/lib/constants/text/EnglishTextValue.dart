@@ -184,6 +184,11 @@ const englishTextValues = {
     "DURATION_SUFFIX": "s",
     "QUESTIONS": "Questions"
   },
+  "SETTINGS":{
+    "TITLE": 'Settings',
+    "LANGUAGE":"Language",
+    "THEME":"Theme"
+  },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Game Creation",
     "TITLE_EDIT": "Game Modification",

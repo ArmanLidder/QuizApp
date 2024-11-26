@@ -19,28 +19,37 @@ class ThemeColorOption extends StatelessWidget {
     return Obx(() {
       // When themeName in themeService changes, this block will rebuild.
       bool isSelected = themeName == themeService.themeName.value;
-
       return GestureDetector(
         onTap: () => themeService.setTheme(themeName),  // When tapped, set the theme
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              backgroundColor: color,  // Set the background color to the passed color
-              radius: 32,  // Set radius for the circle
-              child: isSelected  // If theme is selected, show a check icon inside the circle
-                  ? Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 20,
-              )
-                  : null,
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle, // Ensure the border is circular
+                border: Border.all(
+                  color: isSelected ? themeService.mainAccent.value : Colors.transparent, // Use accent color if selected
+                  width: 3.0, // Border width
+                ),
+              ),
+              child: CircleAvatar(
+                backgroundColor: color, // Set the background color to the passed color
+                radius: 32, // Set radius for the circle
+                child: isSelected // If theme is selected, show a check icon inside the circle
+                    ? Icon(
+                  Icons.check,
+                  color: themeService.mainAccent.value,
+                  size: 20,
+                )
+                    : null,
+              ),
             ),
             SizedBox(height: 8),  // Space between circle and label
             // Label under the circle
             Text(
               themeName,
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(fontSize: 14,
+              color:  themeService.mainAccent.value),
             ),
           ],
         ),

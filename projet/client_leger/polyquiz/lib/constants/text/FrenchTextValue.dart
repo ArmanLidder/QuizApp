@@ -186,6 +186,11 @@ const frenchTextValues = {
     "DURATION_SUFFIX": "s",
     "QUESTIONS": "Questions"
   },
+  "SETTINGS":{
+    "TITLE": 'Paramètres',
+    "LANGUAGE":"Langue",
+    "THEME":"Thème"
+  },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Création du jeu",
     "TITLE_EDIT": "Modification du jeu",
