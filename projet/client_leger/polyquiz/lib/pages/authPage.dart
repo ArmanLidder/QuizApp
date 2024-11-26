@@ -49,7 +49,7 @@ class _AuthPageState extends State<AuthPage> {
       onChanged: (String? newLanguage) {
         if (newLanguage != null) {
           setState(() {
-            translationService.currentLanguageAbbr =
+            translationService.localeLanguageAbbr =
                 newLanguage; // Update language in TranslationService
             // Re-fetch text values after changing the language
             _refreshText();
