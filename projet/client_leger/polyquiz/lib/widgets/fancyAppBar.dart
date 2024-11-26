@@ -79,7 +79,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
             },
             child: Icon(
               Icons.settings,
-              color: themeService.mainAccent.value,
+              color: Colors.white,
               size: 32,
             ),
           ),
