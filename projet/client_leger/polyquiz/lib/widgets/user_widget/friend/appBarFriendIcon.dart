@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/widgets/user_widget/friend/FriendListWidget.dart';
 
 import 'friendTabMenu.dart';
 
@@ -25,7 +26,7 @@ class PendingRequestsWidget extends StatelessWidget {
                 content: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.8,
                   height: MediaQuery.of(context).size.height * 0.6,
-                  child: FriendDisplayBox(),
+                  child: FriendListDisplay(),
                 ),
               );
             },
