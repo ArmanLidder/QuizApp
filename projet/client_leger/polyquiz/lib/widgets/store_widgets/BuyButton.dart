@@ -26,7 +26,7 @@ class _BuyButtonState extends State<BuyButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
   bool alreadyOwns = false;
-  bool canAfford = false;
+  bool get canAfford => loggedInUserService.observableCurrency >= widget.cost;
   Map get shopText => TranslationService.instance.text['SHOPPING'];
 
   @override
@@ -36,19 +36,13 @@ class _BuyButtonState extends State<BuyButton> {
   }
 
   _setupButtonState () async {
-    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
-    bool ownsItem = await storeService.isOwned(
-        loggedInUserService.getUid()!, widget.itemId);
+    bool ownsItem = storeService.isOwned(widget.itemId);
     setState(() {
       alreadyOwns = ownsItem;
-      canAfford = availableFunds >= widget.cost;
     });
-    }
+  }
   Future<void> _updateButtonStatus() async {
-    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
-    setState(() {
-      canAfford = availableFunds >= widget.cost;
-    });
+    return;
   }
 
   @override
@@ -109,9 +103,9 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
   final LoggedInUserService loggedInUserService = Get.find();
   final StoreService storeService = Get.find();
   bool alreadyOwns = false;
-  bool canAfford = false;
-  bool hasLevelNeeded = false;
+  bool get canAfford => loggedInUserService.observableCurrency >= widget.cost;
   Map get shopText => TranslationService.instance.text['SHOPPING'];
+  bool get hasLevelNeeded => loggedInUserService.observableLevel >= widget.minLevel;
 
   @override
   void initState() {
@@ -121,26 +115,14 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
 
 
   Future<void> _setupUpdateButton() async {
-    num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
-    bool ownsItem = await storeService.isOwned(
-        loggedInUserService.getUid() ?? "noIdInButtonWidget", widget.itemId);
-    bool hasRequiredLevel =
-        (loggedInUserService.observableLevel.value ?? 0) >= widget.minLevel;
+    bool ownsItem = await storeService.isOwned( widget.itemId);
     setState(() {
       alreadyOwns = ownsItem;
-      canAfford = availableFunds >= widget.cost;
-      hasLevelNeeded = hasRequiredLevel;
     });
   }
 
-    Future<void> _updateButtonStatus() async {
+  Future<void> _updateButtonStatus() async {
     num availableFunds = loggedInUserService.observableCurrency.value ?? 0;
-    bool hasRequiredLevel =
-        (loggedInUserService.observableLevel.value ?? 0) >= widget.minLevel;
-    setState(() {
-      canAfford = availableFunds >= widget.cost;
-      hasLevelNeeded = hasRequiredLevel;
-    });
   }
 
   @override
@@ -169,9 +151,9 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
       } else {
         buttonColor = Colors.grey;
         final content =
-            TranslationService.instance.languageValue.value == Language.fr
-                ? "Débloqué au niveau"
-                : "Unlocked at level";
+        TranslationService.instance.languageValue.value == Language.fr
+            ? "Débloqué au niveau"
+            : "Unlocked at level";
         buttonText = '$content ${widget.minLevel}';
         buttonAction = _updateButtonStatus; // Disable button if requirements not met
       }
@@ -213,7 +195,7 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
   final ThemeService _themeService = ThemeService.instance;
 
   bool alreadyOwns = false;
-  bool canAfford = false;
+  bool get canAfford => loggedInUserService.observableCurrency >= widget.cost;
   bool hasAchievement = false;
 
   @override
@@ -222,14 +204,11 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
     _setupButtonStatus();
   }
   Future<void> _setupButtonStatus() async {
-    bool ownsItem = await storeService.isOwned(
-        loggedInUserService.getUid()!, widget.itemId);
+    bool ownsItem = await storeService.isOwned(widget.itemId);
     bool achievementUnlocked =
         loggedInUserService.observableAchievement.value.contains(widget.achievement) ?? false;
-
     setState(() {
       alreadyOwns = ownsItem;
-      canAfford = loggedInUserService.observableCurrency.value >= widget.cost;
       hasAchievement = achievementUnlocked;
     });
   }
@@ -238,7 +217,6 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
     bool achievementUnlocked =
         loggedInUserService.observableAchievement.value.contains(widget.achievement) ?? false;
     setState(() {
-      canAfford = loggedInUserService.observableCurrency.value >= widget.cost;
       hasAchievement = achievementUnlocked;
     });
   }
@@ -274,9 +252,9 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
       } else {
         buttonColor = Colors.grey;
         final content =
-            TranslationService.instance.languageValue.value == Language.fr
-                ? "Débloqué à l'exploit"
-                : "Unlocked at exploit";
+        TranslationService.instance.languageValue.value == Language.fr
+            ? "Débloqué à l'exploit"
+            : "Unlocked at exploit";
 
         buttonText = '$content ${achievementText[(widget.achievement as int) - 1]}';
         buttonAction = _updateButtonStatus; // Disable button if achievement not met
@@ -336,7 +314,7 @@ class _RewardCashButtonState extends State<RewardCashButton> {
     await loggedInUserService.reloadUser();
     final user = loggedInUserService.getUser();
     bool ownsItem = await storeService.isOwned(
-        user?.uid ?? "noIdInRewardCashButtonWidget", widget.itemId);
+        widget.itemId);
     bool achievementUnlocked =
         user?.achievements.contains(widget.achievement) ?? false;
 
@@ -381,11 +359,11 @@ class _RewardCashButtonState extends State<RewardCashButton> {
       } else {
         buttonColor = Colors.grey;
         final content =
-            TranslationService.instance.languageValue.value == Language.fr
-                ? "Débloqué à l'exploit  "
-                : "Unlocked at achievement ";
+        TranslationService.instance.languageValue.value == Language.fr
+            ? "Débloqué à l'exploit  "
+            : "Unlocked at achievement ";
         buttonText =
-            '$content ${achievementText[(widget.achievement - 1) as int]}';
+        '$content ${achievementText[(widget.achievement - 1) as int]}';
         buttonAction = _updateButtonStatus; // Disable button if achievement not met
       }
 
