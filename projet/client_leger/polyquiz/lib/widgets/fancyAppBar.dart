@@ -141,14 +141,16 @@ class _FancyAppBarState extends State<FancyAppBar> {
                               shape: BoxShape.circle,
                             ),
                             child: Center(
-                              child: Text(
-                                loggedInUserService.observableLevel.toString(),
-                                style: TextStyle(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
+                              child: Obx((){
+                                return Text(
+                                  loggedInUserService.observableLevel.toString(),
+                                  style: TextStyle(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                              );
+                              }),
                             ),
                           ),
                         ),

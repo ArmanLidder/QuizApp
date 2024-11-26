@@ -49,7 +49,7 @@ class ThemeStoreList extends StatelessWidget {
         itemId: item["id"],
         name: item["name"],
         cost: item["cost"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy( item["id"])},
       );
       items.add(widget);
     });
@@ -76,7 +76,7 @@ class ImageStoreList extends StatelessWidget {
         name: item["name"],
         cost: item["cost"],
         source: item["source"], // New field for image source
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy( item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
@@ -85,8 +85,8 @@ class ImageStoreList extends StatelessWidget {
     });
     return Center(
         child: Wrap(
-      children: items,
-    ));
+          children: items,
+        ));
   }
 }
 
@@ -107,7 +107,7 @@ class RewardImageStoreList extends StatelessWidget {
         cost: item["cost"],
         source: item["source"], // New field for image source
         minLevel: item["minLevel"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy( item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
@@ -116,8 +116,8 @@ class RewardImageStoreList extends StatelessWidget {
     });
     return Center(
         child: Wrap(
-      children: items,
-    ));
+          children: items,
+        ));
   }
 }
 
@@ -137,7 +137,7 @@ class RewardThemeStoreList extends StatelessWidget {
         name: item["name"],
         cost: item["cost"],
         achievement: item["achievement"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy(item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
@@ -146,8 +146,8 @@ class RewardThemeStoreList extends StatelessWidget {
     });
     return Center(
         child: Wrap(
-      children: items,
-    ));
+          children: items,
+        ));
   }
 }
 
@@ -166,7 +166,7 @@ class RewardCashStoreList extends StatelessWidget {
         itemId: item["id"],
         cost: item["cost"],
         achievement: item["achievement"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy(item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
@@ -175,7 +175,7 @@ class RewardCashStoreList extends StatelessWidget {
     });
     return Center(
         child: Wrap(
-      children: items,
-    ));
+          children: items,
+        ));
   }
 }

@@ -77,7 +77,9 @@ class _BuyButtonState extends State<BuyButton> {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
         onPressed: buttonAction,
-        child: Text(buttonText, textAlign: TextAlign.center),
+        child: Text(buttonText, textAlign: TextAlign.center,
+            style:TextStyle(color: ThemeService.instance.mainAccent.value)
+        ),
       );
     });
   }
@@ -164,7 +166,10 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
           fixedSize: Size(200, 60),
         ),
         onPressed: buttonAction,
-        child: Center(child: Text(buttonText, textAlign: TextAlign.center)),
+        child: Center(child: Text(buttonText,
+            textAlign: TextAlign.center,
+            style:TextStyle(color: ThemeService.instance.mainAccent.value)
+        )),
       );
     });
   }
