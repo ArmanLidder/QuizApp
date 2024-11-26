@@ -167,7 +167,13 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(()=> Scaffold(
+    return Obx(() {
+      //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
+      // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!!
+      //-MAXIME
+      var observationSetterDONOTDELETE = TranslationService.instance.languageValue.value;
+
+      return Scaffold(
       appBar: FancyAppBar(context: context),
       backgroundColor: themeService.mainBackground.value,
       body: Stack(children: [
@@ -482,6 +488,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         ),
         Positioned(bottom: 20, left: 20, child: ChatPopup())
       ]),
-    ));
+    );
+    });
   }
 }
