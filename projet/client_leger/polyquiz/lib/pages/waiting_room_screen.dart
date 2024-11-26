@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
@@ -166,7 +167,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Obx(()=> Scaffold(
       appBar: FancyAppBar(context: context),
       backgroundColor: themeService.mainBackground.value,
       body: Stack(children: [
@@ -179,7 +180,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
               boxShadow: [
                 BoxShadow(
                   color:
-                      const Color.fromRGBO(128, 128, 128, 1).withOpacity(0.5),
+                  const Color.fromRGBO(128, 128, 128, 1).withOpacity(0.5),
                   spreadRadius: 5,
                   blurRadius: 7,
                   offset: Offset(0, 3),
@@ -227,8 +228,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                     builder: (BuildContext context, Widget? snapshot) {
                       return this.waitingRoomService.isRoomLocked
                           ? Center(
-                              child: Text(waitRoomText['TEAM_NOTICE_LOCK'],
-                                  style: TextStyle(color: Colors.red)))
+                          child: Text(waitRoomText['TEAM_NOTICE_LOCK'],
+                              style: TextStyle(color: Colors.red)))
                           : SizedBox.shrink();
                     }),
               SizedBox(height: 20.0),
@@ -252,22 +253,125 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   builder: (BuildContext context, Widget? snapshot) {
                     return waitingRoomService.gameType == 'classic'
                         ? ListView.builder(
-                            itemCount: waitingRoomService.players.length,
-                            itemBuilder: (context, index) {
-                              return Column(
+                      itemCount: waitingRoomService.players.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color:
+                                  themeService.mainBackground.value),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                        color:
-                                            themeService.mainBackground.value),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                  SmartAvatar(
+                                    userId:
+                                    waitingRoomService.players[index],
+                                    size: 60,
+                                    hasName: true,
+                                    interactible: true,
+                                  ),
+                                  if (widget.isHost)
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.remove_circle_outline,
+                                        color: Color.fromRGBO(
+                                            246, 53, 53, 1),
+                                        size: 28.0,
+                                      ),
+                                      onPressed:
+                                      !waitingRoomService.isTransition
+                                          ? () => waitingRoomService
+                                          .sendBanPlayer(
+                                        waitingRoomService
+                                            .players[index],
+                                      )
+                                          : null,
+                                    )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 10)
+                          ],
+                        );
+                      },
+                    )
+                        : ListView.builder(
+                      itemCount:
+                      waitingRoomService.teamsForInterface.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    '${waitRoomText['TEAM_LABEL']} ${index + 1}',
+                                    style: TextStyle(
+                                        color: themeService
+                                            .mainAccent.value)),
+                                if (waitingRoomService
+                                    .teamsForInterface[index]
+                                    .userIds
+                                    .length ==
+                                    1 &&
+                                    !widget.isHost &&
+                                    waitingRoomService
+                                        .teamsForInterface[index]
+                                        .userIds[0] !=
+                                        username &&
+                                    !this.waitingRoomService.isRoomLocked)
+                                  TextButton(
+                                      style: TextButton.styleFrom(
+                                          backgroundColor: !waitingRoomService.isTransition
+                                              ? themeService
+                                              .secondaryBackground
+                                              .value
+                                              : Color.fromRGBO(
+                                              164, 164, 164, 1)),
+                                      onPressed:
+                                      waitingRoomService.isTransition
+                                          ? null
+                                          : () {
+                                        waitingRoomService.joinTeam(
+                                            waitingRoomService
+                                                .teamsForInterface[
+                                            index]
+                                                .name);
+                                      },
+                                      child: Text(waitRoomText['JOIN_TEAM'],
+                                          style: TextStyle(
+                                              color: themeService.secondaryAccent.value,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.normal))),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color:
+                                  themeService.mainBackground.value),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  for (int i = 0;
+                                  i <
+                                      waitingRoomService
+                                          .teamsForInterface[index]
+                                          .userIds
+                                          .length;
+                                  i++)
+                                    Column(
                                       children: [
                                         SmartAvatar(
-                                          userId:
-                                              waitingRoomService.players[index],
+                                          userId: waitingRoomService
+                                              .teamsForInterface[index]
+                                              .userIds[i],
                                           size: 60,
                                           hasName: true,
                                           interactible: true,
@@ -280,128 +384,25 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                                   246, 53, 53, 1),
                                               size: 28.0,
                                             ),
-                                            onPressed:
-                                                !waitingRoomService.isTransition
-                                                    ? () => waitingRoomService
-                                                            .sendBanPlayer(
-                                                          waitingRoomService
-                                                              .players[index],
-                                                        )
-                                                    : null,
+                                            onPressed: !waitingRoomService
+                                                .isTransition
+                                                ? () => waitingRoomService
+                                                .sendBanPlayer(
+                                              waitingRoomService
+                                                  .players[i],
+                                            )
+                                                : null,
                                           )
                                       ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 10)
+                                    )
                                 ],
-                              );
-                            },
-                          )
-                        : ListView.builder(
-                            itemCount:
-                                waitingRoomService.teamsForInterface.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                          '${waitRoomText['TEAM_LABEL']} ${index + 1}',
-                                          style: TextStyle(
-                                              color: themeService
-                                                  .mainAccent.value)),
-                                      if (waitingRoomService
-                                                  .teamsForInterface[index]
-                                                  .userIds
-                                                  .length ==
-                                              1 &&
-                                          !widget.isHost &&
-                                          waitingRoomService
-                                                  .teamsForInterface[index]
-                                                  .userIds[0] !=
-                                              username &&
-                                          !this.waitingRoomService.isRoomLocked)
-                                        TextButton(
-                                            style: TextButton.styleFrom(
-                                                backgroundColor: !waitingRoomService.isTransition
-                                                    ? themeService
-                                                        .secondaryBackground
-                                                        .value
-                                                    : Color.fromRGBO(
-                                                        164, 164, 164, 1)),
-                                            onPressed:
-                                                waitingRoomService.isTransition
-                                                    ? null
-                                                    : () {
-                                                        waitingRoomService.joinTeam(
-                                                            waitingRoomService
-                                                                .teamsForInterface[
-                                                                    index]
-                                                                .name);
-                                                      },
-                                            child: Text(waitRoomText['JOIN_TEAM'],
-                                                style: TextStyle(
-                                                    color: themeService.secondaryAccent.value,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.normal))),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10),
-                                  Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                        color:
-                                            themeService.mainBackground.value),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                waitingRoomService
-                                                    .teamsForInterface[index]
-                                                    .userIds
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              SmartAvatar(
-                                                userId: waitingRoomService
-                                                    .teamsForInterface[index]
-                                                    .userIds[i],
-                                                size: 60,
-                                                hasName: true,
-                                                interactible: true,
-                                              ),
-                                              if (widget.isHost)
-                                                IconButton(
-                                                  icon: Icon(
-                                                    Icons.remove_circle_outline,
-                                                    color: Color.fromRGBO(
-                                                        246, 53, 53, 1),
-                                                    size: 28.0,
-                                                  ),
-                                                  onPressed: !waitingRoomService
-                                                          .isTransition
-                                                      ? () => waitingRoomService
-                                                              .sendBanPlayer(
-                                                            waitingRoomService
-                                                                .players[i],
-                                                          )
-                                                      : null,
-                                                )
-                                            ],
-                                          )
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 10)
-                                ],
-                              );
-                            },
-                          );
+                              ),
+                            ),
+                            SizedBox(height: 10)
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
               ),
@@ -433,10 +434,10 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                             ),
                             onPressed: !this.validationBeforeEntry()
                                 ? () => setState(() {
-                                      this.waitingRoomService.isTransition =
-                                          true;
-                                      waitingRoomService.sendStartSignals();
-                                    })
+                              this.waitingRoomService.isTransition =
+                              true;
+                              waitingRoomService.sendStartSignals();
+                            })
                                 : null,
                             child: Text(waitRoomText['START_BUTTON'],
                                 style: TextStyle(
@@ -450,27 +451,27 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                         animation: waitingRoomService,
                         builder: (BuildContext context, Widget? snapshot) {
                           return waitingRoomService.gameType == 'classic' ||
-                                  this.waitingRoomService.isRoomLocked
+                              this.waitingRoomService.isRoomLocked
                               ? SizedBox.shrink()
                               : TextButton(
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: (!this.onlyOneMember() &&
-                                            !waitingRoomService.isTransition)
-                                        ? themeService.secondaryBackground.value
-                                        : Color.fromRGBO(164, 164, 164, 1),
-                                  ),
-                                  onPressed: this.onlyOneMember() == true ||
-                                          waitingRoomService.isTransition
-                                      ? null
-                                      : () {
-                                          waitingRoomService.sendCreateTeam();
-                                        },
-                                  child: Text(waitRoomText['CREATE_TEAM'],
-                                      style: TextStyle(
-                                          color: themeService
-                                              .secondaryAccent.value,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.normal)));
+                              style: TextButton.styleFrom(
+                                backgroundColor: (!this.onlyOneMember() &&
+                                    !waitingRoomService.isTransition)
+                                    ? themeService.secondaryBackground.value
+                                    : Color.fromRGBO(164, 164, 164, 1),
+                              ),
+                              onPressed: this.onlyOneMember() == true ||
+                                  waitingRoomService.isTransition
+                                  ? null
+                                  : () {
+                                waitingRoomService.sendCreateTeam();
+                              },
+                              child: Text(waitRoomText['CREATE_TEAM'],
+                                  style: TextStyle(
+                                      color: themeService
+                                          .secondaryAccent.value,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.normal)));
                         }),
                   QuitBtn(
                       isHost: widget.isHost, roomId: waitingRoomService.roomId),
@@ -481,6 +482,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         ),
         Positioned(bottom: 20, left: 20, child: ChatPopup())
       ]),
-    );
+    ));
   }
 }
