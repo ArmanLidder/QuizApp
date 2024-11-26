@@ -169,9 +169,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
   Widget build(BuildContext context) {
     return Obx(() {
       //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
-      // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!!
+      // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!! (il y a qqn qui delete ces fonctions)
       //-MAXIME
-      var observationSetterDONOTDELETE = TranslationService.instance.languageValue.value;
+      var observationEnablerDONOTDELETE = TranslationService.instance.languageValue.value;
 
       return Scaffold(
       appBar: FancyAppBar(context: context),
