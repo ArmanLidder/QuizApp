@@ -187,7 +187,11 @@ const englishTextValues = {
   "SETTINGS":{
     "TITLE": 'Settings',
     "LANGUAGE":"Language",
-    "THEME":"Theme"
+    "THEME":"Theme",
+    "dark":"sombre",
+    "light":"normal",
+    "disco":"disco",
+    "blueGrey":"bleur-gris"
   },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Game Creation",

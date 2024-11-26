@@ -189,7 +189,11 @@ const frenchTextValues = {
   "SETTINGS":{
     "TITLE": 'Paramètres',
     "LANGUAGE":"Langue",
-    "THEME":"Thème"
+    "THEME":"Thème",
+    "dark":"dark",
+    "light":"light",
+    "disco":"disco",
+    "blueGrey":"blue-grey"
   },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Création du jeu",

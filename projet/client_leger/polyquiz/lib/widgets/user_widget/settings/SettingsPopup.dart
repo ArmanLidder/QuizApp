@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
@@ -77,6 +78,7 @@ class _SettingsPopupState extends State<SettingsPopup> {
                 ),
               ),
               DropdownButton<String>(
+                dropdownColor: themeService.mainBackground.value,
                 value: translationService.currentLanguageAbbr,
                 onChanged: (String? newValue) {
                   setState(() {
@@ -84,11 +86,11 @@ class _SettingsPopupState extends State<SettingsPopup> {
                     TranslationService.instance.currentLanguageAbbr =  newValue!;
                   });
                 },
-                items: <String>['fr', 'en']
+                items: <String>['Francais', 'English']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
+                    value: value == "Francais" ? "fr":"en",
+                    child: Text(value, style: TextStyle(color: themeService.mainAccent.value),),
                   );
                 }).toList(),
               ),

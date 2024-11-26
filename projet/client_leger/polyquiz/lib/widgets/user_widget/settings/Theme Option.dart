@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';  // Assuming GetX is used for state management
 import 'package:polyquiz/services/theme_service.dart';
 
+import '../../../services/translationService.dart';
+
 class ThemeColorOption extends StatelessWidget {
   final String themeName; // The theme name to display and select
   final Color color;     // The color of the circle
   ThemeService themeService = ThemeService.instance;
+  Map get settingsText=> TranslationService.instance.text['SETTINGS'];
 
-  // Constructor
+
   ThemeColorOption({
     required this.themeName,
     required this.color,
@@ -15,6 +18,8 @@ class ThemeColorOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("theme name: " + themeName);
+    print(settingsText[themeName]);
     // Ensure the widget rebuilds on themeName change
     return Obx(() {
       // When themeName in themeService changes, this block will rebuild.
@@ -47,7 +52,7 @@ class ThemeColorOption extends StatelessWidget {
             SizedBox(height: 8),  // Space between circle and label
             // Label under the circle
             Text(
-              themeName,
+              settingsText[themeName],
               style: TextStyle(fontSize: 14,
               color:  themeService.mainAccent.value),
             ),
