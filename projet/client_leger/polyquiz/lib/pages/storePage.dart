@@ -51,7 +51,7 @@ class _StorepageState extends State<Storepage> {
             backgroundColor: _themeService.mainBackground.value,
             appBar: FancyAppBar(
               context: context,
-              canGoBack: true,
+              canLeaveFromAppBar: true,
             ),
             body: storeItems == null
                 ? Center(

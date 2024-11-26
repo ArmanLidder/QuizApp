@@ -6,9 +6,9 @@ import 'package:polyquiz/widgets/user_widget/friend/appBarFriendIcon.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final bool canGoBack;
+  final bool canLeaveFromAppBar;
   final BuildContext context;
-  FancyAppBar({required this.context, this.canGoBack = false});
+  FancyAppBar({required this.context, this.canLeaveFromAppBar = false});
 
   @override
   _FancyAppBarState createState() => _FancyAppBarState();
@@ -46,7 +46,9 @@ class _FancyAppBarState extends State<FancyAppBar> {
         title: Center(
           child: InkWell(
             onTap: () {
-              Navigator.pushReplacementNamed(widget.context, '/home');
+              if (widget.canLeaveFromAppBar){
+                Navigator.pushReplacementNamed(widget.context,  '/home');
+              }
             },
             child: Text(
               "PolyQuiz",
@@ -88,7 +90,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
             padding: const EdgeInsets.only(right: 16.0),
             child: PopupMenuButton<int>(
               onSelected: (value) {},
-              itemBuilder: (context) => [
+              itemBuilder: (context) => widget.canLeaveFromAppBar ? [
                 PopupMenuItem(
                   value: 1,
                   child: Row(
@@ -114,7 +116,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
                     Navigator.pushReplacementNamed(widget.context, '/auth');
                   },
                 ),
-              ],
+              ] : [],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
