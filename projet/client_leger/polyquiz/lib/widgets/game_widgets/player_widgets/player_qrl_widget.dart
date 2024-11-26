@@ -67,23 +67,28 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
   }
 
   Widget getObserverTextFieldQrl() {
-    _controller.text = _gameInterfaceManagementService.gameService.obsQrlAnswer;
-    return TextField(
-      style: TextStyle(color: _themeService.mainAccent.value),
-      controller: _controller,
-      decoration: InputDecoration(
-          enabledBorder: OutlineInputBorder(
-              borderSide:
-              BorderSide(color: _themeService.mainAccent.value)),
-          focusedBorder: OutlineInputBorder(
-              borderSide:
-              BorderSide(color: _themeService.mainAccent.value)),
-      ),
-      expands: true,
-      maxLines: null,
-      readOnly: true,
-      maxLength: 200,
-      onChanged: (value) {},
+    _controller.text = _gameInterfaceManagementService.gameService.qrlAnswer;
+    return AnimatedBuilder(
+      animation: _gameInterfaceManagementService.gameService,
+      builder: (context, snapshot) {
+        return TextField(
+          style: TextStyle(color: _themeService.mainAccent.value),
+          controller: _controller,
+          decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                  borderSide:
+                  BorderSide(color: _themeService.mainAccent.value)),
+              focusedBorder: OutlineInputBorder(
+                  borderSide:
+                  BorderSide(color: _themeService.mainAccent.value)),
+          ),
+          expands: true,
+          maxLines: null,
+          readOnly: true,
+          maxLength: 200,
+          onChanged: (value) {},
+        );
+      }
     );
   }
 

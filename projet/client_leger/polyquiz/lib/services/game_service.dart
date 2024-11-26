@@ -19,7 +19,12 @@ class GameService extends ChangeNotifier {
   bool isOfflineMode = false;
   bool isInputFocused = false;
   Map<int, String?> _answers = {};
-  String qrlAnswer = '';
+  String _qrlAnswer = '';
+  String get qrlAnswer => _qrlAnswer;
+  void set qrlAnswer(String value) {
+    this._qrlAnswer = value;
+    notifyListeners();
+  }
   bool isActive = false;
   bool hasInteracted = false;
   int? lastQrlScore;

@@ -97,7 +97,8 @@ class ObservationService extends GetxController {
 
   void handleGetQRLInteraction() {
     this.socketService.onMessage(SocketEvent.GET_QRL_INTERACTION, (isActive) {
-      this.gameService.obsQrlAnswer = isActive as bool ? observerText['QRL_PLAYER_ACTIVE'] : observerText['QRL_PLAYER_INACTIVE'];
+      print("Get qrl interaction: $isActive");
+      this.gameService.qrlAnswer = isActive as bool ? observerText['QRL_PLAYER_ACTIVE'] : observerText['QRL_PLAYER_INACTIVE'];
     });
   }
 
@@ -168,7 +169,7 @@ class ObservationService extends GetxController {
       this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
       this.gameService.obsQreAnswer = playerCGI.qreAnswer;
       this.gameService.obsQrlAnswer = playerCGI.qrlAnswer;
-      this.gameService.qrlAnswer = playerCGI.qrlAnswer;
+      // this.gameService.qrlAnswer = playerCGI.qrlAnswer;
       this.gameInterfaceManagementService.getScore();
     });
   }
