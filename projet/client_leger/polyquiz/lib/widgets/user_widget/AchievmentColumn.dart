@@ -51,11 +51,12 @@ class AchievementBox extends StatelessWidget {
         mainAxisAlignment:
             MainAxisAlignment.start, // Align content to the start
         children: [
+          !isDone ?
           Icon(
-            this.isDone ? Icons.star : Icons.star_border,
-            size: 24,
-            color: this.isDone ? Color(0xFFFCDB03) : Colors.black54,
-          ),
+            Icons.star_border,
+            size: 48,
+            color: isDone ? Color(0xFFFCDB03) : _themeService.mainAccent.value,
+          ): Text('🏆', style: TextStyle(fontSize: 24),),
           SizedBox(width: 12), // Space between icon and text
           Expanded(
             child: Text(
