@@ -35,6 +35,7 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
   @override
   void initState() {
     super.initState();
+    _language = Language.en;
     if (_loggedInUserService.user != null) {
       _language = _loggedInUserService.user!.settings.language;
     } else {

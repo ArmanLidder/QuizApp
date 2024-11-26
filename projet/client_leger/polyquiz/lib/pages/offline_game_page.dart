@@ -54,10 +54,11 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
 
   @override
   void initState() {
+    super.initState();
     _gameService.offlineGameService.init();
     this.currentTime = this._gameService.offlineGameService.quiz.duration;
     this.handleTimer();
-    super.initState();
+    //super.initState();
   }
 
   @override
