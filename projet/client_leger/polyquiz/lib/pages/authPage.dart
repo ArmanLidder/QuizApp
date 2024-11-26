@@ -311,8 +311,13 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 child: Text(_isRegistering
                     ? loginPageText['REGISTER_LINK']
-                    : loginPageText['SUBMIT_BUTTON']),
-              ),
+                    : loginPageText['SUBMIT_BUTTON'],
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold)
+                ),
+              )
             ),
             SizedBox(height: 16),
             Center(
