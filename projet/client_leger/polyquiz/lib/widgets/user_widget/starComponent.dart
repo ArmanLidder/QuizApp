@@ -28,11 +28,12 @@ class StarCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          !isDone ?
           Icon(
-            isDone ? Icons.star : Icons.star_border,
+            Icons.star_border,
             size: 48,
             color: isDone ? Color(0xFFFCDB03) : _themeService.mainAccent.value,
-          ),
+          ): Text('🏆', style: TextStyle(fontSize: 24),),
           SizedBox(height: 8),
           Flexible(
             child: Text(

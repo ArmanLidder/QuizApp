@@ -18,10 +18,6 @@ class MoneyCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      User? user = loggedInUserService.getUser(); // Retrieve the user object
-      num prestige = user?.prestige ?? 0; // Default to 0 if prestige is null
-      num level = user?.level ?? 0; // Default to 0 if level is null
-
       return Center(
         child: Text(
           '${shopText['CURRENCY']} : ${loggedInUserService.observableCurrency.value} \$',
@@ -161,6 +157,7 @@ class RewardCashStoreList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> items = [];
+    cashItems.sort((a, b) => a["achievement"].compareTo(b["achievement"]));
     cashItems.forEach((item) {
       Widget widget = RewardCashItem(
         itemId: item["id"],
