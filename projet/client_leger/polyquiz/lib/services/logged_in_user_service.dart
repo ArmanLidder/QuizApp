@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/LanguageService.dart';
+import 'package:polyquiz/services/StoreService.dart';
 import 'package:polyquiz/services/camera_service.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/notification_service.dart';
@@ -104,6 +105,7 @@ class LoggedInUserService extends GetxController {
       String themeName = themeEnumToName[l]!;
       print("choucroute");
       ThemeService.instance.setTheme(themeName);
+      StoreService.instance.setup();
     } else {
       print('Login failed: user not found with email $email');
     }
