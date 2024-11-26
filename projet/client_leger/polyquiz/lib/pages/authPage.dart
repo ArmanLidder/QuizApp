@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/errorMessageTranslator.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
@@ -39,10 +41,9 @@ class _AuthPageState extends State<AuthPage> {
   bool _isValidEmail = true;
   bool _isValidPassword = true;
   bool _isCameraOpen = false;
-  String? _selectedAvatar;
-  Widget languageDropdown() {
-    _selectedAvatar = constDefaultAvatars[0];
+  Rx<String?> _selectedAvatar = constDefaultAvatars[0].obs;
 
+  Widget languageDropdown() {
     return DropdownButton<String>(
       value: translationService.currentLanguageAbbr,
       onChanged: (String? newLanguage) {
@@ -119,7 +120,7 @@ class _AuthPageState extends State<AuthPage> {
       );
 
       await userService.createUser(
-        _selectedAvatar!,
+        _selectedAvatar.value!,
         _emailController.text,
         _usernameController.text,
       );
@@ -257,7 +258,7 @@ class _AuthPageState extends State<AuthPage> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        _selectedAvatar = avatarUrl;
+                        _selectedAvatar.value = avatarUrl;
                       });
                     },
                     child: Stack(
@@ -267,7 +268,7 @@ class _AuthPageState extends State<AuthPage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: _selectedAvatar == avatarUrl
+                              color: _selectedAvatar.value == avatarUrl
                                   ? Colors.blue
                                   : Colors.transparent,
                               width: 3, // Border thickness
@@ -284,18 +285,6 @@ class _AuthPageState extends State<AuthPage> {
                 }).toList(),
               ),
               SizedBox(height: 12),
-              Container(
-                width: 300,
-                height: 120,
-                child: CameraWidget(
-                  onImageCaptured: (imageUrl) {
-                    setState(() {
-                      _selectedAvatar = imageUrl;
-                      _isCameraOpen = false;
-                    });
-                  },
-                ),
-              ),
             ],
             SizedBox(height: 24),
             SizedBox(
