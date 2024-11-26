@@ -56,9 +56,10 @@ class _HomePageState extends State<HomePage> {
                       loggedInUserService.observableUsername.value,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
+                      fontSize: 30.0,
                       color: this.themeService.mainAccent.value),
                 ),
+                SizedBox(height: 30,),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushReplacementNamed(context, '/roomList');
@@ -67,6 +68,7 @@ class _HomePageState extends State<HomePage> {
                     backgroundColor:
                         this.themeService.secondaryBackground.value,
                     foregroundColor: this.themeService.secondaryAccent.value,
+                    minimumSize: Size(200, 50),
                   ),
                   child: Text(mainPageText['JOIN_GAME']),
                 ),
@@ -79,6 +81,7 @@ class _HomePageState extends State<HomePage> {
                     backgroundColor:
                         this.themeService.secondaryBackground.value,
                     foregroundColor: this.themeService.secondaryAccent.value,
+                    minimumSize: Size(200, 50),
                   ),
                   child: Text(mainPageText['CREATE_GAME']),
                 ),
@@ -91,6 +94,8 @@ class _HomePageState extends State<HomePage> {
                       backgroundColor:
                           this.themeService.secondaryBackground.value,
                       foregroundColor: this.themeService.secondaryAccent.value,
+                      minimumSize: Size(200, 50),
+
                     ),
                     child: Text(mainPageText['SHOP'])),
               ],
