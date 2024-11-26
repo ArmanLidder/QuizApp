@@ -149,11 +149,11 @@ class GameService extends ChangeNotifier {
       print("After obsUpdateChoice answers are: ${this.answers}");
       return;
     }
-    if (this.answers.containsKey(index)) {
+    if (!isSelected && this.answers.containsKey(index)) {
       this.answers.remove(index);
       notifyListeners();
     }
-    print("After obsUpdateChoice answers are: ${this.answers}");
+    print("After obsUpdateChoice answers are: ${this.answers}\nMind you, we removed a $isSelected answer");
   }
 
   void selectQREanswer(int selectedAnswer) {
