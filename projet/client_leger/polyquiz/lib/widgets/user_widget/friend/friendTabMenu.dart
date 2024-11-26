@@ -63,7 +63,7 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
                   controller: _tabController,
                   tabs: [
                     Tab(text: localMap["TITLE"]),
-                    Tab(text: localMap["PENDING_TITLE"]),
+                    Tab(text: localMap["PENDING_REQUESTS_TAB"]),
                   ],
                   indicatorColor: themeService.secondaryBackground.value,
                   labelColor: themeService.secondaryBackground.value,

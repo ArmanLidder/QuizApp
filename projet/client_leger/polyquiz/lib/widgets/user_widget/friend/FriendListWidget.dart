@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import '../../../services/LanguageService.dart';
 import '../../../services/theme_service.dart';
 import 'friendTabMenu.dart';
@@ -11,10 +12,14 @@ class FriendListDisplay extends StatefulWidget {
   final FriendService friendService = FriendService.instance;
   final ThemeService themeService = ThemeService.instance;
   final LanguageService ls = LanguageService.instance;
+  final TranslationService trs = TranslationService.instance;
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
 
   @override
   _FriendListDisplayState createState() => _FriendListDisplayState();
+}
+
+class TraductionService {
 }
 
 class _FriendListDisplayState extends State<FriendListDisplay>
@@ -69,7 +74,7 @@ class _FriendListDisplayState extends State<FriendListDisplay>
               icon: Icon(Icons.person_add,
                   color: themeService.secondaryAccent.value),
               label: Text(
-                widget.ls.addLabel,
+                widget.trs.text["FRIENDS"]["ADD_FRIEND"],
                 style: TextStyle(color: themeService.secondaryAccent.value),
               ),
               style: ElevatedButton.styleFrom(

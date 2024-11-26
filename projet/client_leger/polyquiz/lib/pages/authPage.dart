@@ -35,13 +35,14 @@ class _AuthPageState extends State<AuthPage> {
   Map get text => translationService.text;
   Map get registerPageText => this.text['REGISTER_PAGE'];
   Map get loginPageText => this.text['LOGIN_PAGE'];
+  Map get nameChangeText => this.text["USERNAME_MODIFICATION"];
 
   bool _isRegistering = false;
   bool _obscurePassword = true;
   bool _isValidUsername = true;
+  String _userNameDiagnosis = "";
   bool _isValidEmail = true;
   bool _isValidPassword = true;
-  bool _isCameraOpen = false;
   Rx<String?> _selectedAvatar = constDefaultAvatars[0].obs;
 
   Widget languageDropdown() {
@@ -112,10 +113,11 @@ class _AuthPageState extends State<AuthPage> {
 
   Future<void> _register() async {
     try {
-      await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
+      String userId = userCredential.user!.uid;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(registerPageText['SUCCESS_REGISTER_POPUP'])),
       );
@@ -183,18 +185,18 @@ class _AuthPageState extends State<AuthPage> {
                 controller: _usernameController,
                 decoration: InputDecoration(
                   errorText: !_isValidUsername
-                      ? registerPageText['USERNAME_INVALID']
+                      ? nameChangeText[_userNameDiagnosis]
                       : null,
                   prefixIcon: Icon(Icons.person),
                   labelText: registerPageText['USERNAME_LABEL'],
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (e) async {
-                  bool result = await validationService.isValidUsername(e);
+                  String result = await validationService.userNameDiagnosis(e);
                   setState(() {
-                    _isValidUsername = result;
+                    _isValidUsername = result == "";
+                    _userNameDiagnosis = result;
                   });
-                  print(_isValidUsername); // You can print the result here
                 },
               ),
             if (_isRegistering) SizedBox(height: 16),

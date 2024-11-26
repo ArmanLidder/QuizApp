@@ -113,7 +113,7 @@ const frenchTextValues = {
     "ACCEPT_REQUEST": "Accepter",
     "DECLINE_REQUEST": "Refuser",
     "ALREADY_SENT_ERROR": "La requête d'ami a déja été envoyée",
-    "PENDING_TITLE": "en attente de la liste d'amis"
+    "PENDING_TITLE": "Demandes recues",
   },
   "AVATAR_MODIFICATION": {
     "TITLE": "Modification d'avatar",

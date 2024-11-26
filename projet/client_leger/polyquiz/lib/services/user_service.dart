@@ -44,7 +44,6 @@ class UserService extends GetxController {
   Future<void> createUser(String avatarURL, String email, String username) async {
     try {
       DocumentReference docRef = _db.collection(collectionName).doc();
-
       await docRef.set({
         'email': email,
         'username': username,
@@ -63,7 +62,6 @@ class UserService extends GetxController {
           'avgGameTime': 0,
           "correctAnswers": 0,
           "gameTime": 0,
-
         },
         'loginHistory': [],
         'gameHistory': [],

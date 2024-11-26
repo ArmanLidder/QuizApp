@@ -18,6 +18,7 @@ class ChangeNamePopup extends StatefulWidget {
 class _ChangeNamePopupState extends State<ChangeNamePopup> {
   late TextEditingController _nameController;
   bool _isValidUsername = true;
+  String _userNameDiagnosis = "";
   Map get nameText => TranslationService.instance.text['USERNAME_MODIFICATION'];
 
   @override
@@ -27,9 +28,11 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
   }
 
   Future<void> _validateUsername(String username) async {
-    bool result = await widget.validationService.isValidUsername(username);
+
+    String result = await widget.validationService.userNameDiagnosis(username);
     setState(() {
-      _isValidUsername = result;
+      _isValidUsername = result == "";
+      _userNameDiagnosis = result;
     });
   }
 
@@ -41,7 +44,7 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
         controller: _nameController,
         decoration: InputDecoration(
           labelText: nameText['NEW_USERNAME'],
-          errorText: !_isValidUsername ? nameText['ERROR'] : null,
+          errorText: !_isValidUsername ? nameText[_userNameDiagnosis] : null,
           border: OutlineInputBorder(),
         ),
         onChanged: (e) {
