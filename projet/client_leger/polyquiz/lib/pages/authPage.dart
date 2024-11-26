@@ -205,7 +205,7 @@ class _AuthPageState extends State<AuthPage> {
               controller: _emailController,
               decoration: InputDecoration(
                 errorText:
-                    !_isValidEmail ? registerPageText['EMAIL_INVALID'] : null,
+                    !_isValidEmail ? registerPageText['EMAIL_FORMAT_INVALID'] : null,
                 prefixIcon: Icon(Icons.email),
                 labelText: registerPageText['EMAIL_LABEL'],
                 border: OutlineInputBorder(),
