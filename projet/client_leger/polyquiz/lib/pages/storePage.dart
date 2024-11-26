@@ -59,9 +59,10 @@ class _StorepageState extends State<Storepage> {
                         CircularProgressIndicator()) // Show loading indicator while fetching
                 : Stack(children: [
                     SingleChildScrollView(
-                      child: Center(
+                      child:Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 60.0), // Add 20px padding on both sides
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start, // Align the Column content to the left                          children: [
                           children: [
                             MoneyCounter(),
                             Text(
@@ -70,6 +71,7 @@ class _StorepageState extends State<Storepage> {
                                   color: _themeService.mainAccent.value),
                             ),
                             Wrap(
+                              alignment: WrapAlignment.start,
                               spacing: 8.0, // Space between items horizontally
                               runSpacing: 8.0, // Space between items vertically
                               children: [
@@ -88,7 +90,7 @@ class _StorepageState extends State<Storepage> {
                             SizedBox(height: 20),
                             Text(
                               TranslationService.instance.languageValue.value ==
-                                      Language.fr
+                                  Language.fr
                                   ? "Récompenses: "
                                   : "Prizes: ",
                               style: TextStyle(
@@ -104,7 +106,7 @@ class _StorepageState extends State<Storepage> {
                             SizedBox(height: 20),
                             Text(
                               TranslationService.instance.languageValue.value ==
-                                      Language.fr
+                                  Language.fr
                                   ? "Récompenses d'exploit: "
                                   : "Achievements rewards: ",
                               style: TextStyle(
@@ -116,8 +118,10 @@ class _StorepageState extends State<Storepage> {
                             SizedBox(height: 20),
                           ],
                         ),
+                      )
+
+
                       ),
-                    ),
                     Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
                   ]));
       }),

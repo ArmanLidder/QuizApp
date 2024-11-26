@@ -75,11 +75,14 @@ class _BuyButtonState extends State<BuyButton> {
       }
 
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
+        style: ElevatedButton.styleFrom(backgroundColor: buttonColor,
+          fixedSize: Size(200, 60),
+        ),
         onPressed: buttonAction,
         child: Text(buttonText, textAlign: TextAlign.center,
             style:TextStyle(color: ThemeService.instance.mainAccent.value)
         ),
+
       );
     });
   }

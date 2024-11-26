@@ -79,10 +79,10 @@ class ImageStoreList extends StatelessWidget {
         width: 5,
       ));
     });
-    return Center(
-        child: Wrap(
-          children: items,
-        ));
+    return  Wrap(
+      alignment: WrapAlignment.start,
+      children: items,
+        );
   }
 }
 
@@ -110,10 +110,10 @@ class RewardImageStoreList extends StatelessWidget {
         width: 5,
       ));
     });
-    return Center(
-        child: Wrap(
-          children: items,
-        ));
+    return Wrap(
+      alignment: WrapAlignment.start,
+      children: items,
+        );
   }
 }
 
@@ -140,10 +140,11 @@ class RewardThemeStoreList extends StatelessWidget {
         width: 5,
       ));
     });
-    return Center(
-        child: Wrap(
-          children: items,
-        ));
+    return
+         Wrap(
+           alignment: WrapAlignment.start,
+           children: items,
+        );
   }
 }
 
@@ -170,9 +171,10 @@ class RewardCashStoreList extends StatelessWidget {
         width: 5,
       ));
     });
-    return Center(
-        child: Wrap(
+    return
+        Wrap(
+          alignment: WrapAlignment.start,
           children: items,
-        ));
+        );
   }
 }
