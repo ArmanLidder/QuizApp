@@ -154,7 +154,7 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
           _updateButtonStatus();
         };
       } else {
-        buttonColor = Colors.grey;
+        buttonColor = Colors.red;
         final content =
         TranslationService.instance.languageValue.value == Language.fr
             ? "Débloqué au niveau"
@@ -258,7 +258,7 @@ class _RewardThemeButtonState extends State<RewardThemeButton> {
           buttonAction = _updateButtonStatus; // Disable button if insufficient funds
         }
       } else {
-        buttonColor = Colors.grey;
+        buttonColor = Colors.red;
         final content =
         TranslationService.instance.languageValue.value == Language.fr
             ? "Débloqué à l'exploit"
@@ -365,7 +365,7 @@ class _RewardCashButtonState extends State<RewardCashButton> {
           _updateButtonStatus();
         };
       } else {
-        buttonColor = Colors.grey;
+        buttonColor = Colors.red;
         final content =
         TranslationService.instance.languageValue.value == Language.fr
             ? "Débloqué à l'exploit  "
