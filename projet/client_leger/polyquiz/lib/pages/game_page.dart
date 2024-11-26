@@ -149,7 +149,7 @@ class _MyWidgetState extends State<GamePage> {
             gameInterfaceManagementService:
             _gameInterfaceManagementService))
           ]),
-          Positioned(bottom: 20, left: 20, child: ObservationSelector())
+          Positioned(bottom: 20, left: 20, child: ChatPopup())
         ]),
       );
     } else {
@@ -229,13 +229,11 @@ class _MyWidgetState extends State<GamePage> {
                                               questionPts:
                                                   _gameInterfaceManagementService
                                                       .gameService
-                                                      .question!
-                                                      .points,
+                                                      .question?.points ?? 0,
                                               questionText:
                                                   _gameInterfaceManagementService
                                                       .gameService
-                                                      .question!
-                                                      .text),
+                                                      .question?.text ?? ''),
                                           Expanded(
                                             child: Container(
                                               alignment: Alignment.center,
@@ -294,7 +292,7 @@ class _MyWidgetState extends State<GamePage> {
                                 ),
                               ]),
                               Positioned(
-                                  bottom: 0, left: 20, child: ObservationSelector())
+                                  bottom: 0, left: 20, child: ChatPopup())
                             ]),
                           );
                         }
