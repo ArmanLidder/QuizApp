@@ -295,6 +295,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.interactiveListService.isFinal = true;
       this.gameService.audio.pause();
       this.interactiveListService.getPlayersList(this.roomId, leftPlayers: this.leftPlayers);
+      this.isResultPage = true;
     }
   }
 

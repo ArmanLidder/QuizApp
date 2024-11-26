@@ -191,6 +191,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
             if (this.gameService.timer == 0) {
               this.isGameOver = true;
               this._interactiveListService.isFinal = true;
+              this.isResultPage = true;
             }
           }
           notifyListeners();
