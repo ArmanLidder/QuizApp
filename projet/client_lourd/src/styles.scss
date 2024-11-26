@@ -158,16 +158,18 @@ button[mat-icon-button]{
     --color-bg-button: rgb(33, 150, 243);
     --color-error: rgb(255, 102, 102);
   }
-  //button bg is bgButton, the text inside it is secondary
-  /* Disco Theme */
+  /* Disco Theme - Updated */
+  /* Disco Theme - Updated */
   .theme-disco {
-    --color-primary: hsl(60, 100%, 50%);
-    --color-secondary: hsl(0, 100%, 50%); //secondary accent
-    --color-bg-primary: hsl(270, 50%, 50%);
-    --color-bg-secondary: hsl(0, 100%, 50%);
-    --color-bg-button: #000000;
-    --color-error: rgb(220 38 38);
+    --color-primary: hsl(45, 100%, 70%); /* Jaune vif pour le texte principal */
+    --color-secondary: hsl(190, 100%, 85%); /* Cyan clair pour les éléments au-dessus des boutons */
+    --color-bg-primary: hsl(250, 50%, 20%); /* Bleu-violet profond pour le fond principal */
+    --color-bg-secondary: hsl(240, 40%, 35%); /* Bleu grisâtre pour les éléments clés */
+    --color-bg-button: hsl(330, 60%, 45%); /* Rose vif pour les boutons */
+    --color-error: rgb(220, 38, 38); /* Inchangé */
   }
+
+
 
   /* BlueGrey Theme */
   .theme-blueGrey {

@@ -2,7 +2,7 @@
     <div *ngIf='!waitingRoomManagementService.isTransition' class="waiting-room">
         <div class="waiting-room-header text-primary">
             <h1>{{ 'WAITING_ROOM_PAGE.TITLE' | translate }}</h1>
-            <h2 *ngIf='isHost'>{{ 'WAITING_ROOM_PAGE.ROOM_CODE' | translate }} : {{ waitingRoomManagementService.roomId }}</h2>
+            <h2>{{ 'WAITING_ROOM_PAGE.ROOM_CODE' | translate }} : {{ waitingRoomManagementService.roomId }}</h2>
             <div *ngIf='isHost'>
                 <h3>{{ 'WAITING_ROOM_PAGE.ROOM_STATUS' | translate }} {{ setLockActionMessage() }}</h3>
                 <label class="switch-btn" [matTooltip]="'WAITING_ROOM_PAGE.LOCK_ROOM_TOOLTIP' | translate">
@@ -12,6 +12,9 @@
             </div>
             <h3 *ngIf='isHost && waitingRoomManagementService.isRoomLocked && validationBeforeEntry()' style="color: red">
                 {{ setHostValidationError() }}
+            </h3>
+            <h3 *ngIf='!isHost && waitingRoomManagementService.isRoomLocked && validationBeforeEntry()' style="color: red">
+                {{ setPlayerValidationError() }}
             </h3>
         </div>
 

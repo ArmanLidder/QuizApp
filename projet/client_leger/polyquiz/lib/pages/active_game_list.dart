@@ -57,6 +57,11 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     final quizService = Provider.of<QuizService>(context, listen: false);
 
     gameListService.games$.listen((games) {
+      print('GAMES:');
+      print(games);
+      games.forEach((game) {
+        print('game info: ${game}');
+      });
       games.where((game) => !game.private).forEach((game) {
         quizService.basicGetById(game.quizId).then((quiz) {
           setState(() {
@@ -495,6 +500,25 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                                         fontSize: 16,
                                                         color: themeService
                                                             .mainAccent.value)),
+                                                RichText(
+                                                  text: TextSpan(children: [
+                                                    TextSpan(
+                                                        text: game.numberOfObs
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: themeService
+                                                                .mainAccent
+                                                                .value)),
+                                                    WidgetSpan(
+                                                        child: Icon(
+                                                            Icons
+                                                                .remove_red_eye_outlined,
+                                                            color: themeService
+                                                                .mainAccent
+                                                                .value))
+                                                  ]),
+                                                ),
                                                 Text(activeText['ONGOING_GAME'],
                                                     style: TextStyle(
                                                         color: themeService

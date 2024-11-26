@@ -70,6 +70,7 @@ export class RoomManagingService {
             prestige: config.prestige,
             total_price: 0,
             observersCounter: new Map<string, number>([[HOST_USERNAME, 0]]),
+            observerTotalCounter: 0
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -89,10 +90,15 @@ export class RoomManagingService {
     }
 
     updateObserverCounter(roomId: number, userId: string, decrement: boolean) {
-        const roomObserverCounter = this.getRoomById(roomId).observersCounter
+        const roomObserverCounter = this.getRoomById(roomId).observersCounter;
         const currentObserverValue = roomObserverCounter.get(userId);
-        if (decrement) roomObserverCounter.set(userId, currentObserverValue - 1);
-        else roomObserverCounter.set(userId, currentObserverValue + 1);
+        if (decrement) {
+            roomObserverCounter.set(userId, currentObserverValue - 1);
+            this.getRoomById(roomId).observerTotalCounter -= 1;
+        } else {
+            roomObserverCounter.set(userId, currentObserverValue + 1);
+            this.getRoomById(roomId).observerTotalCounter += 1;
+        }
         console.log(decrement, roomObserverCounter)
     }
 
@@ -121,6 +127,7 @@ export class RoomManagingService {
                 room: roomCode,
                 quizId: roomData.quizId,
                 numberOfPlayers: roomData.players.size,
+                numberOfObs: roomData.observerTotalCounter,
                 hostUserId: roomData.hostUserId,
                 gameType: roomData.gameType,
                 private: roomData.private,

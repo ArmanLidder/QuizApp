@@ -331,7 +331,8 @@
     "START_BUTTON": "Start",
     "CREATE_TEAM": "Create Team",
     "QUIZ_STARTING_IN": "Quiz starts in:",
-    "TEAM_VALIDATION": "Must have a minimum of two members per team and at least 2 teams.",
+    "TEAM_VALIDATION": "Must have two players per team and at least 2 teams.",
+    "TEAM_NOTICE_LOCK": "The host has locked the room. You can't change your team.",
     "CLASSIC_VALIDATION": "Must have at least 1 player."
   },
   "POP_UP_MESSAGE": {
@@ -566,5 +567,12 @@
     "OBSERVING": "You are observing",
     "QRL_PLAYER_INACTIVE": "The player is inactive...",
     "QRL_PLAYER_ACTIVE": "The player is writing an answer..."
+  },
+  "SETTINGS_POPUP" : {
+    "SETTINGS": "Settings",
+    "LIGHT": "light",
+    "DARK": "dark",
+    "LANGUAGE": "Language",
+    "THEME": "Theme"
   }
 }
