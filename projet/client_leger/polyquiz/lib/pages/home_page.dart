@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   mainPageText['WELCOME'] +
                       " " +
-                      loggedInUserService.observableUsername.value,
+                      loggedInUserService.observableUsername.value + " !",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30.0,

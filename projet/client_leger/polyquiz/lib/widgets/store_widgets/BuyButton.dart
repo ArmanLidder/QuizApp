@@ -384,7 +384,7 @@ class _RewardCashButtonState extends State<RewardCashButton> {
         child: Center(
             child: Text(buttonText,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: _themeService.mainAccent.value))),
+                style: TextStyle(color: _themeService.mainAccent.value,fontSize: 12))),
       );
     });
   }
