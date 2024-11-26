@@ -32,7 +32,6 @@ class _UserIdsRowState extends State<UserIdsRow> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Text Field for filtering usernames
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: TextField(
@@ -47,7 +46,6 @@ class _UserIdsRowState extends State<UserIdsRow> {
             ),
           ),
         ),
-        // StreamBuilder to listen to the users collection
         Expanded(
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('users').snapshots(),
@@ -55,20 +53,14 @@ class _UserIdsRowState extends State<UserIdsRow> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
-
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
-
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return const Center(child: Text('No users found.'));
               }
-
-              // Filter users based on the entered text
               final filteredUsers =
               _filterUsers(snapshot.data!.docs, filterText);
-
-              // Build the widgets for each user
               return ListView(
                 children: filteredUsers.map((doc) {
                   final uid = doc['uid'] as String;

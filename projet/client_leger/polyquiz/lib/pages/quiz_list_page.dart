@@ -75,7 +75,7 @@ class _QuizListPageState extends State<QuizListPage> {
     return Obx(() {
       return Scaffold(
           backgroundColor: _themeService.mainBackground.value,
-          appBar: FancyAppBar(context: context, hasBackButton: false),
+          appBar: FancyAppBar(context: context, canGoBack: false),
           body: isLoading
               ? Center(child: CircularProgressIndicator())
               : errorMessage.isNotEmpty

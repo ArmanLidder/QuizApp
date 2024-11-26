@@ -6,9 +6,9 @@ import 'package:polyquiz/widgets/user_widget/friend/appBarFriendIcon.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final bool hasBackButton;
+  final bool canGoBack;
   final BuildContext context;
-  FancyAppBar({required this.context, this.hasBackButton = false});
+  FancyAppBar({required this.context, this.canGoBack = false});
 
   @override
   _FancyAppBarState createState() => _FancyAppBarState();
@@ -44,24 +44,24 @@ class _FancyAppBarState extends State<FancyAppBar> {
       ),
       child: AppBar(
         title: Center(
-          child: Text(
-            "PolyQuiz",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+          child: InkWell(
+            onTap: () {
+              Navigator.pushReplacementNamed(widget.context, '/home');
+            },
+            child: Text(
+              "PolyQuiz",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
           ),
+
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: widget.hasBackButton
-            ? IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.red),
-                onPressed: () {
-                  Navigator.pushReplacementNamed(widget.context, '/home');
-                })
-            : PendingRequestsWidget(),
+        leading: PendingRequestsWidget(),
         actions: [
           GestureDetector(
             onTap: () {
