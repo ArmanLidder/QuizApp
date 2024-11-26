@@ -191,9 +191,9 @@ const frenchTextValues = {
     "LANGUAGE":"Langue",
     "THEME":"Thème",
     "dark":"sombre",
-    "light":"normal",
+    "light":"éclairé",
     "disco":"disco",
-    "blueGrey":"bleur-gris"
+    "blueGrey":"bleu-gris"
 
   },
   "QUIZ_CREATION": {
