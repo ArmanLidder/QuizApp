@@ -25,7 +25,7 @@ class QrlEvaluationService extends ChangeNotifier {
   List<int> scores = [0, 50, 100];
   String currentAnswer = '';
   String currentUsername = '';
-  int inputPoint = -1;
+  int inputPoint = 0;
   bool isCorrectionFinished = false;
   bool isValid = true;
   List<int> points = [];
@@ -81,7 +81,7 @@ class QrlEvaluationService extends ChangeNotifier {
     this.isValid = true;
     this.currentAnswer = '';
     this.currentUsername = '';
-    this.inputPoint = -1;
+    this.inputPoint = 0;
     notifyListeners();
   }
 
@@ -108,7 +108,7 @@ class QrlEvaluationService extends ChangeNotifier {
       if (isValid) {
         getCorrection(inputPoint);
         nextAnswer();
-        inputPoint = -1;
+        inputPoint = 0;
       }
 
       if (indexPlayer >= usernames.length) {

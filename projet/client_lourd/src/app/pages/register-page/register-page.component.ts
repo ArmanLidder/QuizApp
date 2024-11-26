@@ -27,7 +27,7 @@ export class RegisterPageComponent implements OnInit {
     isLogging: boolean = false;
     constructor() {
         this.authForm = this.fb.group({
-            username: ['', [Validators.required, this.usernameValidator]],
+            username: ['', [Validators.required, this.usernameValidator, Validators.maxLength(10)]],
             email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
             password: ['', [Validators.required, Validators.minLength(6)]],
         });

@@ -61,7 +61,7 @@ export class QreResponseAreaComponent implements OnInit, OnDestroy {
   calculateResponseInterval() {
     const lowerBound = Math.max(this.gameService.question!.interval!.min!, this.selectedValue - this.gameService.question!.margin!);
     const upperBound = Math.min(this.gameService.question!.interval!.max!, this.selectedValue + this.gameService.question!.margin!);
-    this.responseInterval = `${lowerBound.toString()} à ${upperBound.toString()}`;
+    this.responseInterval = `${lowerBound.toString()} - ${upperBound.toString()}`;
   }
 
   onSliderChange() {

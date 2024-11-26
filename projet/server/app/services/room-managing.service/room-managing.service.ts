@@ -19,16 +19,19 @@ export class RoomManagingService {
         this.rooms = new Map<number, RoomData>();
     }
     //this function is used to handle random socket disconnects, just to check if they are in a game and if they are, handle it.
-    getUsernameAndRoomBySocketId(socketid: string):[string,number] | undefined {
+
+    getUsernameAndRoomBySocketId(socketid: string): [string, number][] | undefined {
+        let res: [string, number][] = [];
         for (const [roomId, roomData] of this.rooms.entries()) {
             for (const [username, socketId] of roomData.players.entries()) {
                 if (socketId === socketid) {
-                    return [username,roomId];
+                    res.push([username, roomId]);
                 }
             }
         }
-        return undefined;
+        return res.length > 0 ? res : undefined;
     }
+
 
     get roomMap() {
         return this.rooms;
@@ -67,6 +70,7 @@ export class RoomManagingService {
             prestige: config.prestige,
             total_price: 0,
             observersCounter: new Map<string, number>([[HOST_USERNAME, 0]]),
+            observerTotalCounter: 0
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -86,10 +90,15 @@ export class RoomManagingService {
     }
 
     updateObserverCounter(roomId: number, userId: string, decrement: boolean) {
-        const roomObserverCounter = this.getRoomById(roomId).observersCounter
+        const roomObserverCounter = this.getRoomById(roomId).observersCounter;
         const currentObserverValue = roomObserverCounter.get(userId);
-        if (decrement) roomObserverCounter.set(userId, currentObserverValue - 1);
-        else roomObserverCounter.set(userId, currentObserverValue + 1);
+        if (decrement) {
+            roomObserverCounter.set(userId, currentObserverValue - 1);
+            this.getRoomById(roomId).observerTotalCounter -= 1;
+        } else {
+            roomObserverCounter.set(userId, currentObserverValue + 1);
+            this.getRoomById(roomId).observerTotalCounter += 1;
+        }
         console.log(decrement, roomObserverCounter)
     }
 
@@ -118,6 +127,7 @@ export class RoomManagingService {
                 room: roomCode,
                 quizId: roomData.quizId,
                 numberOfPlayers: roomData.players.size,
+                numberOfObs: roomData.observerTotalCounter,
                 hostUserId: roomData.hostUserId,
                 gameType: roomData.gameType,
                 private: roomData.private,

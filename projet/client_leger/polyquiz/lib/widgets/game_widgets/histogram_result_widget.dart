@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 
 class Histogram extends StatefulWidget {

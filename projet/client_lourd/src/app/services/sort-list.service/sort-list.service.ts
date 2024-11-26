@@ -27,8 +27,11 @@ export class SortListService {
     }
 
     private sortComparaisonByName(firstPlayer: PlayerData, secondPlayer: PlayerData) {
-        return firstPlayer[0].localeCompare(secondPlayer[0]);
+        const firstName = typeof firstPlayer[firstPlayer.length - 1] === 'string' ? firstPlayer[firstPlayer.length - 1] as string : '';
+        const secondName = typeof secondPlayer[secondPlayer.length - 1] === 'string' ? secondPlayer[secondPlayer.length - 1] as string : '';
+        return firstName.localeCompare(secondName);
     }
+
 
     private sortComparaisonByScore(firstPlayer: PlayerData, secondPlayer: PlayerData) {
         const scoreComparaison = secondPlayer[1] - firstPlayer[1];

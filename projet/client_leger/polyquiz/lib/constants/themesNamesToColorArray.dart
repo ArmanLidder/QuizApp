@@ -27,6 +27,6 @@ Map<String, List<Color>> themeColors = {
     Colors.blueGrey[50]!, // mainAccent:
     Colors.purple[600]!, // secondaryBackground:
     Colors.purple[200]!, // secondaryAccent:
-    Colors.blueGrey[800]! // container
+    Color.fromRGBO(191, 159, 223, 1) // container
   ],
 };

@@ -1,28 +1,19 @@
 .enter {
+    padding: 8px;
     margin-left: 10px;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--color-bg-button);
+    color: var(--color-secondary);
     flex: 0 0 auto;
-    border: 4px solid #007bff;
 }
 
 .enter:hover {
-    background-color: white;
-    color: #007bff;
+    opacity: 0.75;
     transition: 0.3s;
-}
-
-.enter:active {
-    background-color: #007bff;
-    color: black;
-    flex: 0 0 auto;
-    border: 4px solid black;
 }
 
 .enter:disabled {
     background-color: gray;
     color: white;
-    border: 4px solid gray;
     cursor: not-allowed;
     opacity: 0.35;
 }
@@ -38,12 +29,6 @@
     background-color: white;
     color: red;
     transition: 0.3s;
-}
-
-.cancel:active {
-    background-color: red;
-    color: black;
-    border: 4px solid black;
 }
 
 button {

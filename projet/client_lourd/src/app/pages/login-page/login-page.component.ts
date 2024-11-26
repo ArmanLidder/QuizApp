@@ -33,15 +33,13 @@ export class LoginPageComponent {
         const { email, password } = this.authForm.value;
         if (this.authForm.valid) {
             try {
-                console.log("Set to true")
                 this.isLogging = true;
                 await this.authService.login(email, password);
                 this.snackbarService.show(this.translate.instant('LOGIN_PAGE.SUCCESS_LOGIN_POPUP'));
-                this.router.navigate(['/home']);
+                await this.router.navigate(['/home']);
             } catch (error:any) {
                 this.snackbarService.show(error.message);
             } finally {
-                console.log("set to false")
                 this.isLogging = false;
             }
         }

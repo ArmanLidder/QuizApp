@@ -159,14 +159,22 @@ export class QuizCreationComponent implements OnInit{
 
         if (this.mode === PageMode.MODIFICATION) {
             quiz.id = this.quiz.id;
-            this.quizService.basicPut(quiz).subscribe(async () => {
+            this.quizService.basicPut(quiz).subscribe(async (res) => {
+                if (res.status===500) {
+                    this.openErrorDialog(await this.translate.get('QUIZ_CREATION.TITLE_ALREADY_EXISTS').toPromise());
+                    return;
+                }
                 const message = await this.translate.get('QUIZ_CREATION.QUIZ_UPDATED_SUCCESS').toPromise();
                 this.snackBar.show(message);
                 navigateToAdminCallBack();
             });
         } else {
             quiz.id = generateRandomId();
-            this.quizService.basicPost(quiz).subscribe(async () => {
+            this.quizService.basicPost(quiz).subscribe(async (res) => {
+                if (res.status===500) {
+                    this.openErrorDialog(await this.translate.get('QUIZ_CREATION.TITLE_ALREADY_EXISTS').toPromise());
+                    return;
+                }
                 const message = await this.translate.get('QUIZ_CREATION.QUIZ_ADDED_SUCCESS').toPromise();
                 this.snackBar.show(message);
                 navigateToAdminCallBack();

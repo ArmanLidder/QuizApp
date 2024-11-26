@@ -14,7 +14,7 @@ export class SnackbarService {
       verticalPosition: 'bottom',
       horizontalPosition: 'center',
       // panelClass: ['my-snack-bar'],
-      ...config, // additional config if you need
+      ...config,
     });
   }
 }

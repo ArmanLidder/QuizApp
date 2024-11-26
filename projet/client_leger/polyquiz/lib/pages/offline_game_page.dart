@@ -4,7 +4,6 @@ import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
-import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_notice.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
@@ -55,10 +54,11 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
 
   @override
   void initState() {
+    super.initState();
     _gameService.offlineGameService.init();
     this.currentTime = this._gameService.offlineGameService.quiz.duration;
     this.handleTimer();
-    super.initState();
+    //super.initState();
   }
 
   @override
@@ -126,7 +126,8 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                                 .gameService.question!.points,
                                         questionText:
                                             gameInterfaceManagementService
-                                                .gameService.question!.text),
+                                                .gameService.question!.text,
+                                        isOffline: true),
                                   if (isTimerTransition || isFinalTransition)
                                     QuestionInfoWidget(
                                         questionNum: isFinalTransition

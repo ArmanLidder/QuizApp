@@ -6,6 +6,8 @@ import { PlayerStatus } from '@common/player-status/player-status';
 import { SocketEvent } from '@common/socket-event-name/socket-event-name';
 import { UserData, RoomSettings } from '@common/constants/interactive-list-socket.service.const';
 import {GameService} from "@app/services/game.service/game.service";
+import {firstValueFrom} from "rxjs";
+import {UsersService} from "@app/services/users.service/users.service";
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +17,7 @@ export class InteractiveListSocketService {
     isFinal: boolean = false;
     private actualStatus: Player[] = [];
 
-    constructor(private socketService: SocketClientService, private gameService: GameService) {
+    constructor(private socketService: SocketClientService, private gameService: GameService, private usersService: UsersService) {
         this.reset();
     }
 
@@ -46,31 +48,35 @@ export class InteractiveListSocketService {
     }
 
     private gatherPlayersUsername(roomSettings: RoomSettings, resolve: (value: number | PromiseLike<number>) => void, leftPlayers: Player[]) {
-        this.socketService.send(SocketEvent.GATHER_PLAYERS_USERNAME, roomSettings.roomId, (players: string[]) => {
+        this.socketService.send(SocketEvent.GATHER_PLAYERS_USERNAME, roomSettings.roomId, async (players: string[]) => {
             resolve(players.length);
-            this.setUpPlayerList(leftPlayers);
+            await this.setUpPlayerList(leftPlayers);
             players.forEach((username) => {
                 this.getPlayerScoreFromServer({ username, resetPlayerStatus: roomSettings.resetPlayerStatus }, roomSettings.roomId, leftPlayers);
             });
         });
     }
 
-    private setUpPlayerList(leftPlayers: Player[]) {
+    private async setUpPlayerList(leftPlayers: Player[]) {
         this.actualStatus = this.players;
         this.players = [];
-        this.appendLeftPlayersToActivePlayers(leftPlayers);
+        await this.appendLeftPlayersToActivePlayers(leftPlayers);
     }
 
     private getPlayerScoreFromServer(userInfo: UserData, roomId: number, leftPlayers: Player[]) {
-        this.socketService.send(SocketEvent.GET_SCORE, { roomId, username: userInfo.username }, (score: Score) => {
-            this.addPlayer(userInfo, score, leftPlayers);
+        this.socketService.send(SocketEvent.GET_SCORE, { roomId, username: userInfo.username }, async (score: Score) => {
+            await this.addPlayer(userInfo, score, leftPlayers);
         });
     }
 
-    private addPlayer(userInfo: UserData, score: Score, leftPlayers: Player[]) {
+    private async addPlayer(userInfo: UserData, score: Score, leftPlayers: Player[]) {
         const status = this.initPlayerStatus(userInfo.username, userInfo.resetPlayerStatus, leftPlayers);
         const canChat = this.canPlayerChat(userInfo.username);
-        this.players.push([userInfo.username, score.points, score.bonusCount, status, canChat]);
+
+        let user = await firstValueFrom(this.usersService.getUser(userInfo.username));
+        const retrievedUsername = user?.username || '';
+
+        this.players.push([userInfo.username, score.points, score.bonusCount, status, canChat, retrievedUsername]);
     }
 
     private canPlayerChat(username: string) {
@@ -78,9 +84,14 @@ export class InteractiveListSocketService {
         return this.actualStatus.length === 0 ? true : this.actualStatus[playerIndex][CAN_TALK];
     }
 
-    private appendLeftPlayersToActivePlayers(leftPlayers: Player[]) {
-        leftPlayers.forEach(([username, points, bonusCount]) => this.players.push([username, points, bonusCount, PlayerStatus.LEFT, false]));
+    private async appendLeftPlayersToActivePlayers(leftPlayers: Player[]) {
+        for (const [username, points, bonusCount] of leftPlayers) {
+            let user = await firstValueFrom(this.usersService.getUser(username));
+            const retrievedUsername = user?.username || '';
+            this.players.push([username, points, bonusCount, PlayerStatus.LEFT, false, retrievedUsername]);
+        }
     }
+
 
     private findPlayer(username: string, players: Player[]) {
         return players.findIndex((player) => player[0] === username);

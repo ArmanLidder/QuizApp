@@ -10,8 +10,8 @@ thead th {
   font-size: 1.5rem;
   text-align: center;
   padding: 15px;
-  background-color: #007bff;
-  color: white;
+  background-color: var(--color-bg-button);
+  color: var(--color-secondary);
   border-radius: 8px 8px 0 0;
 }
 
@@ -35,7 +35,7 @@ thead th {
 .quiz-title {
   flex: 2;
   font-weight: bold;
-  color: #343a40;
+  color: var(--color-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -73,7 +73,7 @@ thead th {
 .no-game {
   flex: 1;
   font-weight: bold;
-  color: #343a40;
+  color: var(--color-primary);
   text-align: center;
 }
 
@@ -98,7 +98,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background-color: #e9ecef;
+  background-color: var(--color-bg-secondary);
 }
 
 .button-container {

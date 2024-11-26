@@ -50,22 +50,14 @@ class StoreService extends GetxController {
 
   Future<bool> isOwned(String userId, String itemId) async {
     try {
-      // Reference to the user's document
-      DocumentReference userDocRef =
-          _firestore.collection('storeProfiles').doc(userId);
-      // Fetch the user's document
+      DocumentReference userDocRef =  _firestore.collection('storeProfiles').doc(userId);
       DocumentSnapshot userDoc = await userDocRef.get();
 
-      // Check if the document exists
       if (userDoc.exists) {
-        // Retrieve the ownedItems field
         Map<String, dynamic> itemData = userDoc.data() as Map<String, dynamic>;
-
         List<dynamic> ownedItems = itemData['ownedItems'] ?? [];
-        // Check if the itemId exists in the ownedItems
         return ownedItems.contains(itemId);
       } else {
-        // If the user document does not exist, return false
         return false;
       }
     } catch (e) {

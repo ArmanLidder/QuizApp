@@ -172,13 +172,13 @@ export class QuizFormService {
 
         const quiz: Quiz = {
             id: this.quiz?.id,
-            title: quizForm.value.title.trim(),
-            description: quizForm.value.description.trim(),
+            title: (quizForm.value.title ?? '').trim(),
+            description: (quizForm.value.description ?? '').trim(),
             duration: quizForm.value.duration,
             lastModification: now,
             questions,
             visible: quizForm.value.visible,
-            owner:quizForm.value.owner,
+            owner: quizForm.value.owner,
         };
         return quiz;
     }

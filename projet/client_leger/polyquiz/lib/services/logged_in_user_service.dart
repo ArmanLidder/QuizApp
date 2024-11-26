@@ -1,16 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/animation.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/LanguageService.dart';
-import 'package:polyquiz/services/friendService.dart';
+import 'package:polyquiz/services/camera_service.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/notification_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'user_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 const Map <Theme,String> themeEnumToName={
@@ -52,7 +53,7 @@ class LoggedInUserService extends GetxController {
     this.user = user;
     this.observableCurrency.value = (this.user?.currency ?? 0).round();
     this.observablePrestige.value = (this.user?.prestige ?? 0).round();
-    this.observableLevel.value = (this.user?.level ?? 0).round();
+    this.observableLevel.value = (this.user?.level ?? 0).round() ~/ 10;
     this.observableUsername.value = this.user!.username;
     this.observableAvatar.value = (this.user?.avatar ?? "");
     this.observableAchievement.value = (this.user?.achievements ?? []);
@@ -157,7 +158,8 @@ class LoggedInUserService extends GetxController {
   }
 
   Future<void> uploadCustomProfilePicture() async {
-    String? newImagelLink = await this.imageStorageService.pickAndUploadImage();
+    File? image = await CameraService().takePhoto();
+    String? newImagelLink = await this.imageStorageService.uploadImage(image!);
     this.observableAvatar.value = newImagelLink!;
     await this.userService.updateUserAvatar(
         id: this.forceToString(this.getUid()),

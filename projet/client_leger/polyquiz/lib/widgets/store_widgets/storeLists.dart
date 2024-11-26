@@ -125,7 +125,6 @@ class RewardThemeStoreList extends StatelessWidget {
   final List<Map<String, dynamic>> rewardItems;
   final String userId;
   final StoreService storeService = Get.find();
-  ThemeService _themeService = ThemeService.instance;
 
   RewardThemeStoreList({required this.rewardItems, required this.userId});
 

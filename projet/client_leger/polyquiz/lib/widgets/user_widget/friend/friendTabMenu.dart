@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/friendService.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/translationService.dart';
-import 'package:polyquiz/services/user_service.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
-import '../../../services/LanguageService.dart';
 import '../../../services/theme_service.dart';
 
 class FriendDisplayBox extends StatefulWidget {
@@ -41,7 +38,7 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
   Widget build(BuildContext context) {
     return SizedBox(
       height: 400,
-      child: Obx((){
+      child: Obx(() {
         return Container(
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.all(8),
@@ -57,7 +54,7 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
               ),
             ],
           ),
-          child: Obx((){
+          child: Obx(() {
             final Map localMap = TranslationService.instance.text['FRIENDS'];
 
             return Column(
@@ -92,7 +89,9 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
   Widget _buildFriendsList() {
     return Obx(() {
       if (loggedInUserService.friends.isEmpty) {
-        return Center(child: Text(textFriends['EMPTY_FRIENDS_LIST']));
+        return Center(
+            child: Text(textFriends['EMPTY_FRIENDS_LIST'],
+                style: TextStyle(color: themeService.mainAccent.value)));
       }
 
       return ListView.builder(
@@ -112,7 +111,9 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
 
     return Obx(() {
       if (loggedInUserService.friendRequests.isEmpty) {
-        return Center(child: Text(textFriends['EMPTY_FRIENDS_LIST']));
+        return Center(
+            child: Text(textFriends['NO_PENDING_REQUESTS'],
+                style: TextStyle(color: themeService.mainAccent.value)));
       }
 
       return ListView.builder(
