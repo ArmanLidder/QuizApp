@@ -380,7 +380,7 @@ class ResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
-      Language uselessShit = transService.languageValue.value;
+      Language ObxObservator = transService.languageValue.value;
 
       return Container(
         color: _themeService.mainBackground.value,
