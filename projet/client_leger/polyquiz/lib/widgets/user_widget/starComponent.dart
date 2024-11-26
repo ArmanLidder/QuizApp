@@ -22,7 +22,7 @@ class StarCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: this.isDone
             ? Color.fromARGB(255, 250, 249, 174)
-            : _themeService.container.value,
+            : Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -32,7 +32,7 @@ class StarCard extends StatelessWidget {
           Icon(
             Icons.star_border,
             size: 48,
-            color: isDone ? Color(0xFFFCDB03) : _themeService.mainAccent.value,
+            color: isDone ? Color(0xFFFCDB03) : Colors.black,
           ): Text('🏆', style: TextStyle(fontSize: 24),),
           SizedBox(height: 8),
           Flexible(
@@ -43,7 +43,7 @@ class StarCard extends StatelessWidget {
                   fontSize: 12,
                   color: this.isDone
                       ? Colors.brown
-                      : _themeService.mainAccent.value),
+                      : Colors.black),
               overflow: TextOverflow.visible,
               maxLines: 3,
             ),

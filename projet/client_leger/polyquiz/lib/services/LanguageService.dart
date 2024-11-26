@@ -170,9 +170,9 @@ class LanguageService extends GetxService {
   String get filterByUsernameText {
     switch (languageAbr.value) {
       case 'fr':
-        return 'Filtrer par nom d\'utilisateur';
+        return 'Rechercher un utilisateur';
       case 'en':
-        return 'Filter by username';
+        return 'search for a user';
       case 'tp': // Toki Pona
         return 'Kule tawa nimi pi użytkama';
       default:

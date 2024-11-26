@@ -184,7 +184,10 @@ class HostHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final validateButtonStyle = TextButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.normal),
+      textStyle: TextStyle(fontWeight: FontWeight.normal,
+      color: this.hostInterfaceManagementService.NextQuestionBtnDisabled
+          ? Colors.white
+          : _themeService.secondaryAccent.value,),
       splashFactory: NoSplash.splashFactory,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       backgroundColor:
@@ -229,7 +232,9 @@ class HostHeader extends StatelessWidget {
                         ? gameText['SHOW_RESULT']
                         : gameText['NEXT_QUESTION'],
                     style: TextStyle(
-                        color: _themeService.secondaryAccent.value, fontSize: 20),
+                        color: this.hostInterfaceManagementService.NextQuestionBtnDisabled
+                            ? Colors.white
+                            : _themeService.secondaryAccent.value, fontSize: 20),
                   ),
                   style: validateButtonStyle,
                 ),

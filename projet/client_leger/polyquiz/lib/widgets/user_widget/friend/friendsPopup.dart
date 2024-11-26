@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 import '../../../services/LanguageService.dart';
 import '../../../services/friendService.dart';
@@ -47,7 +48,7 @@ class _UserIdsRowState extends State<UserIdsRow> {
               });
             },
             decoration: InputDecoration(
-              labelText: ls.filterByUsernameText,
+              labelText: TranslationService.instance.text["USER_SEARCH"]["PLACEHOLDER"],
               border: OutlineInputBorder(),
             ),
           ),
