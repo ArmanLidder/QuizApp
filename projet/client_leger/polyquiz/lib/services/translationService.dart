@@ -35,6 +35,11 @@ class TranslationService extends GetxController {
     return 'fr';
 
   }
+  void set localeLanguageAbbr(String abbr) {
+    final value = getEnumFromAbbreviation(abbr);
+    _currentLanguage = value;
+    languageValue.value = value;
+  }
 
   void set currentLanguageAbbr(String abbr) {
     LanguageService.instance.updateLanguageInFirebaseAbr(abbr);
@@ -43,7 +48,7 @@ class TranslationService extends GetxController {
     languageValue.value = value;
   }
 
-  void set localeLanguageAbbr(String abbr) {
+  void set (String abbr) {
     final value = getEnumFromAbbreviation(abbr);
     _currentLanguage = value;
     languageValue.value = value;

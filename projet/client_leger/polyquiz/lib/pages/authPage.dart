@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/errorMessageTranslator.dart';
+import 'package:polyquiz/services/LanguageService.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/user_service.dart';
@@ -49,7 +50,7 @@ class _AuthPageState extends State<AuthPage> {
       onChanged: (String? newLanguage) {
         if (newLanguage != null) {
           setState(() {
-            translationService.localeLanguageAbbr =
+            TranslationService.instance.localeLanguageAbbr =
                 newLanguage; // Update language in TranslationService
             // Re-fetch text values after changing the language
             _refreshText();

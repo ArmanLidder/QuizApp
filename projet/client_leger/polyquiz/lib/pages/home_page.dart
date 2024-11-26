@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
             this.themeService.mainBackground.value, // Set background color
         appBar: FancyAppBar(
           context: context,
+          canLeaveFromAppBar: true,
         ),
         body: Stack(children: [
           Center(
