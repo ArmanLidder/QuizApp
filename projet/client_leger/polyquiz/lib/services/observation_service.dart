@@ -167,9 +167,9 @@ class ObservationService extends GetxController {
       // this.gameInterfaceManagementService.timerText = this.hostInterfaceManagementService.timerText;
       this.gameInterfaceManagementService.players = playerCGI.players;
       this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
-      this.gameService.obsQreAnswer = playerCGI.qreAnswer;
+      print("Setting QRE value to ${playerCGI.qreAnswer}");
+      Future.delayed(Duration(milliseconds: 125), () {this.gameService.obsQreAnswer = playerCGI.qreAnswer;; print('set the qre value to ${playerCGI.qreAnswer}');});
       this.gameService.obsQrlAnswer = playerCGI.qrlAnswer;
-      // this.gameService.qrlAnswer = playerCGI.qrlAnswer;
       this.gameInterfaceManagementService.getScore();
     });
   }

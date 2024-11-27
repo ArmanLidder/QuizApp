@@ -30,14 +30,24 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   @override
   void initState() {
     super.initState();
+    print("Building QRE Widget");
     if (question != null && question?.interval != null) {
       final max = question!.interval!.max;
       final min = question!.interval!.min;
       final defaultValue = ((max + min) / 2).round();
-      if (this.gameInterfaceManagementService.gameService.isObserverMode) this.gameInterfaceManagementService.gameService.obsQreAnswer = defaultValue;
+
+      bool isObserver = this.gameInterfaceManagementService.gameService.isObserverMode;
+      if (isObserver) this.gameInterfaceManagementService.gameService.silentSetObsQre(defaultValue);
+
       currentValue = defaultValue;
     }
   }
+  //
+  // void setObserverQreValue(int min, int max) {
+  //   int qreValue = this.gameInterfaceManagementService.gameService.obsQreAnswer;
+  //   if (qreValue >= min && qreValue <= max) return;
+  //   this.gameInterfaceManagementService.gameService.obsQreAnswer = ((max+min)/2).round();
+  // }
 
   Quiz.QuizQuestion get defaultQuestion {
     return Quiz.QuizQuestion(
