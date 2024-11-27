@@ -183,17 +183,22 @@ const englishTextValues = {
     "DESCRIPTION": "Description",
     "DURATION": "Duration",
     "DURATION_SUFFIX": "s",
-    "QUESTIONS": "Questions"
+    "QUESTIONS": "Questions",
+    "NO_DOWNLOAD": "No downloaded quiz",
+    "SUCCESSFUL_DOWNLOAD": "Download successful",
+    "ALREADY_DOWNLOADED": "This quiz has already been downloaded",
+    "ERROR": "Error",
+    "SUCCESSFUL_DELETE": "Quiz successfully deleted",
+    "QUIZ_NOT_FOUND": "The quiz doesn't exist"
   },
-  "SETTINGS":{
+  "SETTINGS": {
     "TITLE": 'Settings',
-    "LANGUAGE":"Language",
-    "THEME":"Theme",
-    "dark":"dark",
-    "light":"light",
-    "disco":"disco",
-    "pinkGrey":"pink-grey"
-
+    "LANGUAGE": "Language",
+    "THEME": "Theme",
+    "dark": "dark",
+    "light": "light",
+    "disco": "disco",
+    "pinkGrey": "pink-grey"
   },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Game Creation",

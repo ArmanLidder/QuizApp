@@ -55,8 +55,7 @@ class _QuizListPageState extends State<QuizListPage> {
 
   void showPopup(BuildContext context, String message) {
     final SnackBar snackBar = SnackBar(
-        content: Text(message,
-            style: TextStyle(color: themeService.mainAccent.value)),
+        content: Text(message, style: TextStyle(color: Colors.white)),
         duration: Duration(milliseconds: 1500),
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.all(16.0));

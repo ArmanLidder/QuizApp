@@ -150,7 +150,7 @@ const frenchTextValues = {
     "THEMES": "Thèmes",
     "NO_THEMES": "Aucun thème disponible pour le moment.",
     "IMAGES": "Images",
-    "REWARDS":"Récompenses",
+    "REWARDS": "Récompenses",
     "NO_IMAGES": "Aucune image disponible pour le moment.",
     "OWNED": "Déjà possédé",
     "NOT_ENOUGH_FUNDS": "Pas assez de fonds",
@@ -185,17 +185,22 @@ const frenchTextValues = {
     "DESCRIPTION": "Description",
     "DURATION": "Durée",
     "DURATION_SUFFIX": "s",
-    "QUESTIONS": "Questions"
+    "QUESTIONS": "Questions",
+    "NO_DOWNLOAD": "Aucun quiz téléchargé",
+    "SUCCESSFUL_DOWNLOAD": "Téléchargement réussi",
+    "ALREADY_DOWNLOADED": "Le quiz a déjà été téléchargé",
+    "ERROR": "Erreur",
+    "SUCCESSFUL_DELETE": "Quiz supprimé avec succès",
+    "QUIZ_NOT_FOUND": "Le quiz n'existe pas"
   },
-  "SETTINGS":{
+  "SETTINGS": {
     "TITLE": 'Paramètres',
-    "LANGUAGE":"Langue",
-    "THEME":"Thème",
-    "dark":"sombre",
-    "light":"éclairé",
-    "disco":"disco",
-    "pinkGrey":"rose-gris"
-
+    "LANGUAGE": "Langue",
+    "THEME": "Thème",
+    "dark": "sombre",
+    "light": "éclairé",
+    "disco": "disco",
+    "pinkGrey": "rose-gris"
   },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Création du jeu",

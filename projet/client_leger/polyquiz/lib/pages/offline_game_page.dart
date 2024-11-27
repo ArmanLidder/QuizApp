@@ -4,6 +4,7 @@ import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_notice.dart';
 import 'package:polyquiz/widgets/game_widgets/player_widgets/player_qcm_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_info_widget.dart';
@@ -21,6 +22,9 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
       GameInterfaceManagementService();
   GlobalNavigationService _globalNavigationService = GlobalNavigationService();
   GameService _gameService = GameService();
+  Map get text => TranslationService.instance.text;
+  Map get gameText => text['GAME_INTERFACE'];
+  Map get btnText => text['BUTTON'];
 
   bool noticeReceived = false;
   String message = "Attendez pendant que l'hôte corrige les réponses...";
@@ -35,7 +39,7 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
       setState(() {
         currentTime--;
         if (currentTime == 0 && isFinalTransition) {
-          _globalNavigationService.navigateTo('/auth');
+          _globalNavigationService.navigateTo('/offline');
         } else if (currentTime == 0 && !isTimerTransition) {
           gameInterfaceManagementService.gameService.sendAnswer();
           this.isLastQuestion = !_gameService.offlineGameService.next();
@@ -155,7 +159,7 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                       decoration:
                                           BoxDecoration(border: Border.all()),
                                       child: Text(
-                                        'Pointage: ${gameInterfaceManagementService.gameService.offlineGameService.playerScore}',
+                                        '${gameText['CURRENT_POINTS']}: ${gameInterfaceManagementService.gameService.offlineGameService.playerScore}',
                                         style: TextStyle(fontSize: 20),
                                       ),
                                     ),
@@ -235,7 +239,7 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                               }
                                             },
                                       child: Text(
-                                        'Confirmer',
+                                        text['CONFIRMATION_DIALOG']['CONFIRM'],
                                         style: TextStyle(
                                             color: Color.fromRGBO(
                                                 255, 255, 255, 1),
@@ -256,10 +260,10 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                   TextButton(
                                     onPressed: () {
                                       _globalNavigationService
-                                          .navigateTo('/auth');
+                                          .navigateTo('/offline');
                                     },
                                     child: Text(
-                                      'Quitter',
+                                      btnText['QUIT'],
                                       style: TextStyle(
                                           color:
                                               Color.fromRGBO(255, 255, 255, 1),
