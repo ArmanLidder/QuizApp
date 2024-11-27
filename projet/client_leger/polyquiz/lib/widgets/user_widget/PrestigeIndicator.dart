@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/LanguageService.dart';
 import '../../services/theme_service.dart';
 
 
 String prestigeText(int prestige){
-  final LanguageService ls = LanguageService.instance;
-  String prestigeText = '🚫 ' + ls.medalLevels[0]; // Default text
+  Map trs = TranslationService.instance.text["PROFILE"];
+  String prestigeText = '🚫 ' + trs["NONE"]!; // Default text
   if (prestige! >= 200) {
-    prestigeText = '🏅 ' + ls.medalLevels[4];
+    prestigeText = '🏅 ' + trs["PLATINUM"]!;
   } else if (prestige! >= 150) {
-    prestigeText = '🥇 ' + ls.medalLevels[3];
+    prestigeText = '🥇 ' + trs["GOLD"]!;
   } else if (prestige! >= 100) {
-    prestigeText = '🥈 ' + ls.medalLevels[2];
+    prestigeText = '🥈 ' + trs["SILVER"]!;
   } else if (prestige! >= 50) {
-    prestigeText = '🥉 ' + ls.medalLevels[1];
+    prestigeText = '🥉 ' + trs["BRONZE"]!;
   }
   return prestigeText;
 }
