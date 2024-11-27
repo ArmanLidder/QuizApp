@@ -58,6 +58,8 @@ class OtherUserPresentation extends StatelessWidget {
         final avgTimePerGame = data['avgTimePerGame'];
         final achievements = data['achievements'];
 
+
+
         // Build the UI using the fetched data
         return AlertDialog(
             contentPadding: EdgeInsets.zero,
@@ -96,11 +98,11 @@ class OtherUserPresentation extends StatelessWidget {
                                               _themeService.mainAccent.value)),
 
 
-                                  Text('Prestige: ${prestigeText(prestige)} ',
+                                  Text(statisticText["PRESTIGE"]+ ": " + prestigeText(prestige),
                                       style: TextStyle(
                                           color:
                                               _themeService.mainAccent.value)),
-                                  Text('Currency: $currency',
+                                  Text(statisticText["CURRENCY"]+ ": " + currency.toString(),
                                       style: TextStyle(
                                           color:
                                               _themeService.mainAccent.value)),
