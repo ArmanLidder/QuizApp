@@ -54,12 +54,15 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   @override
   Widget build(BuildContext context) {
     print("Rebuilding button ${widget.index}");
-    if (this.gameInterfaceManagementService.gameService.answers.containsKey(widget.index)) {
-      textBtnColor = Color.fromRGBO(53, 121, 246, 1);
-      print('Button ${widget.index} is TRUE');
-    } else {
-      textBtnColor = Color.fromRGBO(0, 0, 0, 0);
-      print('Button ${widget.index} is FALSE');
+    if (this.gameInterfaceManagementService.gameService.isObserverMode) {
+      if (this.gameInterfaceManagementService.gameService.answers.containsKey(
+          widget.index)) {
+        textBtnColor = Color.fromRGBO(53, 121, 246, 1);
+        print('Button ${widget.index} is TRUE');
+      } else {
+        textBtnColor = Color.fromRGBO(0, 0, 0, 0);
+        print('Button ${widget.index} is FALSE');
+      }
     }
     print('after rebuilding buttonn, answers are ${this.gameInterfaceManagementService.gameService.answers}');
     if (gameInterfaceManagementService.getQcmEnabled()) {
