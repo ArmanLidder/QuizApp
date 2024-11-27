@@ -74,7 +74,7 @@ class ObservationService extends GetxController {
     this.gameService.isObservingHost = this.isHost;
     this.gameService.observedUid = newUid;
     this.gameService.realGameService.username = this.isHost ? 'host' : newUid;
-    if (this.gameService.isObserverMode) this.gameService.obsQrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
+    if (this.gameService.isObserverMode) this.gameService.qrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
     this.socketService.sendMessage(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
     if (this.isHost) this.socketService.sendMessage(SocketEvent.NEW_OBSERVER_GAME, {
       'roomId': this.gameConfigs?.room,
@@ -155,6 +155,7 @@ class ObservationService extends GetxController {
   }
 
   void unpackStats(TransportStatsFormat stats) {
+    print("tried to unpack stats");
     // TODO
   }
 
