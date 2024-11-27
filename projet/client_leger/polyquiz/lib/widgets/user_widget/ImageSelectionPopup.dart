@@ -22,7 +22,7 @@ class ImageSelectionPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: ts.mainBackground.value, // Set the background color of the dialog to blue
-      title: Text(avatarText['CHOOSE_AVATAR']),
+      title: Text(avatarText['CHOOSE_AVATAR'], style:TextStyle(color: ThemeService.instance.mainAccent.value)),
       content: SizedBox(
         width: double.maxFinite,
         height: 300,
