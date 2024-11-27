@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/constants/themesNamesToColorArray.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'BuyButton.dart';
 
 class ThemeItem extends StatelessWidget {
@@ -40,7 +41,7 @@ class ThemeItem extends StatelessWidget {
           SizedBox(height: 8),
           // Item name in white
           Text(
-            name,
+            TranslationService.instance.text["SETTINGS"][name],
             style: TextStyle(color: _themeService.mainAccent.value),
           ),
           SizedBox(height: 8),
@@ -203,7 +204,7 @@ class RewardThemeItem extends StatelessWidget {
           SizedBox(height: 8),
           // Item name in white
           Text(
-            name,
+            TranslationService.instance.text["SETTINGS"][name],
             style: TextStyle(color: _themeService.mainAccent.value),
           ),
           SizedBox(height: 8),

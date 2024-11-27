@@ -194,7 +194,7 @@ const frenchTextValues = {
     "dark":"sombre",
     "light":"éclairé",
     "disco":"disco",
-    "pinkGrey":"bleu-rose"
+    "pinkGrey":"rose-gris"
 
   },
   "QUIZ_CREATION": {
