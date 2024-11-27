@@ -8,6 +8,8 @@ import '../../services/user_service.dart';
 import 'AchievmentColumn.dart';
 import 'package:polyquiz/widgets/user_widget/friend/smartFriendIcon.dart';
 
+import 'PrestigeIndicator.dart';
+
 class OtherUserPresentation extends StatelessWidget {
   final String userId;
   final UserService userService = UserService.instance;
@@ -92,7 +94,9 @@ class OtherUserPresentation extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           color:
                                               _themeService.mainAccent.value)),
-                                  Text('Prestige: $prestige',
+
+
+                                  Text('Prestige: ${prestigeText(prestige)} ',
                                       style: TextStyle(
                                           color:
                                               _themeService.mainAccent.value)),

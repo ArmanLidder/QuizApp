@@ -5,6 +5,8 @@ import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/widgets/user_widget/friend/appBarFriendIcon.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 
+import '../services/translationService.dart';
+
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool canLeaveFromAppBar;
   final BuildContext context;
@@ -22,6 +24,8 @@ class _FancyAppBarState extends State<FancyAppBar> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   late String imageUrl; // Use late keyword to initialize later
   final ThemeService themeService = ThemeService.instance;
+  Map get MenuText => TranslationService.instance.text["AVATAR_CLICK_MENU"];
+
   @override
   void initState() {
     super.initState();
@@ -89,13 +93,14 @@ class _FancyAppBarState extends State<FancyAppBar> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: PopupMenuButton<int>(
+              color:themeService.container.value,
               onSelected: (value) {},
               itemBuilder: (context) => widget.canLeaveFromAppBar ? [
                 PopupMenuItem(
                   value: 1,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Icon(Icons.person), Text(" Profil"), Spacer()],
+                    children: [Icon(Icons.person,color:themeService.mainAccent.value), Text(" Profil", style:TextStyle(color: themeService.mainAccent.value)), Spacer()],
                   ),
                   onTap: () {
                     Navigator.pushReplacementNamed(widget.context, '/user');
@@ -106,8 +111,8 @@ class _FancyAppBarState extends State<FancyAppBar> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.logout),
-                      Text("Déconnection"),
+                      Icon(Icons.logout, color: themeService.mainAccent.value,),
+                      Text(MenuText["PROFILE"], style:TextStyle(color: themeService.mainAccent.value)),
                       Spacer()
                     ],
                   ),

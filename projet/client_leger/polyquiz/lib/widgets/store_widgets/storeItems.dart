@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/constants/themesNamesToColorArray.dart';
 import 'package:polyquiz/services/translationService.dart';
@@ -10,7 +11,6 @@ class ThemeItem extends StatelessWidget {
   final num cost;
   final Future<void> Function() onBuy;
   final ThemeService _themeService = ThemeService.instance;
-
   ThemeItem.ThemeStoreItem({
     Key? key,
     required this.itemId,

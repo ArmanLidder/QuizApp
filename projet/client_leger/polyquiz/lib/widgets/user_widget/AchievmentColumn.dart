@@ -46,9 +46,7 @@ class AchievementBox extends StatelessWidget {
       width: double.infinity, // Take up as much width as possible
       padding: const EdgeInsets.all(8.0), // Padding inside the box
       decoration: BoxDecoration(
-        color: this.isDone
-            ? Color.fromARGB(255, 250, 249, 174)
-            : _themeService.container.value,
+        color:  _themeService.container.value,
         borderRadius: BorderRadius.circular(12), // Rounded corners
         border: Border.all(color: Colors.grey[400]!), // Optional border color
       ),
@@ -60,7 +58,7 @@ class AchievementBox extends StatelessWidget {
           Icon(
             Icons.star_border,
             size: 48,
-            color: _themeService.container.value,
+            color: _themeService.mainAccent.value,
           ): Text('🏆', style: TextStyle(fontSize: 24),),
           SizedBox(width: 12), // Space between icon and text
           Expanded(
@@ -69,9 +67,7 @@ class AchievementBox extends StatelessWidget {
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: this.isDone
-                      ? Colors.brown
-                      : _themeService.mainAccent.value),
+                  color:  _themeService.mainAccent.value),
               overflow:
                   TextOverflow.ellipsis, // Text will be truncated if too long
             ),

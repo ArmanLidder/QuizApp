@@ -20,7 +20,7 @@ const Map <Theme,String> themeEnumToName={
   Theme.dark: "dark",
  Theme.light: "light",
   Theme.disco: 'disco',
-  Theme.blueGrey: "pinkGrey",
+  Theme.pinkGrey: "pinkGrey",
 };
 
 
@@ -104,7 +104,6 @@ class LoggedInUserService extends GetxController {
       LanguageService.instance.loadLanguage();
       Theme? l = this.user?.settings.theme!;
       String themeName = themeEnumToName[l]!;
-      print("choucroute");
       ThemeService.instance.setTheme(themeName);
       StoreService.instance.setup();
       UserPageCustomisationService.instance.subscribeToStoreAccount();
