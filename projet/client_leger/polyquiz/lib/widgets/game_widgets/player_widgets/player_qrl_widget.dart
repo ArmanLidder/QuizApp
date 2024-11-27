@@ -94,6 +94,7 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
 
   Widget getRegularTextfield() {
     return TextField(
+      enabled: _gameInterfaceManagementService.gameService.realGameService.isValidateActive,
       style: TextStyle(color: _themeService.mainAccent.value),
       decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(

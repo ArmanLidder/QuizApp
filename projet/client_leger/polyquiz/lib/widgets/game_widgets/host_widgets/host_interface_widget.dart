@@ -172,12 +172,15 @@ class HostHeader extends StatelessWidget {
     if (currentQuestion == null ||
         this.gameService.realGameService.question?.type != QuestionType.QRE)
       return null;
-    return Text(
+    return Padding(
+      padding: const EdgeInsets.only(top: 5.0),
+      child: Text(
       "✅ : ${currentQuestion.answer} ± ${currentQuestion.margin}",
       style: TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 16,
-          color: _themeService.mainAccent.value),
+        fontWeight: FontWeight.normal,
+        fontSize: 16,
+        color: _themeService.mainAccent.value),
+      ),
     );
   }
 
