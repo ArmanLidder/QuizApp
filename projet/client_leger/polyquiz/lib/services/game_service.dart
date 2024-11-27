@@ -46,7 +46,12 @@ class GameService extends ChangeNotifier {
     else this.realGameService.obsAnswers = value;
   }
 
-  int obsQreAnswer = 0;
+  int _obsQreAnswer = 0;
+  int get obsQreAnswer => this._obsQreAnswer;
+  void set obsQreAnswer(int value) {
+    this._obsQreAnswer = value;
+    notifyListeners();
+  }
   String get obsQrlAnswer => this.realGameService.obsQrlAnswer;
   void set obsQrlAnswer(String value) {
     this.realGameService.obsQrlAnswer = value;

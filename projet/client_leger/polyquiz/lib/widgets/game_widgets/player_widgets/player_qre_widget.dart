@@ -33,8 +33,9 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     if (question != null && question?.interval != null) {
       final max = question!.interval!.max;
       final min = question!.interval!.min;
-      if (this.gameInterfaceManagementService.gameService.isObserverMode) this.gameInterfaceManagementService.gameService.obsQreAnswer = min.toInt();
-      currentValue = ((max + min) / 2).round();
+      final defaultValue = ((max + min) / 2).round();
+      if (this.gameInterfaceManagementService.gameService.isObserverMode) this.gameInterfaceManagementService.gameService.obsQreAnswer = defaultValue;
+      currentValue = defaultValue;
     }
   }
 
