@@ -29,8 +29,8 @@ class PlayerNotice extends StatelessWidget {
                     child: Text(
                       TranslationService.instance.languageValue.value ==
                               Language.fr
-                          ? 'Vous avez recu ${gameInterfaceManagementService?.gameService.lastQrlScore} points'
-                          : "You've received ${gameInterfaceManagementService?.gameService.lastQrlScore} points",
+                          ? 'Vous avez recu ${gameInterfaceManagementService?.gameService.lastQrlScore} %'
+                          : "You've received ${gameInterfaceManagementService?.gameService.lastQrlScore} %",
                       style: TextStyle(
                           fontSize: 16, color: _themeService.mainAccent.value),
                     ),

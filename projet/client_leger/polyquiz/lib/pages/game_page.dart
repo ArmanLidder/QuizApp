@@ -206,7 +206,10 @@ class _MyWidgetState extends State<GamePage> {
                                                       .gameService.timer,
                                             ),
                                           ),
-                                          QuestionInfoWidget(
+                                          Positioned.fill(
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: QuestionInfoWidget(
                                               questionNum:
                                                   _gameInterfaceManagementService
                                                       .gameService
@@ -221,6 +224,8 @@ class _MyWidgetState extends State<GamePage> {
                                                       .gameService
                                                       .question!
                                                       .text),
+                                            ),
+                                          ),
                                           Expanded(
                                             child: Container(
                                               alignment: Alignment.center,

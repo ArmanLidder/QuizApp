@@ -265,13 +265,14 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        SmartAvatar(
-                                          userId:
-                                              waitingRoomService.players[index],
-                                          size: 60,
-                                          hasName: true,
-                                          interactible: true,
-                                        ),
+                                        SmartAvatarWrapper(userId: waitingRoomService.players[index]),
+                                        // SmartAvatar(
+                                        //   userId:
+                                        //       waitingRoomService.players[index],
+                                        //   size: 60,
+                                        //   hasName: true,
+                                        //   interactible: true,
+                                        // ),
                                         if (widget.isHost)
                                           IconButton(
                                             icon: Icon(
@@ -367,14 +368,17 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                                             i++)
                                           Column(
                                             children: [
-                                              SmartAvatar(
-                                                userId: waitingRoomService
+                                              SmartAvatarWrapper(userId: waitingRoomService
                                                     .teamsForInterface[index]
-                                                    .userIds[i],
-                                                size: 60,
-                                                hasName: true,
-                                                interactible: true,
-                                              ),
+                                                    .userIds[i],),
+                                              // SmartAvatar(
+                                              //   userId: waitingRoomService
+                                              //       .teamsForInterface[index]
+                                              //       .userIds[i],
+                                              //   size: 60,
+                                              //   hasName: true,
+                                              //   interactible: true,
+                                              // ),
                                               if (widget.isHost)
                                                 IconButton(
                                                   icon: Icon(
@@ -481,6 +485,25 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         ),
         Positioned(bottom: 20, left: 20, child: ChatPopup())
       ]),
+    );
+  }
+}
+
+class SmartAvatarWrapper extends StatelessWidget {
+  final String userId;
+
+  const SmartAvatarWrapper({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SmartAvatar(
+      userId: userId,
+      hasName: true,
+      interactible: true,
+      applyTheme: false,
     );
   }
 }

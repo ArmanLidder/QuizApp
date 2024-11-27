@@ -75,56 +75,73 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
       padding: EdgeInsets.all(30.0), // to center the text
       child: Column(
         children: [
-          Text(
-            'Q${widget.questionNum}',
-            style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: themeService.mainAccent.value),
-          ),
-          Text('${widget.questionPts} pts',
-              style: TextStyle(
-                  fontSize: 16, color: themeService.mainAccent.value)),
-          Text(
-            '${widget.questionText}',
-            style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: themeService.mainAccent.value),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
+            Padding(
+            padding: const EdgeInsets.only(left: 70.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                child: Column(
+                  children: [
+                  Text(
+                    'Q${widget.questionNum}',
+                    style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: themeService.mainAccent.value),
+                  ),
+                  Text(
+                    '${widget.questionPts} pts',
+                    style: TextStyle(
+                    fontSize: 16,
+                    color: themeService.mainAccent.value),
+                  ),
+                  ],
+                ),
+                ),
+              Text(
+                '${widget.questionText}',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: themeService.mainAccent.value),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                IconButton(
                   color: themeService.mainAccent.value,
                   onPressed: () {
                     setState(() {
-                      if (ttsStateIcon == ttsDisabledIcon) {
-                        ttsStateIcon = ttsEnabledIcon;
-                        _ttsService.isTtsEnabled = true;
-                        _ttsService.speak(widget.questionText);
-                      } else {
-                        ttsStateIcon = ttsDisabledIcon;
-                        _ttsService.stop();
-                        _ttsService.isTtsEnabled = false;
-                      }
+                    if (ttsStateIcon == ttsDisabledIcon) {
+                      ttsStateIcon = ttsEnabledIcon;
+                      _ttsService.isTtsEnabled = true;
+                      _ttsService.speak(widget.questionText);
+                    } else {
+                      ttsStateIcon = ttsDisabledIcon;
+                      _ttsService.stop();
+                      _ttsService.isTtsEnabled = false;
+                    }
                     });
                   },
                   icon: Icon(ttsStateIcon)),
-              IconButton(
+                IconButton(
                   color: themeService.mainAccent.value,
                   onPressed: () {
                     _ttsService.speak(_currentQuestionText);
                   },
                   icon: Icon(Icons.replay)),
-              IconButton(
+                IconButton(
                   color: themeService.mainAccent.value,
                   onPressed: () {
                     _ttsService.stop();
                   },
                   icon: Icon(Icons.stop)),
-            ],
-          )
+                ],
+              )
+              ],
+            ),
+            )
         ],
       ),
     );

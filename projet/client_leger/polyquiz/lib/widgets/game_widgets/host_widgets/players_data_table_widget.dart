@@ -221,14 +221,13 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
                             decorationThickness: 2);
                       }
                       List<DataCell> cells = [
-                        DataCell(Center(
-                          child: SmartAvatar(
-                            userId: player.username,
-                            hasName: true,
-                            interactible: true,
-                            applyTheme: false,
+                        DataCell(
+                          Center(
+                            child: RepaintBoundary(
+                              child: SmartAvatarWrapper(userId: player.username,),
+                            ),
                           ),
-                        )),
+                        ),
                         DataCell(Center(
                           child: Text(player.score.toString(),
                               style: playerTextStyle),
@@ -254,6 +253,26 @@ class _PlayersDataTableState extends State<PlayersDataTable> {
     );
   }
 }
+
+class SmartAvatarWrapper extends StatelessWidget {
+  final String userId;
+
+  const SmartAvatarWrapper({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SmartAvatar(
+      userId: userId,
+      hasName: true,
+      interactible: true,
+      applyTheme: false,
+    );
+  }
+}
+
 
 // class Player {
 //   final String username;
