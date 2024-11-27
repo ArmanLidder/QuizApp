@@ -24,7 +24,7 @@ class ThemeItem extends StatelessWidget {
       margin: EdgeInsets.all(3),
       padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
-          color: _themeService.container.value,
+          color: _themeService.secondaryBackground.value,
           borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
@@ -80,7 +80,7 @@ class ImageItem extends StatelessWidget {
       margin: EdgeInsets.all(3),
       padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
-          color: _themeService.container.value,
+          color: _themeService.secondaryBackground.value,
           borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
@@ -134,7 +134,7 @@ class RewardImageItem extends StatelessWidget {
       margin: EdgeInsets.all(3),
       padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
-          color: _themeService.container.value,
+          color: _themeService.secondaryBackground.value,
           borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
@@ -187,7 +187,7 @@ class RewardThemeItem extends StatelessWidget {
       margin: EdgeInsets.all(3),
       padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
-          color: _themeService.container.value,
+          color: _themeService.secondaryBackground.value,
           borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
@@ -241,7 +241,7 @@ class RewardCashItem extends StatelessWidget {
       margin: EdgeInsets.all(3),
       padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
-          color: _themeService.container.value,
+          color: _themeService.secondaryBackground.value,
           borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [

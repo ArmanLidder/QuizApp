@@ -87,16 +87,17 @@ class ImageStoreList extends StatelessWidget {
 }
 
 class RewardImageStoreList extends StatelessWidget {
-  final List<Map<String, dynamic>> rewardItems;
+  final List<Map<String, dynamic>> rewardImages;
+  final List<Map<String, dynamic>> rewardThemes;
   final String userId;
   final StoreService storeService = Get.find();
 
-  RewardImageStoreList({required this.rewardItems, required this.userId});
+  RewardImageStoreList.RewardStoreList({ required this.rewardImages,required this.rewardThemes, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     List<Widget> items = [];
-    rewardItems.forEach((item) {
+    rewardImages.forEach((item) {
       Widget widget = RewardImageItem(
         itemId: item["id"],
         name: item["name"],
@@ -104,6 +105,19 @@ class RewardImageStoreList extends StatelessWidget {
         source: item["source"], // New field for image source
         minLevel: item["minLevel"],
         onBuy: () async => {await storeService.buy( item["id"])},
+      );
+      items.add(widget);
+      items.add(SizedBox(
+        width: 5,
+      ));
+    });
+    rewardThemes.forEach((item) {
+      Widget widget = RewardThemeItem(
+        itemId: item["id"],
+        name: item["name"],
+        cost: item["cost"],
+        achievement: item["achievement"],
+        onBuy: () async => {await storeService.buy(item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
@@ -119,16 +133,16 @@ class RewardImageStoreList extends StatelessWidget {
 }
 
 class RewardThemeStoreList extends StatelessWidget {
-  final List<Map<String, dynamic>> rewardItems;
+  final List<Map<String, dynamic>> rewardThemes;
   final String userId;
   final StoreService storeService = Get.find();
 
-  RewardThemeStoreList({required this.rewardItems, required this.userId});
+  RewardThemeStoreList({required this.rewardThemes, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     List<Widget> items = [];
-    rewardItems.forEach((item) {
+    rewardThemes.forEach((item) {
       Widget widget = RewardThemeItem(
         itemId: item["id"],
         name: item["name"],

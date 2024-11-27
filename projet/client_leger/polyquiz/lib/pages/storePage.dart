@@ -99,12 +99,10 @@ class _StorepageState extends State<Storepage> {
                                 fontSize: 18,
                                   color: _themeService.mainAccent.value),
                             ),),
-                            RewardImageStoreList(
-                                rewardItems: storeItems!['rewardImages']!,
-                                userId: this.uid),
-                            SizedBox(height: 20),
-                            RewardThemeStoreList(
-                                rewardItems: storeItems!['rewardThemes']!,
+                            RewardImageStoreList.RewardStoreList(
+                                rewardImages: storeItems!['rewardImages']!,
+                                rewardThemes: storeItems!['rewardThemes']!,
+
                                 userId: this.uid),
                             SizedBox(height: 20),
                         Center(child:
