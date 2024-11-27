@@ -215,7 +215,7 @@ class UserSettings {
     if (themeValue == 'light') theme = Theme.light;
     else if (themeValue == 'dark') theme = Theme.dark;
     else if (themeValue == 'disco') theme = Theme.disco;
-    else if (themeValue == 'blueGrey') theme = Theme.blueGrey;
+    else if (themeValue == 'bluePink') theme = Theme.blueGrey;
     else theme = Theme.light;
 
     String languageValue = json['language'];

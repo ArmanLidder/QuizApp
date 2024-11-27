@@ -40,16 +40,19 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(nameText['TITLE']),
-      content: TextField(
-        controller: _nameController,
-        decoration: InputDecoration(
-          labelText: nameText['NEW_USERNAME'],
-          errorText: !_isValidUsername ? nameText[_userNameDiagnosis] : null,
-          border: OutlineInputBorder(),
+      content: SizedBox(
+        width: 300,
+        child:TextField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            labelText: nameText['NEW_USERNAME'],
+            errorText: !_isValidUsername ? nameText[_userNameDiagnosis] : null,
+            border: OutlineInputBorder(),
+          ),
+          onChanged: (e) {
+            _validateUsername(e);
+          },
         ),
-        onChanged: (e) {
-          _validateUsername(e);
-        },
       ),
       actions: [
         TextButton(

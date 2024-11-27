@@ -150,6 +150,7 @@ const frenchTextValues = {
     "THEMES": "Thèmes",
     "NO_THEMES": "Aucun thème disponible pour le moment.",
     "IMAGES": "Images",
+    "REWARDS":"Récompenses",
     "NO_IMAGES": "Aucune image disponible pour le moment.",
     "OWNED": "Déjà possédé",
     "NOT_ENOUGH_FUNDS": "Pas assez de fonds",
@@ -193,7 +194,7 @@ const frenchTextValues = {
     "dark":"sombre",
     "light":"éclairé",
     "disco":"disco",
-    "pinkGrey":"bleu-gris"
+    "pinkGrey":"bleu-rose"
 
   },
   "QUIZ_CREATION": {

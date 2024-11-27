@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import '../../services/LanguageService.dart';
 
 class AchievementColumn extends StatelessWidget {
   final List<num> completedAchievements;
+  final TranslationService trs = TranslationService.instance;
+  List<String> get achievementText => trs.text["PROFILE"]["ALL_ACHIEVEMENTS"];
+  List<String> get statisticText => trs.text["PROFILE"];
+
   final LanguageService ls = LanguageService.instance;
 
   AchievementColumn({required this.completedAchievements});
@@ -16,7 +21,7 @@ class AchievementColumn extends StatelessWidget {
         return Column(children: [
           AchievementBox(
             label:
-                ls.achievementsList[index], // Use the index number as the title
+              achievementText[index], // Use the index number as the title
             isDone: isCompleted,
           ),
           SizedBox(

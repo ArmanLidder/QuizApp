@@ -148,6 +148,7 @@ const englishTextValues = {
     "THEMES": "Themes",
     "NO_THEMES": "No themes available at the moment.",
     "IMAGES": "Images",
+    "REWARDS": "Rewards",
     "NO_IMAGES": "No images available at the moment.",
     "OWNED": "Already owned",
     "NOT_ENOUGH_FUNDS": "Not enough funds",

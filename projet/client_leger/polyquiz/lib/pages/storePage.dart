@@ -94,10 +94,7 @@ class _StorepageState extends State<Storepage> {
                             SizedBox(height: 20),
                         Center(child:
                         Text(
-                              TranslationService.instance.languageValue.value ==
-                                  Language.fr
-                                  ? "Récompenses: "
-                                  : "Prizes: ",
+                              TranslationService.instance.text["SHOPPING"]["REWARDS"],
                               style: TextStyle(
                                 fontSize: 18,
                                   color: _themeService.mainAccent.value),

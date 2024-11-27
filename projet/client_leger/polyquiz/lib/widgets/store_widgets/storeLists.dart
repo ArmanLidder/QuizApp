@@ -110,6 +110,7 @@ class RewardImageStoreList extends StatelessWidget {
         width: 5,
       ));
     });
+
     return Wrap(
       alignment: WrapAlignment.start,
       children: items,

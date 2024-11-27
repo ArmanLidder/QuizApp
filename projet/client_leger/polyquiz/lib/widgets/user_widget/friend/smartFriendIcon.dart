@@ -25,6 +25,9 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   void initState() {
     super.initState();
     _checkStatus();
+    LoggedInUserService.instance.friendRequests.listen((_) {
+      _checkStatus();
+    });
   }
 
   Future<void> _checkStatus() async {
@@ -39,6 +42,7 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
 
   Future<void> _handleIconPressed() async {
     if (_status == 'friends') {
+      if (!widget.canRemoveFriend){return;}
       if (widget.canRemoveFriend){
       await widget.friendService.deleteFriendship(
         currentUserId!,
@@ -59,7 +63,8 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+
     IconData iconData;
     Color iconColor;
     switch (_status) {
@@ -80,8 +85,8 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
         iconColor = Colors.black;
         break;
       case 'receivedPending':
-        iconData = Icons.person_add;
-        iconColor = Colors.green;
+        iconData = Icons.group;
+        iconColor = Colors.black;
         break;
       case 'notFriends':
         iconData = Icons.person_add;

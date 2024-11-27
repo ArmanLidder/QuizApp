@@ -32,7 +32,7 @@ class Userpage extends StatelessWidget {
       Language uselessShit = transService.languageValue.value;
       return MaterialApp(
         home: Scaffold(
-          backgroundColor: themeService.mixedMain,
+          backgroundColor: themeService.mainBackground.value,
           appBar: FancyAppBar(
             context: context,
             canLeaveFromAppBar: true,

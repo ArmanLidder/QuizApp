@@ -1,3 +1,6 @@
+import 'dart:ui';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
@@ -22,7 +25,7 @@ class StarCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: this.isDone
             ? Color.fromARGB(255, 250, 249, 174)
-            : Colors.white,
+            : Color(0xFFF3F4F6),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
