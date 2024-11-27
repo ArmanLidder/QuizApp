@@ -100,7 +100,8 @@ class _FancyAppBarState extends State<FancyAppBar> {
                   value: 1,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Icon(Icons.person,color:themeService.mainAccent.value), Text(" Profil", style:TextStyle(color: themeService.mainAccent.value)), Spacer()],
+                    children: [Icon(Icons.person,color:themeService.mainAccent.value),
+                      Text(MenuText["PROFIL"], style:TextStyle(color: themeService.mainAccent.value)), Spacer()],
                   ),
                   onTap: () {
                     Navigator.pushReplacementNamed(widget.context, '/user');
@@ -112,7 +113,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Icon(Icons.logout, color: themeService.mainAccent.value,),
-                      Text(MenuText["PROFILE"], style:TextStyle(color: themeService.mainAccent.value)),
+                      Text(MenuText["DISCONNECT"], style:TextStyle(color: themeService.mainAccent.value)),
                       Spacer()
                     ],
                   ),
