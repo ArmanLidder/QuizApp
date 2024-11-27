@@ -1,3 +1,6 @@
+import 'dart:ui';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
@@ -22,17 +25,18 @@ class StarCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: this.isDone
             ? Color.fromARGB(255, 250, 249, 174)
-            : _themeService.container.value,
+            : Color(0xFFF3F4F6),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          !isDone ?
           Icon(
-            isDone ? Icons.star : Icons.star_border,
+            Icons.star_border,
             size: 48,
-            color: isDone ? Color(0xFFFCDB03) : _themeService.mainAccent.value,
-          ),
+            color: isDone ? Color(0xFFFCDB03) : Colors.black,
+          ): Text('🏆', style: TextStyle(fontSize: 24),),
           SizedBox(height: 8),
           Flexible(
             child: Text(
@@ -42,7 +46,7 @@ class StarCard extends StatelessWidget {
                   fontSize: 12,
                   color: this.isDone
                       ? Colors.brown
-                      : _themeService.mainAccent.value),
+                      : Colors.black),
               overflow: TextOverflow.visible,
               maxLines: 3,
             ),

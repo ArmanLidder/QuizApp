@@ -51,7 +51,7 @@ class _StorepageState extends State<Storepage> {
             backgroundColor: _themeService.mainBackground.value,
             appBar: FancyAppBar(
               context: context,
-              hasBackButton: true,
+              canLeaveFromAppBar: true,
             ),
             body: storeItems == null
                 ? Center(
@@ -59,17 +59,20 @@ class _StorepageState extends State<Storepage> {
                         CircularProgressIndicator()) // Show loading indicator while fetching
                 : Stack(children: [
                     SingleChildScrollView(
-                      child: Center(
+                      child:Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 60.0), // Add 20px padding on both sides
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start, // Align the Column content to the left                          children: [
                           children: [
                             MoneyCounter(),
-                            Text(
+                            Center(child:Text(
                               shopText['THEMES'],
                               style: TextStyle(
+                                  fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),
+                            ),),
                             Wrap(
+                              alignment: WrapAlignment.start,
                               spacing: 8.0, // Space between items horizontally
                               runSpacing: 8.0, // Space between items vertically
                               children: [
@@ -79,45 +82,48 @@ class _StorepageState extends State<Storepage> {
                               ],
                             ),
                             SizedBox(height: 20),
+                            Center(child:
                             Text(shopText['IMAGES'],
-                                style: TextStyle(
-                                    color: _themeService.mainAccent.value)),
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: _themeService.mainAccent.value),
+                            ),),
                             ImageStoreList(
                                 themes: storeItems!['images']!,
                                 userId: this.uid),
                             SizedBox(height: 20),
-                            Text(
-                              TranslationService.instance.languageValue.value ==
-                                      Language.fr
-                                  ? "Récompenses: "
-                                  : "Prizes: ",
+                        Center(child:
+                        Text(
+                              TranslationService.instance.text["SHOPPING"]["REWARDS"],
                               style: TextStyle(
+                                fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),
-                            RewardImageStoreList(
-                                rewardItems: storeItems!['rewardImages']!,
+                            ),),
+                            RewardImageStoreList.RewardStoreList(
+                                rewardImages: storeItems!['rewardImages']!,
+                                rewardThemes: storeItems!['rewardThemes']!,
+
                                 userId: this.uid),
                             SizedBox(height: 20),
-                            RewardThemeStoreList(
-                                rewardItems: storeItems!['rewardThemes']!,
-                                userId: this.uid),
-                            SizedBox(height: 20),
-                            Text(
+                        Center(child:
+                        Text(
                               TranslationService.instance.languageValue.value ==
-                                      Language.fr
+                                  Language.fr
                                   ? "Récompenses d'exploit: "
                                   : "Achievements rewards: ",
                               style: TextStyle(
+                                  fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),
+                            ),),
                             RewardCashStoreList(
                                 cashItems: storeItems!['rewardCurrency']!,
                                 userId: this.uid),
                             SizedBox(height: 20),
                           ],
                         ),
+                      )
+
                       ),
-                    ),
                     Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
                   ]));
       }),

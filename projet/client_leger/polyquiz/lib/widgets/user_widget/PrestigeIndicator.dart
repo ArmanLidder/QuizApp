@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/LanguageService.dart';
 import '../../services/theme_service.dart';
+
+
+String prestigeText(int prestige){
+  Map trs = TranslationService.instance.text["PROFILE"];
+  String prestigeText = '🚫 ' + trs["NONE"]!; // Default text
+  if (prestige! >= 200) {
+    prestigeText = '🏅 ' + trs["PLATINUM"]!;
+  } else if (prestige! >= 150) {
+    prestigeText = '🥇 ' + trs["GOLD"]!;
+  } else if (prestige! >= 100) {
+    prestigeText = '🥈 ' + trs["SILVER"]!;
+  } else if (prestige! >= 50) {
+    prestigeText = '🥉 ' + trs["BRONZE"]!;
+  }
+  return prestigeText;
+}
 
 class PrestigeIndicator extends StatelessWidget {
   final num? prestige;
@@ -10,19 +27,9 @@ class PrestigeIndicator extends StatelessWidget {
 
   PrestigeIndicator({required this.prestige});
 
+
   @override
   Widget build(BuildContext context) {
-    String prestigeText = '🚫 ' + ls.medalLevels[0]; // Default text
-
-    if (prestige! >= 200) {
-      prestigeText = '🏅 ' + ls.medalLevels[4];
-    } else if (prestige! >= 150) {
-      prestigeText = '🥇 ' + ls.medalLevels[3];
-    } else if (prestige! >= 100) {
-      prestigeText = '🥈 ' + ls.medalLevels[2];
-    } else if (prestige! >= 50) {
-      prestigeText = '🥉 ' + ls.medalLevels[1];
-    }
 
     return Chip(
       color: WidgetStatePropertyAll(const Color.fromRGBO(132, 124, 243, 1)),
@@ -30,7 +37,7 @@ class PrestigeIndicator extends StatelessWidget {
         mainAxisSize: MainAxisSize.min, // Only take up the space needed
         children: [
           SizedBox(width: 4), // Space between icon and text
-          Text("Prestige: " + prestigeText,
+          Text("Prestige: " + prestigeText(prestige! as int),
               style: TextStyle(
                   fontSize: 14,
                   color: Colors.white)), // Adjust font size for better fit

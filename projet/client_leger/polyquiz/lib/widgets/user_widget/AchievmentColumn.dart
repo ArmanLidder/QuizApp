@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import '../../services/LanguageService.dart';
 
 class AchievementColumn extends StatelessWidget {
   final List<num> completedAchievements;
+  final TranslationService trs = TranslationService.instance;
+  List<String> get achievementText => trs.text["PROFILE"]["ALL_ACHIEVEMENTS"];
+  List<String> get statisticText => trs.text["PROFILE"];
+
   final LanguageService ls = LanguageService.instance;
 
   AchievementColumn({required this.completedAchievements});
@@ -16,7 +21,7 @@ class AchievementColumn extends StatelessWidget {
         return Column(children: [
           AchievementBox(
             label:
-                ls.achievementsList[index], // Use the index number as the title
+              achievementText[index], // Use the index number as the title
             isDone: isCompleted,
           ),
           SizedBox(
@@ -41,9 +46,7 @@ class AchievementBox extends StatelessWidget {
       width: double.infinity, // Take up as much width as possible
       padding: const EdgeInsets.all(8.0), // Padding inside the box
       decoration: BoxDecoration(
-        color: this.isDone
-            ? Color.fromARGB(255, 250, 249, 174)
-            : _themeService.container.value,
+        color:  _themeService.container.value,
         borderRadius: BorderRadius.circular(12), // Rounded corners
         border: Border.all(color: Colors.grey[400]!), // Optional border color
       ),
@@ -51,11 +54,12 @@ class AchievementBox extends StatelessWidget {
         mainAxisAlignment:
             MainAxisAlignment.start, // Align content to the start
         children: [
+          !isDone ?
           Icon(
-            this.isDone ? Icons.star : Icons.star_border,
-            size: 24,
-            color: this.isDone ? Color(0xFFFCDB03) : Colors.black54,
-          ),
+            Icons.star_border,
+            size: 48,
+            color: _themeService.mainAccent.value,
+          ): Text('🏆', style: TextStyle(fontSize: 24),),
           SizedBox(width: 12), // Space between icon and text
           Expanded(
             child: Text(
@@ -63,9 +67,7 @@ class AchievementBox extends StatelessWidget {
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: this.isDone
-                      ? Colors.brown
-                      : _themeService.mainAccent.value),
+                  color:  _themeService.mainAccent.value),
               overflow:
                   TextOverflow.ellipsis, // Text will be truncated if too long
             ),

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import '../../models/user.dart';
 import '../../services/user_service.dart';
 import 'AchievmentColumn.dart';
 import 'package:polyquiz/widgets/user_widget/friend/smartFriendIcon.dart';
 
+import 'PrestigeIndicator.dart';
+
 class OtherUserPresentation extends StatelessWidget {
   final String userId;
   final UserService userService = UserService.instance;
   final ThemeService _themeService = ThemeService.instance;
+  Map get statisticText => TranslationService.instance.text["PROFILE"];
 
   OtherUserPresentation({required this.userId});
 
@@ -53,6 +58,8 @@ class OtherUserPresentation extends StatelessWidget {
         final avgTimePerGame = data['avgTimePerGame'];
         final achievements = data['achievements'];
 
+
+
         // Build the UI using the fetched data
         return AlertDialog(
             contentPadding: EdgeInsets.zero,
@@ -89,11 +96,13 @@ class OtherUserPresentation extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           color:
                                               _themeService.mainAccent.value)),
-                                  Text('Prestige: $prestige',
+
+
+                                  Text(statisticText["PRESTIGE"]+ ": " + prestigeText(prestige),
                                       style: TextStyle(
                                           color:
                                               _themeService.mainAccent.value)),
-                                  Text('Currency: $currency',
+                                  Text(statisticText["CURRENCY"]+ ": " + currency.toString(),
                                       style: TextStyle(
                                           color:
                                               _themeService.mainAccent.value)),
@@ -104,8 +113,9 @@ class OtherUserPresentation extends StatelessWidget {
                           Positioned(
                             top: 0,
                             right: 0,
-                            child: SmartFriendIcon(
-                                targetUserId: userId, canRemoveFriend: false),
+                            child: userId != LoggedInUserService.instance.getUid() ?
+                            SmartFriendIcon(
+                                targetUserId: userId, canRemoveFriend: false, hasThemeColor: true,) : SizedBox(),
                           ),
                         ],
                       ),
@@ -114,7 +124,7 @@ class OtherUserPresentation extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Parties Jouées:',
+                          Text(statisticText["GAMES_PLAYED"],
                               style: TextStyle(
                                   color: _themeService.mainAccent.value)),
                           Text('$gamesPlayed',
@@ -126,7 +136,7 @@ class OtherUserPresentation extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Parties Gagnées:',
+                          Text(statisticText["GAMES_WON"],
                               style: TextStyle(
                                   color: _themeService.mainAccent.value)),
                           Text('$gamesWon',
@@ -138,7 +148,7 @@ class OtherUserPresentation extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Bonnes réponses par partie:',
+                          Text(statisticText["AVG_CORRECT_ANSWERS"],
                               style: TextStyle(
                                   color: _themeService.mainAccent.value)),
                           Text('$correctAnswersPerGame',
@@ -150,17 +160,17 @@ class OtherUserPresentation extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Temps moyen par partie:',
+                          Text(statisticText["AVG_GAME_TIME"],
                               style: TextStyle(
                                   color: _themeService.mainAccent.value)),
-                          Text('${avgTimePerGame}s',
+                          Text('${avgTimePerGame} s',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: _themeService.mainAccent.value)),
                         ],
                       ),
                       SizedBox(height: 16),
-                      Text('Exploits',
+                      Text(statisticText["ACHIEVEMENTS"],
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

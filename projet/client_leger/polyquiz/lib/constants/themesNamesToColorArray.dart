@@ -4,25 +4,25 @@ Map<String, List<Color>> themeColors = {
   "light": [
     Colors.white, // mainBackground
     Colors.black, // mainAccent
-    Color.fromRGBO(53, 121, 246, 1), // secondaryBackground
+    Color(0xFF2196F3), // secondaryBackground
     Colors.white, // secondaryAccent
     const Color.fromARGB(255, 234, 232, 232), // container
   ],
   "dark": [
     Color.fromRGBO(43, 48, 59, 1), // mainBackground
     Colors.white, // mainAccent
-    Color.fromRGBO(0, 123, 255, 1), // secondaryBackground
+    Color(0xFF2196F3), // secondaryBackground
     Colors.black, // secondaryAccent
     Color.fromRGBO(26, 29, 36, 1), // container
   ],
   "disco": [
-    Colors.purple[500]!, // mainBackground
-    Colors.yellow[500]!, // mainAccent
-    Colors.black, // secondaryBackground
-    Colors.red[500]!, // secondaryAccent
-    Colors.green, // container
+    Color.fromRGBO(25, 25, 66, 1),
+    Color.fromRGBO(255, 221, 51, 1),
+    Color.fromRGBO(220, 48, 133, 1),
+    Color.fromRGBO(178, 229, 255, 1),
+    Color.fromRGBO(48, 48, 86, 1),
   ],
-  "blueGrey": [
+  "pinkGrey": [
     Colors.blueGrey[900]!, // mainBackground:
     Colors.blueGrey[50]!, // mainAccent:
     Colors.purple[600]!, // secondaryBackground:

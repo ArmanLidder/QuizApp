@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 
 import '../../services/logged_in_user_service.dart';
@@ -7,6 +8,7 @@ class ImageSelectionPopup extends StatelessWidget {
   final List<String> imageUrls;
   //final Function onImageSelected;
   final VoidCallback onPlusButtonPressed;
+  final ThemeService ts = ThemeService.instance;
 
   ImageSelectionPopup({
     required this.imageUrls,
@@ -19,6 +21,7 @@ class ImageSelectionPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: ts.mainBackground.value, // Set the background color of the dialog to blue
       title: Text(avatarText['CHOOSE_AVATAR']),
       content: SizedBox(
         width: double.maxFinite,

@@ -148,6 +148,7 @@ const englishTextValues = {
     "THEMES": "Themes",
     "NO_THEMES": "No themes available at the moment.",
     "IMAGES": "Images",
+    "REWARDS": "Rewards",
     "NO_IMAGES": "No images available at the moment.",
     "OWNED": "Already owned",
     "NOT_ENOUGH_FUNDS": "Not enough funds",
@@ -183,6 +184,16 @@ const englishTextValues = {
     "DURATION": "Duration",
     "DURATION_SUFFIX": "s",
     "QUESTIONS": "Questions"
+  },
+  "SETTINGS":{
+    "TITLE": 'Settings',
+    "LANGUAGE":"Language",
+    "THEME":"Theme",
+    "dark":"dark",
+    "light":"light",
+    "disco":"disco",
+    "pinkGrey":"pink-grey"
+
   },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Game Creation",

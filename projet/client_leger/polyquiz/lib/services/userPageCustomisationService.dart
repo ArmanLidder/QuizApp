@@ -10,8 +10,8 @@ class UserPageCustomisationService extends GetxService {
   // Singleton instance
   static UserPageCustomisationService get instance => Get.find();
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  RxList<String> _ownedThemes = <String>[].obs;
 
   Future<List<String>> defaultAvatars() async {
     List<String> imageUrls = [];
@@ -61,6 +61,31 @@ class UserPageCustomisationService extends GetxService {
     imageUrls.addAll(await purchasedAvatars(userId));
     return imageUrls;
   }
+
+  void subscribeToStoreAccount() {
+    String userId = loggedInUserService.getUid()!;
+    _firestore.collection('storeProfiles').doc(userId).snapshots().listen((storeAccountSnapshot) async {
+      if (storeAccountSnapshot.exists) {
+        // Retrieve `itemsOwned` and update cached data
+        List<dynamic> itemsOwned = storeAccountSnapshot.get('ownedItems') ?? [];
+
+        List<String> themes = [];
+        for (var itemId in itemsOwned) {
+          DocumentSnapshot itemDoc = await _firestore.collection('storeItems').doc(itemId).get();
+          if (itemDoc.exists && (itemDoc.get('itemType') == 'theme' || itemDoc.get('itemType') == 'rewardTheme')) {
+            var name = itemDoc.get('name');
+            if (name is String) {
+              themes.add(name);
+            }
+          }
+        }
+        // Update the observable list
+        _ownedThemes.assignAll(themes);
+      }
+    });
+  }
+
+/*
   Future<List<String>> purchasedThemes(String userId) async {
     List<String> themeNames = [];
 
@@ -82,10 +107,8 @@ class UserPageCustomisationService extends GetxService {
       }
     }
     return themeNames;
-  }
-  Future<List<String>> availableThemes() async {
-    String userId = loggedInUserService.getUid()!;
-    List<String> themeNames = await this.purchasedThemes(userId);
-    return ["dark", "light", ...themeNames];
-  }
-}
+  }*/
+  List<String> availableThemes() {
+    // Combine default themes with owned themes
+    return ["dark", "light", ..._ownedThemes];
+  }}

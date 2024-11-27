@@ -32,10 +32,10 @@ class Userpage extends StatelessWidget {
       Language uselessShit = transService.languageValue.value;
       return MaterialApp(
         home: Scaffold(
-          backgroundColor: themeService.mixedMain,
+          backgroundColor: themeService.mainBackground.value,
           appBar: FancyAppBar(
             context: context,
-            hasBackButton: true,
+            canLeaveFromAppBar: true,
           ),
           body: Stack(
             children: [
@@ -47,8 +47,12 @@ class Userpage extends StatelessWidget {
                   child: FractionallySizedBox(
                     widthFactor: 0.8,
                     child: Container(
-                      color: themeService.mainBackground
-                          .value, // Set the background color here
+
+                      decoration: BoxDecoration(
+                          color: themeService.mainBackground
+                              .value, // Set the background color here
+                          border: Border.all(color: Colors.black)
+                      ),
                       child: SingleChildScrollView(
                         child: Column(
                           children: [

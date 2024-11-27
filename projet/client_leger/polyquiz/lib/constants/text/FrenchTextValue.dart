@@ -113,7 +113,7 @@ const frenchTextValues = {
     "ACCEPT_REQUEST": "Accepter",
     "DECLINE_REQUEST": "Refuser",
     "ALREADY_SENT_ERROR": "La requête d'ami a déja été envoyée",
-    "PENDING_TITLE": "en attente de la liste d'amis"
+    "PENDING_TITLE": "Demandes recues",
   },
   "AVATAR_MODIFICATION": {
     "TITLE": "Modification d'avatar",
@@ -150,6 +150,7 @@ const frenchTextValues = {
     "THEMES": "Thèmes",
     "NO_THEMES": "Aucun thème disponible pour le moment.",
     "IMAGES": "Images",
+    "REWARDS":"Récompenses",
     "NO_IMAGES": "Aucune image disponible pour le moment.",
     "OWNED": "Déjà possédé",
     "NOT_ENOUGH_FUNDS": "Pas assez de fonds",
@@ -185,6 +186,16 @@ const frenchTextValues = {
     "DURATION": "Durée",
     "DURATION_SUFFIX": "s",
     "QUESTIONS": "Questions"
+  },
+  "SETTINGS":{
+    "TITLE": 'Paramètres',
+    "LANGUAGE":"Langue",
+    "THEME":"Thème",
+    "dark":"sombre",
+    "light":"éclairé",
+    "disco":"disco",
+    "pinkGrey":"rose-gris"
+
   },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Création du jeu",

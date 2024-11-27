@@ -5,11 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/services/LanguageService.dart';
+import 'package:polyquiz/services/StoreService.dart';
 import 'package:polyquiz/services/camera_service.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/notification_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'user_service.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -18,7 +20,7 @@ const Map <Theme,String> themeEnumToName={
   Theme.dark: "dark",
  Theme.light: "light",
   Theme.disco: 'disco',
-  Theme.blueGrey: "blueGrey",
+  Theme.pinkGrey: "pinkGrey",
 };
 
 
@@ -102,8 +104,9 @@ class LoggedInUserService extends GetxController {
       LanguageService.instance.loadLanguage();
       Theme? l = this.user?.settings.theme!;
       String themeName = themeEnumToName[l]!;
-      print("choucroute");
       ThemeService.instance.setTheme(themeName);
+      StoreService.instance.setup();
+      UserPageCustomisationService.instance.subscribeToStoreAccount();
     } else {
       print('Login failed: user not found with email $email');
     }

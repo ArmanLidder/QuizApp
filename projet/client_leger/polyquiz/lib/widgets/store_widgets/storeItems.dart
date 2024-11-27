@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/constants/themesNamesToColorArray.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'BuyButton.dart';
 
 class ThemeItem extends StatelessWidget {
@@ -9,7 +11,6 @@ class ThemeItem extends StatelessWidget {
   final num cost;
   final Future<void> Function() onBuy;
   final ThemeService _themeService = ThemeService.instance;
-
   ThemeItem.ThemeStoreItem({
     Key? key,
     required this.itemId,
@@ -40,7 +41,7 @@ class ThemeItem extends StatelessWidget {
           SizedBox(height: 8),
           // Item name in white
           Text(
-            name,
+            TranslationService.instance.text["SETTINGS"][name],
             style: TextStyle(color: _themeService.mainAccent.value),
           ),
           SizedBox(height: 8),
@@ -203,7 +204,7 @@ class RewardThemeItem extends StatelessWidget {
           SizedBox(height: 8),
           // Item name in white
           Text(
-            name,
+            TranslationService.instance.text["SETTINGS"][name],
             style: TextStyle(color: _themeService.mainAccent.value),
           ),
           SizedBox(height: 8),
@@ -245,7 +246,8 @@ class RewardCashItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
-          // Purple circle
+
+
           ClipOval(
             child: Image.network(
               "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/shopGIFS%2FmoneyBag.png?alt=media&token=2b17df15-3c81-4f39-b27f-03c96b2f8f84",
@@ -253,6 +255,11 @@ class RewardCashItem extends StatelessWidget {
               height: 50,
               fit: BoxFit.cover,
             ),
+          ),
+          SizedBox(height: 8,),
+          Text(
+            (-cost).toString() + " \$",
+            style: TextStyle(color: _themeService.mainAccent.value),
           ),
 
           SizedBox(height: 8),

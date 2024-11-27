@@ -63,7 +63,9 @@ class QrlEvaluationService extends ChangeNotifier {
   }
 
   void nextAnswer() {
+    print("Pre incrementation the index is $indexPlayer");
     this.indexPlayer++;
+    print("Post incrementation the index is $indexPlayer");
     if (this.indexPlayer < this.usernames.length) {
       this.currentAnswer = this.answers[this.indexPlayer];
       this.currentUsername = this.usernames[this.indexPlayer];
@@ -103,7 +105,8 @@ class QrlEvaluationService extends ChangeNotifier {
 
   void submitPoint(List<QuestionStatistics> gameStats) {
     this.isValid = scores.contains(inputPoint);
-
+    print("the player index is now: $indexPlayer");
+    print("the username length for the list is ${usernames.length}");
     if (indexPlayer < usernames.length) {
       if (isValid) {
         getCorrection(inputPoint);
@@ -170,7 +173,6 @@ class QrlEvaluationService extends ChangeNotifier {
       answers.add(value.answers);
     }
     indexPlayer = -1;
-    nextAnswer();
     notifyListeners();
   }
 }

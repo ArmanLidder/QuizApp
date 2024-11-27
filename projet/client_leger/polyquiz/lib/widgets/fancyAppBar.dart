@@ -7,12 +7,14 @@ import 'package:polyquiz/widgets/observer_widgets/observer_counter.dart';
 import 'package:polyquiz/widgets/user_widget/friend/appBarFriendIcon.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 
+import '../services/translationService.dart';
+
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final bool hasBackButton;
   final bool isGamePage;
   final bool isObserver;
+  final bool canLeaveFromAppBar;
   final BuildContext context;
-  FancyAppBar({required this.context, this.hasBackButton = false, this.isGamePage = false, this.isObserver = false});
+  FancyAppBar({required this.context, this.canLeaveFromAppBar = false, this.isGamePage = false, this.isObserver = false});
 
   @override
   _FancyAppBarState createState() => _FancyAppBarState();
@@ -26,6 +28,8 @@ class _FancyAppBarState extends State<FancyAppBar> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   late String imageUrl; // Use late keyword to initialize later
   final ThemeService themeService = ThemeService.instance;
+  Map get MenuText => TranslationService.instance.text["AVATAR_CLICK_MENU"];
+
   @override
   void initState() {
     super.initState();
@@ -38,43 +42,34 @@ class _FancyAppBarState extends State<FancyAppBar> {
     else return ObserverCounter();
   }
 
-  Widget getCenterWidget() {
-    return Row(
-      children: [
-      if(widget.isGamePage) getObservationWidget(), 
-      Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(right: 120.0),
-        child: Center(
-          child: Text(
-        "PolyQuiz",
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),
-          ),
-        ),
-      ),
-    )],
+  Widget getTitleWidget() {
+    return Center(
+        child: InkWell(
+        onTap: () {
+      if (widget.canLeaveFromAppBar){
+        Navigator.pushReplacementNamed(widget.context,  '/home');
+      }
+    },
+    child: Text(
+    "PolyQuiz",
+    style: TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    fontSize: 20,
+    ),
+    ),
     );
   }
 
-  Widget getLeadingWidget() {
-    Widget mainLeadingWidget = widget.hasBackButton
-        ? IconButton(
-        icon: Icon(Icons.arrow_back, color: Colors.red),
-        onPressed: () {
-          Navigator.pushReplacementNamed(widget.context, '/home');
-        })
-        : PendingRequestsWidget();
-
-    mainLeadingWidget = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: mainLeadingWidget,
+  Widget getCenterWidget() {
+    return Row(
+      children: [
+        if(widget.isGamePage) getObservationWidget(),
+        Expanded(
+          child: getTitleWidget(),
+        )
+      ],
     );
-
-    return mainLeadingWidget;
   }
 
   @override
@@ -94,7 +89,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
         title: getCenterWidget(),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: getLeadingWidget(),
+        leading: PendingRequestsWidget(),
         actions: [
           GestureDetector(
             onTap: () {
@@ -112,7 +107,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
             },
             child: Icon(
               Icons.settings,
-              color: themeService.mainAccent.value,
+              color: Colors.white,
               size: 32,
             ),
           ),
@@ -120,13 +115,15 @@ class _FancyAppBarState extends State<FancyAppBar> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: PopupMenuButton<int>(
+              color:themeService.container.value,
               onSelected: (value) {},
-              itemBuilder: (context) => [
+              itemBuilder: (context) => widget.canLeaveFromAppBar ? [
                 PopupMenuItem(
                   value: 1,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Icon(Icons.person), Text(" Profil"), Spacer()],
+                    children: [Icon(Icons.person,color:themeService.mainAccent.value),
+                      Text(MenuText["PROFIL"], style:TextStyle(color: themeService.mainAccent.value)), Spacer()],
                   ),
                   onTap: () {
                     Navigator.pushReplacementNamed(widget.context, '/user');
@@ -137,8 +134,8 @@ class _FancyAppBarState extends State<FancyAppBar> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.logout),
-                      Text("Déconnection"),
+                      Icon(Icons.logout, color: themeService.mainAccent.value,),
+                      Text(MenuText["DISCONNECT"], style:TextStyle(color: themeService.mainAccent.value)),
                       Spacer()
                     ],
                   ),
@@ -147,7 +144,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
                     Navigator.pushReplacementNamed(widget.context, '/auth');
                   },
                 ),
-              ],
+              ] : [],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -174,14 +171,16 @@ class _FancyAppBarState extends State<FancyAppBar> {
                               shape: BoxShape.circle,
                             ),
                             child: Center(
-                              child: Text(
-                                loggedInUserService.observableLevel.toString(),
-                                style: TextStyle(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
+                              child: Obx((){
+                                return Text(
+                                  loggedInUserService.observableLevel.toString(),
+                                  style: TextStyle(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                              );
+                              }),
                             ),
                           ),
                         ),
