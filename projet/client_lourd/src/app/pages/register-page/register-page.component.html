@@ -48,7 +48,7 @@
             <app-avatar-picker (avatarSelected)="onAvatarSelected($event)"></app-avatar-picker>
         </div>
 
-        <button type="submit" class="w-full border border-slate-200 rounded-md disabled:bg-purple-400 py-2 px-3 bg-blue-700 text-white font-bold mt-4" [disabled]="!authForm.valid || !this.selectedAvatar">
+        <button type="submit" class="w-full border border-slate-200 rounded-md disabled:bg-blue-300 py-2 px-3 bg-blue-700 text-white font-bold mt-4" [disabled]="!authForm.valid || !this.selectedAvatar">
             {{ 'REGISTER_PAGE.SUBMIT_BUTTON' | translate }}
         </button>
 
