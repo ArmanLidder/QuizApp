@@ -50,12 +50,11 @@ class QrlEvaluationService extends ChangeNotifier {
   void initialize(Map<String, ResponseData> qrlAnswers) {
     this.indexPlayer = -1;
     this.isCorrectionFinished = false;
-    hostInterfaceManagementService.qrlCallback = this.initializePlayerAnswers;
+    hostInterfaceManagementService.qrlCallback = this.initializePlayerAnswers; 
     this.initializePlayerAnswers(qrlAnswers);
     if (this.hostInterfaceManagementService.gameService.realGameService.isAION) {
       this.openai.init();
     }
-    this.nextAnswer();
   }
 
   void getCorrection(int point) {
@@ -173,6 +172,7 @@ class QrlEvaluationService extends ChangeNotifier {
       answers.add(value.answers);
     }
     indexPlayer = -1;
+    this.nextAnswer();
     notifyListeners();
   }
 }
