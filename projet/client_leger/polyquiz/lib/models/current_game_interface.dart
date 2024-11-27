@@ -90,7 +90,7 @@ class HostCurrentGameInterface {
       currentTime: json['currentTime'] as int,
       leftPlayers: (json['leftPlayers'] as List<dynamic>).map((player) => Player.fromList(player as List<dynamic>)).toList(),
       players: (json['players'] as List<dynamic>).map((player) => Player.fromList(player)).toList(),
-      histogramDataChangingResponses: (json['histogramDataChangingResponses'] as List).map((e) => e as int).toList(),
+      histogramDataChangingResponses: (json['histogramDataChangingResponses'] as List).map((e) => (e ?? 0) as int).toList(),
       isHostEvaluating: json['isHostEvaluating'] as bool,
       gameStats: json['gameStats'] as String,
       isPaused: json['isPaused'] as bool,
