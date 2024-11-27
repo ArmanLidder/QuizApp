@@ -121,7 +121,6 @@ class _StorepageState extends State<Storepage> {
                                 userId: this.uid),
                             SizedBox(height: 20),
                             CancelBtn(),
-
                           ],
                         ),
                       )
