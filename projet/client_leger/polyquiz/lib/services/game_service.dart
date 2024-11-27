@@ -150,7 +150,8 @@ class GameService extends ChangeNotifier {
   }
 
   void obsUpdateChoice(int index, bool isSelected) {
-    if (this.lockedStatus) return;
+    print('value of lockedStatus: $lockedStatus');
+    // if (this.lockedStatus) return;
     if (isSelected && !this.answers.containsKey(index)) {
       String? textChoice = this.question?.choices?[index].text;
       this.answers[index] = textChoice;
