@@ -19,11 +19,11 @@
     <!-- Theme Selection -->
     <div class="w-full flex items-center mb-4">
         <label class="text-sm font-medium text-primary w-1/4 text-right mr-4">{{'SETTINGS_POPUP.THEME' | translate }}</label>
-        <div class="flex w-1/2">
+        <div class="flex w-1/2 justify-between">
             <ng-container *ngFor="let theme of availableThemes$ | async">
                 <div
                         (click)="switchTheme(theme.name)"
-                        class="flex flex-col items-center cursor-pointer min-w-[60px]"
+                        class="flex flex-col items-center cursor-pointer"
                         [class.opacity-50]="currentTheme !== theme.name"
                         [class.opacity-100]="currentTheme === theme.name"
                 >
@@ -44,10 +44,7 @@
                                 [class.bg-gray-900]="theme.name === 'dark'"
                         ></div>
                     </div>
-                    <!-- Theme Name -->
-                    <span *ngIf="theme.name === 'light'" class="text-sm text-primary text-center">{{translate.instant('SETTINGS_POPUP.LIGHT')}}</span>
-                    <span *ngIf="theme.name === 'dark'" class="text-sm text-primary text-center">{{translate.instant('SETTINGS_POPUP.DARK')}}</span>
-                    <span *ngIf="!(theme.name === 'light' || theme.name === 'dark')" class="text-sm text-primary text-center">{{theme.name}}</span>
+                    <span class="text-sm text-primary text-center whitespace-nowrap">{{ 'SETTINGS_POPUP.' + theme.name | translate }}</span>
                 </div>
             </ng-container>
         </div>
