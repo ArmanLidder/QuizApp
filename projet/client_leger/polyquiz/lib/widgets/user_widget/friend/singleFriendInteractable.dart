@@ -33,29 +33,34 @@ class SingleFriendInteractable extends StatelessWidget {
           return const Text('Error loading user');
         } else {
           final username = snapshot.data!;
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey[200]?.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                SmartAvatar(userId: userId,size: 35,),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    username,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: _themeService.mainAccent.value ),
-                  ),
+          return Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                IconButton(
-                  icon: this.isPending? AcceptOrRefuse(targetUserId: userId): SmartFriendIcon(targetUserId: userId),
-                  onPressed: () {
-                  },
+                child: Row(
+                  children: [
+                    SmartAvatar(userId: userId,size: 35,),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        username,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: this.isPending? AcceptOrRefuse(targetUserId: userId): SmartFriendIcon(targetUserId: userId),
+                      onPressed: () {
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 5,)
+            ],
           );
         }
       },

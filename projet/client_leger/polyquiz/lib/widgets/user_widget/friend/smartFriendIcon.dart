@@ -24,7 +24,6 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   @override
   void initState() {
     super.initState();
-    _checkStatus();
     LoggedInUserService.instance.friendRequests.listen((_) {
       _checkStatus();
     });
