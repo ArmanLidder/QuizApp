@@ -115,7 +115,7 @@ class RealGameService extends ChangeNotifier {
       this.qcmEnabled = true;
       // this._gameInterfaceManagementService.changeQcmEnabled(true);
       this.question = questionData.question;
-      if (!this.observerMode) this.username = questionData.username; // TODO: make sure this is needed
+      if (!this.observerMode) this.username = questionData.username == 'Organisateur' ? 'host' : questionData.username; // TODO: make sure this is needed
       this.oldQuestion = this.question!;
       if (!isNotified) {
         notifyListeners();

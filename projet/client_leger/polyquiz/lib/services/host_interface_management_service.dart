@@ -274,7 +274,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
       this.timerText = timerTransText['RESULT_AVAILABLE_IN'];
       this.gameService.realGameService.timer = timeValue;
 
-      if (this.gameService.timer == 0 && this.gameService.username == 'host') {
+      if (this.gameService.timer == 0) {
         this.isResultPage = true;
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
