@@ -238,7 +238,7 @@ class _MyWidgetState extends State<GamePage> {
                                                   _gameInterfaceManagementService
                                                       .gameService
                                                       .question?.text ?? ''),
-                                          Expanded(
+                                          if (!this._gameService.isObserverMode) Expanded(
                                             child: Container(
                                               alignment: Alignment.center,
                                               margin: EdgeInsets.all(5.0),
