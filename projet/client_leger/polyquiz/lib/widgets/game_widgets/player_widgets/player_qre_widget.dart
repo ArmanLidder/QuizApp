@@ -146,6 +146,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   Widget getSlider() {
+    if (currentValue < min || currentValue > max) this.gameInterfaceManagementService.gameService.silentSetObsQre(((max + min) / 2).round());
     return Row(
       children: [
         IconButton(
