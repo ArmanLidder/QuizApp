@@ -9,6 +9,7 @@ import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/store_widgets/storeLists.dart';
 import '../models/user.dart';
 import '../widgets/fancyAppBar.dart';
+import '../widgets/game_widgets/cancel_btn.dart';
 
 class Storepage extends StatefulWidget {
   @override
@@ -119,6 +120,7 @@ class _StorepageState extends State<Storepage> {
                                 cashItems: storeItems!['rewardCurrency']!,
                                 userId: this.uid),
                             SizedBox(height: 20),
+                            CancelBtn(),
                           ],
                         ),
                       )

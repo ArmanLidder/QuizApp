@@ -112,7 +112,7 @@ class ProfileCard extends StatelessWidget {
                                   loggedInUserService.observableLevel
                                       .toString(),
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),

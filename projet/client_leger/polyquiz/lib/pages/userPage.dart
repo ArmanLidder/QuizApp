@@ -7,6 +7,7 @@ import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/chat_widgets/chat_popup.dart';
 import 'package:polyquiz/widgets/user_widget/friend/FriendListWidget.dart';
 import '../widgets/fancyAppBar.dart';
+import '../widgets/game_widgets/cancel_btn.dart';
 import '../widgets/user_widget/ProfileCard.dart';
 import '../widgets/user_widget/statisticBlorb.dart';
 import '../widgets/user_widget/starComponent.dart';
@@ -76,6 +77,7 @@ class Userpage extends StatelessWidget {
                                     gameHistory: userData?.gameHistory ?? [],
                                     loginHistory: userData?.loginHistory ?? [],
                                   ),
+                                  CancelBtn(),
                                 ],
                               ),
                             ),

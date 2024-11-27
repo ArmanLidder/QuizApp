@@ -143,25 +143,28 @@ class _MyWidgetState extends State<GamePage> {
         return Scaffold(
           appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
           backgroundColor: themeService.mainBackground.value,
-          body: Stack(children: [
-            ListView(children: [
-              Visibility(
-                  visible: isHost,
-                  child: HostInterface(
-                      interactiveListService: _interactiveListService,
-                      gameInterfaceManagementService:
-                      _gameInterfaceManagementService))
+          body: Container(
+            color: themeService.mainBackground.value,
+            child: Stack(children: [
+              ListView(children: [
+                Visibility(
+                    visible: isHost,
+                    child: HostInterface(
+                        interactiveListService: _interactiveListService,
+                        gameInterfaceManagementService:
+                        _gameInterfaceManagementService))
+              ]),
+              Positioned(bottom: 20, left: 20, child: ChatPopup())
             ]),
-            Positioned(bottom: 20, left: 20, child: ChatPopup())
-          ]),
+          ),
         );
       });
     } else {
-      return Container(
+      return Obx(()=>Container(
           color: themeService.mainBackground.value,
           child: AnimatedBuilder(
               animation:
-                  _gameInterfaceManagementService.gameService.realGameService,
+              _gameInterfaceManagementService.gameService.realGameService,
               builder: (BuildContext context, Widget? snapshot) {
                 if (_gameInterfaceManagementService.gameService.question ==
                     null) {
@@ -194,9 +197,9 @@ class _MyWidgetState extends State<GamePage> {
                                   gameService: _gameInterfaceManagementService
                                       .gameService,
                                   interactiveListService:
-                                      _interactiveListService,
+                                  _interactiveListService,
                                   gameInterfaceManagementService:
-                                      _gameInterfaceManagementService,
+                                  _gameInterfaceManagementService,
                                 ),
                               ],
                             ),
@@ -218,26 +221,26 @@ class _MyWidgetState extends State<GamePage> {
                                             child: TimerWidget(
                                               isHost: isHost,
                                               timeTxt:
-                                                  _gameInterfaceManagementService
-                                                      .timerText,
+                                              _gameInterfaceManagementService
+                                                  .timerText,
                                               time:
-                                                  _gameInterfaceManagementService
-                                                      .gameService.timer,
+                                              _gameInterfaceManagementService
+                                                  .gameService.timer,
                                             ),
                                           ),
                                           Positioned.fill(
                                             child: Align(
                                               alignment: Alignment.center,
                                               child: QuestionInfoWidget(
-                                              questionNum:
+                                                  questionNum:
                                                   _gameInterfaceManagementService
                                                       .gameService
                                                       .questionNumber,
-                                              questionPts:
+                                                  questionPts:
                                                   _gameInterfaceManagementService
                                                       .gameService
                                                       .question?.points ?? 0,
-                                              questionText:
+                                                  questionText:
                                                   _gameInterfaceManagementService
                                                       .gameService
                                                       .question?.text ?? ''),
@@ -262,14 +265,14 @@ class _MyWidgetState extends State<GamePage> {
                                                             .mainAccent.value),
                                                   ),
                                                   _gameInterfaceManagementService
-                                                          .isBonus
+                                                      .isBonus
                                                       ? Text(
-                                                          gameText[
-                                                              'BONUS_RECEIVED_FEEDBACK'],
-                                                          style: TextStyle(
-                                                              color: themeService
-                                                                  .mainAccent
-                                                                  .value))
+                                                      gameText[
+                                                      'BONUS_RECEIVED_FEEDBACK'],
+                                                      style: TextStyle(
+                                                          color: themeService
+                                                              .mainAccent
+                                                              .value))
                                                       : SizedBox()
                                                 ],
                                               ),
@@ -288,12 +291,12 @@ class _MyWidgetState extends State<GamePage> {
                                         child: PlayerNotice(
                                           message: message,
                                           gameInterfaceManagementService:
-                                              _gameInterfaceManagementService,
+                                          _gameInterfaceManagementService,
                                         ),
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [getButtons()],
                                       )
                                     ],
@@ -307,7 +310,7 @@ class _MyWidgetState extends State<GamePage> {
                         }
                       });
                 }
-              }));
+              })));
     }
   }
 
