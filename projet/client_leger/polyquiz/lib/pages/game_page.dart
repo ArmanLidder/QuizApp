@@ -143,17 +143,20 @@ class _MyWidgetState extends State<GamePage> {
         return Scaffold(
           appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
           backgroundColor: themeService.mainBackground.value,
-          body: Stack(children: [
-            ListView(children: [
-              Visibility(
-                  visible: isHost,
-                  child: HostInterface(
-                      interactiveListService: _interactiveListService,
-                      gameInterfaceManagementService:
-                      _gameInterfaceManagementService))
+          body: Container(
+            color: themeService.mainBackground.value,
+            child: Stack(children: [
+              ListView(children: [
+                Visibility(
+                    visible: isHost,
+                    child: HostInterface(
+                        interactiveListService: _interactiveListService,
+                        gameInterfaceManagementService:
+                        _gameInterfaceManagementService))
+              ]),
+              Positioned(bottom: 20, left: 20, child: ChatPopup())
             ]),
-            Positioned(bottom: 20, left: 20, child: ChatPopup())
-          ]),
+          ),
         );
       });
     } else {
