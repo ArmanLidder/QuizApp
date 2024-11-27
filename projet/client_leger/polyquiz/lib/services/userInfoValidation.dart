@@ -45,6 +45,7 @@ class ValidationService extends GetxController{
 
   bool isValidAddress(String email) {
     return email.contains('@') && email.contains('.');
+
   }
 
   bool isValidPassword(String password) {

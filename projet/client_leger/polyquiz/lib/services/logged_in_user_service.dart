@@ -20,7 +20,7 @@ const Map <Theme,String> themeEnumToName={
   Theme.dark: "dark",
  Theme.light: "light",
   Theme.disco: 'disco',
-  Theme.blueGrey: "blueGrey",
+  Theme.blueGrey: "pinkGrey",
 };
 
 

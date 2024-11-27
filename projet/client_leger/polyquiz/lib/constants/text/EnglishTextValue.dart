@@ -191,7 +191,7 @@ const englishTextValues = {
     "dark":"dark",
     "light":"light",
     "disco":"disco",
-    "blueGrey":"blue-grey"
+    "pinkGrey":"pink-grey"
 
   },
   "QUIZ_CREATION": {

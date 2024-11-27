@@ -56,14 +56,15 @@ class _FriendDisplayBoxState extends State<FriendDisplayBox>
           ),
           child: Obx(() {
             final Map localMap = TranslationService.instance.text['FRIENDS'];
-
+            num friendRequestNumber = loggedInUserService.friendRequests.value.length;
+            String optionalNumberindicator = friendRequestNumber != 0 ? "($friendRequestNumber)": "";
             return Column(
               children: [
                 TabBar(
                   controller: _tabController,
                   tabs: [
                     Tab(text: localMap["TITLE"]),
-                    Tab(text: localMap["PENDING_REQUESTS_TAB"]),
+                    Tab(text: localMap["PENDING_REQUESTS_TAB"] + optionalNumberindicator) ,
                   ],
                   indicatorColor: themeService.secondaryBackground.value,
                   labelColor: themeService.secondaryBackground.value,

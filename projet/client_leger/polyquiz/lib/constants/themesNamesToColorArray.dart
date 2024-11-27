@@ -22,7 +22,7 @@ Map<String, List<Color>> themeColors = {
     Colors.cyan[100]!, // secondaryAccent (hsl(190, 100%, 85%))
     Colors.pink[600]!, // buttonBackground (hsl(330, 60%, 45%))
   ],
-  "blueGrey": [
+  "pinkGrey": [
     Colors.blueGrey[900]!, // mainBackground:
     Colors.blueGrey[50]!, // mainAccent:
     Colors.purple[600]!, // secondaryBackground:

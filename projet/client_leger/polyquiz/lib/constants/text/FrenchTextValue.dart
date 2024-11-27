@@ -193,7 +193,7 @@ const frenchTextValues = {
     "dark":"sombre",
     "light":"éclairé",
     "disco":"disco",
-    "blueGrey":"bleu-gris"
+    "pinkGrey":"bleu-gris"
 
   },
   "QUIZ_CREATION": {
