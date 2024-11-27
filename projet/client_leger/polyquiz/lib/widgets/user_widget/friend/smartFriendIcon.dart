@@ -3,15 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import '../../../services/friendService.dart';
 
 class SmartFriendIcon extends StatefulWidget {
   final bool canRemoveFriend;
   final String targetUserId;
   final FriendService friendService = FriendService.instance;
+  final bool hasThemeColor;
   SmartFriendIcon({
     Key? key,
     required this.targetUserId,
+    this.hasThemeColor = false,
     this.canRemoveFriend = true,
   }) : super(key: key);
 
@@ -44,9 +47,7 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
 
   Future<void> _checkStatus() async {
     if (currentUserId == null) return;
-
-    final status = await widget.friendService.friendshipStatus(
-      currentUserId!,
+    final status = widget.friendService.friendshipStatus(
       widget.targetUserId,
     );
     setState(() {
@@ -91,7 +92,6 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
           iconColor = Colors.black;
         }
         break;
-
       case 'sentPending':
         iconData = Icons.hourglass_empty;
         iconColor = Colors.black;
@@ -108,7 +108,9 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
         iconData = Icons.hourglass_empty;
         iconColor = Colors.black;
     }
-
+  if(widget.hasThemeColor){
+      iconColor = ThemeService.instance.mainAccent.value;
+  }
     return IconButton(
       icon: Icon(iconData, color: iconColor),
       onPressed: _status == 'sentPending'

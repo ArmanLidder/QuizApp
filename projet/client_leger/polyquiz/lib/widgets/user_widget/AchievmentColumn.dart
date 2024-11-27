@@ -60,7 +60,7 @@ class AchievementBox extends StatelessWidget {
           Icon(
             Icons.star_border,
             size: 48,
-            color: isDone ? Color(0xFFFCDB03) : _themeService.mainAccent.value,
+            color: _themeService.container.value,
           ): Text('🏆', style: TextStyle(fontSize: 24),),
           SizedBox(width: 12), // Space between icon and text
           Expanded(

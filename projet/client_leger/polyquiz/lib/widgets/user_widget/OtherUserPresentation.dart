@@ -109,7 +109,7 @@ class OtherUserPresentation extends StatelessWidget {
                             right: 0,
                             child: userId != LoggedInUserService.instance.getUid() ?
                             SmartFriendIcon(
-                                targetUserId: userId, canRemoveFriend: false) : SizedBox(),
+                                targetUserId: userId, canRemoveFriend: false, hasThemeColor: true,) : SizedBox(),
                           ),
                         ],
                       ),
