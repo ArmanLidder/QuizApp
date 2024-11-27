@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/player_status.dart';
 import 'package:polyquiz/constants/socket-event.dart';
+import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/score.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/socket_service.dart';
@@ -166,22 +167,6 @@ class InteractiveListService extends ChangeNotifier {
     this.players = [];
     this.isAlreadyInit = false;
   }
-}
-
-class Player {
-  final String username;
-  final int score;
-  final int bonus;
-  String status;
-  bool canChat;
-
-  Player({
-    required this.username,
-    required this.score,
-    required this.bonus,
-    required this.status,
-    required this.canChat,
-  });
 }
 
 class RoomSettings {

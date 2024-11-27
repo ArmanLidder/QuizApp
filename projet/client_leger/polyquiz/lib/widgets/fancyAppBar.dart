@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/widgets/observer_widgets/observation_selector.dart';
+import 'package:polyquiz/widgets/observer_widgets/observer_counter.dart';
 import 'package:polyquiz/widgets/user_widget/friend/appBarFriendIcon.dart';
 import 'package:polyquiz/widgets/user_widget/settings/SettingsPopup.dart';
 
 import '../services/translationService.dart';
 
 class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
+  final bool isGamePage;
+  final bool isObserver;
   final bool canLeaveFromAppBar;
   final BuildContext context;
-  FancyAppBar({required this.context, this.canLeaveFromAppBar = false});
+  FancyAppBar({required this.context, this.canLeaveFromAppBar = false, this.isGamePage = false, this.isObserver = false});
 
   @override
   _FancyAppBarState createState() => _FancyAppBarState();
@@ -33,6 +37,41 @@ class _FancyAppBarState extends State<FancyAppBar> {
         .observableAvatar.value; // Initialize with the source image URL
   }
 
+  Widget getObservationWidget() {
+    if (widget.isObserver) return ObservationSelector();
+    else return ObserverCounter();
+  }
+
+  Widget getTitleWidget() {
+    return Center(
+        child: InkWell(
+        onTap: () {
+      if (widget.canLeaveFromAppBar){
+        Navigator.pushReplacementNamed(widget.context,  '/home');
+      }
+    },
+    child: Text(
+    "PolyQuiz",
+    style: TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    fontSize: 20,
+    ),
+    ),
+    ));
+  }
+
+  Widget getCenterWidget() {
+    return Row(
+      children: [
+        if(widget.isGamePage) getObservationWidget(),
+        Expanded(
+          child: getTitleWidget(),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext barContext) {
     return Container(
@@ -47,24 +86,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
         ),
       ),
       child: AppBar(
-        title: Center(
-          child: InkWell(
-            onTap: () {
-              if (widget.canLeaveFromAppBar){
-                Navigator.pushReplacementNamed(widget.context,  '/home');
-              }
-            },
-            child: Text(
-              "PolyQuiz",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-          ),
-
-        ),
+        title: getCenterWidget(),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: PendingRequestsWidget(),

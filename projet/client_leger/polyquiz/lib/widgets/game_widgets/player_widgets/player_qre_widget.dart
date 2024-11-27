@@ -15,35 +15,49 @@ class PlayerQreWidget extends StatefulWidget {
 }
 
 class _PlayerQreWidgetState extends State<PlayerQreWidget> {
-  GameInterfaceManagementService gameInterfaceManagementService =
-      GameInterfaceManagementService();
   ThemeService _themeService = ThemeService.instance;
-  bool get isValidated => !gameInterfaceManagementService
-      .gameService.realGameService.isValidateActive;
-  int currentValue = 0;
+  GameInterfaceManagementService gameInterfaceManagementService = GameInterfaceManagementService();
+  bool get isValidated => !gameInterfaceManagementService.gameService.realGameService.isValidateActive;
+  int _currentValue = 0;  // TODO: attach this to gameService maybe
+  int get currentValue {
+    if (this.gameInterfaceManagementService.gameService.isObserverMode) return this.gameInterfaceManagementService.gameService.obsQreAnswer;
+    return this.gameInterfaceManagementService.gameService.qreAnswer;
+  }
+  void set currentValue(int value) { this.gameInterfaceManagementService.gameService.qreAnswer = value; }
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get qreText => gameText['PLAYER_QRE_INTERFACE'];
 
   @override
   void initState() {
     super.initState();
+    print("Building QRE Widget");
     if (question != null && question?.interval != null) {
       final max = question!.interval!.max;
       final min = question!.interval!.min;
-      currentValue = ((max + min) / 2).round();
+      final defaultValue = ((max + min) / 2).round();
+
+      bool isObserver = this.gameInterfaceManagementService.gameService.isObserverMode;
+      if (isObserver) this.gameInterfaceManagementService.gameService.silentSetObsQre(defaultValue);
+
+      currentValue = defaultValue;
     }
   }
+  //
+  // void setObserverQreValue(int min, int max) {
+  //   int qreValue = this.gameInterfaceManagementService.gameService.obsQreAnswer;
+  //   if (qreValue >= min && qreValue <= max) return;
+  //   this.gameInterfaceManagementService.gameService.obsQreAnswer = ((max+min)/2).round();
+  // }
 
   Quiz.QuizQuestion get defaultQuestion {
     return Quiz.QuizQuestion(
-      type: QuestionType.QRE,
-      text: "Mount Everest Height? (meters)",
-      points: 40,
-      answer: 8849,
-      interval: Quiz.Interval(max: 9000, min: 8800),
-      margin: 10,
-      imageUrl:
-          "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/quizImages%2F1730682720280.png?alt=media&token=3e58c73f-8803-4bba-907c-72981d7c516e",
+        type: QuestionType.QRE,
+        text: "Mount Everest Height? (meters)",
+        points: 40,
+        answer: 8849,
+        interval: Quiz.Interval(max: 9000, min: 8800),
+        margin: 10,
+        imageUrl: "https://firebasestorage.googleapis.com/v0/b/polyquiz-app.appspot.com/o/quizImages%2F1730682720280.png?alt=media&token=3e58c73f-8803-4bba-907c-72981d7c516e",
     );
   }
 
@@ -132,6 +146,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   Widget getSlider() {
+    if (currentValue < min || currentValue > max) this.gameInterfaceManagementService.gameService.silentSetObsQre(((max + min) / 2).round());
     return Row(
       children: [
         IconButton(
@@ -231,8 +246,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   void changeSliderValue(double value) {
-    if (isValidated) return;
-    gameInterfaceManagementService.gameService.qreAnswer = currentValue;
+    if (isValidated || this.gameInterfaceManagementService.gameService.isObserverMode) return;
     setState(() {
       currentValue = value.round();
     });
@@ -240,11 +254,11 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   }
 
   bool get canIncrement {
-    return !(isValidated || (currentValue >= this.max));
+    return !(isValidated || (currentValue >= this.max) || this.gameInterfaceManagementService.gameService.isObserverMode);
   }
 
   bool get canDecrement {
-    return !(isValidated || (currentValue <= this.min));
+    return !(isValidated || (currentValue <= this.min) || this.gameInterfaceManagementService.gameService.isObserverMode);
   }
 
   void incrementSlider() {

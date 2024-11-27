@@ -183,18 +183,6 @@ class HostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final validateButtonStyle = TextButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.normal,
-      color: this.hostInterfaceManagementService.NextQuestionBtnDisabled
-          ? Colors.white
-          : _themeService.secondaryAccent.value,),
-      splashFactory: NoSplash.splashFactory,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      backgroundColor:
-          this.hostInterfaceManagementService.NextQuestionBtnDisabled
-              ? Colors.grey
-              : _themeService.secondaryBackground.value,
-    );
     return Obx(() {
       //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
       // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!! (il y a qqn qui delete ces fonctions)
@@ -206,7 +194,7 @@ class HostHeader extends StatelessWidget {
             Row(
               children: [
                 TimerWidget(
-                  isHost: true,
+                  isHost: !this.gameService.isObserverMode,
                   timeTxt: TranslationService.instance.text['GAME_INTERFACE']['TIMER_TEXT']['TIME_LEFT'],
                   time: gameService.realGameService.timer,
                   hostInterfaceManagementService: hostInterfaceManagementService,
@@ -222,23 +210,7 @@ class HostHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 20),
-                TextButton(
-                  onPressed:
-                  this.hostInterfaceManagementService.NextQuestionBtnDisabled
-                      ? null
-                      : onNextQuestion,
-                  child: Text(
-                    gameService.realGameService.isLast
-                        ? gameText['SHOW_RESULT']
-                        : gameText['NEXT_QUESTION'],
-                    style: TextStyle(
-                        color: this.hostInterfaceManagementService.NextQuestionBtnDisabled
-                            ? Colors.white
-                            : _themeService.secondaryAccent.value, fontSize: 20),
-                  ),
-                  style: validateButtonStyle,
-                ),
-                SizedBox(width: 50),
+                if (!this.gameService.isObserverMode) getNextQuestionButton(),
                 QuitBtn(
                     isHost: true,
                     roomId: gameService.realGameService.roomId,
@@ -265,6 +237,42 @@ class HostHeader extends StatelessWidget {
       ]);
     });
   }
+
+  Widget getNextQuestionButton() {
+    final validateButtonStyle = TextButton.styleFrom(
+      textStyle: TextStyle(fontWeight: FontWeight.normal,
+        color: this.hostInterfaceManagementService.NextQuestionBtnDisabled
+            ? Colors.white
+            : _themeService.secondaryAccent.value,),
+      splashFactory: NoSplash.splashFactory,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      backgroundColor:
+      this.hostInterfaceManagementService.NextQuestionBtnDisabled
+          ? Colors.grey
+          : _themeService.secondaryBackground.value,
+    );
+    return Row(
+      children: [
+        TextButton(
+          onPressed:
+          this.hostInterfaceManagementService.NextQuestionBtnDisabled
+              ? null
+              : onNextQuestion,
+          child: Text(
+            gameService.realGameService.isLast
+                ? gameText['SHOW_RESULT']
+                : gameText['NEXT_QUESTION'],
+            style: TextStyle(
+                color: this.hostInterfaceManagementService.NextQuestionBtnDisabled
+                    ? Colors.white
+                    : _themeService.secondaryAccent.value, fontSize: 20),
+          ),
+          style: validateButtonStyle,
+        ),
+        SizedBox(width: 50)
+      ],
+    );
+  }
 }
 
 class HostMiddleSection extends StatelessWidget {
@@ -287,7 +295,7 @@ class HostMiddleSection extends StatelessWidget {
             return Column(
               children: [
                 Visibility(
-                  visible: hostInterfaceManagementService.isHostEvaluating,
+                  visible: hostInterfaceManagementService.isHostEvaluating && !gameService.isObserverMode,
                   child: HostGrading(
                     gameStats: hostInterfaceManagementService.gameStats,
                     qrlAnswers: hostInterfaceManagementService.responsesQRL,

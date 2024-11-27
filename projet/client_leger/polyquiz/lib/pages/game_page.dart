@@ -3,6 +3,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
@@ -20,6 +21,8 @@ import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
 import '../models/user.dart';
+import 'package:polyquiz/widgets/observer_widgets/observer_counter.dart';
+import 'package:polyquiz/widgets/observer_widgets/observation_selector.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -62,6 +65,12 @@ class _MyWidgetState extends State<GamePage> {
       _socketService.clearAllListeners();
       _cleanupSocketListeners();
     }
+    if (this._gameService.isObserverMode) {
+      final game = ObservationService.instance.gameConfigs;
+      this._gameService.init(game!.room.toString(), true);
+      this._gameService.realGameService.username = 'host';
+      ObservationService.instance.observeGame(game, context);
+    }
     if (_socketService.isSocketAlive()) {
       if (!isHost) {
         this._gameInterfaceManagementService.gameService.isOfflineMode = false;
@@ -70,6 +79,11 @@ class _MyWidgetState extends State<GamePage> {
             .setUp(this._gameService.realGameService.roomId.toString());
       }
     }
+    ObservationService.instance.callback = (bool value) {
+      setState(() {
+        this.isHost = value;
+      });
+    };
   }
 
   Future<void> _cleanupSocketListeners() async {
@@ -113,7 +127,8 @@ class _MyWidgetState extends State<GamePage> {
     }
     return Visibility(
         visible: !this._gameService.realGameService.isHostEvaluating,
-        child: questionWidget);
+        child: questionWidget
+    );
   }
 
   @override
@@ -126,7 +141,7 @@ class _MyWidgetState extends State<GamePage> {
         var observationEnablerDONOTDELETE = TranslationService.instance.languageValue.value;
 
         return Scaffold(
-          appBar: FancyAppBar(context: context),
+          appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
           backgroundColor: themeService.mainBackground.value,
           body: Stack(children: [
             ListView(children: [
@@ -171,7 +186,7 @@ class _MyWidgetState extends State<GamePage> {
                       builder: (BuildContext context, Widget? snapshot) {
                         if (_gameInterfaceManagementService.isResultPage) {
                           return Scaffold(
-                            appBar: FancyAppBar(context: context),
+                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
                             backgroundColor: themeService.mainBackground.value,
                             body: ListView(
                               children: [
@@ -188,7 +203,7 @@ class _MyWidgetState extends State<GamePage> {
                           );
                         } else {
                           return Scaffold(
-                            appBar: FancyAppBar(context: context),
+                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
                             backgroundColor: themeService.mainBackground.value,
                             body: Stack(children: [
                               ListView(shrinkWrap: true, children: [
@@ -218,14 +233,12 @@ class _MyWidgetState extends State<GamePage> {
                                               questionPts:
                                                   _gameInterfaceManagementService
                                                       .gameService
-                                                      .question!
-                                                      .points,
+                                                      .question?.points ?? 0,
                                               questionText:
                                                   _gameInterfaceManagementService
                                                       .gameService
-                                                      .question!
-                                                      .text),
-                                          Expanded(
+                                                      .question?.text ?? ''),
+                                          if (!this._gameService.isObserverMode) Expanded(
                                             child: Container(
                                               alignment: Alignment.center,
                                               margin: EdgeInsets.all(5.0),
@@ -327,7 +340,7 @@ class _MyWidgetState extends State<GamePage> {
 
     return Row(
       children: <Widget>[
-        AnimatedBuilder(
+        if (!this._gameService.isObserverMode) AnimatedBuilder(
           animation: this._gameService.realGameService,
           builder: (BuildContext context, Widget? snapshot) => TextButton(
               onPressed: isValidateButtonActive ? onValidate : null,
@@ -340,7 +353,7 @@ class _MyWidgetState extends State<GamePage> {
                 ),
               )),
         ),
-        SizedBox(width: 100.0),
+        if (!this._gameService.isObserverMode) SizedBox(width: 100.0),
         QuitBtn(
           isHost: false,
           roomId: this._gameService.realGameService.roomId,

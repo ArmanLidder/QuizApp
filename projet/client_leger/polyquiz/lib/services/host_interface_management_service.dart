@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/constants/timer_message.dart';
 import 'package:polyquiz/enums/question_type.dart';
+import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_service.dart';
@@ -52,6 +53,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
   GameService gameService = GameService();
   SocketService _socketService = SocketService();
   InteractiveListService _interactiveListService = InteractiveListService();
+  InteractiveListService get interactiveListService => _interactiveListService;
   OpenaiService openIA = OpenaiService();
 
 
@@ -99,6 +101,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this.isPanicMode = false;
     this.gameService.realGameService.validated = false;
     this.gameService.realGameService.locked = false;
+    if (this.gameService.isObserverMode) return;
     this._socketService.sendMessage(SocketEvent.START_TRANSITION, this.roomId);
   }
 
@@ -108,7 +111,10 @@ class HostInterfaceManagementService extends ChangeNotifier {
   }
 
   configureBaseSocketFeatures(BuildContext context) {
-    this.reset(context);
+    if (!this.gameService.isObserverMode) {
+      this.reset(context);
+      this.handleRequestHostGameStatus();
+    }
     this.handleTimeTransition();
     this.handleEndQuestion();
     this.handleFinalTimeTransition();
@@ -125,8 +131,51 @@ class HostInterfaceManagementService extends ChangeNotifier {
     isAlreadyInit = true;
   }
 
+  void handleRequestHostGameStatus() {
+    this._socketService.onMessage(SocketEvent.REQUEST_HOST_GAME_STATUS, (_) {
+      List<int> histogramDataChangingResponses = [];
+
+      switch (this.gameService.realGameService.question?.type) {
+        case QuestionType.QRE:
+          histogramDataChangingResponses = [
+            this.histogramDataChangingResponses[qreValueText['WITHIN_MARGIN']] ?? 0,
+            this.histogramDataChangingResponses[qreValueText['EXACT_ANSWER']] ?? 0,
+            this.histogramDataChangingResponses[qreValueText['INCORRECT_ANSWER']] ?? 0
+          ];
+          break;
+        default:
+          histogramDataChangingResponses = [
+            this.histogramDataChangingResponses['actif'] ?? 0,
+            this.histogramDataChangingResponses['inactif'] ?? 0,
+          ];
+          break;
+      }
+
+      final gameStatus = {
+      "roomId": this.roomId,
+      "timerText": this.timerText,
+      "currentTime": this.gameService.realGameService.timer,
+      "isGameOver": this.isGameOver,
+      "leftPlayers": this.leftPlayers,
+      "players": this.interactiveListService.players,
+      "histogramDataChangingResponses": this.gameService.realGameService.question?.type == QuestionType.QCM ? [1000] : histogramDataChangingResponses,
+      "isHostEvaluating": this.isHostEvaluating,
+      "gameStats": this.stringifyStats(),
+      "isPaused": this.isPaused,
+      "isPanicMode": this.isPanicMode,
+      "isValidated": this.gameService.realGameService.validated
+      };
+      this._socketService.sendMessage(SocketEvent.SENDING_HOST_GAME_STATUS, gameStatus);
+    });
+  }
+
   void handleTimeTransition() {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
+      if (this.gameService.isObserverMode) {
+        this.obsHandleTimeTransition(timeValue);
+        notifyListeners();
+        return;
+      }
       this.timerText = timerTransText['NEXT'];
       this.gameService.realGameService.timer = timeValue;
       notifyListeners();
@@ -141,8 +190,24 @@ class HostInterfaceManagementService extends ChangeNotifier {
     });
   }
 
+  void obsHandleTimeTransition(int timeValue) {
+    this.timerText = timerTransText['NEXT'];
+    if (this.gameService.isObservingHost) this.gameService.realGameService.timer = timeValue;
+    if (this.gameService.timer == 0) {
+      if (this.gameService.isObservingHost) {
+        this.gameService.realGameService.inTimeTransition = false;
+        this.resetInterface();
+      }
+      this.timerText = timerTransText['TIME_LEFT'];
+    }
+  }
+
   void handleEndQuestion() {
     this._socketService.onMessage(SocketEvent.END_QUESTION, (_) {
+      if (this.gameService.isObserverMode) {
+        this.obsHandleEndQuestion();
+        return;
+      }
       this.gameService.audio.pause();
       this.gameService.audio.seek(Duration.zero);
       this.gameService.realGameService.audioPaused = false;
@@ -179,13 +244,37 @@ class HostInterfaceManagementService extends ChangeNotifier {
     });
   }
 
+  void obsHandleEndQuestion() {
+    if (this.gameService.isObservingHost) {
+      this.gameService.audio.pause();
+      this.gameService.audio.seek(Duration.zero);
+      this.gameService.realGameService.audioPaused = false;
+      this.gameService.realGameService.inTimeTransition = true;
+      this.resetInterface();
+    }
+    switch (this.gameService.question?.type) {
+      case QuestionType.QRE:
+      case QuestionType.QCM:
+        if (this.gameService.isObservingHost)
+          this.interactiveListService.getPlayersList(this.roomId, leftPlayers: this.leftPlayers, resetPlayerStatus: false);
+        break;
+      case QuestionType.QRL:
+      default:
+        this.isHostEvaluating = true;
+    }
+  }
+
   void handleFinalTimeTransition() {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION,
         (timeValue) {
+      if (this.gameService.isObserverMode) {
+        this.obsHandleEndQuestion();
+        return;
+      }
       this.timerText = timerTransText['RESULT_AVAILABLE_IN'];
       this.gameService.realGameService.timer = timeValue;
 
-      if (this.gameService.timer == 0 && this.gameService.username == 'host') {
+      if (this.gameService.timer == 0) {
         this.isResultPage = true;
         this.isGameOver = true;
         this._interactiveListService.isFinal = true;
@@ -196,6 +285,18 @@ class HostInterfaceManagementService extends ChangeNotifier {
       }
       notifyListeners();
     });
+  }
+
+  void obsHandleFinalTimeTransition(int timeValue) {
+    this.timerText = timerTransText['RESULT_AVAILABLE_IN'];
+    if (this.gameService.isObservingHost) this.gameService.realGameService.timer = timeValue;
+    if (this.gameService.timer == 0) {
+      this.isGameOver = true;
+      this.interactiveListService.isFinal = true;
+      this.gameService.audio.pause();
+      this.interactiveListService.getPlayersList(this.roomId, leftPlayers: this.leftPlayers);
+      this.isResultPage = true;
+    }
   }
 
   void handleRefreshChoicesStats() {
@@ -264,15 +365,17 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleEndQuestionAfterRemoval() {
     this._socketService.onMessage(SocketEvent.END_QUESTION_AFTER_REMOVAL, (_) {
-      resetInterface();
+      if (!this.gameService.isObserverMode || this.gameService.isObservingHost) resetInterface();
     });
   }
 
   void handleHostPanicMode() {
     this._socketService.onMessage(SocketEvent.PANIC_MODE, (_) {
-      if (this.gameService.timer > 0 &&
-          !this.gameService.realGameService.audioPaused) {
-        this.gameService.audio.play(AssetSource('music.mp3'));
+      if (!this.gameService.isObserverMode || this.gameService.isObservingHost) {
+        if (this.gameService.timer > 0 &&
+            !this.gameService.realGameService.audioPaused) {
+          this.gameService.audio.play(AssetSource('music.mp3'));
+        }
       }
       this.isPanicMode = true;
     });
@@ -280,14 +383,16 @@ class HostInterfaceManagementService extends ChangeNotifier {
 
   void handleHostTimerPause() {
     this._socketService.onMessage(SocketEvent.PAUSE_TIMER, (_) {
-      if (this.gameService.realGameService.audioPaused && this.isPanicMode) {
-        this.gameService.audio.play(AssetSource('music.mp3'));
-      } else if (!this.gameService.realGameService.audioPaused &&
-          this.isPanicMode) {
-        this.gameService.audio.pause();
+      if (!this.gameService.isObserverMode || !this.gameService.isObservingHost) {
+        if (this.gameService.realGameService.audioPaused && this.isPanicMode) {
+          this.gameService.audio.play(AssetSource('music.mp3'));
+        } else if (!this.gameService.realGameService.audioPaused &&
+            this.isPanicMode) {
+          this.gameService.audio.pause();
+        }
+        this.gameService.realGameService.audioPaused =
+        !this.gameService.realGameService.audioPaused;
       }
-      this.gameService.realGameService.audioPaused =
-          !this.gameService.realGameService.audioPaused;
     });
   }
 
@@ -396,7 +501,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     final patternAa = RegExp(r'Aa');
     final patternBb = RegExp(r'Bb');
     final patternCc = RegExp(r'Cc');
-    
+
     if (patternCc.hasMatch(qrlText)) {
       return 100;
     } else if (patternBb.hasMatch(qrlText)) {

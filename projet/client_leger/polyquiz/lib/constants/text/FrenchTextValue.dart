@@ -608,5 +608,19 @@ const frenchTextValues = {
     "CURRENT_POINTS": "Pointage",
     "BONUS_RECEIVED_FEEDBACK": "Vous avez recu des points Bonus!",
     "VALIDATE_BUTTON": "Valider"
+  },
+  "OBSERVER_INTERFACE": {
+    "INACTIVE_PLAYER": "Le joueur est inactif ...",
+    "PLAYER_IS_WRITING": "Le joueur écrit une réponse ...",
+  },
+  "OBSERVER": {
+    "CHOOSE_PLAYER": "Choisir un joueur à observer",
+    "OBSERVE": "Observer",
+    "CANCEL": "Annuler",
+    "OBSERVATION_MENU": "Menu Observation",
+    "OBSERVING": "Vous observez",
+    "QRL_PLAYER_INACTIVE": "Le joueur est inactif...",
+    "QRL_PLAYER_ACTIVE": "Le joueur écrit une réponse ...",
+    "QRL_PLAYER_ANSWER": "Réponse du joueur: ",
   }
 };
