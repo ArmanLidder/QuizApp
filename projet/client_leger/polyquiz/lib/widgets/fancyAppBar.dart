@@ -58,7 +58,7 @@ class _FancyAppBarState extends State<FancyAppBar> {
     fontSize: 20,
     ),
     ),
-    );
+    ));
   }
 
   Widget getCenterWidget() {
