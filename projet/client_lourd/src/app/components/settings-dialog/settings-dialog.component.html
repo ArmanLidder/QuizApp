@@ -19,7 +19,7 @@
     <!-- Theme Selection -->
     <div class="w-full flex items-center mb-4">
         <label class="text-sm font-medium text-primary w-1/4 text-right mr-4">{{'SETTINGS_POPUP.THEME' | translate }}</label>
-        <div class="flex w-1/2 justify-between">
+        <div class="flex w-1/2 gap-2">
             <ng-container *ngFor="let theme of availableThemes$ | async">
                 <div
                         (click)="switchTheme(theme.name)"

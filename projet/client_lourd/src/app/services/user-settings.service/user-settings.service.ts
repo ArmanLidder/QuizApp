@@ -29,6 +29,10 @@ export class UserSettingsService {
         });
     }
 
+    resetStateVariables(): void {
+        this.setTheme('light');
+        this.availableThemesSubject.next(null);
+    }
 
     async switchLanguage(language: 'en' | 'fr') {
         const currentUser: User | null = await firstValueFrom(this.userService.currentUserProfile$);

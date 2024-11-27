@@ -13,6 +13,7 @@ import {first, switchMap} from "rxjs";
 import {map} from "rxjs/operators";
 import {TranslateService} from "@ngx-translate/core";
 import {randomDelay} from "../../../utils/random-time-waiter/random-time-waiter";
+import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
 
 
 @Injectable({
@@ -35,7 +36,8 @@ export class AuthService {
     constructor(private auth: Auth,
                 private usersService: UsersService,
                 private avatarService: AvatarService,
-                private translate: TranslateService) {
+                private translate: TranslateService,
+                private settings: UserSettingsService) {
     }
 
     async register(username: string, email: string, password: string, selectedAvatar: string | File): Promise<void> {
@@ -96,6 +98,7 @@ export class AuthService {
 
 
     async logout(): Promise<void> {
+        this.settings.resetStateVariables();
         await this.usersService.addLogEvent('logout');
         return await this.auth.signOut();
     }
