@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
-
 import '../../../services/friendService.dart';
 
 class SmartFriendIcon extends StatefulWidget {
@@ -21,15 +22,29 @@ class SmartFriendIcon extends StatefulWidget {
 class _SmartFriendIconState extends State<SmartFriendIcon> {
   String _status = 'loading';
   String? currentUserId = LoggedInUserService.instance.getUid();
+  late StreamSubscription friendRequestsSubscription;
+
   @override
   void initState() {
     super.initState();
-    LoggedInUserService.instance.friendRequests.listen((_) {
+    // Subscribe to friend requests stream
+    friendRequestsSubscription = LoggedInUserService.instance.friendRequests.listen((_) {
       _checkStatus();
     });
+    // Initial status check
+    _checkStatus();
+  }
+
+  @override
+  void dispose() {
+    // Cancel the stream subscription when the widget is disposed
+    friendRequestsSubscription.cancel();
+    super.dispose();
   }
 
   Future<void> _checkStatus() async {
+    if (currentUserId == null) return;
+
     final status = await widget.friendService.friendshipStatus(
       currentUserId!,
       widget.targetUserId,
@@ -41,12 +56,13 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
 
   Future<void> _handleIconPressed() async {
     if (_status == 'friends') {
-      if (!widget.canRemoveFriend){return;}
-      if (widget.canRemoveFriend){
+      if (!widget.canRemoveFriend) {
+        return;
+      }
       await widget.friendService.deleteFriendship(
         currentUserId!,
         widget.targetUserId,
-      );}
+      );
     } else if (_status == 'notFriends') {
       await widget.friendService.createFriendRequest(
         currentUserId!,
@@ -62,18 +78,15 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   @override
-  Widget build(BuildContext context){
-
+  Widget build(BuildContext context) {
     IconData iconData;
     Color iconColor;
     switch (_status) {
       case 'friends':
-        if(widget.canRemoveFriend)
-        {
+        if (widget.canRemoveFriend) {
           iconData = Icons.person_remove;
           iconColor = Colors.red;
-        }
-        else{
+        } else {
           iconData = Icons.group;
           iconColor = Colors.black;
         }

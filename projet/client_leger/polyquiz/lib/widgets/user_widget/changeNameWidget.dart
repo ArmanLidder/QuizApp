@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/services/userInfoValidation.dart';
 
@@ -20,7 +21,7 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
   bool _isValidUsername = true;
   String _userNameDiagnosis = "";
   Map get nameText => TranslationService.instance.text['USERNAME_MODIFICATION'];
-
+  final ThemeService ts = ThemeService.instance;
   @override
   void initState() {
     super.initState();
@@ -39,19 +40,29 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(nameText['TITLE']),
+      backgroundColor: ts.mainBackground.value,
+      title: Text(nameText['TITLE'],style: TextStyle(color: ts.mainAccent.value),),
       content: SizedBox(
         width: 300,
-        child:TextField(
-          controller: _nameController,
-          decoration: InputDecoration(
-            labelText: nameText['NEW_USERNAME'],
-            errorText: !_isValidUsername ? nameText[_userNameDiagnosis] : null,
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (e) {
-            _validateUsername(e);
-          },
+        height: 150,
+        child:Column(
+          children: [
+            Text( nameText['NEW_USERNAME']),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white, // Set the background color to white
+                floatingLabelBehavior: FloatingLabelBehavior.always, // Always show the label above the field
+                labelStyle: TextStyle(color: ts.mainAccent.value),
+                errorText: !_isValidUsername ? nameText[_userNameDiagnosis] : null,
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (e) {
+                _validateUsername(e);
+              },
+            ),
+          ],
         ),
       ),
       actions: [
