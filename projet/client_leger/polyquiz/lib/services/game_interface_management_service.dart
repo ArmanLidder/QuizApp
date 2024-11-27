@@ -182,6 +182,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
             this.isDefaultTimerMessage = false;
             if (this.gameService.timer == 0) {
               this.isGameOver = true;
+              final numberOfPlayers = this._interactiveListService.getPlayersList(this.gameService.realGameService.roomId);
               this._interactiveListService.isFinal = true;
               this.isResultPage = true;
             }

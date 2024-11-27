@@ -533,7 +533,8 @@ const frenchTextValues = {
       "TIME_LEFT": "Temps restant ",
       "FINAL_RESULT": "Résultats finaux \n s'afficherons dans ",
       "RESULT_AVAILABLE_IN": "Résultat dans ",
-      "NEXT": "Prochaine \n question dans "
+      "NEXT": "Prochaine \n question dans ",
+      "LOADING_QUESTIONS": "Chargement des questions...",
     },
     "QRE_HISTOGRAM_X_VAL": {
       "WITHIN_MARGIN": "Dans l'intervalle",
