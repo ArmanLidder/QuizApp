@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
+import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/game_service.dart';
@@ -33,6 +34,27 @@ class QuitBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
+        if (this.gameService?.isObserverMode ?? false) {
+          this._socketService.sendMessage(SocketEvent.OBS_LEFT, {
+            'roomId': this.gameService!.realGameService.roomId,
+            'observedId': this.gameService!.observedUid,
+          });
+          if (gameService != null) {
+            gameService!.destroy();
+          }
+          if (gameInterfaceManagementService != null) {
+            gameInterfaceManagementService!.reset();
+          }
+          if (interactiveListService != null) {
+            interactiveListService!.reset();
+          }
+          if (hostInterfaceManagementService != null) {
+            this.hostInterfaceManagementService!.isAlreadyInit = false;
+          }
+          ObservationService.instance.reset(context);
+          _globalNavigationService.navigateTo('/home');
+          return;
+        }
         if (this.isHost) {
           this._socketService.sendMessage(SocketEvent.HOST_LEFT, roomId);
           print('HOST LEFT');

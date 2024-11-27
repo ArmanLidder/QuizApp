@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
+import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 
 class PlayerQcmChoice extends StatefulWidget {
@@ -22,6 +24,7 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
   GameInterfaceManagementService gameInterfaceManagementService =
       GameInterfaceManagementService();
   ThemeService _themeService = ThemeService.instance;
+  SocketService _socketService = SocketService();
 
   @override
   void initState() {
@@ -31,11 +34,34 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     if (gameInterfaceManagementService.gameService.isOfflineMode) {
       this._themeService.setTheme('light');
     }
+    if(!this.gameInterfaceManagementService.gameService.isObserverMode) this.handleRequestQCMSStatus();
+  }
+
+  void handleRequestQCMSStatus() {
+    if (this._socketService.isSocketAlive()) {
+      this._socketService.onMessage(SocketEvent.REQUEST_PAYER_QCM_CHOICES, (_) {
+        final data = {
+          'roomId': this.gameInterfaceManagementService.gameService.realGameService.roomId,
+          'isSelected': this.gameInterfaceManagementService.gameService.answers.containsKey(widget.index),
+          'index': widget.index,
+        };
+        this._socketService.sendMessage(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, data);
+      });
+    }
   }
 
   Color textBtnColor = Color.fromRGBO(0, 0, 0, 0);
   @override
   Widget build(BuildContext context) {
+    print("Rebuilding button ${widget.index}");
+    if (this.gameInterfaceManagementService.gameService.answers.containsKey(widget.index)) {
+      textBtnColor = Color.fromRGBO(53, 121, 246, 1);
+      print('Button ${widget.index} is TRUE');
+    } else {
+      textBtnColor = Color.fromRGBO(0, 0, 0, 0);
+      print('Button ${widget.index} is FALSE');
+    }
+    print('after rebuilding buttonn, answers are ${this.gameInterfaceManagementService.gameService.answers}');
     if (gameInterfaceManagementService.getQcmEnabled()) {
       if (lastQuestionIndex !=
               gameInterfaceManagementService.gameService.questionNumber &&
@@ -54,30 +80,23 @@ class _PlayerQcmChoiceWidgetState extends State<PlayerQcmChoice> {
     }
     return TextButton(
       onPressed: () {
-        if (!this
-                .gameInterfaceManagementService
-                .gameService
-                .realGameService
-                .isHostEvaluating &&
-            this
-                .gameInterfaceManagementService
-                .gameService
-                .realGameService
-                .isValidateActive) {
-          gameInterfaceManagementService.getQcmEnabled()
-              ? setState(() {
-                  textBtnColor = changeColor(textBtnColor, _themeService);
-                  if (gameInterfaceManagementService
-                      .gameService.isOfflineMode) {
-                    gameInterfaceManagementService.gameService
-                        .selectChoiceOffline(widget.index);
-                  } else {
-                    gameInterfaceManagementService.gameService
-                        .selectChoice(widget.index);
-                  }
-                })
-              : () {};
-        }
+        bool isButtonsActive = !this.gameInterfaceManagementService.gameService.realGameService.isHostEvaluating &&
+            this.gameInterfaceManagementService.gameService.realGameService.isValidateActive &&
+            !this.gameInterfaceManagementService.gameService.isObserverMode;
+        if (isButtonsActive) {
+              gameInterfaceManagementService.getQcmEnabled()
+                  ? setState(() {
+                      textBtnColor = changeColor(textBtnColor, _themeService);
+                      if (gameInterfaceManagementService.gameService.isOfflineMode) {
+                        gameInterfaceManagementService.gameService
+                            .selectChoiceOffline(widget.index);
+                      } else {
+                        gameInterfaceManagementService.gameService
+                            .selectChoice(widget.index);
+                      }
+                    })
+                  : () {};
+            }
       },
       style: TextButton.styleFrom(
           side: BorderSide(color: _themeService.mainAccent.value),

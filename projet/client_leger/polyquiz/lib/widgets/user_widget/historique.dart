@@ -20,6 +20,7 @@ class LoginEvenementRow extends StatelessWidget {
   final String date;
   final String label;
   final ThemeService themeService = ThemeService.instance;
+  final TranslationService trs = TranslationService.instance;
 
   LoginEvenementRow({
     required this.date,
@@ -32,7 +33,8 @@ class LoginEvenementRow extends StatelessWidget {
     return Row(
       children: [
         Text(
-          label,
+          trs.text["PROFILE"][label.toUpperCase()],
+
           style: TextStyle(
               color: this.label == 'login' ? Colors.green : Colors.red,
               fontWeight: FontWeight.bold),
@@ -47,30 +49,31 @@ class LoginEvenementRow extends StatelessWidget {
 class GameEvenementRow extends StatelessWidget {
   final String date;
   final String label;
-  final Color color;
   final String gameMode;
   final ThemeService themeService = ThemeService.instance;
+  final TranslationService trs = TranslationService.instance;
   GameEvenementRow({
     required this.date,
     required this.label,
     required this.gameMode,
-    this.color = Colors.black,
   });
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Text(
-          label,
+          trs.text["PROFILE"][label.toUpperCase()],
           style: TextStyle(
               color: this.label == 'win' ? Colors.green : Colors.red,
               fontWeight: FontWeight.bold),
         ),
         Text(" - "),
         Text(date, style: TextStyle(color: themeService.mainAccent.value)),
-        Text(", Gamemode: ",
+        Text(", " + trs.text["PROFILE"]["GAMEMODE"] + ": ",
             style: TextStyle(color: themeService.mainAccent.value)),
-        Text(gameMode, style: TextStyle(color: themeService.mainAccent.value))
+        Text(gameMode == "Classic" ?  trs.text["PROFILE"]["GAMEMODE_CLASSIC"] :
+                                      trs.text["PROFILE"]["GAMEMODE_TEAM"],
+            style: TextStyle(color: themeService.mainAccent.value))
       ],
     );
   }
@@ -98,7 +101,7 @@ class Historique extends StatelessWidget {
       String eventType = loginEventTypeToString[login.eventType]!;
       return Event(
           eventType: eventType,
-          timestamp: DateFormat('yyyy-MM-dd HH:mm').format(dateTime));
+          timestamp: DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime));
     }).toList();
   }
 

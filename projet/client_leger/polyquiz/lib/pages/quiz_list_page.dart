@@ -55,8 +55,7 @@ class _QuizListPageState extends State<QuizListPage> {
 
   void showPopup(BuildContext context, String message) {
     final SnackBar snackBar = SnackBar(
-        content: Text(message,
-            style: TextStyle(color: themeService.mainAccent.value)),
+        content: Text(message, style: TextStyle(color: Colors.white)),
         duration: Duration(milliseconds: 1500),
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.all(16.0));
@@ -75,7 +74,7 @@ class _QuizListPageState extends State<QuizListPage> {
     return Obx(() {
       return Scaffold(
           backgroundColor: _themeService.mainBackground.value,
-          appBar: FancyAppBar(context: context, hasBackButton: false),
+          appBar: FancyAppBar(context: context, canLeaveFromAppBar: false),
           body: isLoading
               ? Center(child: CircularProgressIndicator())
               : errorMessage.isNotEmpty

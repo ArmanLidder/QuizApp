@@ -153,7 +153,7 @@ class ProfileCard extends StatelessWidget {
                           Text(
                             loggedInUserService.observableUsername.value,
                             style: TextStyle(
-                              color: themeService.mainBackground.value,
+                              color: themeService.secondaryAccent.value,
                               fontSize: 18.0,
                               fontWeight: FontWeight.bold,
                             ),
@@ -196,7 +196,7 @@ class ProfileCard extends StatelessWidget {
                       child: Text(
                         loggedInUserService.getUser()!.email,
                         style: TextStyle(
-                          color: themeService.mainBackground.value,
+                          color: themeService.secondaryAccent.value,
                           fontSize: 14.0,
                         ),
                       ),

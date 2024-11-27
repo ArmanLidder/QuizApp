@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
@@ -19,6 +21,7 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
       GameInterfaceManagementService();
   SocketService _socketService = SocketService();
   ThemeService _themeService = ThemeService.instance;
+  final TextEditingController _controller = TextEditingController();
 
   void sendActiveNotice() {
     this._gameInterfaceManagementService.gameService.isActive = true;
@@ -63,6 +66,67 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
     super.dispose();
   }
 
+  Widget getObserverTextFieldQrl() {
+    _controller.text = _gameInterfaceManagementService.gameService.qrlAnswer;
+    return AnimatedBuilder(
+      animation: _gameInterfaceManagementService.gameService,
+      builder: (context, snapshot) {
+        return TextField(
+          style: TextStyle(color: _themeService.mainAccent.value),
+          controller: _controller,
+          decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                  borderSide:
+                  BorderSide(color: _themeService.mainAccent.value)),
+              focusedBorder: OutlineInputBorder(
+                  borderSide:
+                  BorderSide(color: _themeService.mainAccent.value)),
+          ),
+          expands: true,
+          maxLines: null,
+          readOnly: true,
+          maxLength: 200,
+          onChanged: (value) {},
+        );
+      }
+    );
+  }
+
+  Widget getRegularTextfield() {
+    return TextField(
+      style: TextStyle(color: _themeService.mainAccent.value),
+      decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide:
+              BorderSide(color: _themeService.mainAccent.value)),
+          focusedBorder: OutlineInputBorder(
+              borderSide:
+              BorderSide(color: _themeService.mainAccent.value)),
+          counterText: '${inputText}/200',
+          counterStyle: TextStyle(color: _themeService.mainAccent.value),
+      ),
+      expands: true,
+      maxLines: null,
+      maxLength: 200,
+      onChanged: (value) {
+        setState(() {
+          croppedInputText = value.trim();
+          inputText = (200 - value.characters.length).toString();
+          this._gameInterfaceManagementService!.gameService.qrlAnswer =
+              croppedInputText;
+          this.handleActiveUser();
+        });
+      },
+    );
+  }
+
+  Widget getTextField() {
+    if (this._gameInterfaceManagementService.gameService.isObserverMode)
+      return getObserverTextFieldQrl();
+    else
+      return getRegularTextfield();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -70,30 +134,11 @@ class _PlayerQrlWidgetState extends State<PlayerQrl> {
         padding: EdgeInsets.fromLTRB(5.0, 100.0, 5.0, 5.0),
         child: SizedBox(
           height: 150,
-          child: TextField(
-            enabled: _gameInterfaceManagementService.gameService.realGameService.isValidateActive,
-            style: TextStyle(color: _themeService.mainAccent.value),
-            decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: _themeService.mainAccent.value)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: _themeService.mainAccent.value)),
-                counterText: '${inputText}/200',
-                counterStyle: TextStyle(color: _themeService.mainAccent.value)),
-            expands: true,
-            maxLines: null,
-            maxLength: 200,
-            onChanged: (value) {
-              setState(() {
-                croppedInputText = value.trim();
-                inputText = (200 - value.characters.length).toString();
-                this._gameInterfaceManagementService!.gameService.qrlAnswer =
-                    croppedInputText;
-                this.handleActiveUser();
-              });
-            },
+          child: AnimatedBuilder(
+            animation: this._gameInterfaceManagementService.gameService,
+            builder: (context, snapshot) {
+              return getTextField();
+            }
           ),
         ),
       ),

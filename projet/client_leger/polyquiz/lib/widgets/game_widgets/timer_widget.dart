@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
@@ -31,7 +32,13 @@ class _TimerWidgetState extends State<TimerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Obx(() {
+      //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
+      // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!! (il y a qqn qui delete ces fonctions)
+      //-MAXIME
+      var observationEnablerDONOTDELETE = TranslationService.instance.languageValue.value;
+
+      return Container(
       margin: EdgeInsets.all(5.0),
       height: 210,
       width: 220,
@@ -39,63 +46,64 @@ class _TimerWidgetState extends State<TimerWidget> {
           border: Border.all(color: themeService.mainAccent.value),
           borderRadius: BorderRadius.circular(100.0)),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '${widget.timeTxt}',
-            style:
-                TextStyle(fontSize: 20, color: themeService.mainAccent.value),
-          ),
-          Text(
-            '${widget.time}',
-            style:
-                TextStyle(fontSize: 28, color: themeService.mainAccent.value),
-          ),
-          Visibility(
-            visible: widget.isHost,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  color: themeService.mainAccent.value,
-                  onPressed: () {
-                    if (widget.hostInterfaceManagementService != null) {
-                      widget.hostInterfaceManagementService?.sendPauseTimer();
-                      setState(() {
-                        timerIcon = changeIcon(timerIcon);
-                      });
-                    }
-                  },
-                  icon: Icon(timerIcon),
-                  iconSize: 35,
-                ),
-                IconButton(
-                  color: themeService.mainAccent.value,
-                  onPressed: () {
-                    if (widget.hostInterfaceManagementService != null) {
-                      if (widget.hostInterfaceManagementService?.gameService
-                              ?.isPanicDisabled() ==
-                          false) {
-                        widget.hostInterfaceManagementService?.startPanicMode();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(gameText['TOOLTIP']
-                                ['TOOLTIP_PANIC_MODE_DISABLED']),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  icon: Icon(panicModeIcon),
-                  iconSize: 35,
-                )
-              ],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${widget.timeTxt}',
+              style:
+              TextStyle(fontSize: 20, color: themeService.mainAccent.value),
             ),
-          )
-        ],
-      ),
-    );
+            Text(
+              '${widget.time}',
+              style:
+              TextStyle(fontSize: 28, color: themeService.mainAccent.value),
+            ),
+            Visibility(
+              visible: widget.isHost,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    color: themeService.mainAccent.value,
+                    onPressed: () {
+                      if (widget.hostInterfaceManagementService != null) {
+                        widget.hostInterfaceManagementService?.sendPauseTimer();
+                        setState(() {
+                          timerIcon = changeIcon(timerIcon);
+                        });
+                      }
+                    },
+                    icon: Icon(timerIcon),
+                    iconSize: 35,
+                  ),
+                  IconButton(
+                    color: themeService.mainAccent.value,
+                    onPressed: () {
+                      if (widget.hostInterfaceManagementService != null) {
+                        if (widget.hostInterfaceManagementService?.gameService
+                            ?.isPanicDisabled() ==
+                            false) {
+                          widget.hostInterfaceManagementService?.startPanicMode();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(gameText['TOOLTIP']
+                              ['TOOLTIP_PANIC_MODE_DISABLED']),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    icon: Icon(panicModeIcon),
+                    iconSize: 35,
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 }
 

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/enums/question_type.dart';
+import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/score.dart';
 import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/models/quiz.dart';
@@ -19,6 +21,8 @@ class GameInterfaceManagementService extends ChangeNotifier {
   GameInterfaceManagementService._internal();
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get timerTransText => gameText['TIMER_TEXT'];
+  Map get observerText => TranslationService.instance.text['OBSERVER'];
+
 
   factory GameInterfaceManagementService() {
     return _instance;
@@ -28,7 +32,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
   bool isGameOver = false;
   bool _qcmEnabled = true;
   int playerScore = 0;
-  List<Player> players = [];
+  List<PlayerScore> players = [];
   bool inPanicMode = false;
   List<QuestionStatistics> gameStats = []; // Type a revoir
   String get timerText => timerTransText[isDefaultTimerMessage ? 'TIME_LEFT' : 'FINAL_RESULT'];
@@ -46,6 +50,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this._socketService.disconnect();
       }
     }
+    if (this.gameService.isObserverMode) return;
     if (this._socketService.isSocketAlive()) {
       this.configureBaseSocketFeatures();
     }
@@ -76,35 +81,72 @@ class GameInterfaceManagementService extends ChangeNotifier {
   }
 
   void resetData() {
-    this.gameService.audio.pause();
-    this.gameService.audio.seek(Duration.zero);
-    this.gameService.realGameService.audioPaused = false;
+    if (!this.gameService.isObservingHost) {
+      this.gameService.audio.pause();
+      this.gameService.audio.seek(Duration.zero);
+      this.gameService.realGameService.audioPaused = false;
+      this.gameService.realGameService.locked = false;
+      this.gameService.realGameService.validated = false;
+    }
     this.inPanicMode = false;
-    this.gameService.realGameService.locked = false;
-    this.gameService.realGameService.validated = false;
     this.isBonus = false;
     this.isDefaultTimerMessage = true;
   }
 
   void handleEndQuestion() {
     this._socketService.onMessage(SocketEvent.END_QUESTION, (_) {
+      if (this.gameService.isObserverMode) {
+        this.obsHandleEndQuestion();
+        notifyListeners();
+        return;
+      }
       this.gameService.audio.pause();
       this.gameService.audio.seek(Duration.zero);
       this.gameService.realGameService.audioPaused = false;
       this.inPanicMode = false;
-      if (this.gameService.question?.type == QuestionType.QCM) {
-        this.getScore();
-        this.changeQcmEnabled(false);
-        this.gameService.realGameService.qcmEnabled = false;
-      } else {
-        this.gameService.realGameService.isHostEvaluating = true;
-        this.gameService.qrlAnswer = '';
-        this.gameService.realGameService.validated = true;
+      switch (this.gameService.question?.type) {
+        case QuestionType.QRL:
+          this.gameService.realGameService.isHostEvaluating = true;
+          this.gameService.qrlAnswer = '';
+          this.gameService.realGameService.validated = true;
+          break;
+        default:
+          this.getScore();
+          this.changeQcmEnabled(false);
+          this.gameService.realGameService.qcmEnabled = false;
+          break;
       }
       this.gameService.realGameService.isNotified = false;
       this.gameService.realGameService.isValidateActive = false;
       notifyListeners();
     });
+  }
+
+  void obsHandleEndQuestion() {
+    if (!this.gameService.isObservingHost) {
+      this.gameService.audio.pause();
+      this.gameService.audio.seek(Duration.zero);
+      this.gameService.realGameService.audioPaused = true;
+    }
+    this.inPanicMode = false;
+    switch (this.gameService.question?.type) {
+      case QuestionType.QCM:
+        this.changeQcmEnabled(false);
+        this.gameService.realGameService.qcmEnabled = false;
+        this.getScore();
+        this.gameService.realGameService.validated = true;
+        break;
+      case QuestionType.QRE:
+        this.getScore();
+        this.gameService.realGameService.validated = true;
+        break;
+      case QuestionType.QRL:
+      default:
+        this.gameService.realGameService.isHostEvaluating = true;
+        this.gameService.qrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
+        if (!this.gameService.isObservingHost) this.gameService.realGameService.validated = true;
+    }
+    notifyListeners();
   }
 
   void handleEvaluationOver() {
@@ -116,9 +158,16 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handleTimeTransition() {
     this._socketService.onMessage(SocketEvent.TIME_TRANSITION, (timeValue) {
-      this.gameService.realGameService.timer = timeValue;
-      if (this.gameService.timer == 0) {
-        this.resetData();
+      if (!this.gameService.isObserverMode) {
+        this.gameService.realGameService.timer = timeValue;
+        if (this.gameService.timer == 0) {
+          this.resetData();
+        }
+      } else if (!this.gameService.isObservingHost) {
+        this.gameService.realGameService.timer = timeValue;
+        if (this.gameService.timer == 0) {
+          this.resetData();
+        }
       }
       notifyListeners();
     });
@@ -127,16 +176,25 @@ class GameInterfaceManagementService extends ChangeNotifier {
   void handleFinalTimeTransition() {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION,
         (timeValue) {
-      //todo code pour afficher la transition aux resultats finaux
-      this.gameService.realGameService.timer = timeValue;
-      this.isDefaultTimerMessage = false;
-      if (this.gameService.timer == 0) {
-        this.isGameOver = true;
-        this._interactiveListService.isFinal = true;
-        final numberOfPlayers = this._interactiveListService.getPlayersList(this.gameService.realGameService.roomId);
-        this.isResultPage = true;
-      }
-      notifyListeners();
+          //todo code pour afficher la transition aux resultats finaux
+          if (!this.gameService.isObserverMode) {
+            this.gameService.realGameService.timer = timeValue;
+            this.isDefaultTimerMessage = false;
+            if (this.gameService.timer == 0) {
+              this.isGameOver = true;
+              this._interactiveListService.isFinal = true;
+              this.isResultPage = true;
+            }
+          } else {
+            this.isDefaultTimerMessage = false;
+            if (!this.gameService.isObservingHost) this.gameService.realGameService.timer = timeValue;
+            if (this.gameService.timer == 0) {
+              this.isGameOver = true;
+              this._interactiveListService.isFinal = true;
+              this.isResultPage = true;
+            }
+          }
+          notifyListeners();
     });
   }
 
@@ -151,9 +209,16 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handlePanicMode() {
     this._socketService.onMessage(SocketEvent.PANIC_MODE, (_) {
-      if (this.gameService.timer > 0 &&
-          !this.gameService.realGameService.audioPaused) {
-        this.gameService.audio.play(AssetSource('music.mp3'));
+      if (!this.gameService.isObserverMode) {
+        if (this.gameService.timer > 0 &&
+            !this.gameService.realGameService.audioPaused) {
+          this.gameService.audio.play(AssetSource('music.mp3'));
+        }
+      } else if (!this.gameService.isObservingHost) {
+        if (this.gameService.timer > 0 &&
+            !this.gameService.realGameService.audioPaused) {
+          this.gameService.audio.play(AssetSource('music.mp3'));
+        }
       }
       this.inPanicMode = true;
       notifyListeners();
@@ -162,15 +227,22 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void handlePauseTimer() {
     this._socketService.onMessage(SocketEvent.PAUSE_TIMER, (_) {
-      if (this.gameService.realGameService.audioPaused && this.inPanicMode) {
-        this.gameService.audio.play(AssetSource('music.mp3'));
-      } else if (!this.gameService.realGameService.audioPaused &&
-          this.inPanicMode) {
-        this.gameService.audio.pause();
+      final audio = AssetSource('music.mp3');
+      if (!this.gameService.isObserverMode) {
+        if (this.gameService.realGameService.audioPaused && this.inPanicMode) {
+          this.gameService.audio.play(audio);
+        } else if (!this.gameService.realGameService.audioPaused &&
+            this.inPanicMode) {
+          this.gameService.audio.pause();
+        }
+        this.gameService.realGameService.audioPaused =
+        !this.gameService.realGameService.audioPaused;
+        notifyListeners();
+      } else if (!this.gameService.isObservingHost) {
+        if (this.gameService.realGameService.audioPaused && this.inPanicMode) this.gameService.audio.play(audio);
+        else if (!this.gameService.realGameService.audioPaused && this.inPanicMode) this.gameService.audio.pause();
+        this.gameService.realGameService.audioPaused = !this.gameService.realGameService.audioPaused;
       }
-      this.gameService.realGameService.audioPaused =
-          !this.gameService.realGameService.audioPaused;
-      notifyListeners();
     });
   }
 
@@ -214,15 +286,16 @@ class GameInterfaceManagementService extends ChangeNotifier {
 
   void getScore() {
     if (this.gameService.realGameService.username != 'host') {
+      final username = this.gameService.isObserverMode ? this.gameService.observedUid : this.gameService.realGameService.username;
       this._socketService.sendMessageWithAck(
         SocketEvent.GET_SCORE,
         {
           'roomId': this.gameService.realGameService.roomId,
-          'username': this.gameService.realGameService.username,
+          'username': username,
         },
         (dynamic response) {
           final score = Score.fromJson(response);
-          this.gameService.realGameService.validated = true;
+          if (!this.gameService.isObservingHost) this.gameService.realGameService.validated = true;
           this.updateScore(score.points);
           this.isBonus = score.isBonus;
         },
@@ -233,7 +306,7 @@ class GameInterfaceManagementService extends ChangeNotifier {
   void updateScore(int score) {
     final oldScore = this.playerScore;
     this.playerScore = score;
-    if (this.gameService.question?.type == QuestionType.QRL) {
+    if (this.gameService.question?.type == QuestionType.QRL && !this.gameService.isObserverMode) {
       this.gameService.lastQrlScore = (((playerScore - oldScore) /
                   (gameService.realGameService.question?.points ?? 0)) *
               100)
@@ -256,11 +329,25 @@ class GameInterfaceManagementService extends ChangeNotifier {
     }
     return this._qcmEnabled;
   }
-}
 
-class Player {
-  final String username;
-  final int points;
+  void handleRequestActivityStatus() {
+    if (this._socketService.isSocketAlive() && !this.gameService.isObserverMode) {
+      this._socketService.onMessage(SocketEvent.REQUEST_QRL_INTERACTION, (uid) {
+        if (uid as String == LoggedInUserService.instance.user?.uid) {
+          this._socketService.sendMessage(SocketEvent.SEND_ACTIVITY_STATUS, {
+            'roomId': this.gameService.realGameService.roomId,
+            'isActive': this.gameService.isActive,
+            'forObs': true,
+          });
 
-  Player({required this.username, required this.points});
+          this._socketService.sendMessage(SocketEvent.GET_LAST_QRL_STATUS, {
+            'roomId': this.gameService.realGameService.roomId,
+            'lastQRLScore': this.gameService.lastQrlScore,
+            'qrlAnswer': this.gameService.qrlAnswer,
+            'userId': LoggedInUserService.instance.user?.uid,
+          });
+        }
+      });
+    }
+  }
 }

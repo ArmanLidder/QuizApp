@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/widgets/user_widget/friend/singleFriendInteractable.dart';
 import '../../../services/LanguageService.dart';
+import '../../../services/friendService.dart';
+import '../../../services/theme_service.dart';
 
 class UserIdsRow extends StatefulWidget {
-  const UserIdsRow({Key? key}) : super(key: key);
+
+  UserIdsRow({Key? key}) : super(key: key);
+  final ThemeService _themeService = ThemeService.instance;
 
   @override
   _UserIdsRowState createState() => _UserIdsRowState();
@@ -15,24 +20,31 @@ class _UserIdsRowState extends State<UserIdsRow> {
   String filterText = ''; // Text input for filtering
   final LanguageService ls = LanguageService.instance;
  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
-
-  // Filters the list of users based on the entered text.
-  List<QueryDocumentSnapshot> _filterUsers(
-
-  List<QueryDocumentSnapshot> users, String filter) {
-    return users
-        .where((doc) {
+  Map get text => TranslationService.instance.text['USER_SEARCH'];
+  Future<List<QueryDocumentSnapshot>> _filterUsers(List<QueryDocumentSnapshot> users, String filter) async {
+    List<QueryDocumentSnapshot> filteredUsers = [];
+    for (var doc in users) {
       final username = doc['username'] as String? ?? '';
       final userId = doc['uid'] as String? ?? '';
-      return username.toLowerCase().contains(filter.toLowerCase()) && userId != loggedInUserService.getUid();    })
-        .toList();
+      final loggedInUid = loggedInUserService.getUid();
+      if (username.toLowerCase().contains(filter.toLowerCase()) &&
+          userId != loggedInUserService.getUid()) {
+        bool isAlreadyFriends =  FriendService.instance.friendshipStatus(userId) == "friends";
+        if (!isAlreadyFriends) {
+          filteredUsers.add(doc);
+        }
+      }
+    }
+    return filteredUsers;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Container(
+      color: widget._themeService.mainBackground.value,
+        child: Column(
       children: [
-        // Text Field for filtering usernames
+        Text(text["TITLE"],style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: widget._themeService.mainAccent.value),),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: TextField(
@@ -42,12 +54,13 @@ class _UserIdsRowState extends State<UserIdsRow> {
               });
             },
             decoration: InputDecoration(
-              labelText: ls.filterByUsernameText,
+              filled: true, // Enables background fill
+              fillColor: Colors.white, // Background color
+              labelText: TranslationService.instance.text["USER_SEARCH"]["PLACEHOLDER"],
               border: OutlineInputBorder(),
             ),
           ),
         ),
-        // StreamBuilder to listen to the users collection
         Expanded(
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance.collection('users').snapshots(),
@@ -55,33 +68,34 @@ class _UserIdsRowState extends State<UserIdsRow> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
-
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('No users found.'));
-              }
-
-              // Filter users based on the entered text
-              final filteredUsers =
-              _filterUsers(snapshot.data!.docs, filterText);
-
-              // Build the widgets for each user
-              return ListView(
-                children: filteredUsers.map((doc) {
-                  final uid = doc['uid'] as String;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: SingleFriendInteractable(userId: uid),
+              return FutureBuilder<List<QueryDocumentSnapshot>>(
+                future: _filterUsers(snapshot.data!.docs, filterText),
+                builder: (context, filteredSnapshot) {
+                  if (filteredSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (filteredSnapshot.hasError) {
+                    return Center(child: Text('Error: ${filteredSnapshot.error}'));
+                  }
+                  final filteredUsers = filteredSnapshot.data ?? [];
+                  if (filteredUsers.isEmpty) {
+                    return const Center(child: Text('No users found.'));
+                  }
+                  return ListView(
+                    children: filteredUsers.map((doc) {
+                      final uid = doc['uid'] as String;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: SingleFriendInteractable(userId: uid),
+                      );
+                    }).toList(),
                   );
-                }).toList(),
+                },
               );
             },
           ),
         ),
       ],
-    );
+    ));
   }
 }

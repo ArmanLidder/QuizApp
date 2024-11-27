@@ -18,10 +18,6 @@ class MoneyCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      User? user = loggedInUserService.getUser(); // Retrieve the user object
-      num prestige = user?.prestige ?? 0; // Default to 0 if prestige is null
-      num level = user?.level ?? 0; // Default to 0 if level is null
-
       return Center(
         child: Text(
           '${shopText['CURRENCY']} : ${loggedInUserService.observableCurrency.value} \$',
@@ -49,7 +45,7 @@ class ThemeStoreList extends StatelessWidget {
         itemId: item["id"],
         name: item["name"],
         cost: item["cost"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy( item["id"])},
       );
       items.add(widget);
     });
@@ -76,78 +72,94 @@ class ImageStoreList extends StatelessWidget {
         name: item["name"],
         cost: item["cost"],
         source: item["source"], // New field for image source
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy( item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
         width: 5,
       ));
     });
-    return Center(
-        child: Wrap(
+    return  Wrap(
+      alignment: WrapAlignment.start,
       children: items,
-    ));
+        );
   }
 }
 
 class RewardImageStoreList extends StatelessWidget {
-  final List<Map<String, dynamic>> rewardItems;
+  final List<Map<String, dynamic>> rewardImages;
+  final List<Map<String, dynamic>> rewardThemes;
   final String userId;
   final StoreService storeService = Get.find();
 
-  RewardImageStoreList({required this.rewardItems, required this.userId});
+  RewardImageStoreList.RewardStoreList({ required this.rewardImages,required this.rewardThemes, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     List<Widget> items = [];
-    rewardItems.forEach((item) {
+    rewardImages.forEach((item) {
       Widget widget = RewardImageItem(
         itemId: item["id"],
         name: item["name"],
         cost: item["cost"],
         source: item["source"], // New field for image source
         minLevel: item["minLevel"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy( item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
         width: 5,
       ));
     });
-    return Center(
-        child: Wrap(
-      children: items,
-    ));
-  }
-}
-
-class RewardThemeStoreList extends StatelessWidget {
-  final List<Map<String, dynamic>> rewardItems;
-  final String userId;
-  final StoreService storeService = Get.find();
-
-  RewardThemeStoreList({required this.rewardItems, required this.userId});
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> items = [];
-    rewardItems.forEach((item) {
+    rewardThemes.forEach((item) {
       Widget widget = RewardThemeItem(
         itemId: item["id"],
         name: item["name"],
         cost: item["cost"],
         achievement: item["achievement"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy(item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
         width: 5,
       ));
     });
-    return Center(
-        child: Wrap(
+
+    return Wrap(
+      alignment: WrapAlignment.start,
       children: items,
-    ));
+        );
+  }
+}
+
+class RewardThemeStoreList extends StatelessWidget {
+  final List<Map<String, dynamic>> rewardThemes;
+  final String userId;
+  final StoreService storeService = Get.find();
+
+  RewardThemeStoreList({required this.rewardThemes, required this.userId});
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> items = [];
+    rewardThemes.forEach((item) {
+      Widget widget = RewardThemeItem(
+        itemId: item["id"],
+        name: item["name"],
+        cost: item["cost"],
+        achievement: item["achievement"],
+        onBuy: () async => {await storeService.buy(item["id"])},
+      );
+      items.add(widget);
+      items.add(SizedBox(
+        width: 5,
+      ));
+    });
+    return
+         Wrap(
+           alignment: WrapAlignment.start,
+           children: items,
+        );
   }
 }
 
@@ -161,21 +173,23 @@ class RewardCashStoreList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> items = [];
+    cashItems.sort((a, b) => a["achievement"].compareTo(b["achievement"]));
     cashItems.forEach((item) {
       Widget widget = RewardCashItem(
         itemId: item["id"],
         cost: item["cost"],
         achievement: item["achievement"],
-        onBuy: () async => {await storeService.buy(userId, item["id"])},
+        onBuy: () async => {await storeService.buy(item["id"])},
       );
       items.add(widget);
       items.add(SizedBox(
         width: 5,
       ));
     });
-    return Center(
-        child: Wrap(
-      children: items,
-    ));
+    return
+        Wrap(
+          alignment: WrapAlignment.start,
+          children: items,
+        );
   }
 }

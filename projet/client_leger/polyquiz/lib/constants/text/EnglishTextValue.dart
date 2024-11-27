@@ -148,6 +148,7 @@ const englishTextValues = {
     "THEMES": "Themes",
     "NO_THEMES": "No themes available at the moment.",
     "IMAGES": "Images",
+    "REWARDS": "Rewards",
     "NO_IMAGES": "No images available at the moment.",
     "OWNED": "Already owned",
     "NOT_ENOUGH_FUNDS": "Not enough funds",
@@ -182,7 +183,22 @@ const englishTextValues = {
     "DESCRIPTION": "Description",
     "DURATION": "Duration",
     "DURATION_SUFFIX": "s",
-    "QUESTIONS": "Questions"
+    "QUESTIONS": "Questions",
+    "NO_DOWNLOAD": "No downloaded quiz",
+    "SUCCESSFUL_DOWNLOAD": "Download successful",
+    "ALREADY_DOWNLOADED": "This quiz has already been downloaded",
+    "ERROR": "Error",
+    "SUCCESSFUL_DELETE": "Quiz successfully deleted",
+    "QUIZ_NOT_FOUND": "The quiz doesn't exist"
+  },
+  "SETTINGS": {
+    "TITLE": 'Settings',
+    "LANGUAGE": "Language",
+    "THEME": "Theme",
+    "dark": "dark",
+    "light": "light",
+    "disco": "disco",
+    "pinkGrey": "pink-grey"
   },
   "QUIZ_CREATION": {
     "TITLE_CREATION": "Game Creation",
@@ -577,5 +593,19 @@ const englishTextValues = {
     "CURRENT_POINTS": "Points",
     "BONUS_RECEIVED_FEEDBACK": "You received Bonus points!!",
     "VALIDATE_BUTTON": "Validate"
+  },
+  "OBSERVER_INTERFACE": {
+    "INACTIVE_PLAYER": "The player is inactive ...",
+    "PLAYER_IS_WRITING": "The player is typing an answer ...",
+  },
+  "OBSERVER": {
+    "CHOOSE_PLAYER": "Choose a player to observe",
+    "OBSERVE": "Observe",
+    "CANCEL": "Cancel",
+    "OBSERVATION_MENU": "Observation Menu",
+    "OBSERVING": "You are observing",
+    "QRL_PLAYER_INACTIVE": "The player is inactive...",
+    "QRL_PLAYER_ACTIVE": "The player is writing an answer...",
+    "QRL_PLAYER_ANSWER": "Player answer: ",
   }
 };

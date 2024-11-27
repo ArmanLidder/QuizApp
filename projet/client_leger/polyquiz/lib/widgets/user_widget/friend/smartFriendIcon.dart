@@ -1,16 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
-
 import '../../../services/friendService.dart';
 
 class SmartFriendIcon extends StatefulWidget {
   final bool canRemoveFriend;
   final String targetUserId;
   final FriendService friendService = FriendService.instance;
+  final bool hasThemeColor;
   SmartFriendIcon({
     Key? key,
     required this.targetUserId,
+    this.hasThemeColor = false,
     this.canRemoveFriend = true,
   }) : super(key: key);
 
@@ -21,17 +25,29 @@ class SmartFriendIcon extends StatefulWidget {
 class _SmartFriendIconState extends State<SmartFriendIcon> {
   String _status = 'loading';
   String? currentUserId = LoggedInUserService.instance.getUid();
-  final ThemeService _themeService = ThemeService.instance;
+  late StreamSubscription friendRequestsSubscription;
 
   @override
   void initState() {
     super.initState();
+    // Subscribe to friend requests stream
+    friendRequestsSubscription = LoggedInUserService.instance.friendRequests.listen((_) {
+      _checkStatus();
+    });
+    // Initial status check
     _checkStatus();
   }
 
+  @override
+  void dispose() {
+    // Cancel the stream subscription when the widget is disposed
+    friendRequestsSubscription.cancel();
+    super.dispose();
+  }
+
   Future<void> _checkStatus() async {
-    final status = await widget.friendService.friendshipStatus(
-      currentUserId!,
+    if (currentUserId == null) return;
+    final status = widget.friendService.friendshipStatus(
       widget.targetUserId,
     );
     setState(() {
@@ -40,11 +56,10 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   Future<void> _handleIconPressed() async {
-    if (!widget.canRemoveFriend) {
-      return;
-    }
-
     if (_status == 'friends') {
+      if (!widget.canRemoveFriend) {
+        return;
+      }
       await widget.friendService.deleteFriendship(
         currentUserId!,
         widget.targetUserId,
@@ -74,27 +89,28 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
           iconColor = Colors.red;
         } else {
           iconData = Icons.group;
-          iconColor = _themeService.mainAccent.value;
+          iconColor = Colors.black;
         }
         break;
-
       case 'sentPending':
         iconData = Icons.hourglass_empty;
-        iconColor = _themeService.mainAccent.value;
+        iconColor = Colors.black;
         break;
       case 'receivedPending':
-        iconData = Icons.person_add;
-        iconColor = Colors.green;
+        iconData = Icons.group;
+        iconColor = Colors.black;
         break;
       case 'notFriends':
         iconData = Icons.person_add;
-        iconColor = _themeService.mainAccent.value;
+        iconColor = Colors.black;
         break;
       default:
         iconData = Icons.hourglass_empty;
-        iconColor = Colors.grey;
+        iconColor = Colors.black;
     }
-
+  if(widget.hasThemeColor){
+      iconColor = ThemeService.instance.mainAccent.value;
+  }
     return IconButton(
       icon: Icon(iconData, color: iconColor),
       onPressed: _status == 'sentPending'

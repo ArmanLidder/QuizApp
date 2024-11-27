@@ -3,6 +3,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
@@ -20,6 +21,8 @@ import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
 import '../models/user.dart';
+import 'package:polyquiz/widgets/observer_widgets/observer_counter.dart';
+import 'package:polyquiz/widgets/observer_widgets/observation_selector.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -62,29 +65,37 @@ class _MyWidgetState extends State<GamePage> {
       _socketService.clearAllListeners();
       _cleanupSocketListeners();
     }
+    if (this._gameService.isObserverMode) {
+      final game = ObservationService.instance.gameConfigs;
+      this._gameService.init(game!.room.toString(), true);
+      this._gameService.realGameService.username = 'host';
+      ObservationService.instance.observeGame(game, context);
+    }
     if (_socketService.isSocketAlive()) {
       if (!isHost) {
-        print('I am Here');
         this._gameInterfaceManagementService.gameService.isOfflineMode = false;
         this
             ._gameInterfaceManagementService
             .setUp(this._gameService.realGameService.roomId.toString());
       }
     }
+    ObservationService.instance.callback = (bool value) {
+      setState(() {
+        this.isHost = value;
+      });
+    };
   }
 
   Future<void> _cleanupSocketListeners() async {
     while (_socketService.getListenerCount() != 0) {
       await Future.delayed(Duration(milliseconds: 100));
     }
-    print('GamePage initState');
     _interactiveListService.configureBaseSocketFeatures();
   }
 
   @override
   void dispose() {
     if (_gameService.isQuitBtn) {
-      print('GamePage dispose');
       isHost = false;
       isQcm = false;
       isGrading = true;
@@ -116,27 +127,35 @@ class _MyWidgetState extends State<GamePage> {
     }
     return Visibility(
         visible: !this._gameService.realGameService.isHostEvaluating,
-        child: questionWidget);
+        child: questionWidget
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     if (isHost) {
-      return Scaffold(
-        appBar: FancyAppBar(context: context),
-        backgroundColor: themeService.mainBackground.value,
-        body: Stack(children: [
-          ListView(children: [
-            Visibility(
-                visible: isHost,
-                child: HostInterface(
-                    interactiveListService: _interactiveListService,
-                    gameInterfaceManagementService:
-                        _gameInterfaceManagementService))
+      return Obx(() {
+        //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
+        // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!! (il y a qqn qui delete ces fonctions)
+        //-MAXIME
+        var observationEnablerDONOTDELETE = TranslationService.instance.languageValue.value;
+
+        return Scaffold(
+          appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
+          backgroundColor: themeService.mainBackground.value,
+          body: Stack(children: [
+            ListView(children: [
+              Visibility(
+                  visible: isHost,
+                  child: HostInterface(
+                      interactiveListService: _interactiveListService,
+                      gameInterfaceManagementService:
+                      _gameInterfaceManagementService))
+            ]),
+            Positioned(bottom: 20, left: 20, child: ChatPopup())
           ]),
-          Positioned(bottom: 20, left: 20, child: ChatPopup())
-        ]),
-      );
+        );
+      });
     } else {
       return Container(
           color: themeService.mainBackground.value,
@@ -167,7 +186,7 @@ class _MyWidgetState extends State<GamePage> {
                       builder: (BuildContext context, Widget? snapshot) {
                         if (_gameInterfaceManagementService.isResultPage) {
                           return Scaffold(
-                            appBar: FancyAppBar(context: context),
+                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
                             backgroundColor: themeService.mainBackground.value,
                             body: ListView(
                               children: [
@@ -184,7 +203,7 @@ class _MyWidgetState extends State<GamePage> {
                           );
                         } else {
                           return Scaffold(
-                            appBar: FancyAppBar(context: context),
+                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
                             backgroundColor: themeService.mainBackground.value,
                             body: Stack(children: [
                               ListView(shrinkWrap: true, children: [
@@ -217,16 +236,14 @@ class _MyWidgetState extends State<GamePage> {
                                               questionPts:
                                                   _gameInterfaceManagementService
                                                       .gameService
-                                                      .question!
-                                                      .points,
+                                                      .question?.points ?? 0,
                                               questionText:
                                                   _gameInterfaceManagementService
                                                       .gameService
-                                                      .question!
-                                                      .text),
+                                                      .question?.text ?? ''),
                                             ),
                                           ),
-                                          Expanded(
+                                          if (!this._gameService.isObserverMode) Expanded(
                                             child: Container(
                                               alignment: Alignment.center,
                                               margin: EdgeInsets.all(5.0),
@@ -328,7 +345,7 @@ class _MyWidgetState extends State<GamePage> {
 
     return Row(
       children: <Widget>[
-        AnimatedBuilder(
+        if (!this._gameService.isObserverMode) AnimatedBuilder(
           animation: this._gameService.realGameService,
           builder: (BuildContext context, Widget? snapshot) => TextButton(
               onPressed: isValidateButtonActive ? onValidate : null,
@@ -341,7 +358,7 @@ class _MyWidgetState extends State<GamePage> {
                 ),
               )),
         ),
-        SizedBox(width: 100.0),
+        if (!this._gameService.isObserverMode) SizedBox(width: 100.0),
         QuitBtn(
           isHost: false,
           roomId: this._gameService.realGameService.roomId,
@@ -381,7 +398,7 @@ class ResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
-      Language uselessShit = transService.languageValue.value;
+      Language ObxObservator = transService.languageValue.value;
 
       return Container(
         color: _themeService.mainBackground.value,

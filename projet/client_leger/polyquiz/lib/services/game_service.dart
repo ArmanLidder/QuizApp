@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
 import 'package:polyquiz/services/offline_game_service.dart';
 import 'package:polyquiz/services/real_game_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
@@ -17,14 +18,49 @@ class GameService extends ChangeNotifier {
 
   bool isOfflineMode = false;
   bool isInputFocused = false;
-  Map<int, String?> answers = {};
-  String qrlAnswer = '';
+  Map<int, String?> _answers = {};
+  String _qrlAnswer = '';
+  String get qrlAnswer => _qrlAnswer;
+  void set qrlAnswer(String value) {
+    this._qrlAnswer = value;
+    notifyListeners();
+  }
   bool isActive = false;
   bool hasInteracted = false;
   int? lastQrlScore;
   int qreAnswer = 0;
   bool gotNotified = false;
   bool isQuitBtn = false;
+
+  bool isObserverMode = false;
+  bool isObservingHost = true;
+  String observedUid = '';
+
+  Map<int, String?> get answers {
+    if (!this.isObserverMode) return this._answers;
+    else return this.realGameService.obsAnswers;
+  }
+
+  void set answers(Map<int, String?> value) {
+    if (!this.isObserverMode) this._answers = value;
+    else this.realGameService.obsAnswers = value;
+  }
+
+  int _obsQreAnswer = 0;
+  int get obsQreAnswer => this._obsQreAnswer;
+  void set obsQreAnswer(int value) {
+    this._obsQreAnswer = value;
+    realGameService.notifyOnChanged();
+    notifyListeners();
+  }
+  void silentSetObsQre(int value) {
+    this._obsQreAnswer = value;
+  }
+  String get obsQrlAnswer => this.realGameService.obsQrlAnswer;
+  void set obsQrlAnswer(String value) {
+    this.realGameService.obsQrlAnswer = value;
+    notifyListeners();
+  }
 
   final OfflineGameService offlineGameService = OfflineGameService();
   final RealGameService realGameService = RealGameService();
@@ -87,11 +123,13 @@ class GameService extends ChangeNotifier {
     this.answers.clear();
   }
 
-  void init(String pathId) {
+  void init(String pathId,[bool isObserver=false]) {
+    if (isObserver) this.isObserverMode = true;
+    // TODO: add configurations for observer
     if (!this.isOfflineMode) {
       configureBaseSockets();
       this.realGameService.roomId = int.parse(pathId);
-      this.realGameService.init();
+      this.realGameService.init(this.isObserverMode);
     } else {
       this.offlineGameService.quizId = pathId;
       this.offlineGameService.init();
@@ -111,8 +149,25 @@ class GameService extends ChangeNotifier {
     }
   }
 
+  void obsUpdateChoice(int index, bool isSelected) {
+    print('value of lockedStatus: $lockedStatus');
+    // if (this.lockedStatus) return;
+    if (isSelected && !this.answers.containsKey(index)) {
+      String? textChoice = this.question?.choices?[index].text;
+      this.answers[index] = textChoice;
+      notifyListeners();
+      print("After obsUpdateChoice answers are: ${this.answers}");
+      return;
+    }
+    if (!isSelected && this.answers.containsKey(index)) {
+      this.answers.remove(index);
+      notifyListeners();
+    }
+    print("After obsUpdateChoice answers are: ${this.answers}\nMind you, we removed a $isSelected answer");
+  }
+
   void selectQREanswer(int selectedAnswer) {
-    if (this.lockedStatus) return;
+    if (this.lockedStatus || this.isObserverMode) return;
     this.qreAnswer = selectedAnswer;
     this.realGameService.sendQRESelection(selectedAnswer);
   }
@@ -142,6 +197,14 @@ class GameService extends ChangeNotifier {
       this.offlineGameService.sendAnswer();
     }
     this.lastQrlScore = null;
+    if (!this.isObserverMode) {
+      this.socketService.sendMessage(SocketEvent.GET_LAST_QRL_STATUS, {
+        'roomId': this.realGameService.roomId,
+        'lastQRLScore': this.lastQrlScore,
+        'qrlAnswer': this.qreAnswer,
+        'userId': LoggedInUserService.instance.user?.uid
+      }); // Done
+    }
     this.answers.clear();
   }
 
@@ -165,6 +228,7 @@ class GameService extends ChangeNotifier {
     this.offlineGameService.reset();
     this.gotNotified = false;
     this.isQuitBtn = false;
+    this.isObserverMode = false;
     this.lastQrlScore = null;
     this.qreAnswer = 0;
   }
@@ -179,9 +243,9 @@ class GameService extends ChangeNotifier {
   void handleTimeEvent(timeValue) {
     this.realGameService.timer = timeValue;
     if (this.timer == 0 && !this.realGameService.locked) {
-
+      // sendQREAnswer not done??
       this.realGameService.locked = true;
-      if (this.username != 'host') sendAnswer();
+      if (this.username != 'host' && !this.isObserverMode) sendAnswer();
     }
   }
 }

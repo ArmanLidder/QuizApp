@@ -7,10 +7,13 @@ import 'package:polyquiz/models/next_question_data.dart';
 import 'package:polyquiz/models/player.dart' as player;
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 // import 'package:polyquiz/services/game_interface_management_service.dart';
 
 class RealGameService extends ChangeNotifier {
   static final RealGameService _instance = RealGameService._internal();
+  Map get text => TranslationService.instance.text;
+  Map get observerText => text['OBSERVER'];
 
   RealGameService._internal();
 
@@ -44,6 +47,10 @@ class RealGameService extends ChangeNotifier {
   bool isSentAnswer = false;
   bool qcmEnabled = false;
   bool isAION = false;
+  bool observerMode = false;
+  String obsQrlAnswer = '';
+  Map<int, String?> obsAnswers = {};
+
 
 
   bool get isValidateActive => this._isValidateButtonActive;
@@ -53,7 +60,11 @@ class RealGameService extends ChangeNotifier {
     notifyListeners();
   }
 
-  init() {
+  init([bool isObserver = false]) {
+    if (isObserver) {
+      this.observerMode = true;
+      this.username = 'host';
+    }
     this.configureBaseSocket();
     this._socketService.sendMessage(SocketEvent.GET_QUESTION, this.roomId);
     print('ROOM ID SENT: ${this.roomId}');
@@ -94,15 +105,17 @@ class RealGameService extends ChangeNotifier {
 
   void configureBaseSocket() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION, (data) {
+      print(data);
       InitialQuestionData questionData = InitialQuestionData(
         question: QuizQuestion.fromJson(data['question']),
-        username: data['username'],
+        username: data['username'] ?? 'host',
         index: data['index'],
         numberOfQuestions: data['numberOfQuestions'],
       );
       this.qcmEnabled = true;
       // this._gameInterfaceManagementService.changeQcmEnabled(true);
       this.question = questionData.question;
+      if (!this.observerMode) this.username = questionData.username == 'Organisateur' ? 'host' : questionData.username; // TODO: make sure this is needed
       this.oldQuestion = this.question!;
       if (!isNotified) {
         notifyListeners();
@@ -116,28 +129,32 @@ class RealGameService extends ChangeNotifier {
     });
 
     this._socketService.onMessage(SocketEvent.GET_NEXT_QUESTION, (data) {
-      NextQuestionData nextQuestionData = NextQuestionData(
-          question: QuizQuestion.fromJson(data['question']),
-          index: data['index'],
-          isLast: data['isLast']);
-      this.qcmEnabled = true;
-      // this._gameInterfaceManagementService.changeQcmEnabled(true);
-      if (!isNotified) {
-        notifyListeners();
-        isNotified = true;
+      if (observerMode) {
+        this.obsQrlAnswer = observerText['QRL_PLAYER_INACTIVE'];
+        this.obsAnswers.clear();
       }
+        NextQuestionData nextQuestionData = NextQuestionData(
+            question: QuizQuestion.fromJson(data['question']),
+            index: data['index'],
+            isLast: data['isLast']);
+        this.qcmEnabled = true;
+        // this._gameInterfaceManagementService.changeQcmEnabled(true);
+        if (!isNotified) {
+          notifyListeners();
+          isNotified = true;
+        }
 
-      this.isHostEvaluating = false;
-      this.isSentAnswer = false;
-      this.question = nextQuestionData.question;
-      this.oldQuestion = this.question!;
-      this.questionNumber = nextQuestionData.index;
-      this.isLast = nextQuestionData.isLast;
-      this.validated = false;
-      this.locked = false;
-      this.isValidateActive = true;
-    });
-  }
+        this.isHostEvaluating = false;
+        this.isSentAnswer = false;
+        this.question = nextQuestionData.question;
+        this.oldQuestion = this.question!;
+        this.questionNumber = nextQuestionData.index;
+        this.isLast = nextQuestionData.isLast;
+        this.validated = false;
+        this.locked = false;
+        this.isValidateActive = true;
+      });
+    }
 
   void sendSelection(int index, bool isSelected) {
     if (_socketService.isSocketAlive()) {
@@ -157,8 +174,13 @@ class RealGameService extends ChangeNotifier {
     });
   }
 
+  void notifyOnChanged() {
+    notifyListeners();
+  }
+
   void reset() {
     this.username = '';
+    this.observerMode = false;
     this.roomId = 0;
     this.timer = 0;
     this.question = null;
