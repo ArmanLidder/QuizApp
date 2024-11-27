@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class QuizFileService {
   static final QuizFileService _instance = QuizFileService._internal();
@@ -16,6 +17,8 @@ class QuizFileService {
   late final Directory folder;
   late final String path;
   bool setUpServiceCalled = false;
+  Map get text => TranslationService.instance.text;
+  Map get quizSelectText => text['QUIZ_SELECTION'];
 
   Future<void> setUpService() async {
     if (!setUpServiceCalled) {
@@ -34,13 +37,13 @@ class QuizFileService {
       final String quizName = quiz.title.replaceAll(' ', '_');
       final File file = File('${this.path}/${quizName}.json');
       if (await file.exists()) {
-        return "Le quiz a déjà été téléchargé";
+        return quizSelectText['ALREADY_DOWNLOADED'];
       }
       String fileContent = jsonEncode(quiz.toJson());
       await file.writeAsString(fileContent);
-      return "Téléchargement réussi";
+      return quizSelectText['SUCCESSFUL_DOWNLOAD'];
     } catch (e) {
-      return "Erreur : ${e}";
+      return "${quizSelectText['ERROR']} : ${e}";
     }
   }
 
@@ -73,12 +76,12 @@ class QuizFileService {
       final File file = File('${this.path}/${quizName}.json');
       if (await file.exists()) {
         await file.delete();
-        return "Quiz supprimé avec succès";
+        return quizSelectText['SUCCESSFUL_DELETE'];
       } else {
-        return "Le quiz n'existe pas";
+        return quizSelectText['QUIZ_NOT_FOUND'];
       }
     } catch (e) {
-      return "Erreur lors de la suppression du quiz : ${e}";
+      return "${quizSelectText['ERROR']} : ${e}";
     }
   }
 }
