@@ -30,7 +30,6 @@ export class UserSettingsService {
     }
 
     resetStateVariables(): void {
-        this.setTheme('light');
         this.availableThemesSubject.next(null);
     }
 
@@ -60,7 +59,7 @@ export class UserSettingsService {
 
     setTheme(theme: string): void {
         const className = `theme-${theme}`;
-        document.documentElement.classList.remove(this.activeTheme);
+        document.documentElement.className = '';
         this.activeTheme = className;
         document.documentElement.classList.add(this.activeTheme);
     }
