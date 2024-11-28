@@ -520,7 +520,11 @@ export class GameCreationService {
             const teams = roomManager.getRoomById(roomId).teams;
             if (teams) {
                 const members = teams.get(Number(userIdOrTeamId)).members
-                if (members) for (const userId of members) await this.updateStats(userId, game, gameType, type, amount);
+                if (members) {
+                    for (const userId of members) {
+                        if (game.players.get(userId)) await this.updateStats(userId, game, gameType, type, amount);
+                    }
+                }
             }
         }
     }
