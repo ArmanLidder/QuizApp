@@ -46,9 +46,6 @@ class LoggedInUserService extends GetxController {
   void _setUser(User? user) {
     setObservable(user);
     TranslationService.instance.currentLanguage = user!.settings.language;
-
-        _subscribeToUser();
-    _subscribeToFriendRequests();
   }
   void setObservable(User? user){
     this.user = user;
@@ -66,6 +63,8 @@ class LoggedInUserService extends GetxController {
     } else {
       print('User not found with email: $email');
     }
+    _subscribeToUser();
+    _subscribeToFriendRequests();
   }
   setUsername(String newUsername) async {
     await FirebaseFirestore.instance
