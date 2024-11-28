@@ -514,8 +514,8 @@ const englishTextValues = {
       "FINAL_RESULT": "Final results in ",
       "RESULT_AVAILABLE_IN": "Result in ",
       "NEXT": "Next question in ",
-      "LOADING_QUESTIONS": "Waiting for questions to load...",
     },
+    "LOADING_QUESTIONS": "Waiting for questions to load...",
     "QRE_HISTOGRAM_X_VAL": {
       "WITHIN_MARGIN": "Within margin",
       "EXACT_ANSWER": "Exact",
