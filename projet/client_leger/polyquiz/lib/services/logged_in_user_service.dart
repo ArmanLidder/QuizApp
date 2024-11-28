@@ -34,7 +34,6 @@ class LoggedInUserService extends GetxController {
   late var observableUsername = "".obs;
   late var observableAvatar = ''.obs;
   late var observableAchievement = [].obs;
-
   User? user;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   RxList<String> friends = <String>[].obs;
@@ -131,6 +130,9 @@ class LoggedInUserService extends GetxController {
     } else {
       print('User not found.');
     }
+
+    this.user =null;
+    this.onClose();
   }
 
   Future<void> reloadUser() async {
@@ -205,7 +207,6 @@ class LoggedInUserService extends GetxController {
   void _subscribeToFriendRequests() {
     String? currentUserId = LoggedInUserService.instance.getUid();
     if (currentUserId == null) return;
-
     _friendRequestSubscription = _firestore
         .collection('users')
         .doc(currentUserId)
