@@ -42,7 +42,7 @@ const defaultUser: User = {
     friendRequests: [],
     settings: {
         theme: 'light',
-        language: 'en',
+        language: 'fr',
         notificationsEnabled: true,
     },
 };
