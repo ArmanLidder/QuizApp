@@ -4,6 +4,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/constants/errorMessageTranslator.dart';
 import 'package:polyquiz/services/LanguageService.dart';
+import 'package:polyquiz/services/tts_service.dart';
 import 'package:polyquiz/services/userPageCustomisationService.dart';
 import 'package:polyquiz/services/imageStorageService.dart';
 import 'package:polyquiz/services/user_service.dart';
@@ -31,6 +32,7 @@ class _AuthPageState extends State<AuthPage> {
       UserPageCustomisationService.instance;
   final ValidationService validationService = ValidationService.instance;
   final TranslationService translationService = TranslationService.instance;
+  final TtsService _ttsService = TtsService();
 
   Map get text => translationService.text;
   Map get registerPageText => this.text['REGISTER_PAGE'];
@@ -55,6 +57,7 @@ class _AuthPageState extends State<AuthPage> {
             TranslationService.instance.localeLanguageAbbr =
                 newLanguage; // Update language in TranslationService
             // Re-fetch text values after changing the language
+            _ttsService.initTts(newLanguage);
             _refreshText();
           });
         }
@@ -114,20 +117,25 @@ class _AuthPageState extends State<AuthPage> {
 
   Future<void> _register() async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+      await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
       String userId = userCredential.user!.uid;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(registerPageText['SUCCESS_REGISTER_POPUP'])),
       );
 
+// Pass the userId to Firestore createUser
       await userService.createUser(
+        userId, // Pass the Firebase Auth ID
         _selectedAvatar.value!,
         _emailController.text,
         _usernameController.text,
       );
+
       setState(() {
         _isRegistering = false;
       });
@@ -143,14 +151,19 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   @override
+  void initState() {
+    _ttsService.initTts('fr');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final List<String> defaultAvatars = constDefaultAvatars;
     return Scaffold(
         body: Container(
-          alignment: Alignment.center, // Vertically center the content
-          child: SingleChildScrollView(
-                child:
-                Container(
+      alignment: Alignment.center, // Vertically center the content
+      child: SingleChildScrollView(
+        child: Container(
           child: Column(
             children: [
               Center(
@@ -173,23 +186,28 @@ class _AuthPageState extends State<AuthPage> {
                     children: [
                       languageDropdown(),
                       Align(
-                        alignment: Alignment.center, // Ensure the Text is aligned left within its parent
+                        alignment: Alignment
+                            .center, // Ensure the Text is aligned left within its parent
                         child: Text(
                           _isRegistering
                               ? registerPageText['TITLE']
                               : loginPageText['TITLE'],
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                       ),
                       SizedBox(height: 8),
-                          Align(
-                            alignment: Alignment.center, // Ensure the Text is aligned left within its parent
-                            child: Text(_isRegistering
+                      Align(
+                        alignment: Alignment
+                            .center, // Ensure the Text is aligned left within its parent
+                        child: Text(
+                          _isRegistering
                               ? registerPageText['SUBTITLE']
                               : loginPageText['SUBTITLE'],
-                                                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                                                  ),
-                          ),
+                          style:
+                              TextStyle(fontSize: 16, color: Colors.grey[700]),
+                        ),
+                      ),
                       SizedBox(height: 24),
                       if (_isRegistering)
                         TextField(
@@ -206,7 +224,8 @@ class _AuthPageState extends State<AuthPage> {
                             border: OutlineInputBorder(),
                           ),
                           onChanged: (e) async {
-                            String result = await validationService.userNameDiagnosis(e);
+                            String result =
+                                await validationService.userNameDiagnosis(e);
                             setState(() {
                               _isValidUsername = result == "";
                               _userNameDiagnosis = result;
@@ -218,14 +237,16 @@ class _AuthPageState extends State<AuthPage> {
                         keyboardType: TextInputType.emailAddress,
                         controller: _emailController,
                         decoration: InputDecoration(
-                          errorText:
-                              !_isValidEmail ? loginPageText['EMAIL_FORMAT_INVALID'] : null,
+                          errorText: !_isValidEmail
+                              ? loginPageText['EMAIL_FORMAT_INVALID']
+                              : null,
                           prefixIcon: Icon(Icons.email),
                           labelText: registerPageText['EMAIL_LABEL'] + "*",
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (e) async {
-                          bool result = await validationService.isValidAddress(e);
+                          bool result =
+                              await validationService.isValidAddress(e);
                           setState(() {
                             _isValidEmail = result;
                           });
@@ -245,8 +266,10 @@ class _AuthPageState extends State<AuthPage> {
                           border: OutlineInputBorder(),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              color:  Colors.black,
-                              _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                              color: Colors.black,
+                              _obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                             ),
                             onPressed: () {
                               setState(() {
@@ -256,7 +279,8 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         onChanged: (e) async {
-                          bool result = await validationService.isValidPassword(e);
+                          bool result =
+                              await validationService.isValidPassword(e);
                           setState(() {
                             _isValidPassword = result;
                           });
@@ -266,7 +290,8 @@ class _AuthPageState extends State<AuthPage> {
                         SizedBox(height: 24),
                         Text(
                           this.text['AVATAR_MODIFICATION']['CHOOSE_AVATAR'],
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 12),
@@ -286,9 +311,10 @@ class _AuthPageState extends State<AuthPage> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: _selectedAvatar.value == avatarUrl
-                                            ? Colors.blue
-                                            : Colors.transparent,
+                                        color:
+                                            _selectedAvatar.value == avatarUrl
+                                                ? Colors.blue
+                                                : Colors.transparent,
                                         width: 3, // Border thickness
                                       ),
                                     ),
@@ -306,34 +332,35 @@ class _AuthPageState extends State<AuthPage> {
                       ],
                       SizedBox(height: 24),
                       SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: (_isRegistering &&
-                                  _isValidUsername &&
-                                  _isValidEmail &&
-                                  _isValidPassword)
-                              ? _register
-                              : (_isValidUsername && _isValidEmail && _isValidPassword)
-                                  ? _login
-                                  : null, // Disable the button if conditions are not met
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue[300],
-                            padding: EdgeInsets.symmetric(vertical: 14),
-                            textStyle: TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          child: Text(_isRegistering
-                              ? loginPageText['REGISTER_LINK']
-                              : loginPageText['SUBMIT_BUTTON'],
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)
-                          ),
-                        )
-                      ),
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: (_isRegistering &&
+                                    _isValidUsername &&
+                                    _isValidEmail &&
+                                    _isValidPassword)
+                                ? _register
+                                : (_isValidUsername &&
+                                        _isValidEmail &&
+                                        _isValidPassword)
+                                    ? _login
+                                    : null, // Disable the button if conditions are not met
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue[300],
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              textStyle: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            child: Text(
+                                _isRegistering
+                                    ? loginPageText['REGISTER_LINK']
+                                    : loginPageText['SUBMIT_BUTTON'],
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                          )),
                       SizedBox(height: 16),
                       Center(
                         child: TextButton(
@@ -357,14 +384,17 @@ class _AuthPageState extends State<AuthPage> {
                       Center(
                         child: ElevatedButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/offline');
+                              Navigator.pushReplacementNamed(
+                                  context, '/offline');
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue[500],
                               foregroundColor: Colors.black,
                             ),
-                            child: Text(loginPageText["OFFLINE_PLAY"],
-                            style: TextStyle(color: Colors.white),)),
+                            child: Text(
+                              loginPageText["OFFLINE_PLAY"],
+                              style: TextStyle(color: Colors.white),
+                            )),
                       )
                     ],
                   ),
@@ -372,9 +402,9 @@ class _AuthPageState extends State<AuthPage> {
               ),
             ],
           ),
-                ),
-              ),
-        ));
+        ),
+      ),
+    ));
   }
 
   @override

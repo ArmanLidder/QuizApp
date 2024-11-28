@@ -13,6 +13,7 @@ class NotificationService extends GetxController {
   RxBool hasUnreadChannels = false.obs;
   final player = AudioPlayer();
   bool isChatOpen = false;
+  String? currentChannelId;
 
 
   @override
@@ -23,6 +24,8 @@ class NotificationService extends GetxController {
   }
 
   bool isChannelPermitted(String channelId) => channelService.getListOfPermittedChannelIds().contains(channelId);
+
+  void clearCurrentChannel() => currentChannelId = null;
 
   void handlePermittedChannel(Canal channel) {
     if (channel.id == null) return;
@@ -43,6 +46,7 @@ class NotificationService extends GetxController {
     if (channel.messages.length > channelMessageCount[channel.id]!) {
       channelMessageCount[channel.id!] = channel.messages.length;
       if (channel.messages.last.userUid == LoggedInUserService.instance.user?.uid) return; // if the message was sent by user, ignore it
+      if (channel.id == currentChannelId) return;
       isChannelRead[channel.id!] = false;
       notify();
       print("New unread message in ${channel.name}");
@@ -72,6 +76,7 @@ class NotificationService extends GetxController {
   }
 
   void notify() {
+    if (LoggedInUserService.instance.user == null) return;
     player.play(AssetSource('notification.mp3'));
     BackgroundNotificationService.instance.showNotification("Nouveau message", "Vous avez de nouveaux messages");
   }

@@ -165,7 +165,7 @@ class ChannelSelectionButton extends StatelessWidget {
     ThemeService themeService = ThemeService.instance;
 
     bool shouldHaveLeaveAndDeleteButton =
-        name != 'general' && !name.toLowerCase().contains("room");
+        name != 'general' && !name.toLowerCase().contains("room") && !name.toLowerCase().contains("#");
 
     Widget leaveAndDeleteButtons = SizedBox(
       width: 100,

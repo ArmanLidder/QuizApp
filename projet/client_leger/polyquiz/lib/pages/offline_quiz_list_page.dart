@@ -54,8 +54,27 @@ class _OfflineQuizListPageState extends State<OfflineQuizListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Quiz'),
+        centerTitle: true,
+        title: Text(
+          "PolyQuiz",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         automaticallyImplyLeading: false,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: <Color>[
+                  Color.fromRGBO(38, 99, 235, 1),
+                  Color.fromRGBO(167, 85, 246, 1)
+                ]),
+          ),
+        ),
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())

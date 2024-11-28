@@ -29,7 +29,7 @@ class _UserIdsRowState extends State<UserIdsRow> {
       final loggedInUid = loggedInUserService.getUid();
       if (username.toLowerCase().contains(filter.toLowerCase()) &&
           userId != loggedInUserService.getUid()) {
-        bool isAlreadyFriends =  FriendService.instance.friendshipStatus(userId) == "friends";
+        bool isAlreadyFriends =  loggedInUserService.friends.value.contains(userId);
         if (!isAlreadyFriends) {
           filteredUsers.add(doc);
         }

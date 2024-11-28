@@ -41,13 +41,13 @@ class UserService extends GetxController {
     }
   }
 
-  Future<void> createUser(String avatarURL, String email, String username) async {
+  Future<void> createUser(String userId, String avatarURL, String email, String username) async {
     try {
-      DocumentReference docRef = _db.collection(collectionName).doc();
+      DocumentReference docRef = _db.collection(collectionName).doc(userId);
       await docRef.set({
         'email': email,
         'username': username,
-        'uid': docRef.id,
+        'uid': userId, // Use the passed userId instead of docRef.id
         'avatar': avatarURL,
         'friends': [],
         'currency': 0,
@@ -60,8 +60,8 @@ class UserService extends GetxController {
           'gamesWon': 0,
           'avgCorrectAnswers': 0,
           'avgGameTime': 0,
-          "correctAnswers": 0,
-          "gameTime": 0,
+          'correctAnswers': 0,
+          'gameTime': 0,
         },
         'loginHistory': [],
         'gameHistory': [],

@@ -14,7 +14,11 @@ class FancyAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isObserver;
   final bool canLeaveFromAppBar;
   final BuildContext context;
-  FancyAppBar({required this.context, this.canLeaveFromAppBar = false, this.isGamePage = false, this.isObserver = false});
+  FancyAppBar(
+      {required this.context,
+      this.canLeaveFromAppBar = false,
+      this.isGamePage = false,
+      this.isObserver = false});
 
   @override
   _FancyAppBarState createState() => _FancyAppBarState();
@@ -38,33 +42,35 @@ class _FancyAppBarState extends State<FancyAppBar> {
   }
 
   Widget getObservationWidget() {
-    if (widget.isObserver) return ObservationSelector();
-    else return ObserverCounter();
+    if (widget.isObserver)
+      return ObservationSelector();
+    else
+      return ObserverCounter();
   }
 
   Widget getTitleWidget() {
     return Center(
         child: InkWell(
-        onTap: () {
-      if (widget.canLeaveFromAppBar){
-        Navigator.pushReplacementNamed(widget.context,  '/home');
-      }
-    },
-    child: Text(
-    "PolyQuiz",
-    style: TextStyle(
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-    fontSize: 20,
-    ),
-    ),
+      onTap: () {
+        if (widget.canLeaveFromAppBar) {
+          Navigator.pushReplacementNamed(widget.context, '/home');
+        }
+      },
+      child: Text(
+        "PolyQuiz",
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
     ));
   }
 
   Widget getCenterWidget() {
     return Row(
       children: [
-        if(widget.isGamePage) getObservationWidget(),
+        if (widget.isGamePage) getObservationWidget(),
         Expanded(
           child: getTitleWidget(),
         )
@@ -100,7 +106,9 @@ class _FancyAppBarState extends State<FancyAppBar> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
                     ),
-                    child: SettingsPopup(), // Your custom settings popup widget
+                    child: SettingsPopup(
+                        isGamePage: widget
+                            .isGamePage), // Your custom settings popup widget
                   );
                 },
               );
@@ -115,36 +123,51 @@ class _FancyAppBarState extends State<FancyAppBar> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: PopupMenuButton<int>(
-              color:themeService.container.value,
+              color: themeService.container.value,
               onSelected: (value) {},
-              itemBuilder: (context) => widget.canLeaveFromAppBar ? [
-                PopupMenuItem(
-                  value: 1,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Icon(Icons.person,color:themeService.mainAccent.value),
-                      Text(MenuText["PROFIL"], style:TextStyle(color: themeService.mainAccent.value)), Spacer()],
-                  ),
-                  onTap: () {
-                    Navigator.pushReplacementNamed(widget.context, '/user');
-                  },
-                ),
-                PopupMenuItem(
-                  value: 2,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.logout, color: themeService.mainAccent.value,),
-                      Text(MenuText["DISCONNECT"], style:TextStyle(color: themeService.mainAccent.value)),
-                      Spacer()
-                    ],
-                  ),
-                  onTap: () async {
-                    loggedInUserService.logout();
-                    Navigator.pushReplacementNamed(widget.context, '/auth');
-                  },
-                ),
-              ] : [],
+              itemBuilder: (context) => widget.canLeaveFromAppBar
+                  ? [
+                      PopupMenuItem(
+                        value: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(Icons.person,
+                                color: themeService.mainAccent.value),
+                            Text(MenuText["PROFIL"],
+                                style: TextStyle(
+                                    color: themeService.mainAccent.value)),
+                            Spacer()
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.pushReplacementNamed(
+                              widget.context, '/user');
+                        },
+                      ),
+                      PopupMenuItem(
+                        value: 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(
+                              Icons.logout,
+                              color: themeService.mainAccent.value,
+                            ),
+                            Text(MenuText["DISCONNECT"],
+                                style: TextStyle(
+                                    color: themeService.mainAccent.value)),
+                            Spacer()
+                          ],
+                        ),
+                        onTap: () async {
+                          loggedInUserService.logout();
+                          Navigator.pushReplacementNamed(
+                              widget.context, '/auth');
+                        },
+                      ),
+                    ]
+                  : [],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -171,15 +194,16 @@ class _FancyAppBarState extends State<FancyAppBar> {
                               shape: BoxShape.circle,
                             ),
                             child: Center(
-                              child: Obx((){
+                              child: Obx(() {
                                 return Text(
-                                  loggedInUserService.observableLevel.toString(),
+                                  loggedInUserService.observableLevel
+                                      .toString(),
                                   style: TextStyle(
                                     fontSize: 8,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
-                              );
+                                );
                               }),
                             ),
                           ),

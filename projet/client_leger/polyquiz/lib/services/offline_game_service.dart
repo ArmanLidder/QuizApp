@@ -81,7 +81,7 @@ class OfflineGameService extends ChangeNotifier {
         }
 
         this.isBonus = true;
-        this.playerScore += (questionPoints * 1.2).toInt();
+        this.playerScore += questionPoints;
       }
     } else {
       this.isBonus = false;
