@@ -91,6 +91,8 @@ class ObservationService extends GetxController {
         'roomId': this.gameConfigs!.room,
         'observedId': this.gameService.observedUid,
       });
+      // this.socketService.clearAllListeners();
+      // this.socketService.disconnect();
       // TODO: HANDLE ROUTER NAVIGATION
     });
   }

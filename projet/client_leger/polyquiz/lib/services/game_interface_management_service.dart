@@ -204,6 +204,8 @@ class GameInterfaceManagementService extends ChangeNotifier {
       this.gameService.destroy();
       this.reset();
       this._interactiveListService.reset();
+      _socketService.clearAllListeners();
+      _socketService.disconnect();
       this._globalNavigationService.navigateTo('/home');
     });
   }
