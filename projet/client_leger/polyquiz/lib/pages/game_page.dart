@@ -49,7 +49,6 @@ class _MyWidgetState extends State<GamePage> {
   GameInterfaceManagementService _gameInterfaceManagementService =
       GameInterfaceManagementService();
   ThemeService themeService = ThemeService.instance;
-  final TranslationService transService = TranslationService.instance;
 
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get timerText => gameText['TIMER_TEXT'];
@@ -161,78 +160,75 @@ class _MyWidgetState extends State<GamePage> {
         );
       });
     } else {
-      return Obx(() {
-        //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
-        Language ObxObservator = transService.languageValue.value;
-        return Container(
-            color: themeService.mainBackground.value,
-            child: AnimatedBuilder(
-                animation:
-                _gameInterfaceManagementService.gameService.realGameService,
-                builder: (BuildContext context, Widget? snapshot) {
-                  if (_gameInterfaceManagementService.gameService.question ==
-                      null) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            gameText["LOADING_QUESTIONS"],
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    );
-                  } else {
-                    return AnimatedBuilder(
-                        animation: Listenable.merge([
-                          _gameInterfaceManagementService,
-                          _gameInterfaceManagementService.gameService
-                        ]),
-                        builder: (BuildContext context, Widget? snapshot) {
-                          if (_gameInterfaceManagementService.isResultPage) {
-                            return Scaffold(
-                              appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
-                              backgroundColor: themeService.mainBackground.value,
-                              body: ListView(
-                                children: [
-                                  ResultPage(
-                                    gameService: _gameInterfaceManagementService
-                                        .gameService,
-                                    interactiveListService:
-                                    _interactiveListService,
-                                    gameInterfaceManagementService:
-                                    _gameInterfaceManagementService,
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            return Scaffold(
-                              appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
-                              backgroundColor: themeService.mainBackground.value,
-                              body: Stack(children: [
-                                ListView(shrinkWrap: true, children: [
-                                  Visibility(
-                                    // Vue du joueur commence ici
-                                    visible: !isHost,
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: TimerWidget(
-                                                isHost: isHost,
-                                                timeTxt:
-                                                _gameInterfaceManagementService
-                                                    .timerText,
-                                                time:
-                                                _gameInterfaceManagementService
-                                                    .gameService.timer,
-                                              ),
+      return Obx(()=>Container(
+          color: themeService.mainBackground.value,
+          child: AnimatedBuilder(
+              animation:
+              _gameInterfaceManagementService.gameService.realGameService,
+              builder: (BuildContext context, Widget? snapshot) {
+                if (_gameInterfaceManagementService.gameService.question ==
+                    null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          gameText["LOADING_QUESTIONS"],
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return AnimatedBuilder(
+                      animation: Listenable.merge([
+                        _gameInterfaceManagementService,
+                        _gameInterfaceManagementService.gameService
+                      ]),
+                      builder: (BuildContext context, Widget? snapshot) {
+                        if (_gameInterfaceManagementService.isResultPage) {
+                          return Scaffold(
+                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
+                            backgroundColor: themeService.mainBackground.value,
+                            body: ListView(
+                              children: [
+                                ResultPage(
+                                  gameService: _gameInterfaceManagementService
+                                      .gameService,
+                                  interactiveListService:
+                                  _interactiveListService,
+                                  gameInterfaceManagementService:
+                                  _gameInterfaceManagementService,
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          return Scaffold(
+                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
+                            backgroundColor: themeService.mainBackground.value,
+                            body: Stack(children: [
+                              ListView(shrinkWrap: true, children: [
+                                Visibility(
+                                  // Vue du joueur commence ici
+                                  visible: !isHost,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: TimerWidget(
+                                              isHost: isHost,
+                                              timeTxt:
+                                              _gameInterfaceManagementService
+                                                  .timerText,
+                                              time:
+                                              _gameInterfaceManagementService
+                                                  .gameService.timer,
                                             ),
-                                            Align(
+                                          ),
+                                          Align(
                                               alignment: Alignment.center,
                                               child: QuestionInfoWidget(
                                                   questionNum:
@@ -248,74 +244,71 @@ class _MyWidgetState extends State<GamePage> {
                                                       .gameService
                                                       .question?.text ?? ''),
                                             ),
-                                            if (!this._gameService.isObserverMode)
-                                              Expanded(
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  margin: EdgeInsets.all(5.0),
-                                                  padding: EdgeInsets.all(10.0),
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: themeService
-                                                              .mainAccent.value)),
-                                                  child: Column(
-                                                    children: [
-                                                      Text(
-                                                        '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            color: themeService
-                                                                .mainAccent.value),
-                                                      ),
-                                                      _gameInterfaceManagementService
-                                                          .isBonus
-                                                          ? Text(
-                                                          gameText[
-                                                          'BONUS_RECEIVED_FEEDBACK'],
-                                                          style: TextStyle(
-                                                              color: themeService
-                                                                  .mainAccent
-                                                                  .value))
-                                                          : SizedBox()
-                                                    ],
+                                          if (!this._gameService.isObserverMode) Expanded(
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              margin: EdgeInsets.all(5.0),
+                                              padding: EdgeInsets.all(10.0),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: themeService
+                                                          .mainAccent.value)),
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: themeService
+                                                            .mainAccent.value),
                                                   ),
-                                                ),
-                                              )
-                                          ],
+                                                  _gameInterfaceManagementService
+                                                      .isBonus
+                                                      ? Text(
+                                                      gameText[
+                                                      'BONUS_RECEIVED_FEEDBACK'],
+                                                      style: TextStyle(
+                                                          color: themeService
+                                                              .mainAccent
+                                                              .value))
+                                                      : SizedBox()
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      if (getImageWidgetFromQuestion() != null)
+                                        getImageWidgetFromQuestion()!,
+                                      getPlayerQuestion(),
+                                      Visibility(
+                                        visible: _gameInterfaceManagementService
+                                            .gameService
+                                            .realGameService
+                                            .isHostEvaluating,
+                                        child: PlayerNotice(
+                                          message: message,
+                                          gameInterfaceManagementService:
+                                          _gameInterfaceManagementService,
                                         ),
-                                        if (getImageWidgetFromQuestion() != null)
-                                          getImageWidgetFromQuestion()!,
-                                        getPlayerQuestion(),
-                                        Visibility(
-                                          visible: _gameInterfaceManagementService
-                                              .gameService
-                                              .realGameService
-                                              .isHostEvaluating,
-                                          child: PlayerNotice(
-                                            message: message,
-                                            gameInterfaceManagementService:
-                                            _gameInterfaceManagementService,
-                                          ),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          children: [getButtons()],
-                                        )
-                                      ],
-                                    ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: [getButtons()],
+                                      )
+                                    ],
                                   ),
-                                ]),
-                                Positioned(                                  bottom: 0, left: 20, child: ChatPopup())
-
+                                ),
                               ]),
-                            );
-                          }
-                        });
-                  }
-                }));
-
-      });
+                              Positioned(
+                                  bottom: 0, left: 20, child: ChatPopup())
+                            ]),
+                          );
+                        }
+                      });
+                }
+              })));
     }
   }
 
@@ -407,6 +400,7 @@ class ResultPage extends StatelessWidget {
     return Obx(() {
       //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
       Language ObxObservator = transService.languageValue.value;
+
       return Container(
         color: _themeService.mainBackground.value,
         child: Column(

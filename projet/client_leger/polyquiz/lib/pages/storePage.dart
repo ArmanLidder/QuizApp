@@ -60,72 +60,80 @@ class _StorepageState extends State<Storepage> {
                         CircularProgressIndicator()) // Show loading indicator while fetching
                 : Stack(children: [
                     SingleChildScrollView(
-                      child:Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 60.0), // Add 20px padding on both sides
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // Align the Column content to the left                          children: [
-                          children: [
-                            MoneyCounter(),
-                            Center(child:Text(
+                        child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 60.0), // Add 20px padding on both sides
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start, // Align the Column content to the left                          children: [
+                        children: [
+                          MoneyCounter(),
+                          Center(
+                            child: Text(
                               shopText['THEMES'],
                               style: TextStyle(
                                   fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),),
-                            Wrap(
-                              alignment: WrapAlignment.start,
-                              spacing: 8.0, // Space between items horizontally
-                              runSpacing: 8.0, // Space between items vertically
-                              children: [
-                                ThemeStoreList(
-                                    themes: storeItems!['themes']!,
-                                    userId: this.uid)
-                              ],
                             ),
-                            SizedBox(height: 20),
-                            Center(child:
-                            Text(shopText['IMAGES'],
+                          ),
+                          Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: 8.0, // Space between items horizontally
+                            runSpacing: 8.0, // Space between items vertically
+                            children: [
+                              ThemeStoreList(
+                                  themes: storeItems!['themes']!,
+                                  userId: this.uid)
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Center(
+                            child: Text(
+                              shopText['IMAGES'],
                               style: TextStyle(
                                   fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),),
-                            ImageStoreList(
-                                themes: storeItems!['images']!,
-                                userId: this.uid),
-                            SizedBox(height: 20),
-                        Center(child:
-                        Text(
-                              TranslationService.instance.text["SHOPPING"]["REWARDS"],
+                            ),
+                          ),
+                          ImageStoreList(
+                              themes: storeItems!['images']!, userId: this.uid),
+                          SizedBox(height: 20),
+                          Center(
+                            child: Text(
+                              TranslationService.instance.text["SHOPPING"]
+                                  ["REWARDS"],
                               style: TextStyle(
-                                fontSize: 18,
+                                  fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),),
-                            RewardImageStoreList.RewardStoreList(
-                                rewardImages: storeItems!['rewardImages']!,
-                                rewardThemes: storeItems!['rewardThemes']!,
-
-                                userId: this.uid),
-                            SizedBox(height: 20),
-                        Center(child:
-                        Text(
+                            ),
+                          ),
+                          RewardImageStoreList.RewardStoreList(
+                              rewardImages: storeItems!['rewardImages']!,
+                              rewardThemes: storeItems!['rewardThemes']!,
+                              userId: this.uid),
+                          SizedBox(height: 20),
+                          Center(
+                            child: Text(
                               TranslationService.instance.languageValue.value ==
-                                  Language.fr
+                                      Language.fr
                                   ? "Récompenses d'exploit: "
                                   : "Achievements rewards: ",
                               style: TextStyle(
                                   fontSize: 18,
                                   color: _themeService.mainAccent.value),
-                            ),),
-                            RewardCashStoreList(
-                                cashItems: storeItems!['rewardCurrency']!,
-                                userId: this.uid),
-                            SizedBox(height: 20),
-                            CancelBtn(),
-                          ],
-                        ),
-                      )
-
+                            ),
+                          ),
+                          RewardCashStoreList(
+                              cashItems: storeItems!['rewardCurrency']!,
+                              userId: this.uid),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [CancelBtn()],
+                          ),
+                        ],
                       ),
+                    )),
                     Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
                   ]));
       }),

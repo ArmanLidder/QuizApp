@@ -205,9 +205,17 @@ class WaitingRoomService extends ChangeNotifier {
         (gameType) => {this.gameType = gameType, notifyListeners()});
   }
 
-  void gatherPlayers() {
-    _socketService.sendMessageWithAck(SocketEvent.GET_GAME_TYPE, this.roomId,
-        (gameType) => {this.gameType = gameType, notifyListeners()});
+  Future<void> gatherPlayers() async {
+    Completer<void> completer = Completer<void>();
+    _socketService.sendMessageWithAck(
+        SocketEvent.GET_GAME_TYPE,
+        this.roomId,
+        (gameType) => {
+              this.gameType = gameType,
+              notifyListeners(),
+              completer.complete()
+            });
+    await completer.future;
 
     _socketService.sendMessageWithAck(
         SocketEvent.GATHER_PLAYERS_USERNAME, this.roomId, (dynamic players) {
