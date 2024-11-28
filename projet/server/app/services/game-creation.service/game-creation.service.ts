@@ -135,7 +135,7 @@ export class GameCreationService {
                     const game = roomManager.getGameByRoomId(data.roomId)
                     data.histogramDataChangingResponses = Array.from(game.choicesStats.values());
                 }
-                sio.emit(SocketEvent.RECEIVING_HOST_GAME_STATUS, data);
+                sio.to(String(socket.id)).emit(SocketEvent.RECEIVING_HOST_GAME_STATUS, data); // pt to one socket id
             } catch (e) {
                 if (e instanceof Error) {
                     console.log(e)
