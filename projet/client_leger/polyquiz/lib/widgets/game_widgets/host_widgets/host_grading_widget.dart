@@ -89,7 +89,7 @@ class _HostGradingState extends State<HostGrading> {
                     ),
                     Row(
                       children: [
-                        Icon(Icons.smart_toy),
+                        Icon(Icons.smart_toy, color: _themeService.mainAccent.value),
                         SizedBox(width: 5),
                         Flexible(
                           child: Text(AIcorrectionText,
@@ -157,9 +157,9 @@ class _HostGradingState extends State<HostGrading> {
                   children: [
                     DataTable(
                         headingRowColor: WidgetStateProperty.all(
-                            Color.fromRGBO(53, 121, 246, 1)),
+                            _themeService.secondaryBackground.value),
                         headingTextStyle: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
+                            color: _themeService.secondaryAccent.value,
                             fontWeight: FontWeight.bold),
                         border: TableBorder.all(),
                         columns: [
