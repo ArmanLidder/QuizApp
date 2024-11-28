@@ -130,9 +130,9 @@ class LoggedInUserService extends GetxController {
     } else {
       print('User not found.');
     }
-
     this.user =null;
-    this.onClose();
+    this.killSubscription();
+    //Get.delete<LoggedInUserService>();
   }
 
   Future<void> reloadUser() async {
@@ -176,6 +176,12 @@ class LoggedInUserService extends GetxController {
         newAvatarUrl: this.forceToString(newProfileUrl));
     await this.reloadUser();
   }
+
+void killSubscription(){
+  _userSubscribtion?.cancel();
+  _friendRequestSubscription?.cancel();
+
+}
 
   @override
   void onClose() {
