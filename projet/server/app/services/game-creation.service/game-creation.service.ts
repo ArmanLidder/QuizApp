@@ -214,6 +214,7 @@ export class GameCreationService {
                 const room = roomManager.getRoomById(data.roomId);
                 console.log(`Obs Left Event : ${userId} left ${room}`)
                 if (room) {
+                    console.log(`Obs Left Event handled: ${userId} left ${room}`)
                     const ObservedUserId = data.observedId === room.hostUserId ? HOST_USERNAME : data.observedId;
                     roomManager.updateObserverCounter(data.roomId, ObservedUserId, true);
                     this.sendUpdateGameList(roomManager, sio)
@@ -578,6 +579,7 @@ export class GameCreationService {
         for (const res of result) {
             const username = res[0];
             const roomId = res[1];
+            this.printLogsServer("DisconnectionHandler", username, roomId)
             if (username === 'Organisateur') {
                 //This is the exact same code used in HOST_LEFT socket event above in the file
                 console.log(`HOST Socket disconnection received event receive ${socket.handshake.auth.userId}`)
