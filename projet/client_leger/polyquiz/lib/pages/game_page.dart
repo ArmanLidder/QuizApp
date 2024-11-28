@@ -21,6 +21,7 @@ import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/players_data_table_widget.dart';
 import 'package:polyquiz/widgets/game_widgets/question_result.dart';
 import '../models/user.dart';
+import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/widgets/observer_widgets/observer_counter.dart';
 import 'package:polyquiz/widgets/observer_widgets/observation_selector.dart';
 
@@ -31,7 +32,7 @@ class GamePage extends StatefulWidget {
   State<GamePage> createState() => _MyWidgetState();
 }
 
-class _MyWidgetState extends State<GamePage> {
+class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
   late bool isHost;
   bool isQcm = false; // Il faudra remplacer par un enum par la suite
   bool isGrading = true;
@@ -56,6 +57,7 @@ class _MyWidgetState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     message = gameText['PLAYER_QRL_INTERFACE']['AWAITING_EVALUATION'];
     this.isHost = this._gameService.realGameService.username == 'host';
     print(
@@ -93,21 +95,42 @@ class _MyWidgetState extends State<GamePage> {
     _interactiveListService.configureBaseSocketFeatures();
   }
 
-  @override
+   @override
   void dispose() {
-    if (_gameService.isQuitBtn) {
-      isHost = false;
-      isQcm = false;
-      isGrading = true;
-      time = 10;
-      questionNum = 1;
-      questionPts = 50;
-      questionTxt = "Question par defaut ?";
-      message = gameText['PLAYER_QRL_INTERFACE']['AWAITING_EVALUATION'];
-      isQuitBtn = false;
-    }
+    WidgetsBinding.instance.removeObserver(this); // Remove observer when the widget is disposed
     super.dispose();
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
+      // App is being closed
+      if (isHost) {
+        _socketService.sendMessage(SocketEvent.HOST_LEFT, this._gameService.realGameService.roomId);
+        print('HOST LEFT');
+      } else {
+        _socketService.sendMessage(SocketEvent.PLAYER_LEFT, this._gameService.realGameService.roomId);
+        print('PLAYER LEFT');
+      }
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  // @override
+  // void dispose() {
+  //   if (_gameService.isQuitBtn) {
+  //     isHost = false;
+  //     isQcm = false;
+  //     isGrading = true;
+  //     time = 10;
+  //     questionNum = 1;
+  //     questionPts = 50;
+  //     questionTxt = "Question par defaut ?";
+  //     message = gameText['PLAYER_QRL_INTERFACE']['AWAITING_EVALUATION'];
+  //     isQuitBtn = false;
+  //   }
+  //   super.dispose();
+  // }
 
   Widget getPlayerQuestion() {
     Widget? questionWidget;
