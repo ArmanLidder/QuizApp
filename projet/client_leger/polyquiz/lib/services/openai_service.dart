@@ -12,7 +12,7 @@ class OpenaiService {
   OpenaiService._internal();
 
   void init() {
-    _apiKey = 'ENTER_YOUR_API_HERE';
+    _apiKey = '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';
   }
 
   Future<void> delayRequests() async {
