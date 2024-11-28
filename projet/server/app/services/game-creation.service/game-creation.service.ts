@@ -280,7 +280,7 @@ export class GameCreationService {
     // We finally send a PLAYER_REMOVED event to the host to remove the player from the player list
     private handlePlayerLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.PLAYER_LEFT, async (roomId: number) => {
-            // await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
+            await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             const obsMap = roomManager.getRoomById(roomId)?.observersCounter;
             this.debug_teams("PLayer Left", roomId, roomManager);
