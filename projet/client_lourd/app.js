@@ -8,6 +8,7 @@ function createWindow() {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize; // Get screen dimensions
 
     mainWindow = new BrowserWindow({
+        title: 'PolyQuiz',
         width: width, // Set to full screen width
         height: height, // Set to full screen height
         webPreferences: {
@@ -23,8 +24,13 @@ function createWindow() {
         }),
     );
 
-    mainWindow.once('ready-to-show', () => {
-        mainWindow.webContents.setZoomFactor(0.8);
+    mainWindow.once('ready-to-show',  () => {
+        mainWindow.webContents.setZoomFactor(0.9);
+    });
+
+    mainWindow.webContents.on('did-fail-load', () => {
+        // Reload or load a fallback URL
+        mainWindow.loadURL(`file://${path.join(__dirname, 'dist/client/index.html')}`);
     });
 
     mainWindow.on('closed', function () {
