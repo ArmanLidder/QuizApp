@@ -71,18 +71,27 @@ class FriendService extends GetxService {
     }
   }
 
-  String friendshipStatus( String targetUserId) {
+  Future<String> friendshipStatus( String targetUserId) async {
     try {
       List<String> friendsList = LoggedInUserService.instance.friends.value;
       List<String> friendRequestsList = LoggedInUserService.instance.friendRequests.value;
+
+      DocumentSnapshot targetUserDoc =
+          await FirebaseFirestore.instance.collection('users').doc(targetUserId).get();
+      List<Map<String, dynamic>> targetUserFriendRequests =
+      List<Map<String, dynamic>>.from(targetUserDoc['friendRequests'] ?? []);
 
       if (friendsList.contains(targetUserId)) {
         return 'friends';
       } else if (friendRequestsList.any((request) => request == targetUserId)) {
         return 'receivedPending';
-      } else {
+      }else if (targetUserFriendRequests.any((request) => request['fromUserId'] == LoggedInUserService.instance.getUid()!)) {
+        return 'sentPending';
+      }
+      else {
           return 'notFriends';
         }
+
     } catch (e) {
       print('Error checking friendship status: $e');
       return 'error';

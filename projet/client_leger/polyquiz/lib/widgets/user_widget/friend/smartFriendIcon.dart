@@ -46,10 +46,15 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
   }
 
   Future<void> _checkStatus() async {
+    if(_status == "sentPending"){
+      return;
+    }
+
     if (currentUserId == null) return;
-    final status = widget.friendService.friendshipStatus(
+    final status = await widget.friendService.friendshipStatus(
       widget.targetUserId,
     );
+    print("newStatus: "+ status);
     setState(() {
       _status = status;
     });
@@ -65,10 +70,15 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
         widget.targetUserId,
       );
     } else if (_status == 'notFriends') {
+
       await widget.friendService.createFriendRequest(
         currentUserId!,
         widget.targetUserId,
       );
+      setState(() {
+        _status = "sentPending";
+      });
+
     } else if (_status == 'receivedPending') {
       await widget.friendService.acceptFriendRequest(
         currentUserId!,
