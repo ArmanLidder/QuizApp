@@ -118,20 +118,24 @@ class _AuthPageState extends State<AuthPage> {
   Future<void> _register() async {
     try {
       UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
       String userId = userCredential.user!.uid;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(registerPageText['SUCCESS_REGISTER_POPUP'])),
       );
 
+// Pass the userId to Firestore createUser
       await userService.createUser(
+        userId, // Pass the Firebase Auth ID
         _selectedAvatar.value!,
         _emailController.text,
         _usernameController.text,
       );
+
       setState(() {
         _isRegistering = false;
       });

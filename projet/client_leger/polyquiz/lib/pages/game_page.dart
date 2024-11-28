@@ -49,7 +49,7 @@ class _MyWidgetState extends State<GamePage> {
   GameInterfaceManagementService _gameInterfaceManagementService =
       GameInterfaceManagementService();
   ThemeService themeService = ThemeService.instance;
-
+  final TranslationService transService = TranslationService.instance;
   Map get gameText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get timerText => gameText['TIMER_TEXT'];
 
@@ -160,7 +160,13 @@ class _MyWidgetState extends State<GamePage> {
         );
       });
     } else {
-      return Obx(()=>Container(
+      return Obx(() {
+
+
+      //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
+      Language ObxObservator = transService.languageValue.value;
+
+      return Container(
           color: themeService.mainBackground.value,
           child: AnimatedBuilder(
               animation:
@@ -308,7 +314,9 @@ class _MyWidgetState extends State<GamePage> {
                         }
                       });
                 }
-              })));
+              })
+      );}
+        );
     }
   }
 
