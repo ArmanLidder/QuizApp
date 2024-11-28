@@ -9,8 +9,7 @@ import {
 import {setPersistence, browserSessionPersistence} from "firebase/auth";
 import {UsersService} from "@app/services/users.service/users.service";
 import {AvatarService} from "@app/services/avatar.service/avatar.service";
-import {first, switchMap} from "rxjs";
-import {map} from "rxjs/operators";
+import {switchMap} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
 import {randomDelay} from "../../../utils/random-time-waiter/random-time-waiter";
 
@@ -39,23 +38,18 @@ export class AuthService {
     }
 
     async register(username: string, email: string, password: string, selectedAvatar: string | File): Promise<void> {
-        await randomDelay(500,2500);
+        await randomDelay(100,1000);
         const isTakenOne = await this.usersService.isUsernameTaken(username);
-        await randomDelay(500,2500);
+        await randomDelay(100,1500);
         const isTakenTwo = await this.usersService.isUsernameTaken(username);
         if (isTakenOne || isTakenTwo) throw new Error(this.translate.instant('REGISTER_PAGE.THE_NAME_IS_ALREADY_USED',{name:username}));
         try {
             //This delay was added because firebase has a bug where two uid's with same
             //email can be created if both users create an account at the exact same time
-            await randomDelay(500,2500);
+            await randomDelay(100,1000);
             const {user} = await createUserWithEmailAndPassword(this.auth, email, password);
             await this.usersService.addUser({uid: user.uid, email, username});
             await this.avatarService.handleAvatarModification(selectedAvatar);
-
-            await this.user$.pipe(
-                map(user => !!user),
-                first(isReady => isReady)  // Wait for first truthy value
-            ).toPromise();
             await this.usersService.addLogEvent('login');
         } catch (error: any) {
             const frenchErrorMessage = this.mapFirebaseAuthError(error.code);
@@ -70,13 +64,8 @@ export class AuthService {
             throw new Error(this.translate.instant('LOGIN_PAGE.USER_ALREADY_CONNECTED'));
         }
         try {
-            setPersistence(this.auth, browserSessionPersistence).then(()=>{
-                return signInWithEmailAndPassword(this.auth, email, password);
-            })
-            await this.user$.pipe(
-                map(user => !!user),
-                first(isReady => isReady)  // Wait for first truthy value
-            ).toPromise();
+            await setPersistence(this.auth, browserSessionPersistence);
+            await signInWithEmailAndPassword(this.auth, email, password);
         } catch (error: any) {
             console.error('Login error:', error);
             await this.auth.signOut();

@@ -42,7 +42,7 @@ const defaultUser: User = {
     friendRequests: [],
     settings: {
         theme: 'light',
-        language: 'fr',
+        language: 'en',
         notificationsEnabled: true,
     },
 };
@@ -118,9 +118,9 @@ export class UsersService {
     }
 
     async updateUsername(newUsername: string): Promise<void> {
-        await randomDelay(500,2500);
+        await randomDelay(100,1000);
         const isTakenOne = await this.isUsernameTaken(newUsername);
-        await randomDelay(500,2500);
+        await randomDelay(100,1000);
         const isTakenTwo = await this.isUsernameTaken(newUsername);
         if (isTakenOne || isTakenTwo) throw new Error(await firstValueFrom(this.translate.get('USERNAME_MODIFICATION.ALREADY_USED')));
         if (this.auth.currentUser?.uid) {
@@ -154,11 +154,13 @@ export class UsersService {
 
 
     async getUserByEmail(email: string): Promise<User | undefined> {
+        console.log(`Getting user by email ${email}`)
         const usersRef = collection(this.firestore, 'users');
         const q = query(usersRef, where('email', '==', email));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
+            console.log("Returning user")
             const userDoc = querySnapshot.docs[0]; // Assuming email is unique
             return userDoc.data() as User;
         } else return undefined;
