@@ -63,6 +63,7 @@ class _ChatWidgetState extends State<ChatWidget> {
               setState(() {
                 page = Page.Channel;
               });
+              notificationService.clearCurrentChannel();
             });
       case Page.Channel:
       default:
@@ -75,6 +76,7 @@ class _ChatWidgetState extends State<ChatWidget> {
       currentChannelId = id;
       page = Page.Message;
     });
+    notificationService.currentChannelId = id;
     notificationService.readChannel(id);
   }
 }

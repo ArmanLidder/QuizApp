@@ -91,6 +91,7 @@ class _ChatPopupState extends State<ChatPopup> {
               ));
         }).then((val) {
       isChatOpen = false;
+      notificationService.clearCurrentChannel();
     });
   }
 }
