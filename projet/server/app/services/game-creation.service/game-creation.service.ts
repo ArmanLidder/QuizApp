@@ -180,6 +180,7 @@ export class GameCreationService {
         socket.on(SocketEvent.OBS_LEFT, (data: {roomId: number; observedId: string}) => {
             const userId = socket.handshake.auth.userId;
             const room = roomManager.getRoomById(data.roomId);
+            console.log(`Obs Left Event : ${userId} left ${room}`)
             if (room) {
                 const ObservedUserId = data.observedId === room.hostUserId ? HOST_USERNAME : data.observedId;
                 roomManager.updateObserverCounter(data.roomId, ObservedUserId, true);
@@ -401,7 +402,7 @@ export class GameCreationService {
     private sendTeams(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
         const teams = roomManager.getRoomById(roomId)?.teams;
         const result = teams ? teams : new Map(); // if last player left there is no teams left so send empty map
-        sio.emit(SocketEvent.GET_TEAMS, Object.fromEntries(result));
+        sio.to(String(roomId)).emit(SocketEvent.GET_TEAMS, Object.fromEntries(result));
     }
 
     private sendUpdateGameList(roomManager: RoomManagingService, sio: io.Server) {
