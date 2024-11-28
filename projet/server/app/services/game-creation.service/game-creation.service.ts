@@ -280,7 +280,7 @@ export class GameCreationService {
     // We finally send a PLAYER_REMOVED event to the host to remove the player from the player list
     private handlePlayerLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.PLAYER_LEFT, async (roomId: number) => {
-            await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
+            // await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             const obsMap = roomManager.getRoomById(roomId)?.observersCounter;
             this.debug_teams("PLayer Left", roomId, roomManager);
@@ -315,16 +315,16 @@ export class GameCreationService {
 
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
-            // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-            const teams = roomManager.getRoomById(roomId).teams
-            let teamsIds: number[] = []
-            if (teams) teamsIds = Array.from(teams.keys());
-            await this.deleteRoomCanal(roomId, roomManager, teamsIds).then(() => {
-                roomManager.deleteRoom(roomId);
-            });
-            // this.sendPlayerListToObserver(roomId, roomManager, sio);
-            roomManager.deleteRoom(roomId);
-            this.sendUpdateGameList(roomManager, sio);
+            // // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+            // const teams = roomManager.getRoomById(roomId).teams
+            // let teamsIds: number[] = []
+            // if (teams) teamsIds = Array.from(teams.keys());
+            // await this.deleteRoomCanal(roomId, roomManager, teamsIds).then(() => {
+            //     roomManager.deleteRoom(roomId);
+            // });
+            // // this.sendPlayerListToObserver(roomId, roomManager, sio);
+            // roomManager.deleteRoom(roomId);
+            // this.sendUpdateGameList(roomManager, sio);
             sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(roomId)).disconnectSockets(true);
         });
@@ -437,6 +437,16 @@ export class GameCreationService {
             if (username === 'Organisateur') {
                 //This is the exact same code used in HOST_LEFT socket event above in the file
                 socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+                // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+                const teams = roomManager.getRoomById(roomId).teams
+                let teamsIds: number[] = []
+                if (teams) teamsIds = Array.from(teams.keys());
+                await this.deleteRoomCanal(roomId, roomManager, teamsIds).then(() => {
+                    roomManager.deleteRoom(roomId);
+                });
+                // this.sendPlayerListToObserver(roomId, roomManager, sio);
+                roomManager.deleteRoom(roomId);
+                this.sendUpdateGameList(roomManager, sio);
                 await this.deleteRoomCanal(roomId, roomManager);
                 roomManager.deleteRoom(roomId);
                 this.sendUpdateGameList(roomManager, sio);
