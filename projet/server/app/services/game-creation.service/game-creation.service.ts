@@ -751,7 +751,7 @@ export class GameCreationService {
                 let total = 0;
                 team.members.forEach((userId) => {
                     const score = players.get(userId);
-                    total += score.points;
+                    if (score) total += score.points;
                 });
                 teamsScore.set(teamId, total);
             });
