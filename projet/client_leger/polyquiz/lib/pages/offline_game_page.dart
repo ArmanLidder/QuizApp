@@ -75,39 +75,57 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: AnimatedBuilder(
-            animation:
-                gameInterfaceManagementService.gameService.offlineGameService,
-            builder: (BuildContext context, Widget? snapshot) {
-              if (gameInterfaceManagementService.gameService.question == null) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Waiting for questions to load...',
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                return AnimatedBuilder(
-                    animation: Listenable.merge([
-                      gameInterfaceManagementService,
-                      gameInterfaceManagementService.gameService
-                    ]),
-                    builder: (BuildContext context, Widget? snapshot) {
-                      return Scaffold(
-                        appBar: AppBar(
-                          title: const Text('PolyQuiz'),
-                          automaticallyImplyLeading: false,
-                          centerTitle: true,
-                          backgroundColor: Color.fromRGBO(53, 121, 246, 1),
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          "PolyQuiz",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: <Color>[
+                  Color.fromRGBO(38, 99, 235, 1),
+                  Color.fromRGBO(167, 85, 246, 1)
+                ]),
+          ),
+        ),
+      ),
+      body: Container(
+          child: AnimatedBuilder(
+              animation:
+                  gameInterfaceManagementService.gameService.offlineGameService,
+              builder: (BuildContext context, Widget? snapshot) {
+                if (gameInterfaceManagementService.gameService.question ==
+                    null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Waiting for questions to load...',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-                        body: ListView(children: [
+                      ],
+                    ),
+                  );
+                } else {
+                  return AnimatedBuilder(
+                      animation: Listenable.merge([
+                        gameInterfaceManagementService,
+                        gameInterfaceManagementService.gameService,
+                      ]),
+                      builder: (BuildContext context, Widget? snapshot) {
+                        return ListView(children: [
                           Column(
                             children: [
                               Row(
@@ -158,9 +176,13 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                                       padding: EdgeInsets.all(10.0),
                                       decoration:
                                           BoxDecoration(border: Border.all()),
-                                      child: Text(
-                                        '${gameText['CURRENT_POINTS']}: ${gameInterfaceManagementService.gameService.offlineGameService.playerScore}',
-                                        style: TextStyle(fontSize: 20),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            '${gameText['CURRENT_POINTS']}: ${gameInterfaceManagementService.gameService.offlineGameService.playerScore}',
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   )
@@ -284,10 +306,10 @@ class _OfflineGamePageState extends State<OfflineGamePage> {
                               )
                             ],
                           ),
-                        ]),
-                      );
-                    });
-              }
-            }));
+                        ]);
+                      });
+                }
+              })),
+    );
   }
 }
