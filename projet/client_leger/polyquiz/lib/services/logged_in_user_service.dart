@@ -212,10 +212,10 @@ Future<void> killSubscription() async {
     });
   }
 
-  void _subscribeToFriendRequests() {
-    _friendRequestSubscription?.cancel();
+  Future<void> _subscribeToFriendRequests() async {
     String? currentUserId = LoggedInUserService.instance.getUid();
     if (currentUserId == null) return;
+    await _friendRequestSubscription?.cancel();
     _friendRequestSubscription = _firestore
         .collection('users')
         .doc(currentUserId)

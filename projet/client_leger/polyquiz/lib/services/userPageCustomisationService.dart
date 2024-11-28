@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -13,10 +15,11 @@ class UserPageCustomisationService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   RxList<String> _ownedThemes = <String>[].obs;
 
+  resetOwnedThemes(){
+    _ownedThemes.value = [];
+  }
   Future<List<String>> defaultAvatars() async {
     List<String> imageUrls = [];
-
-    // Get all documents in the `defaultUsers` collection and add `source` fields to the list
     DocumentSnapshot defaultAvatarsDoc = await _firestore.collection('assets').doc('default_avatars').get();
     if (defaultAvatarsDoc.exists) {
       List<dynamic> avatarURLs = defaultAvatarsDoc.get('avatarURLS') ?? [];
@@ -28,16 +31,13 @@ class UserPageCustomisationService extends GetxService {
     }
     return imageUrls;
   }
-
   Future<List<String>> purchasedAvatars(String userId) async {
     List<String> imageUrls = [];
-
     // Get the user-specific document in `storeAccount`
     DocumentSnapshot storeAccountSnapshot = await _firestore.collection('storeProfiles').doc(userId).get();
     if (storeAccountSnapshot.exists) {
       // Retrieve `itemsOwned` list from `storeAccount`
       List<dynamic> itemsOwned = storeAccountSnapshot.get('ownedItems') ?? [];
-
       // For each item in `itemsOwned`, get the document in `storeItems` and check `itemType`
       for (var itemId in itemsOwned) {
         DocumentSnapshot itemDoc = await _firestore.collection('storeItems').doc(itemId).get();
@@ -49,7 +49,6 @@ class UserPageCustomisationService extends GetxService {
         }
       }
     }
-
     return imageUrls;
   }
 
@@ -64,6 +63,7 @@ class UserPageCustomisationService extends GetxService {
 
   void subscribeToStoreAccount() {
     String userId = loggedInUserService.getUid()!;
+    _ownedThemes.value = [];
     _firestore.collection('storeProfiles').doc(userId).snapshots().listen((storeAccountSnapshot) async {
       if (storeAccountSnapshot.exists) {
         // Retrieve `itemsOwned` and update cached data
