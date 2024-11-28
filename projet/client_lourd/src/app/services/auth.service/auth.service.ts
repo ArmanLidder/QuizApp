@@ -12,6 +12,7 @@ import {AvatarService} from "@app/services/avatar.service/avatar.service";
 import {switchMap} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
 import {randomDelay} from "../../../utils/random-time-waiter/random-time-waiter";
+import {UserSettingsService} from "@app/services/user-settings.service/user-settings.service";
 
 
 @Injectable({
@@ -34,7 +35,8 @@ export class AuthService {
     constructor(private auth: Auth,
                 private usersService: UsersService,
                 private avatarService: AvatarService,
-                private translate: TranslateService) {
+                private translate: TranslateService,
+                private settings: UserSettingsService) {
     }
 
     async register(username: string, email: string, password: string, selectedAvatar: string | File): Promise<void> {
@@ -63,6 +65,7 @@ export class AuthService {
         if (existingUser?.isConnected) {
             throw new Error(this.translate.instant('LOGIN_PAGE.USER_ALREADY_CONNECTED'));
         }
+
         try {
             await setPersistence(this.auth, browserSessionPersistence);
             await signInWithEmailAndPassword(this.auth, email, password);
@@ -71,16 +74,19 @@ export class AuthService {
             await this.auth.signOut();
             throw new Error(this.mapFirebaseAuthError(error.code));
         }
+
         try {
             await this.usersService.addLogEvent('login');
-        } catch (error:any) {
+        } catch (error: any) {
             console.error('Login error:', error);
             await this.auth.signOut();
             throw new Error(error.message);
         }
     }
 
+
     async logout(): Promise<void> {
+        this.settings.resetStateVariables();
         await this.usersService.addLogEvent('logout');
         return await this.auth.signOut();
     }

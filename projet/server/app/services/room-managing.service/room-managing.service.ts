@@ -70,6 +70,7 @@ export class RoomManagingService {
             prestige: config.prestige,
             total_price: 0,
             observersCounter: new Map<string, number>([[HOST_USERNAME, 0]]),
+            observerTotalCounter: 0
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -89,10 +90,15 @@ export class RoomManagingService {
     }
 
     updateObserverCounter(roomId: number, userId: string, decrement: boolean) {
-        const roomObserverCounter = this.getRoomById(roomId).observersCounter
+        const roomObserverCounter = this.getRoomById(roomId).observersCounter;
         const currentObserverValue = roomObserverCounter.get(userId);
-        if (decrement) roomObserverCounter.set(userId, currentObserverValue - 1);
-        else roomObserverCounter.set(userId, currentObserverValue + 1);
+        if (decrement) {
+            roomObserverCounter.set(userId, currentObserverValue - 1);
+            this.getRoomById(roomId).observerTotalCounter -= 1;
+        } else {
+            roomObserverCounter.set(userId, currentObserverValue + 1);
+            this.getRoomById(roomId).observerTotalCounter += 1;
+        }
         console.log(decrement, roomObserverCounter)
     }
 
@@ -121,6 +127,7 @@ export class RoomManagingService {
                 room: roomCode,
                 quizId: roomData.quizId,
                 numberOfPlayers: roomData.players.size,
+                numberOfObs: roomData.observerTotalCounter,
                 hostUserId: roomData.hostUserId,
                 gameType: roomData.gameType,
                 private: roomData.private,
@@ -156,7 +163,6 @@ export class RoomManagingService {
         playerMap.delete(name);
         this.getRoomById(roomId).observersCounter.delete(name);
         console.log(name, this.getRoomById(roomId).observersCounter)
-        // new code
         if (this.getRoomById(roomId).gameType !== 'classic') this.removeUserInTeam(roomId, name);
     }
 
@@ -225,9 +231,12 @@ export class RoomManagingService {
     }
 
     private removeUserInTeam(roomId: number, name: string) {
+        const room = this.getRoomById(roomId)
+        const isOnGoing = room.onGoing;
         const teamMap = this.getRoomById(roomId).teams
         teamMap.forEach((team: Team, teamId: number) => {
-            if (team.members.includes(name)) {
+            if (team.members.includes(name) && !isOnGoing) {
+                console.log(`Remove User was called for Teams with reassignement`)
                 const isEmpty = team.removeMember(name);
                 if (isEmpty) {
                     teamMap.delete(teamId);

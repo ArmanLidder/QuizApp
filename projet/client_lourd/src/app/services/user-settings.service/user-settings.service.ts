@@ -29,6 +29,9 @@ export class UserSettingsService {
         });
     }
 
+    resetStateVariables(): void {
+        this.availableThemesSubject.next(null);
+    }
 
     async switchLanguage(language: 'en' | 'fr') {
         const currentUser: User | null = await firstValueFrom(this.userService.currentUserProfile$);
@@ -56,7 +59,7 @@ export class UserSettingsService {
 
     setTheme(theme: string): void {
         const className = `theme-${theme}`;
-        document.documentElement.classList.remove(this.activeTheme);
+        document.documentElement.className = '';
         this.activeTheme = className;
         document.documentElement.classList.add(this.activeTheme);
     }

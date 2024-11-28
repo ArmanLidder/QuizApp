@@ -21,7 +21,6 @@ import {GameHistory, User, UserStats} from "@common/interfaces/user-data.interfa
 // import {HostCurrentGameInterface} from "@common/interfaces/host.interface";
 import {HostCurrentGameInterface, PlayerCurrentGameInterface} from "@common/interfaces/host.interface";
 import {QuestionType} from "@common/enums/question-type.enum";
-
 // import {InitialQuestionData, ObsQuestionData} from "@common/interfaces/host.interface";
 
 @Service()
@@ -61,115 +60,148 @@ export class GameCreationService {
 
     private handleRoomCreation(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.CREATE_ROOM, async (data: { quizId: string, gameConfig: GameConfig }, callback) => {
-            const userId = socket.handshake.auth.userId;
-            const roomCode = roomManager.addRoom(data.quizId, data.gameConfig);
-            await this.fs.firestore.collection('canals').add(this.generateRoomCanal(roomCode, userId))
-            roomManager.addUser(roomCode, HOST_USERNAME, socket.id);
-            socket.join(String(roomCode));
-            this.sendUpdateGameList(roomManager, sio)
-            callback(roomCode);
+            try {
+                const userId = socket.handshake.auth.userId;
+                const roomCode = roomManager.addRoom(data.quizId, data.gameConfig);
+                this.printLogsServer(SocketEvent.CREATE_ROOM, userId, roomCode);
+                await this.fs.firestore.collection('canals').add(this.generateRoomCanal(roomCode, userId))
+                roomManager.addUser(roomCode, HOST_USERNAME, socket.id);
+                socket.join(String(roomCode));
+                this.sendUpdateGameList(roomManager, sio)
+                callback(roomCode);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message);
+                }
+            }
         });
     }
 
     private handleJoinGame(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.JOIN_GAME, async (data: PlayerUsername, callback) => {
-            const isLocked = roomManager.isRoomLocked(data.roomId);
-            if (!isLocked) {
-                const roomCode = data.roomId;
-                const userId = socket.handshake.auth.userId;
-                // roomManager.addUser(roomCode, data.username, socket.id);
-                roomManager.addUser(roomCode, userId, socket.id);
-                const players = roomManager.getUsernamesArray(roomCode);
-                socket.join(String(roomCode));
-                await this.addUserToRoomCanal(roomCode, userId);
-                sio.to(String(data.roomId)).emit(SocketEvent.NEW_PLAYER, players);
-                this.sendUpdateGameList(roomManager, sio)
+            try {
+                const isLocked = roomManager.isRoomLocked(data.roomId);
+                if (!isLocked) {
+                    const roomCode = data.roomId;
+                    const userId = socket.handshake.auth.userId;
+                    this.printLogsServer(SocketEvent.JOIN_GAME, userId, roomCode);
+                    roomManager.addUser(roomCode, userId, socket.id);
+                    const players = roomManager.getUsernamesArray(roomCode);
+                    socket.join(String(roomCode));
+                    await this.addUserToRoomCanal(roomCode, userId);
+                    sio.to(String(data.roomId)).emit(SocketEvent.NEW_PLAYER, players);
+                    this.sendUpdateGameList(roomManager, sio)
+                }
+                callback(isLocked);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message);
+                }
             }
-            callback(isLocked);
         });
     }
 
     private handleNewObserver(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.NEW_OBSERVER_GAME, async (data: {roomId:number; isFirst: boolean}) => {
-            const hostId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
-            const observerId = socket.handshake.auth.userId;
-            await this.addUserToRoomCanal(data.roomId, observerId);
-            if (data.isFirst) {
-                roomManager.updateObserverCounter(data.roomId, HOST_USERNAME, false);
-                socket.join(String(data.roomId));
-                socket.join(String(hostId));
-                const count = roomManager.getRoomById(data.roomId).observersCounter.get(HOST_USERNAME)
-                if (count >= 0) {
-                    console.log("sending NEW_OBSERVER_GAME");
-                    sio.to(hostId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
+            try {
+                const hostId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
+                const observerId = socket.handshake.auth.userId;
+                this.printLogsServer(SocketEvent.NEW_OBSERVER_GAME, hostId, data.roomId);
+                await this.addUserToRoomCanal(data.roomId, observerId);
+                if (data.isFirst) {
+                    roomManager.updateObserverCounter(data.roomId, HOST_USERNAME, false);
+                    this.sendUpdateGameList(roomManager, sio)
+                    socket.join(String(data.roomId));
+                    socket.join(String(hostId));
+                    const count = roomManager.getRoomById(data.roomId).observersCounter.get(HOST_USERNAME)
+                    if (count >= 0) {
+                        console.log("sending NEW_OBSERVER_GAME");
+                        sio.to(hostId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
+                    }
+                }
+                sio.to(String(hostId)).emit(SocketEvent.REQUEST_HOST_GAME_STATUS);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e)
                 }
             }
-            sio.to(String(hostId)).emit(SocketEvent.REQUEST_HOST_GAME_STATUS);
         });
     }
 
     private handleGameStatusForObsReception(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.SENDING_HOST_GAME_STATUS, (data: HostCurrentGameInterface) => {
-            if (data.histogramDataChangingResponses[0] === 1000) { // To tell me it is QCM
-                const game = roomManager.getGameByRoomId(data.roomId)
-                data.histogramDataChangingResponses = Array.from(game.choicesStats.values());
+            try {
+                if (data.histogramDataChangingResponses[0] === 1000) { // To tell me it is QCM
+                    const game = roomManager.getGameByRoomId(data.roomId)
+                    data.histogramDataChangingResponses = Array.from(game.choicesStats.values());
+                }
+                sio.to(String(socket.id)).emit(SocketEvent.RECEIVING_HOST_GAME_STATUS, data); // pt to one socket id
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e)
+                }
             }
-            sio.emit(SocketEvent.RECEIVING_HOST_GAME_STATUS, data);
         });
     }
 
     private handleChangeObservedPLayer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.CHANGE_OBSERVED_PLAYER, (data: NewObservedPlayer) => {
-            const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
-            const newObservedPlayerId = data.newUserId === roomManager.getRoomById(data.roomId).hostUserId ? HOST_USERNAME : data.newUserId;
-            const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
-            const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, newObservedPlayerId);
-            roomManager.updateObserverCounter(data.roomId, observedPlayerId, true);
-            roomManager.updateObserverCounter(data.roomId, newObservedPlayerId, false);
-            const obsMapCounter = roomManager.getRoomById(data.roomId).observersCounter;
-            const inc_count = obsMapCounter.get(newObservedPlayerId);
-            const dec_count = obsMapCounter.get(observedPlayerId);
-            socket.leave(String(observedPlayerSocketId));
-            socket.join(String(newObservedPlayerSocketId));
-            if (inc_count >= 0) {
-                console.log("sending CHANGE_OBSERVED_PLAYER");
-                sio.to(newObservedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, inc_count);
-            }
-            if (dec_count >= 0) {
-                console.log("sending CHANGE_OBSERVED_PLAYER");
-                sio.to(observedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, dec_count);
-            }
-            const roomId = data.roomId;
-            if (newObservedPlayerId !== HOST_USERNAME) {
-                const room = roomManager.getRoomById(roomId);
-                const game = room.game;
-                const playerScore = game.players.get(newObservedPlayerId);
-                // If QRE we check if QRE Answer has been registered => true = sending qre answer else sending 0. If not qre send 0;
-                const playerQREAnswer = game.currentQuizQuestion.type === QuestionType.QRE ? game.playerQREAnswer.get(newObservedPlayerId) ? game.playerQREAnswer.get(newObservedPlayerId)[1] : 0 : 0;
-                const answers = game.playersAnswers.get(newObservedPlayerId)?.answers ?? "";
-                const qrlAnswer = answers && game.currentQuizQuestion.type === QuestionType.QRL ? answers : "";
-                let players: [string, number][] = [];
-                game.players.forEach((score, username) => {
-                    players.push([username, score.points]);
-                })
-                const choicesStatsValues = Array.from(game.choicesStats.values());
-                const player_data: PlayerCurrentGameInterface = {
-                    roomId: roomId,
-                    isBonus: playerScore.isBonus,
-                    playerScore: playerScore.points,
-                    players: players,
-                    qreAnswer: playerQREAnswer,
-                    qrlAnswer: String(qrlAnswer),
-                    choicesStatsValues: choicesStatsValues,
+            try{
+                const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
+                const newObservedPlayerId = data.newUserId === roomManager.getRoomById(data.roomId).hostUserId ? HOST_USERNAME : data.newUserId;
+                const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
+                const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, newObservedPlayerId);
+                roomManager.updateObserverCounter(data.roomId, observedPlayerId, true);
+                roomManager.updateObserverCounter(data.roomId, newObservedPlayerId, false);
+                const obsMapCounter = roomManager.getRoomById(data.roomId).observersCounter;
+                const inc_count = obsMapCounter.get(newObservedPlayerId);
+                const dec_count = obsMapCounter.get(observedPlayerId);
+                socket.leave(String(observedPlayerSocketId));
+                socket.join(String(newObservedPlayerSocketId));
+                if (inc_count >= 0) {
+                    console.log("sending CHANGE_OBSERVED_PLAYER");
+                    sio.to(newObservedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, inc_count);
                 }
-                sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
-                if (game.currentQuizQuestion.type === QuestionType.QCM) {
-                    console.log("sending RECEIVE_PLAYER_GAME_STATUS");
-                    sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
+                if (dec_count >= 0) {
+                    console.log("sending CHANGE_OBSERVED_PLAYER");
+                    sio.to(observedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, dec_count);
                 }
-                if (game.currentQuizQuestion.type === QuestionType.QRL) {
-                    console.log("sending RECEIVE_PLAYER_GAME_STATUS");
-                    sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
+                const roomId = data.roomId;
+                if (newObservedPlayerId !== HOST_USERNAME) {
+                    const room = roomManager.getRoomById(roomId);
+                    const game = room.game;
+                    const playerScore = game.players.get(newObservedPlayerId);
+                    // If QRE we check if QRE Answer has been registered => true = sending qre answer else sending 0. If not qre send 0;
+                    const playerQREAnswer = game.currentQuizQuestion.type === QuestionType.QRE ? game.playerQREAnswer.get(newObservedPlayerId) ? game.playerQREAnswer.get(newObservedPlayerId)[1] : 0 : 0;
+                    const answers = game.playersAnswers.get(newObservedPlayerId)?.answers ?? "";
+                    const qrlAnswer = answers && game.currentQuizQuestion.type === QuestionType.QRL ? answers : "";
+                    let players: [string, number][] = [];
+                    game.players.forEach((score, username) => {
+                        players.push([username, score.points]);
+                    })
+                    const choicesStatsValues = Array.from(game.choicesStats.values());
+                    const player_data: PlayerCurrentGameInterface = {
+                        roomId: roomId,
+                        isBonus: playerScore.isBonus,
+                        playerScore: playerScore.points,
+                        players: players,
+                        qreAnswer: playerQREAnswer,
+                        qrlAnswer: String(qrlAnswer),
+                        choicesStatsValues: choicesStatsValues,
+                    }
+                    sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
+                    if (game.currentQuizQuestion.type === QuestionType.QCM) {
+                        console.log("sending RECEIVE_PLAYER_GAME_STATUS");
+                        sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
+                    }
+                    if (game.currentQuizQuestion.type === QuestionType.QRL) {
+                        console.log("sending RECEIVE_PLAYER_GAME_STATUS");
+                        sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
+                    }
+                }
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e)
                 }
             }
         });
@@ -177,33 +209,46 @@ export class GameCreationService {
 
     private handleObsLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.OBS_LEFT, (data: {roomId: number; observedId: string}) => {
-            const userId = socket.handshake.auth.userId;
-            const room = roomManager.getRoomById(data.roomId);
-            if (room) {
-                const ObservedUserId = data.observedId === room.hostUserId ? HOST_USERNAME : data.observedId;
-                roomManager.updateObserverCounter(data.roomId, ObservedUserId, true);
-                const count = room.observersCounter.get(ObservedUserId)
-                if (count >= 0) {
-                    const socketId = roomManager.getSocketIdByUsername(data.roomId, ObservedUserId)
-                    if (socketId) sio.to(socketId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
-
-
+            try {
+                const userId = socket.handshake.auth.userId;
+                const room = roomManager.getRoomById(data.roomId);
+                console.log(`Obs Left Event : ${userId} left ${room}`)
+                if (room) {
+                    console.log(`Obs Left Event handled: ${userId} left ${room}`)
+                    const ObservedUserId = data.observedId === room.hostUserId ? HOST_USERNAME : data.observedId;
+                    roomManager.updateObserverCounter(data.roomId, ObservedUserId, true);
+                    this.sendUpdateGameList(roomManager, sio)
+                    const count = room.observersCounter.get(ObservedUserId)
+                    if (count >= 0) {
+                        const socketId = roomManager.getSocketIdByUsername(data.roomId, ObservedUserId)
+                        if (socketId) sio.to(socketId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
+                    }
+                    this.removeUserFromRoomCanal(data.roomId, userId, roomManager);
                 }
-                this.removeUserFromRoomCanal(data.roomId, userId, roomManager);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
             }
         });
     }
 
     private handleGetObsCounter(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.GET_OBS_COUNT, (roomId: number) => {
-            const room = roomManager.getRoomById(roomId);
-            const hostUserId = room.hostUserId;
-            const incomingUserId = socket.handshake.auth.userId;
-            const userId = hostUserId === incomingUserId ? HOST_USERNAME : incomingUserId;
-            const count = room.observersCounter.get(userId);
-            if (count >= 0) {
-                console.log("sending new GET_OBS_COUNT");
-                sio.to(socket.id).emit(SocketEvent.UPDATE_OBS_COUNT, count)
+            try {
+                const room = roomManager.getRoomById(roomId);
+                const hostUserId = room.hostUserId;
+                const incomingUserId = socket.handshake.auth.userId;
+                const userId = hostUserId === incomingUserId ? HOST_USERNAME : incomingUserId;
+                const count = room.observersCounter.get(userId);
+                if (count >= 0) {
+                    console.log("sending new GET_OBS_COUNT");
+                    sio.to(socket.id).emit(SocketEvent.UPDATE_OBS_COUNT, count)
+                }
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
             }
         });
     }
@@ -215,60 +260,102 @@ export class GameCreationService {
             qrlAnswer: string | undefined,
             userId: string
         }) => {
-            sio.to(String(data.roomId)).emit(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, data);
+            try {
+                sio.to(String(data.roomId)).emit(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, data);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleQCMAnswerReception(socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.RECEIVE_PLAYER_QCM_CHOICES, (data: PlayerSelection) => {
-            sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, data);
+            try {
+                sio.to(String(socket.id)).emit(SocketEvent.OBS_QCM_INTERACTION, data);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleBanPlayer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.BAN_PLAYER, async (data: PlayerUsername) => {
-            const bannedID = roomManager.getSocketIdByUsername(data.roomId, data.username);
-            const banned_socket = sio.sockets.sockets.get(bannedID)
-            const bannedUserID = banned_socket.handshake.auth.userId
-            roomManager.banUser(data.roomId, bannedUserID);
-            await this.removeUserFromRoomCanal(data.roomId, banned_socket.handshake.auth.userId, roomManager);
-            sio.to(bannedID).emit(SocketEvent.REMOVED_FROM_GAME);
-            sio.to(String(data.roomId)).emit(SocketEvent.REMOVED_PLAYER, data.username);
-            this.sendUpdateGameList(roomManager, sio)
-            this.sendTeams(data.roomId, roomManager, sio);
+            try {
+                const bannedID = roomManager.getSocketIdByUsername(data.roomId, data.username);
+                const banned_socket = sio.sockets.sockets.get(bannedID)
+                const bannedUserID = banned_socket.handshake.auth.userId
+                roomManager.banUser(data.roomId, bannedUserID);
+                await this.removeUserFromRoomCanal(data.roomId, banned_socket.handshake.auth.userId, roomManager);
+                sio.to(bannedID).emit(SocketEvent.REMOVED_FROM_GAME);
+                sio.to(String(data.roomId)).emit(SocketEvent.REMOVED_PLAYER, data.username);
+                this.sendUpdateGameList(roomManager, sio)
+                this.sendTeams(data.roomId, roomManager, sio);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleToggleRoomLock(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.TOGGLE_ROOM_LOCK, (roomId: number) => {
-            roomManager.changeLockState(roomId);
-            sio.to(String(roomId)).emit(SocketEvent.GET_ROOM_LOCK_UPDATE, roomManager.isRoomLocked(roomId));
+            try {
+                roomManager.changeLockState(roomId);
+                sio.to(String(roomId)).emit(SocketEvent.GET_ROOM_LOCK_UPDATE, roomManager.isRoomLocked(roomId));
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleValidateUsername(roomManager: RoomManagingService, socket: io.Socket) {
         socket.on(SocketEvent.VALIDATE_USERNAME, (data: PlayerUsername, callback) => {
-            let error = '';
-            if (roomManager.isNameUsed(data.roomId, data.username)) error = ErrorDictionary.NAME_ALREADY_USED;
-            else if (roomManager.isNameBanned(data.roomId, data.username)) error = ErrorDictionary.BAN_MESSAGE;
-            callback({isValid: error.length === 0, error});
+            try {
+                let error = '';
+                if (roomManager.isNameUsed(data.roomId, data.username)) error = ErrorDictionary.NAME_ALREADY_USED;
+                else if (roomManager.isNameBanned(data.roomId, data.username)) error = ErrorDictionary.BAN_MESSAGE;
+                callback({isValid: error.length === 0, error});
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleGatherPlayersUsername(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.GATHER_PLAYERS_USERNAME, (roomId: number, callback) => {
-            const players = roomManager.getUsernamesArray(roomId);
-            this.sendTeams(roomId, roomManager, sio);
-            callback(players);
+            try {
+                const players = roomManager.getUsernamesArray(roomId);
+                this.sendTeams(roomId, roomManager, sio);
+                callback(players);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleValidateRoomId(roomManager: RoomManagingService, socket: io.Socket) {
         socket.on(SocketEvent.VALIDATE_ROOM_ID, (roomId: number, callback) => {
-            let isLocked = false;
-            const isRoom = roomManager.roomMap.has(roomId);
-            if (isRoom) isLocked = roomManager.getRoomById(roomId).locked;
-            callback({isRoom, isLocked});
+            try {
+                let isLocked = false;
+                const isRoom = roomManager.roomMap.has(roomId);
+                if (isRoom) isLocked = roomManager.getRoomById(roomId).locked;
+                callback({isRoom, isLocked});
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
@@ -279,35 +366,41 @@ export class GameCreationService {
     // We finally send a PLAYER_REMOVED event to the host to remove the player from the player list
     private handlePlayerLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.PLAYER_LEFT, async (roomId: number) => {
-            await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
-            const userInfo = roomManager.removeUserBySocketId(socket.id);
-            const obsMap = roomManager.getRoomById(roomId)?.observersCounter;
-            this.debug_teams("PLayer Left", roomId, roomManager);
-            this.sendUpdateGameList(roomManager, sio);
-            if (obsMap) obsMap.delete(socket.handshake.auth.userId);
-            sio.to(String(socket.id)).emit(SocketEvent.REMOVED_FROM_GAME);
-            this.sendPlayerListToObserver(roomId, roomManager, sio);
-            this.sendTeams(roomId, roomManager, sio);
-            if (userInfo) {
-                const game = roomManager.getGameByRoomId(roomId);
-                if (game) {
-                    game.removePlayer(userInfo.username);
-                    if (game.players.size === 0) {
-                        roomManager.clearRoomTimer(roomId);
-                        this.timerService.startTimer({
-                            roomId,
-                            time: TRANSITION_QUESTIONS_DELAY
-                        }, SocketEvent.FINAL_TIME_TRANSITION);
-                    } else if (game.playersAnswers.size === game.players.size) {
-                        roomManager.getGameByRoomId(roomId).updateScores();
-                        roomManager.clearRoomTimer(roomId);
-                        roomManager.getRoomById(roomId).players.forEach((socketId, username) => {
-                            if (username !== HOST_USERNAME) sio.to(socketId).emit(SocketEvent.END_QUESTION);
-                        });
-                        sio.to(String(roomId)).emit(SocketEvent.END_QUESTION_AFTER_REMOVAL);
+            try {
+                console.log(`PLAYE_LEFT event receive send REMOVED FROM GAME ${socket.handshake.auth.userId}`);
+                await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
+                const userInfo = roomManager.removeUserBySocketId(socket.id);
+                const obsMap = roomManager.getRoomById(roomId)?.observersCounter;
+                this.sendUpdateGameList(roomManager, sio);
+                if (obsMap) obsMap.delete(socket.handshake.auth.userId);
+                sio.to(String(socket.id)).emit(SocketEvent.REMOVED_FROM_GAME);
+                this.sendPlayerListToObserver(roomId, roomManager, sio);
+                this.sendTeams(roomId, roomManager, sio);
+                if (userInfo) {
+                    const game = roomManager.getGameByRoomId(roomId);
+                    if (game) {
+                        game.removePlayer(userInfo.username);
+                        if (game.players.size === 0) {
+                            roomManager.clearRoomTimer(roomId);
+                            this.timerService.startTimer({
+                                roomId,
+                                time: TRANSITION_QUESTIONS_DELAY
+                            }, SocketEvent.FINAL_TIME_TRANSITION);
+                        } else if (game.playersAnswers.size === game.players.size) {
+                            roomManager.getGameByRoomId(roomId).updateScores();
+                            roomManager.clearRoomTimer(roomId);
+                            roomManager.getRoomById(roomId).players.forEach((socketId, username) => {
+                                if (username !== HOST_USERNAME) sio.to(socketId).emit(SocketEvent.END_QUESTION);
+                            });
+                            sio.to(String(roomId)).emit(SocketEvent.END_QUESTION_AFTER_REMOVAL);
+                        }
                     }
+                    sio.to(String(roomId)).emit(SocketEvent.REMOVED_PLAYER, userInfo.username);
                 }
-                sio.to(String(roomId)).emit(SocketEvent.REMOVED_PLAYER, userInfo.username);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
             }
         });
     }
@@ -315,41 +408,60 @@ export class GameCreationService {
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
             // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-            sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-            const teams = roomManager.getRoomById(roomId).teams
-            let teamsIds: number[] = []
-            if (teams) teamsIds = Array.from(teams.keys());
-            await this.deleteRoomCanal(roomId, roomManager, teamsIds);
+            // const teams = roomManager.getRoomById(roomId).teams
+            // let teamsIds: number[] = []
+            // if (teams) teamsIds = Array.from(teams.keys());
+            // await this.deleteRoomCanal(roomId, roomManager, teamsIds)
             // this.sendPlayerListToObserver(roomId, roomManager, sio);
-            roomManager.deleteRoom(roomId);
-            this.sendUpdateGameList(roomManager, sio);
-            sio.to(String(roomId)).disconnectSockets(true);
+            // roomManager.deleteRoom(roomId);
+            // this.sendUpdateGameList(roomManager, sio);
+            try {
+                console.log(`HOST_LEFT event receive send REMOVED FROM GAME ${socket.handshake.auth.userId}`)
+                sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+                sio.to(String(roomId)).disconnectSockets(true);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleGetGameList(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.GET_GAME_LIST, () => {
-            sio.to(socket.id).emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig());
+            try {
+                sio.to(socket.id).emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig());
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     // type are winner, loser or none
     private handleSaveStats(roomManager: RoomManagingService, socket: io.Socket) {
         socket.on(SocketEvent.SAVE_FINAL_GAME_STATS, async (roomId: number) => {
-            const game = roomManager.getGameByRoomId(roomId);
-            const gameType = roomManager.getRoomById(roomId).gameType;
-            const roomData = roomManager.getRoomById(roomId);
-            const onlyOnePlayer = roomData.players.size === 2; // including host
-            const {
-                highestScorers,
-                nonExtremes,
-                lowestScorers
-            } = gameType === 'classic' ? this.getExtremeScoresClassicGame(game.players) : this.getExtremeScoresTeamGame(this.calculateTeamsFinalScore(roomId, roomManager, game.players))
-            const winnerMoney = this.calculateMoney(highestScorers, roomData.players.size - 1, roomData.total_price, onlyOnePlayer, "winner", gameType, roomId, roomManager);
-            const loserMoney = this.calculateMoney(highestScorers, roomData.players.size - 1, roomData.total_price, onlyOnePlayer, "loser", gameType, roomId, roomManager);
-            for (let winner of highestScorers) await this.dispatchUpdateStats(winner, game, gameType, 'winner', roomId, roomManager, winnerMoney);
-            for (let loser of lowestScorers) await this.dispatchUpdateStats(loser, game, gameType, 'loser', roomId, roomManager, loserMoney);
-            for (let loser of nonExtremes) await this.dispatchUpdateStats(loser, game, gameType, 'none', roomId, roomManager, loserMoney);
+            try {
+                const game = roomManager.getGameByRoomId(roomId);
+                const gameType = roomManager.getRoomById(roomId).gameType;
+                const roomData = roomManager.getRoomById(roomId);
+                const onlyOnePlayer = roomData.players.size === 2; // including host
+                const {
+                    highestScorers,
+                    nonExtremes,
+                    lowestScorers
+                } = gameType === 'classic' ? this.getExtremeScoresClassicGame(game.players) : this.getExtremeScoresTeamGame(this.calculateTeamsFinalScore(roomId, roomManager, game.players))
+                const winnerMoney = this.calculateMoney(highestScorers, roomData.players.size - 1, roomData.total_price, onlyOnePlayer, "winner", gameType, roomId, roomManager);
+                const loserMoney = this.calculateMoney(highestScorers, roomData.players.size - 1, roomData.total_price, onlyOnePlayer, "loser", gameType, roomId, roomManager);
+                for (let winner of highestScorers) await this.dispatchUpdateStats(winner, game, gameType, 'winner', roomId, roomManager, winnerMoney);
+                for (let loser of lowestScorers) await this.dispatchUpdateStats(loser, game, gameType, 'loser', roomId, roomManager, loserMoney);
+                for (let loser of nonExtremes) await this.dispatchUpdateStats(loser, game, gameType, 'none', roomId, roomManager, loserMoney);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
@@ -368,44 +480,80 @@ export class GameCreationService {
 
     private handleGetGameType(roomManager: RoomManagingService, socket: io.Socket) {
         socket.on(SocketEvent.GET_GAME_TYPE, (roomId: number, callback) => {
-            const gameType = roomManager.getRoomById(roomId).gameType;
-            callback(gameType);
+            try {
+                const gameType = roomManager.getRoomById(roomId).gameType;
+                callback(gameType);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleCreateTeam(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.CREATE_TEAM, (roomId: number) => {
-            const userId = socket.handshake.auth.userId;
-            roomManager.createNewTeam(roomId, userId);
-            this.debug_teams('Team Creation', roomId, roomManager)
-            this.sendTeams(roomId, roomManager, sio);
+            try {
+                const userId = socket.handshake.auth.userId;
+                roomManager.createNewTeam(roomId, userId);
+                this.debug_teams('Team Creation', roomId, roomManager)
+                this.sendTeams(roomId, roomManager, sio);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleJoinTeam(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.JOIN_TEAM, ({roomId, newTeamId}: JoinTeamData) => {
-            const userId = socket.handshake.auth.userId;
-            roomManager.joinTeam(roomId, userId, newTeamId);
-            this.debug_teams('Team JOIN', roomId, roomManager)
-            this.sendTeams(roomId, roomManager, sio);
+            try {
+                const userId = socket.handshake.auth.userId;
+                roomManager.joinTeam(roomId, userId, newTeamId);
+                this.debug_teams('Team JOIN', roomId, roomManager)
+                this.sendTeams(roomId, roomManager, sio);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     private handleObserverGetPlayerList(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.GET_OBSERVER_PLAYER_LIST, (roomId: number) => {
-            this.sendPlayerListToObserver(roomId, roomManager, sio);
+            try {
+                this.sendPlayerListToObserver(roomId, roomManager, sio);
+            } catch (e) {
+                if (e instanceof Error) {
+                    console.log(e.message)
+                }
+            }
         });
     }
 
     // Object from entries to send Map (Map is not directly convertable to JSON) on client new Map(Object.entries(teams))
     private sendTeams(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
-        const teams = roomManager.getRoomById(roomId)?.teams;
-        const result = teams ? teams : new Map(); // if last player left there is no teams left so send empty map
-        sio.emit(SocketEvent.GET_TEAMS, Object.fromEntries(result));
+        try {
+            const teams = roomManager.getRoomById(roomId)?.teams;
+            const result = teams ? teams : new Map(); // if last player left there is no teams left so send empty map
+            sio.to(String(roomId)).emit(SocketEvent.GET_TEAMS, Object.fromEntries(result));
+        } catch (e) {
+            if (e instanceof Error) {
+                console.log(e.message)
+            }
+        }
     }
 
     private sendUpdateGameList(roomManager: RoomManagingService, sio: io.Server) {
-        sio.emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig())
+        try {
+            sio.emit(SocketEvent.UPDATE_GAME_LIST, roomManager.getGamesConfig())
+        } catch (e) {
+            if (e instanceof Error) {
+                console.log(e.message)
+            }
+        }
     }
 
     private sendPlayerListToObserver(roomId: number, roomManager: RoomManagingService, sio: io.Server) {
@@ -431,18 +579,25 @@ export class GameCreationService {
         for (const res of result) {
             const username = res[0];
             const roomId = res[1];
+            this.printLogsServer("DisconnectionHandler", username, roomId)
             if (username === 'Organisateur') {
                 //This is the exact same code used in HOST_LEFT socket event above in the file
+                console.log(`HOST Socket disconnection received event receive ${socket.handshake.auth.userId}`)
                 socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-                await this.deleteRoomCanal(roomId, roomManager);
+                const teams = roomManager.getRoomById(roomId).teams
+                console.log(`Teams: ${teams}`);
+                let teamsIds: number[] = []
+                if (teams) teamsIds = Array.from(teams.keys());
+                await this.deleteRoomCanal(roomId, roomManager, teamsIds)
+                // this.sendPlayerListToObserver(roomId, roomManager, sio);
                 roomManager.deleteRoom(roomId);
                 this.sendUpdateGameList(roomManager, sio);
                 sio.to(String(roomId)).disconnectSockets(true);
             } else {
                 //This is the same code used in PLAYER_LEFT socket event above in the file
+                console.log(`Player Socket disconnection received event receive ${socket.handshake.auth.userId}`)
                 await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
                 const userInfo = roomManager.removeUserBySocketId(socket.id);
-                this.debug_teams("PLayer Left", roomId, roomManager);
                 this.sendUpdateGameList(roomManager, sio);
                 this.sendTeams(roomId, roomManager, sio);
                 if (userInfo) {
@@ -484,13 +639,16 @@ export class GameCreationService {
 
     private async removeUserFromRoomCanal(roomCode: number, userId: string, roomManager: RoomManagingService) {
         try {
+            console.log(`Removing User From Canal Method ${userId} in room ${roomCode}`)
             const docRef = await this.getDocRef(roomCode);
             await docRef.update({
                 permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId),
             });
             const teams = roomManager.getRoomById(roomCode).teams;
+            console.log(`Removing User From Canal Method Checking if Teams: ${teams}`)
             if (teams) {
                 for (const [teamId, _] of teams) {
+                    console.log(`Removing User From Canal Method Checking if Teams: ${teamId} ${userId}`)
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
                     await teamDocRef.update({
                         permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId)
@@ -509,7 +667,16 @@ export class GameCreationService {
             const teams = roomManager.getRoomById(roomId).teams;
             if (teams) {
                 const members = teams.get(Number(userIdOrTeamId)).members
-                if (members) for (const userId of members) await this.updateStats(userId, game, gameType, type, amount);
+                if (members) {
+                    console.log(`Dispatch Update From Team ${userIdOrTeamId}`)
+                    for (const userId of members) {
+                        console.log(`Trying Dispatch Update From UserID ${userId}`)
+                        if (game.players.get(userId)) {
+                            console.log(`Rly Dispatch Update From UserID ${userId}`)
+                            await this.updateStats(userId, game, gameType, type, amount);
+                        }
+                    }
+                }
             }
         }
     }
@@ -556,14 +723,19 @@ export class GameCreationService {
 
     private async deleteRoomCanal(roomCode: number, roomManager: RoomManagingService, teamsIds: number[]=[]) {
         try {
-            const docRef = await this.getDocRef(roomCode);
-            await docRef.delete();
+            // const docRef = await this.getDocRef(roomCode);
+            // await docRef.delete();
+            console.log(`deleteRoomCanal ${roomCode} ${teamsIds}`)
             if (teamsIds.length > 0) {
                 for (const teamId of teamsIds) {
+                    console.log(`Team Canal to be deleted ${roomCode} ${teamId}`)
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
                     await teamDocRef.delete();
                 }
             }
+            console.log(`Delete room Canal to be deleted Room ${roomCode} `)
+            const docRef = await this.getDocRef(roomCode);
+            await docRef.delete();
         } catch (error) {
             console.log(error);
         }
@@ -735,7 +907,7 @@ export class GameCreationService {
                 let total = 0;
                 team.members.forEach((userId) => {
                     const score = players.get(userId);
-                    total += score.points;
+                    if (score) total += score.points;
                 });
                 teamsScore.set(teamId, total);
             });
@@ -766,5 +938,9 @@ export class GameCreationService {
                 });
             }
         }
+    }
+
+    private printLogsServer(socketEvent: string, fromUserId: string, roomId: number) {
+        console.log(`${Date.now()}  -- method: ${socketEvent} -- userId: ${fromUserId} -- Room: ${roomId} --`)
     }
 }

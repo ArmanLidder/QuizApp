@@ -7,12 +7,12 @@
 
                 <div class="flex gap-2 mb-2 items-center">
                     <div class="flex gap-2">
-                        <button (click)="addQuestion(i)" class="p-2 rounded hover:opacity-75" type="button">
-                            <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.ADD_QUESTION' | translate"
-                                      class="!text-bgButton"
-                                      matTooltipClass="custom-tooltip">add
-                            </mat-icon>
-                        </button>
+<!--                        <button (click)="addQuestion(i)" class="p-2 rounded hover:opacity-75" type="button">-->
+<!--                            <mat-icon [matTooltip]="'QUIZ_CREATION.QUESTION_LIST.ADD_QUESTION' | translate"-->
+<!--                                      class="!text-bgButton"-->
+<!--                                      matTooltipClass="custom-tooltip">add-->
+<!--                            </mat-icon>-->
+<!--                        </button>-->
 
                         <button (click)="modifyQuestion(i)"
                                 *ngIf="!question.get('beingModified')?.value" class="p-2 rounded hover:opacity-75"
@@ -406,7 +406,6 @@
 
         <div class="flex justify-center mt-4">
             <button (click)="addQuestion(questionsArray ? questionsArray.length - 1 : 0)"
-                    *ngIf='(questionsArray ? questionsArray.length - 1 : 0) < 0'
                     class="bg-bgButton text-secondary px-4 py-2 rounded hover:opacity-75"
                     type="button">
                 {{ 'QUIZ_CREATION.QUESTION_LIST.ADD_QUESTION_BUTTON' | translate }}

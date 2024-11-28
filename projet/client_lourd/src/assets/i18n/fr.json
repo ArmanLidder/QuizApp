@@ -331,7 +331,8 @@
     "START_BUTTON": "Commencer",
     "CREATE_TEAM": "Créer Équipe",
     "QUIZ_STARTING_IN": "Quiz commence dans :",
-    "TEAM_VALIDATION": "Il faut un minimum de 2 joueurs par équipe et au moins 2 équipes.",
+    "TEAM_VALIDATION": "Il faut 2 joueurs par équipe et au moins 2 équipes.",
+    "TEAM_NOTICE_LOCK": "L'organisateur a vérouillé la salle. Vous ne pouvez pas modifier votre équipe.",
     "CLASSIC_VALIDATION": "Il faut au moins 1 joueur."
   },
   "POP_UP_MESSAGE": {
@@ -566,5 +567,14 @@
     "OBSERVING": "Vous observez",
     "QRL_PLAYER_INACTIVE": "Le joueur est inactif...",
     "QRL_PLAYER_ACTIVE": "Le joueur écrit une réponse ..."
+  },
+  "SETTINGS_POPUP" : {
+    "SETTINGS": "Paramètres",
+    "dark":"sombre",
+    "light":"éclairé",
+    "disco":"disco",
+    "pinkGrey":"rose-gris",
+    "LANGUAGE": "Langue",
+    "THEME": "Thème"
   }
 }
