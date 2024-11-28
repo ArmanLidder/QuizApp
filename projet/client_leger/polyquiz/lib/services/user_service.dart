@@ -68,7 +68,7 @@ class UserService extends GetxController {
         'friendRequests': [],
         'settings': {
           'theme': 'light',
-          'language': 'en',
+          'language': 'fr',
           'notificationsEnabled': true,
         },
       });
