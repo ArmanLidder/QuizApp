@@ -27,7 +27,7 @@
         </mat-form-field>
         <div *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched" class="text-red-600 text-sm">
             <p *ngIf="authForm.get('email')?.errors?.required">{{ 'REGISTER_PAGE.EMAIL_REQUIRED' | translate }}</p>
-            <p *ngIf="authForm.get('email')?.errors?.email">{{ 'REGISTER_PAGE.EMAIL_INVALID' | translate }}</p>
+            <p *ngIf="authForm.get('email')?.errors?.email">{{ 'REGISTER_PAGE.EMAIL_FORMAT_INVALID' | translate }}</p>
             <p *ngIf="authForm.get('email')?.errors?.pattern">{{ 'REGISTER_PAGE.EMAIL_FORMAT_INVALID' | translate }}</p>
         </div>
 
