@@ -521,8 +521,13 @@ export class GameCreationService {
             if (teams) {
                 const members = teams.get(Number(userIdOrTeamId)).members
                 if (members) {
+                    console.log(`Dispatch Update From Team ${userIdOrTeamId}`)
                     for (const userId of members) {
-                        if (game.players.get(userId)) await this.updateStats(userId, game, gameType, type, amount);
+                        console.log(`Trying Dispatch Update From UserID ${userId}`)
+                        if (game.players.get(userId)) {
+                            console.log(`Rly Dispatch Update From UserID ${userId}`)
+                            await this.updateStats(userId, game, gameType, type, amount);
+                        }
                     }
                 }
             }
