@@ -87,6 +87,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         realGameService.isAION = widget.gameConfigService!.getGameConfig().IA!;
         setState(() {
           waitingRoomService.gameType = widget.gameConfigService!.gameType;
+          print('HOST GAME TYPE: ${waitingRoomService.gameType}');
         });
       } else {
         roomId = widget.quiz.id;
@@ -105,9 +106,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             isFromActiveList: widget.isFromActiveList);
 
         if (!widget.isHost) {
-          waitingRoomService.gatherPlayers();
-          print(
-              'waiting room player game type: ${waitingRoomService.gameType}');
+          await waitingRoomService.gatherPlayers();
         }
       }
       waitingRoomService.configureBaseSocketFeatures();
