@@ -44,7 +44,7 @@ class LoggedInUserService extends GetxController {
   StreamSubscription<DocumentSnapshot>? _friendRequestSubscription;
 
   // Method to set user info
-  void setUser(User? user) {
+  void _setUser(User? user) {
     setObservable(user);
     TranslationService.instance.currentLanguage = user!.settings.language;
 
@@ -63,7 +63,7 @@ class LoggedInUserService extends GetxController {
   Future<void> setUserByEmail(String email) async {
     User? fetchedUser = await this.userService.getUserByEmail(email); // Fetch user by email
     if (fetchedUser != null) {
-      setUser(fetchedUser); // Set the fetched user
+      _setUser(fetchedUser); // Set the fetched user
     } else {
       print('User not found with email: $email');
     }
@@ -76,10 +76,7 @@ class LoggedInUserService extends GetxController {
     reloadUser();
 
   }
-
-
   Future<void> login(String email) async {
-
     await setUserByEmail(email);
     User? currentUser = this.user;
     if (currentUser != null) {
@@ -139,7 +136,7 @@ class LoggedInUserService extends GetxController {
   Future<void> reloadUser() async {
     String? uid = this.getUid();
     User? user = await UserService.instance.getUserById(uid ?? '');
-    this.setUser(user);
+    this._setUser(user);
   }
 
   User? getUser() {

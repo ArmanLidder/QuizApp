@@ -17,7 +17,7 @@ class FriendService extends GetxService {
       final reverseRequestExists = targetUserFriendRequests.any((request) =>
       request['fromUserId'] == targetUserId && request['toUserId'] == currentUserId);
 
-      if (reverseRequestExists) {
+      if (false) {
         await acceptFriendRequest(targetUserId, currentUserId);
         return;
       } else {
@@ -26,6 +26,8 @@ class FriendService extends GetxService {
             {'fromUserId': currentUserId, 'toUserId': targetUserId}
           ]),
         });
+        print("goththere");
+
       }
     } catch (e) {
       print('Error creating friend request: $e');
