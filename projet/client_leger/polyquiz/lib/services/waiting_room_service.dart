@@ -79,6 +79,7 @@ class WaitingRoomService extends ChangeNotifier {
     while (!isSocketAlive()) {
       print("Socket is not connected. Attempting to connect...");
       await connectToSocket("roomId", isHost: true);
+      await Future.delayed(Duration(seconds: 1));
     }
 
     final data = {
