@@ -273,7 +273,7 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
                                                       .gameService
                                                       .question?.text ?? ''),
                                             ),
-                                          if (!this._gameService.isObserverMode) Expanded(
+                                          Expanded(
                                             child: Container(
                                               alignment: Alignment.center,
                                               margin: EdgeInsets.all(5.0),
@@ -292,7 +292,7 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
                                                             .mainAccent.value),
                                                   ),
                                                   _gameInterfaceManagementService
-                                                      .isBonus
+                                                      .isBonus && !this._gameService.isObserverMode
                                                       ? Text(
                                                       gameText[
                                                       'BONUS_RECEIVED_FEEDBACK'],
