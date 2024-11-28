@@ -447,8 +447,10 @@ class ResultPage extends StatelessWidget {
             PlayersDataTable(
               isHost: false,
             ),
-            StatisticZone(
-                gameStats: this.gameInterfaceManagementService!.gameStats),
+            if (this.gameInterfaceManagementService!.gameStats[0].question != null)
+              StatisticZone(
+              gameStats: this.gameInterfaceManagementService!.gameStats,
+              ),
             QuitBtn(
               isHost: false,
               roomId: gameService.realGameService.roomId,
