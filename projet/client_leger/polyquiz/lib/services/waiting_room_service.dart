@@ -252,6 +252,8 @@ class WaitingRoomService extends ChangeNotifier {
 
   void handleRemovedFromGame() {
     _socketService.onMessage(SocketEvent.REMOVED_FROM_GAME, (_) {
+      _socketService.clearAllListeners();
+      _socketService.disconnect();
       _globalNavigationService.navigateTo('/home');
     });
   }
