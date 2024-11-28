@@ -228,8 +228,7 @@ class _MyWidgetState extends State<GamePage> {
                                                   .gameService.timer,
                                             ),
                                           ),
-                                          Positioned.fill(
-                                            child: Align(
+                                          Align(
                                               alignment: Alignment.center,
                                               child: QuestionInfoWidget(
                                                   questionNum:
@@ -245,7 +244,6 @@ class _MyWidgetState extends State<GamePage> {
                                                       .gameService
                                                       .question?.text ?? ''),
                                             ),
-                                          ),
                                           if (!this._gameService.isObserverMode) Expanded(
                                             child: Container(
                                               alignment: Alignment.center,
