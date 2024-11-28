@@ -84,9 +84,9 @@
                             <ul class="!bg-bgPrimary !text-primary p-4 rounded-lg" style="max-height: 200px; overflow-y: auto;">
                                 <li *ngFor="let history of user.loginHistory" class="mb-2 last:mb-0">
                                 <span [ngClass]="{'text-green-600': history.eventType === 'login', 'text-red-600': history.eventType === 'logout'}">
-                                    {{ history.eventType === 'login' ? ('PROFILE.LOGIN' | translate) : ('PROFILE.LOGOUT' | translate) }} -
+                                    {{ history.eventType === 'login' ? ('PROFILE.LOGIN' | translate) : ('PROFILE.LOGOUT' | translate) }}
                                 </span>
-                                    {{ history.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }}
+                                    - {{ history.timestamp.toDate() | date:'yyyy-MM-dd HH:mm:ss' }}
                                 </li>
                             </ul>
                         </mat-expansion-panel>
@@ -101,9 +101,9 @@
                                 <ng-container *ngIf="user.gameHistory && user.gameHistory.length > 0; else noGameHistory">
                                     <li *ngFor="let game of user.gameHistory" class="mb-2 last:mb-0">
                         <span [ngClass]="{'text-green-600': game.result === 'win', 'text-red-600': game.result === 'loss'}">
-                            {{ game.result === 'win' ? ('PROFILE.WIN' | translate) : ('PROFILE.LOSS' | translate) }} -
+                            {{ game.result === 'win' ? ('PROFILE.WIN' | translate) : ('PROFILE.LOSS' | translate) }}
                         </span>
-                                        {{ game.timestamp }},
+                                        - {{ game.timestamp }},
                                         {{ 'PROFILE.GAMEMODE' | translate }} :
                                         {{ game.gameMode === 'classic' ? ('PROFILE.GAMEMODE_CLASSIC' | translate) : ('PROFILE.GAMEMODE_TEAM' | translate) }}
                                     </li>
