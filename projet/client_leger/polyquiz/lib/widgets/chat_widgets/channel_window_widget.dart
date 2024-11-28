@@ -265,7 +265,7 @@ class ChannelSelectionButton extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     child: Text(chatText['DELETE'],
-                        style: TextStyle(color: themeService.mainAccent.value)))
+                    ))
               ],
             ));
   }
