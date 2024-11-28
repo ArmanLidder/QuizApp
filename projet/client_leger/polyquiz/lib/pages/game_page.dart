@@ -369,10 +369,10 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
             this._gameService.realGameService.isValidateActive;
 
     final validateButtonStyle = TextButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.normal),
+      textStyle: TextStyle(fontWeight: FontWeight.normal, color: themeService.secondaryAccent.value),
       splashFactory: NoSplash.splashFactory,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      backgroundColor: isValidateButtonActive ? Colors.blueAccent : Colors.grey,
+      backgroundColor: isValidateButtonActive ? themeService.secondaryBackground.value : Colors.grey,
     );
 
     return Row(

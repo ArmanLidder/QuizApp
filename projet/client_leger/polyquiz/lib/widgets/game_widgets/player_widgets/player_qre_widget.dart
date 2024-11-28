@@ -123,27 +123,27 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
     );
   }
 
-  Widget getIncrementalAdjustmentButtons() {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          onPressed: canDecrement ? decrementSlider : null,
-          icon: Icon(Icons.add),
-          color: canDecrement
-              ? _themeService.secondaryBackground.value
-              : Colors.grey,
-        ),
-        Spacer(),
-        IconButton(
-          onPressed: canIncrement ? incrementSlider : null,
-          icon: Icon(Icons.remove),
-          color: canIncrement
-              ? _themeService.secondaryBackground.value
-              : Colors.grey,
-        ),
-      ],
-    );
-  }
+  // Widget getIncrementalAdjustmentButtons() {
+  //   return Row(
+  //     children: <Widget>[
+  //       IconButton(
+  //         onPressed: canDecrement ? decrementSlider : null,
+  //         icon: Icon(Icons.add),
+  //         color: canDecrement
+  //             ? _themeService.secondaryBackground.value
+  //             : Colors.grey,
+  //       ),
+  //       Spacer(),
+  //       IconButton(
+  //         onPressed: canIncrement ? incrementSlider : null,
+  //         icon: Icon(Icons.remove),
+  //         color: canIncrement
+  //             ? _themeService.secondaryBackground.value
+  //             : Colors.grey,
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget getSlider() {
     if (currentValue < min || currentValue > max) this.gameInterfaceManagementService.gameService.silentSetObsQre(((max + min) / 2).round());
@@ -181,7 +181,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
           color: _themeService.secondaryAccent.value,
           style: ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(
-                  canIncrement ? Colors.blueAccent : Colors.grey)),
+                  canIncrement ? _themeService.secondaryBackground.value : Colors.grey)),
         )
       ],
     );
