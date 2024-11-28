@@ -17,6 +17,7 @@ import 'package:polyquiz/widgets/game_widgets/question_result.dart';
 import 'package:polyquiz/widgets/game_widgets/host_widgets/histogram_legend_widget.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart';
 import 'package:polyquiz/services/interactive_list_service.dart';
+import 'package:polyquiz/models/user.dart';
 
 class HostInterface extends StatefulWidget {
   final InteractiveListService? interactiveListService;
@@ -353,7 +354,10 @@ class ResultPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Le jeux est terminé! voici les résultats.',
+          TranslationService.instance.languageValue.value ==
+            Language.fr
+            ? 'Le jeux est terminé! voici les résultats.'
+            : 'The game is over! Here are the results.',
           style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,

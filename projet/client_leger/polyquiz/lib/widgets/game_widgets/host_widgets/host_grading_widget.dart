@@ -153,36 +153,35 @@ class _HostGradingState extends State<HostGrading> {
                 ],
               );
             } else {
-              return Container();
-              // Column(
-              //   children: [
-              //     DataTable(
-              //         headingRowColor: WidgetStateProperty.all(
-              //             Color.fromRGBO(53, 121, 246, 1)),
-              //         headingTextStyle: TextStyle(
-              //             color: Color.fromRGBO(255, 255, 255, 1),
-              //             fontWeight: FontWeight.bold),
-              //         border: TableBorder.all(),
-              //         columns: [
-              //           DataColumn(
-              //             label: Expanded(child: Center(child: Text('Nom'))),
-              //           ),
-              //           DataColumn(
-              //             label: Expanded(child: Center(child: Text('Note'))),
-              //           ),
-              //         ],
-              //         rows: List<DataRow>.generate(
-              //             _qrlEvaluationService.points.length, (index) {
-              //           return DataRow(cells: [
-              //             DataCell(
-              //                 Text(_qrlEvaluationService.usernames[index])),
-              //             DataCell(Text(
-              //                 _qrlEvaluationService.points[index].toString()))
-              //           ]);
-              //         })),
-              //     SizedBox(height: .0),
-              //   ],
-              // );
+                return Column(
+                  children: [
+                    DataTable(
+                        headingRowColor: WidgetStateProperty.all(
+                            Color.fromRGBO(53, 121, 246, 1)),
+                        headingTextStyle: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 1),
+                            fontWeight: FontWeight.bold),
+                        border: TableBorder.all(),
+                        columns: [
+                          DataColumn(
+                            label: Expanded(child: Center(child: Text('Nom'))),
+                          ),
+                          DataColumn(
+                            label: Expanded(child: Center(child: Text('Note'))),
+                          ),
+                        ],
+                        rows: List<DataRow>.generate(
+                            _qrlEvaluationService.points.length, (index) {
+                          return DataRow(cells: [
+                            DataCell(
+                                Text(_qrlEvaluationService.usernames[index])),
+                            DataCell(Text(
+                                _qrlEvaluationService.points[index].toString()))
+                          ]);
+                        })),
+                    SizedBox(height: .0),
+                  ],
+                );
             }
           }),
     );

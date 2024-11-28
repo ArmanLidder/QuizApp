@@ -6,6 +6,7 @@ import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/translationService.dart';
 import 'package:polyquiz/models/typedefs.dart';
+import 'package:polyquiz/models/user.dart';
 
 class StatisticZone extends StatefulWidget {
   final List<QuestionStatistics> gameStats;
@@ -25,6 +26,7 @@ class _StatisticZoneState extends State<StatisticZone> {
   ThemeService _themeService = ThemeService.instance;
   Map get transText => TranslationService.instance.text['GAME_INTERFACE'];
   Map get qreValueText => transText['QRE_HISTOGRAM_X_VAL'];
+  Map get text => TranslationService.instance.text;
 
   @override
   void initState() {
@@ -134,7 +136,11 @@ class _StatisticZoneState extends State<StatisticZone> {
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: ElevatedButton(
                   onPressed: previous,
-                  child: Text('Précédent',
+                  child: Text(
+                    TranslationService.instance.languageValue.value ==
+                      Language.fr
+                      ? 'Précédent'
+                      : "Previous",
                       style: TextStyle(
                           color: _themeService.secondaryAccent.value)),
                   style: TextButton.styleFrom(
@@ -153,7 +159,11 @@ class _StatisticZoneState extends State<StatisticZone> {
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: ElevatedButton(
                   onPressed: next,
-                  child: Text('Suivant',
+                  child: Text(
+                    TranslationService.instance.languageValue.value ==
+                      Language.fr
+                      ? 'Suivant'
+                      : "Next",
                       style: TextStyle(
                           color: _themeService.secondaryAccent.value)),
                   style: TextButton.styleFrom(
