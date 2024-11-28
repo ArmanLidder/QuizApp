@@ -280,10 +280,10 @@ export class GameCreationService {
     // We finally send a PLAYER_REMOVED event to the host to remove the player from the player list
     private handlePlayerLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.PLAYER_LEFT, async (roomId: number) => {
+            console.log(`PLAYE_LEFT event receive send REMOVED FROM GAME ${socket.handshake.auth.userId}`);
             await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
             const userInfo = roomManager.removeUserBySocketId(socket.id);
             const obsMap = roomManager.getRoomById(roomId)?.observersCounter;
-            this.debug_teams("PLayer Left", roomId, roomManager);
             this.sendUpdateGameList(roomManager, sio);
             if (obsMap) obsMap.delete(socket.handshake.auth.userId);
             sio.to(String(socket.id)).emit(SocketEvent.REMOVED_FROM_GAME);
@@ -316,13 +316,14 @@ export class GameCreationService {
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
             // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-            const teams = roomManager.getRoomById(roomId).teams
-            let teamsIds: number[] = []
-            if (teams) teamsIds = Array.from(teams.keys());
-            await this.deleteRoomCanal(roomId, roomManager, teamsIds)
+            // const teams = roomManager.getRoomById(roomId).teams
+            // let teamsIds: number[] = []
+            // if (teams) teamsIds = Array.from(teams.keys());
+            // await this.deleteRoomCanal(roomId, roomManager, teamsIds)
             // this.sendPlayerListToObserver(roomId, roomManager, sio);
-            roomManager.deleteRoom(roomId);
-            this.sendUpdateGameList(roomManager, sio);
+            // roomManager.deleteRoom(roomId);
+            // this.sendUpdateGameList(roomManager, sio);
+            console.log(`HOST_LEFT event receive send REMOVED FROM GAME ${socket.handshake.auth.userId}`)
             sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(roomId)).disconnectSockets(true);
         });
@@ -426,61 +427,57 @@ export class GameCreationService {
         } as Canal;
     }
 
-    // public async handleUserDisconnection(roomManager: RoomManagingService, socketId: string, socket: io.Socket, sio: io.Server) {
-    //     let result = roomManager.getUsernameAndRoomBySocketId(socketId);
-    //     if (!result || result.length === 0) return;
-    //     for (const res of result) {
-    //         const username = res[0];
-    //         const roomId = res[1];
-    //         if (username === 'Organisateur') {
-    //             //This is the exact same code used in HOST_LEFT socket event above in the file
-    //             socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-    //             // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-    //             const teams = roomManager.getRoomById(roomId).teams
-    //             let teamsIds: number[] = []
-    //             if (teams) teamsIds = Array.from(teams.keys());
-    //             await this.deleteRoomCanal(roomId, roomManager, teamsIds).then(() => {
-    //                 roomManager.deleteRoom(roomId);
-    //             });
-    //             // this.sendPlayerListToObserver(roomId, roomManager, sio);
-    //             roomManager.deleteRoom(roomId);
-    //             this.sendUpdateGameList(roomManager, sio);
-    //             await this.deleteRoomCanal(roomId, roomManager);
-    //             roomManager.deleteRoom(roomId);
-    //             this.sendUpdateGameList(roomManager, sio);
-    //             sio.to(String(roomId)).disconnectSockets(true);
-    //         } else {
-    //             //This is the same code used in PLAYER_LEFT socket event above in the file
-    //             await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
-    //             const userInfo = roomManager.removeUserBySocketId(socket.id);
-    //             this.debug_teams("PLayer Left", roomId, roomManager);
-    //             this.sendUpdateGameList(roomManager, sio);
-    //             this.sendTeams(roomId, roomManager, sio);
-    //             if (userInfo) {
-    //                 const game = roomManager.getGameByRoomId(roomId);
-    //                 if (game) {
-    //                     game.removePlayer(userInfo.username);
-    //                     if (game.players.size === 0) {
-    //                         roomManager.clearRoomTimer(roomId);
-    //                         this.timerService.startTimer({
-    //                             roomId,
-    //                             time: TRANSITION_QUESTIONS_DELAY
-    //                         }, SocketEvent.FINAL_TIME_TRANSITION);
-    //                     } else if (game.playersAnswers.size === game.players.size) {
-    //                         roomManager.getGameByRoomId(roomId).updateScores();
-    //                         roomManager.clearRoomTimer(roomId);
-    //                         roomManager.getRoomById(roomId).players.forEach((socketId, username) => {
-    //                             if (username !== HOST_USERNAME) sio.to(socketId).emit(SocketEvent.END_QUESTION);
-    //                         });
-    //                         sio.to(String(roomId)).emit(SocketEvent.END_QUESTION_AFTER_REMOVAL);
-    //                     }
-    //                 }
-    //                 sio.to(String(roomId)).emit(SocketEvent.REMOVED_PLAYER, userInfo.username);
-    //             }
-    //         }
-    //     }
-    //
-    // }
+    public async handleUserDisconnection(roomManager: RoomManagingService, socketId: string, socket: io.Socket, sio: io.Server) {
+        let result = roomManager.getUsernameAndRoomBySocketId(socketId);
+        if (!result || result.length === 0) return;
+        for (const res of result) {
+            const username = res[0];
+            const roomId = res[1];
+            if (username === 'Organisateur') {
+                //This is the exact same code used in HOST_LEFT socket event above in the file
+                console.log(`HOST Socket disconnection received event receive ${socket.handshake.auth.userId}`)
+                socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
+                const teams = roomManager.getRoomById(roomId).teams
+                console.log(`Teams: ${teams}`);
+                let teamsIds: number[] = []
+                if (teams) teamsIds = Array.from(teams.keys());
+                await this.deleteRoomCanal(roomId, roomManager, teamsIds)
+                // this.sendPlayerListToObserver(roomId, roomManager, sio);
+                roomManager.deleteRoom(roomId);
+                this.sendUpdateGameList(roomManager, sio);
+                sio.to(String(roomId)).disconnectSockets(true);
+            } else {
+                //This is the same code used in PLAYER_LEFT socket event above in the file
+                console.log(`Player Socket disconnection received event receive ${socket.handshake.auth.userId}`)
+                await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
+                const userInfo = roomManager.removeUserBySocketId(socket.id);
+                this.sendUpdateGameList(roomManager, sio);
+                this.sendTeams(roomId, roomManager, sio);
+                if (userInfo) {
+                    const game = roomManager.getGameByRoomId(roomId);
+                    if (game) {
+                        game.removePlayer(userInfo.username);
+                        if (game.players.size === 0) {
+                            roomManager.clearRoomTimer(roomId);
+                            this.timerService.startTimer({
+                                roomId,
+                                time: TRANSITION_QUESTIONS_DELAY
+                            }, SocketEvent.FINAL_TIME_TRANSITION);
+                        } else if (game.playersAnswers.size === game.players.size) {
+                            roomManager.getGameByRoomId(roomId).updateScores();
+                            roomManager.clearRoomTimer(roomId);
+                            roomManager.getRoomById(roomId).players.forEach((socketId, username) => {
+                                if (username !== HOST_USERNAME) sio.to(socketId).emit(SocketEvent.END_QUESTION);
+                            });
+                            sio.to(String(roomId)).emit(SocketEvent.END_QUESTION_AFTER_REMOVAL);
+                        }
+                    }
+                    sio.to(String(roomId)).emit(SocketEvent.REMOVED_PLAYER, userInfo.username);
+                }
+            }
+        }
+
+    }
 
     private async addUserToRoomCanal(roomCode: number, userId: string) {
         try {
@@ -495,13 +492,16 @@ export class GameCreationService {
 
     private async removeUserFromRoomCanal(roomCode: number, userId: string, roomManager: RoomManagingService) {
         try {
+            console.log(`Removing User From Canal Method ${userId} in room ${roomCode}`)
             const docRef = await this.getDocRef(roomCode);
             await docRef.update({
                 permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId),
             });
             const teams = roomManager.getRoomById(roomCode).teams;
+            console.log(`Removing User From Canal Method Checking if Teams: ${teams}`)
             if (teams) {
                 for (const [teamId, _] of teams) {
+                    console.log(`Removing User From Canal Method Checking if Teams: ${teams} ${userId}`)
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
                     await teamDocRef.update({
                         permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId)
@@ -569,12 +569,15 @@ export class GameCreationService {
         try {
             // const docRef = await this.getDocRef(roomCode);
             // await docRef.delete();
+            console.log(`deleteRoomCanal ${roomCode} ${teamsIds}`)
             if (teamsIds.length > 0) {
                 for (const teamId of teamsIds) {
+                    console.log(`Team Canal to be deleted ${roomCode} ${teamId}`)
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
                     await teamDocRef.delete();
                 }
             }
+            console.log(`Delete room Canal to be deleted Room ${roomCode} `)
             const docRef = await this.getDocRef(roomCode);
             await docRef.delete();
         } catch (error) {
