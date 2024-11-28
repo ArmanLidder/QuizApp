@@ -71,7 +71,7 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 500,
+      width: 430,
       padding: EdgeInsets.all(30.0), // to center the text
       child: Column(
         children: [
