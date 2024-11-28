@@ -76,9 +76,10 @@ class WaitingRoomService extends ChangeNotifier {
     final completer = Completer<String>();
     print('Creating room for quiz: $quizId');
 
-    if (!isSocketAlive()) {
+    while (!isSocketAlive()) {
       print("Socket is not connected. Attempting to connect...");
       await connectToSocket("roomId", isHost: true);
+      await Future.delayed(Duration(seconds: 1));
     }
 
     final data = {
