@@ -42,7 +42,7 @@ export class SocketManager {
             this.gameManagementService.configureGameManagingSockets(this.roomManager, socket, this.sio);
             socket.on('disconnect', async () => {
                 console.log(`Client disconnected ${socket.handshake.auth.userId}`);
-                // await this.gameCreationService.handleUserDisconnection(this.roomManager,socket.id,socket, this.sio);
+                await this.gameCreationService.handleUserDisconnection(this.roomManager,socket.id,socket, this.sio);
             });
         });
     }
