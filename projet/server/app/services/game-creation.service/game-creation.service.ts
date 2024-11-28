@@ -501,7 +501,7 @@ export class GameCreationService {
             console.log(`Removing User From Canal Method Checking if Teams: ${teams}`)
             if (teams) {
                 for (const [teamId, _] of teams) {
-                    console.log(`Removing User From Canal Method Checking if Teams: ${teams} ${userId}`)
+                    console.log(`Removing User From Canal Method Checking if Teams: ${teamId} ${userId}`)
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
                     await teamDocRef.update({
                         permittedUsers: this.fs.firebase.firestore.FieldValue.arrayRemove(userId)
