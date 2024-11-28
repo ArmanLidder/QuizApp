@@ -109,6 +109,7 @@ class LoggedInUserService extends GetxController {
   }
 
   logout() async {
+    killSubscription();
     String? userId = user?.uid;  // Adjust this to match your user object structure
     DocumentSnapshot userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
     _firestore
@@ -132,7 +133,6 @@ class LoggedInUserService extends GetxController {
     }
     this.user =null;
     this.killSubscription();
-    //Get.delete<LoggedInUserService>();
   }
 
   Future<void> reloadUser() async {
@@ -177,10 +177,10 @@ class LoggedInUserService extends GetxController {
     await this.reloadUser();
   }
 
-void killSubscription(){
-  _userSubscribtion?.cancel();
-  _friendRequestSubscription?.cancel();
-
+Future<void> killSubscription() async {
+  await _userSubscribtion?.cancel();
+  await _friendRequestSubscription?.cancel();
+  print("cancelled subsrciption");
 }
 
   @override
@@ -190,15 +190,18 @@ void killSubscription(){
     super.onClose();
   }
 
-  void _subscribeToUser() {
+  Future<void> _subscribeToUser() async {
     String? userId = LoggedInUserService.instance.getUid();
     if (userId == null) return;
+    await _userSubscribtion?.cancel();
 
     _userSubscribtion = _firestore
         .collection('users')
         .doc(userId)
         .snapshots()
         .listen((snapshot) {
+      print("userSubscription called");
+
       if (snapshot.exists) {
         User user = User.fromJson(snapshot.data()!);
         setObservable(user);
@@ -211,6 +214,7 @@ void killSubscription(){
   }
 
   void _subscribeToFriendRequests() {
+    _friendRequestSubscription?.cancel();
     String? currentUserId = LoggedInUserService.instance.getUid();
     if (currentUserId == null) return;
     _friendRequestSubscription = _firestore
@@ -218,6 +222,7 @@ void killSubscription(){
         .doc(currentUserId)
         .snapshots()
         .listen((snapshot) {
+          print("freindRequestSubscription called");
       if (snapshot.exists) {
         List<dynamic> friendRequestsList = snapshot['friendRequests'] ?? [];
         List<String> pendingRequests = friendRequestsList.map<String>((request) {
