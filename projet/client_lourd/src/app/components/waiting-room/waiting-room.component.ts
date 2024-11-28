@@ -73,8 +73,10 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     }
 
     toggleRoomLocked() {
-        this.waitingRoomManagementService.isRoomLocked = !this.waitingRoomManagementService.isRoomLocked;
-        this.waitingRoomManagementService.sendToggleRoomLock();
+        if (!this.waitingRoomManagementService.isTransition) {
+            this.waitingRoomManagementService.isRoomLocked = !this.waitingRoomManagementService.isRoomLocked;
+            this.waitingRoomManagementService.sendToggleRoomLock();
+        }
     }
 
     setLockActionMessage() {
