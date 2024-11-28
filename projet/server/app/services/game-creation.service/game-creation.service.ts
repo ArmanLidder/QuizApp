@@ -316,14 +316,16 @@ export class GameCreationService {
     private handleHostLeft(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.HOST_LEFT, async (roomId: number) => {
             // socket.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
-            sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             const teams = roomManager.getRoomById(roomId).teams
             let teamsIds: number[] = []
             if (teams) teamsIds = Array.from(teams.keys());
-            await this.deleteRoomCanal(roomId, roomManager, teamsIds);
+            await this.deleteRoomCanal(roomId, roomManager, teamsIds).then(() => {
+                roomManager.deleteRoom(roomId);
+            });
             // this.sendPlayerListToObserver(roomId, roomManager, sio);
             roomManager.deleteRoom(roomId);
             this.sendUpdateGameList(roomManager, sio);
+            sio.to(String(roomId)).emit(SocketEvent.REMOVED_FROM_GAME);
             sio.to(String(roomId)).disconnectSockets(true);
         });
     }
@@ -557,14 +559,16 @@ export class GameCreationService {
 
     private async deleteRoomCanal(roomCode: number, roomManager: RoomManagingService, teamsIds: number[]=[]) {
         try {
-            const docRef = await this.getDocRef(roomCode);
-            await docRef.delete();
+            // const docRef = await this.getDocRef(roomCode);
+            // await docRef.delete();
             if (teamsIds.length > 0) {
                 for (const teamId of teamsIds) {
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
                     await teamDocRef.delete();
                 }
             }
+            const docRef = await this.getDocRef(roomCode);
+            await docRef.delete();
         } catch (error) {
             console.log(error);
         }
