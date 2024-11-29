@@ -1,13 +1,14 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:polyquiz/constants/constants.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/game_list_item.dart';
 import 'package:polyquiz/models/host_interface.dart';
 import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart' as gims;
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
@@ -152,13 +153,22 @@ class ObservationService extends GetxController {
   TransportStatsFormat parseGameStats(String stringifyStats) {
     final parsedData = jsonDecode(stringifyStats);
     if (parsedData is List<List>) {
-      return parsedData;
+      return parsedData.map((datum) {
+        return TransportStats.fromJson(datum);
+      }).toList();
     } else return [];
   }
 
   void unpackStats(TransportStatsFormat stats) {
-    print("tried to unpack stats");
-    // TODO
+    this.hostInterfaceManagementService.gameStats = [];
+    stats.forEach((stat) {
+      Map<String, bool> values = Map<String, bool>.fromEntries(stat.values);
+      Map<String, num> responses = Map<String, num>.fromEntries(stat.responses);
+      hostInterfaceManagementService.gameStats.add(
+          QuestionStatistics(values, responses, stat.question)
+      );
+    });
+    print("Successfully unpacked the stats");
   }
 
   void handlePlayerGameState() {
