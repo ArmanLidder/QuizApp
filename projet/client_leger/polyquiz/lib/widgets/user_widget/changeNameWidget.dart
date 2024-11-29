@@ -29,7 +29,6 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
   }
 
   Future<void> _validateUsername(String username) async {
-
     String result = await widget.validationService.userNameDiagnosis(username);
     setState(() {
       _isValidUsername = result == "";
@@ -41,21 +40,25 @@ class _ChangeNamePopupState extends State<ChangeNamePopup> {
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: ts.mainBackground.value,
-      title: Text(nameText['TITLE'],style: TextStyle(color: ts.mainAccent.value),),
+      title: Text(
+        nameText['TITLE'],
+        style: TextStyle(color: ts.mainAccent.value),
+      ),
       content: SizedBox(
         width: 300,
         height: 150,
-        child:Column(
+        child: Column(
           children: [
-            Text( nameText['NEW_USERNAME']),
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white, // Set the background color to white
-                floatingLabelBehavior: FloatingLabelBehavior.always, // Always show the label above the field
+                floatingLabelBehavior: FloatingLabelBehavior
+                    .always, // Always show the label above the field
                 labelStyle: TextStyle(color: ts.mainAccent.value),
-                errorText: !_isValidUsername ? nameText[_userNameDiagnosis] : null,
+                errorText:
+                    !_isValidUsername ? nameText[_userNameDiagnosis] : null,
                 border: OutlineInputBorder(),
               ),
               onChanged: (e) {
