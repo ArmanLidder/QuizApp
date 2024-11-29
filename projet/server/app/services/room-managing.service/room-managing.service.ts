@@ -177,8 +177,8 @@ export class RoomManagingService {
     removeUserFromRoom(roomId: number, name: string): void {
         const playerMap = this.getRoomById(roomId).players;
         playerMap.delete(name);
-        this.getRoomById(roomId).observersCounter.delete(name);
-        console.log(name, this.getRoomById(roomId).observersCounter)
+        // this.getRoomById(roomId).observersCounter.delete(name);
+        // console.log(name, this.getRoomById(roomId).observersCounter)
         if (this.getRoomById(roomId).gameType !== 'classic') this.removeUserInTeam(roomId, name);
     }
 
