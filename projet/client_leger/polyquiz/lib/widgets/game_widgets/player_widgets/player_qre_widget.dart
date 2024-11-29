@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart' as Quiz;
@@ -90,6 +92,7 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
                 children: <Widget>[
                   getMinMaxCard(),
                   // getIncrementalAdjustmentButtons(),
+                  currentAnswerWidget(),
                   getSlider(),
                   getToleranceWidget(),
                   getIntervalWidget(),
@@ -143,6 +146,18 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   //     ],
   //   );
   // }
+
+  Widget currentAnswerWidget() {
+    return Center(
+      child: Text(
+        "${qreText['CURRENT_SELECTION']} $currentValue",
+        style: TextStyle(
+          fontSize: 16,
+          color: _themeService.mainAccent.value
+        ),
+      ),
+    );
+  }
 
   Widget getSlider() {
     if (currentValue < min || currentValue > max) this.gameInterfaceManagementService.gameService.silentSetObsQre(((max + min) / 2).round());
