@@ -50,7 +50,9 @@ export class PlayerListComponent {
     findTeam(userId: string) {
         let result;
         this.waitingRoomService.teams.forEach((team: any, teamId) => {
-            if (team.members.includes(userId)) result = teamId;
+            if (team.members.includes(userId)) {
+                result = teamId;
+            }
         });
         return result ? result : this.translate.instant('GAME_INTERFACE.PLAYER_LIST.QUIT_TEAMMATE_LABEL');
     }
