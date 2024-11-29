@@ -112,12 +112,13 @@ class _HostGradingState extends State<HostGrading> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                         DropdownButton<int>(
+                          dropdownColor: _themeService.mainBackground.value,
                         value: revokeAIcorrection ? _qrlEvaluationService.inputPoint : AIscore,
                         style: TextStyle(color: _themeService.mainAccent.value),
                         items: _qrlEvaluationService.scores.map((int score) {
                           return DropdownMenuItem<int>(
                           value: score,
-                          child: Text(score.toString()),
+                          child: Text(score.toString(), style: TextStyle(color: _themeService.mainAccent.value),),
                           );
                         }).toList(),
                         onChanged: (value) {
