@@ -253,8 +253,6 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                     onPressed: () {
                       this.userData = this.loggedInUserService.getUser();
                       if (_formKey.currentState!.validate()) {
-                        print('got into validate if');
-                        print(_IsAIOn);
                         gameConfigService.setIA(_IsAIOn);
                         gameConfigService.setGameType(_gameType);
                         gameConfigService.setPrice(_price);

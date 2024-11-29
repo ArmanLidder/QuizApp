@@ -256,7 +256,6 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this.unpackStats(this.parseGameStats(gameStats));
         notifyListeners();
       } catch (e) {
-        print('Error in handleGameStatusDistribution: $e');
       }
     });
   }
@@ -315,8 +314,6 @@ class GameInterfaceManagementService extends ChangeNotifier {
               100)
           .toInt();
 
-      print("I am Here 444444");
-      print(this.gameService.lastQrlScore);
       notifyListeners();
     }
   }

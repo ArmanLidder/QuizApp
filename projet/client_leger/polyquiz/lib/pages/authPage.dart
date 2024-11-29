@@ -98,13 +98,11 @@ class _AuthPageState extends State<AuthPage> {
           loggedInUserService.user!.settings.language;
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
-      print(e);
       if (e == "USER ALREADY CONNECTED") {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(loginPageText['USER_ALREADY_CONNECTED'])),
         );
       } else {
-        print(e);
         FirebaseAuthException? error = e as FirebaseAuthException?;
         String? errorCode = error?.code;
         String? cleanErrorCode = firebaseAuthErrors[errorCode];
@@ -250,7 +248,6 @@ class _AuthPageState extends State<AuthPage> {
                           setState(() {
                             _isValidEmail = result;
                           });
-                          print(_isValidEmail); // You can print the result here
                         },
                       ),
                       SizedBox(height: 16),

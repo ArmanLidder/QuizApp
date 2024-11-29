@@ -21,7 +21,6 @@ class ObserverCounterService extends ChangeNotifier {
     socketService.onMessage(SocketEvent.UPDATE_OBS_COUNT, (count) {
       obsCount = count;
       notifyListeners();
-      print('ObserverCounter initialized ${obsCount}');
     });
   }
 }

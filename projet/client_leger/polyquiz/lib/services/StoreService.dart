@@ -61,7 +61,6 @@ class StoreService extends GetxController {
       }
       _storeItems.value = categorizedItems; // Update the reactive variable
     } catch (error) {
-      print("Error loading initial store items: $error");
       _storeItems.value = {
         'themes': [],
         'images': [],
@@ -80,13 +79,10 @@ class StoreService extends GetxController {
       if (snapshot.exists) {
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
         _itemsOwned.value = List<String>.from(data['ownedItems'] ?? []);
-        print(_itemsOwned.value);
       } else {
-        print("storeProfile doesnt exists");
         _itemsOwned.value = []; // If document doesn't exist, set an empty list
       }
     } catch (error) {
-      print("Error loading initial owned items: $error");
       _itemsOwned.value = []; // Handle errors by resetting the list
     }
   }
@@ -102,7 +98,6 @@ class StoreService extends GetxController {
         _itemsOwned.value = []; // If document doesn't exist, clear the list
       }
     }, onError: (error) {
-      print("Error listening to owned items: $error");
       _itemsOwned.value = []; // Handle errors by resetting the list
     });
   }
@@ -144,7 +139,6 @@ class StoreService extends GetxController {
         'ownedItems': <String>[], // Empty list of owned items
       });
     } catch (e) {
-      print("Error creating store profile: $e");
     }
   }
 
@@ -156,7 +150,6 @@ class StoreService extends GetxController {
         this._createStoreProfile(userId);
       }
     } catch (e) {
-      print("Error checking or creating store profile: $e");
     }
   }
 
@@ -169,7 +162,6 @@ class StoreService extends GetxController {
         'ownedItems': FieldValue.arrayUnion([itemId]),
       });
     } catch (e) {
-      print("Error adding item to owned items: $e");
     }
   }
 
@@ -192,12 +184,10 @@ class StoreService extends GetxController {
       if (itemData != null) break;
     }
     if (itemData == null) {
-      print("Item not found in cached store items.");
       return;
     }
     num itemCost = itemData['cost'] ?? 0;
     if (availableMoney < itemCost) {
-      print("Not enough money.");
       return;
     }
     try {
@@ -207,9 +197,7 @@ class StoreService extends GetxController {
       });
       addToOwned(userId!, itemId);
       _purchaseTrigger.value++; // Trigger observers
-      print("Purchase successful!");
     } catch (e) {
-      print("Error during purchase: $e");
     }
   }
 

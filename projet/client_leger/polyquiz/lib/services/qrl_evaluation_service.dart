@@ -62,9 +62,7 @@ class QrlEvaluationService extends ChangeNotifier {
   }
 
   void nextAnswer() {
-    print("Pre incrementation the index is $indexPlayer");
     this.indexPlayer++;
-    print("Post incrementation the index is $indexPlayer");
     if (this.indexPlayer < this.usernames.length) {
       this.currentAnswer = this.answers[this.indexPlayer];
       this.currentUsername = this.usernames[this.indexPlayer];
@@ -104,8 +102,6 @@ class QrlEvaluationService extends ChangeNotifier {
 
   void submitPoint(List<QuestionStatistics> gameStats) {
     this.isValid = scores.contains(inputPoint);
-    print("the player index is now: $indexPlayer");
-    print("the username length for the list is ${usernames.length}");
     if (indexPlayer < usernames.length) {
       if (isValid) {
         getCorrection(inputPoint);
@@ -123,7 +119,6 @@ class QrlEvaluationService extends ChangeNotifier {
 
   void endCorrection(List<QuestionStatistics> gameStats) {
     for (int i = 0; i < this.usernames.length; i++) {
-      print('POINTS CONTENT: ${this.points[i]}');
       this.correctedQrlAnswers[this.usernames[i]] = this.points[i];
       this.questionStats[this.points[i].toString()] =
           int.parse(this.questionStats[this.points[i].toString()]!.toString()) +
@@ -156,8 +151,6 @@ class QrlEvaluationService extends ChangeNotifier {
   void initializePlayerAnswers(Map<String, ResponseData> qrlAnswers) {
     usernames.clear();
     answers.clear();
-    print("The length of qrlAnswers is ${qrlAnswers.length}\nAnd the values are\n");
-    qrlAnswers.forEach((key, value) => print("key: $key, value: $value"));
     var sortedEntries = qrlAnswers.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
 

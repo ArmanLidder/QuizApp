@@ -79,7 +79,6 @@ class ChannelService extends GetxController {
       final snapshot = await serverTimeDoc.get();
       time = snapshot['time'];
     } catch (e) {
-      print('Error fetching time: $e');
     }
     Message message = Message(
         userUid: loggedInService.user?.uid ?? "",

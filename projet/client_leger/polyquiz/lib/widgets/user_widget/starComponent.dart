@@ -67,7 +67,6 @@ class StarCardGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      print("starComponent build called");
 
       List achievementsList =
           LoggedInUserService.instance.observableAchievement.value;

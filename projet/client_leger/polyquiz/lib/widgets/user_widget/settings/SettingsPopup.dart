@@ -91,7 +91,6 @@ class _SettingsPopupState extends State<SettingsPopup> {
                     value: translationService.currentLanguageAbbr,
                     onChanged: (String? newValue) {
                       setState(() {
-                        print(newValue!);
                         TranslationService.instance.currentLanguageAbbr =
                             newValue!;
                         _ttsService.initTts(newValue);

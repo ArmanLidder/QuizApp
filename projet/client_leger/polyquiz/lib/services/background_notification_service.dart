@@ -20,7 +20,6 @@ class BackgroundNotificationService extends GetxController
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     currentState = state;
-    print("The app is currently: $currentState");
   }
 
   Future<void> initializeNotifications() async {
@@ -71,7 +70,6 @@ class BackgroundNotificationService extends GetxController
   //     sound: true,
   //   );
   //   tokenValue = await _firebaseMessaging.getToken();
-  //   print("Token: $tokenValue");
   // }
   //
   // Future<void> setUserToken(String? userId) async {
@@ -80,7 +78,7 @@ class BackgroundNotificationService extends GetxController
   //     'userId': userId,
   //     'token': tokenValue,
   //   })
-  //     .then((_) => print("User token added"))
-  //     .catchError((error) => print("Failed to add user token: $error"));
+  //     .then()
+  //     .catchError((error) {});
   // }
 }

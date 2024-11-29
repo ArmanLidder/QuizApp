@@ -30,7 +30,6 @@ class _PlayerQreWidgetState extends State<PlayerQreWidget> {
   @override
   void initState() {
     super.initState();
-    print("Building QRE Widget");
     if (question != null && question?.interval != null) {
       final max = question!.interval!.max;
       final min = question!.interval!.min;

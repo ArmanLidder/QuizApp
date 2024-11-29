@@ -20,7 +20,6 @@ class ThemeItem extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    print(themeColors[name]?[0]);
     return Container(
       margin: EdgeInsets.all(3),
       padding: EdgeInsets.all(5),

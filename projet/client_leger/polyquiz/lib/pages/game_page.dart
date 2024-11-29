@@ -60,8 +60,6 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     message = gameText['PLAYER_QRL_INTERFACE']['AWAITING_EVALUATION'];
     this.isHost = this._gameService.realGameService.username == 'host';
-    print(
-        'isAlreadyInit interactive service: ${_interactiveListService.isAlreadyInit}');
     if (_socketService.isSocketAlive() &&
         !_interactiveListService.isAlreadyInit) {
       _socketService.clearAllListeners();
@@ -110,11 +108,9 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
       if (isHost) {
         _socketService.sendMessage(
             SocketEvent.HOST_LEFT, this._gameService.realGameService.roomId);
-        print('HOST LEFT');
       } else {
         _socketService.sendMessage(
             SocketEvent.PLAYER_LEFT, this._gameService.realGameService.roomId);
-        print('PLAYER LEFT');
       }
     }
     super.didChangeAppLifecycleState(state);

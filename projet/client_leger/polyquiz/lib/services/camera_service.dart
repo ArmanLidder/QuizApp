@@ -15,7 +15,6 @@ class CameraService {
         return File(photo.path); // Retourne le fichier photo
       }
     } catch (e) {
-      debugPrint('Erreur lors de la capture de la photo : $e');
     }
     return null; // Retourne null si aucune photo n'est prise
   }

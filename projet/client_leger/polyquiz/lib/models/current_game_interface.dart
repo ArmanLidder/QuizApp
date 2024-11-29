@@ -18,8 +18,6 @@ class Player {
 
   factory Player.fromList(List<dynamic> data) {
     // Ensure the list has the expected length and types
-    print(data);
-    print('the data length is ${data.length}');
     if (!(data.length == 5 || data.length == 6)) {
       throw ArgumentError('Player data must have exactly 5 or 6 elements.');
     }

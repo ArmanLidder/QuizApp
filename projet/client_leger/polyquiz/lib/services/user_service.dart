@@ -36,7 +36,6 @@ class UserService extends GetxController {
       final user = User.fromJson(doc.data()!);
       return user;
     } catch (e) {
-      print('Failed to fetch user by email: $e');
       return null; // Handle the error appropriately
     }
   }
@@ -73,9 +72,7 @@ class UserService extends GetxController {
         },
       });
 
-      print('User created');
     } catch (e) {
-      print('Failed to create user: $e');
     }
   }
 
@@ -85,11 +82,9 @@ class UserService extends GetxController {
       if (documentSnapshot.exists) {
         return documentSnapshot.get('avatar') as String?;
       } else {
-        print('Document does not exist');
         return null;
       }
     } catch (e) {
-      print('Error fetching avatar: $e');
       return null;
     }
   }
@@ -102,11 +97,9 @@ class UserService extends GetxController {
         // Access the 'avatar' field if it exists
         return documentSnapshot.get('level') as num?;
       } else {
-        print('Document does not exist');
         return null;
       }
     } catch (e) {
-      print('Error fetching avatar: $e');
       return null;
     }
   }
@@ -120,9 +113,7 @@ class UserService extends GetxController {
       await _db.collection(collectionName).doc(id).update({
         'avatar': newAvatarUrl,
       });
-      print('Avatar updated successfully');
     } catch (e) {
-      print('Failed to update avatar: $e');
     }
   }
 }

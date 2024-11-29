@@ -66,10 +66,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     final quizService = Provider.of<QuizService>(context, listen: false);
 
     gameListService.games$.listen((games) {
-      print('GAMES:');
-      print(games);
       games.forEach((game) {
-        print('game info: ${game}');
       });
       games.where((game) => !game.private).forEach((game) {
         quizService.basicGetById(game.quizId).then((quiz) {
@@ -111,7 +108,6 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
       });
     } else {
       if (dataOfRoomValidation['isLocked']) {
-        print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(activeText['ROOM_LOCKED'])),
         );
@@ -266,7 +262,6 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
               Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
             ]);
           } else if (snapshot.hasError) {
-            print('Error: ${snapshot.error}');
             return Column(
               children: [
                 Align(
@@ -320,7 +315,6 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                     ],
                   );
                 } else if (snapshot.hasError) {
-                  print('Error: ${snapshot.error}');
                   return Column(
                     children: [
                       Align(

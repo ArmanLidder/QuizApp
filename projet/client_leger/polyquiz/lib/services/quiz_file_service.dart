@@ -59,13 +59,11 @@ class QuizFileService {
             Quiz quiz = Quiz.fromJson(jsonDecode(fileContent));
             quizzes.add(quiz);
           } catch (e) {
-            print('ERROR WHILE TRANSFORMING JSON TO QUIZ: ${e}');
           }
         }
       }
       return quizzes;
     } catch (e) {
-      print("ERROR WHILE GETTING QUIZZES FROM DIRECTORY: ${e}");
       return quizzes;
     }
   }

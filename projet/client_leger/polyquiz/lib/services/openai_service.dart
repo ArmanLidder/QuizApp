@@ -26,7 +26,6 @@ class OpenaiService {
     const Duration baseDelay = Duration(seconds: 2);
 
     for (int attempt = 0; attempt < maxRetries; attempt++) {
-      print('Attempt: $attempt');
       final response = await http.post(
         Uri.parse('https://api.openai.com/v1/chat/completions'),
         headers: {
@@ -47,7 +46,6 @@ class OpenaiService {
       } else if (response.statusCode == 429) {
         final int delay = baseDelay.inMilliseconds * (1 << attempt);
         await Future.delayed(Duration(milliseconds: delay));
-        print('Retrying after delay: ${delay / 1000} seconds');
       } else {
         throw Exception('Failed to get response from OpenAI: ${response.statusCode}');
       }

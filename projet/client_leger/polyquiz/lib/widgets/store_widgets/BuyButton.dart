@@ -146,7 +146,6 @@ class _ImageRewardButtonState extends State<ImageRewardButton> {
         buttonColor = Colors.green;
         buttonText = '${shopText['BUY']} (${widget.cost}) \$';
         buttonAction = () async {
-          print("preemptive button change");
           setState(() {
             alreadyOwns = true; //Temporaire localement, le set up avant d'avoir confirmation du serveurs
           });

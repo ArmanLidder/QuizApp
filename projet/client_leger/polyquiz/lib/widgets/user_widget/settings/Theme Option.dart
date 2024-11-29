@@ -18,8 +18,6 @@ class ThemeColorOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("theme name: " + themeName);
-    print(settingsText[themeName]);
     // Ensure the widget rebuilds on themeName change
     return Obx(() {
       // When themeName in themeService changes, this block will rebuild.

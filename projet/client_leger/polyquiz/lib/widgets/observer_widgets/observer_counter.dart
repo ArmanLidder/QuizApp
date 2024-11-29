@@ -12,7 +12,6 @@ class _ObserverCounterState extends State<ObserverCounter> {
   @override
   void initState() {
     observerCounterService.initialize();
-    print('ObserverCounter initialized ${observerCounterService.obsCount}');
     super.initState();
   }
 

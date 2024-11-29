@@ -15,7 +15,6 @@ class ImageStorageService {
         .millisecondsSinceEpoch}.jpg');
     await ref.putFile(image);
     String link = await ref.getDownloadURL();
-    print("new link: " + link);
     photoImageUrl.value = link;
     return link;
   }
