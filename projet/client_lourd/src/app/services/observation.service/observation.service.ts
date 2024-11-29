@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {ApplicationRef, Injectable} from '@angular/core';
 import {Router} from "@angular/router";
 import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
 import {SocketEvent} from "@common/socket-event-name/socket-event-name";
@@ -24,8 +24,12 @@ import {
     INACTIVE_STATUS,
     TransportStatsFormat
 } from "@common/constants/host-interface.component.const";
-import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
+// import {EXACT_ANSWER, INCORRECT_ANSWER, WITHIN_MARGIN} from "@common/constants/statistic-zone.component.const";
 import {TranslateService} from "@ngx-translate/core";
+import {QuestionType} from "@common/enums/question-type.enum";
+import {
+    WaitingRoomManagementService
+} from "@app/services/waiting-room-management.service/waiting-room-management.service";
 
 @Injectable({
     providedIn: 'root'
@@ -35,40 +39,61 @@ export class ObservationService {
     observedPlayerId: string;
     gameConfigs: GameListItem;
     playersList: string[];
+    firstCall: boolean;
+
+    WITHIN_MARGIN = this.translate.instant('GAME_INTERFACE.QRE_HISTOGRAM_X_VAL.WITHIN_MARGIN');
+    EXACT_ANSWER = this.translate.instant('GAME_INTERFACE.QRE_HISTOGRAM_X_VAL.EXACT_ANSWER');
+    INCORRECT_ANSWER = this.translate.instant('GAME_INTERFACE.QRE_HISTOGRAM_X_VAL.INCORRECT_ANSWER');
 
     constructor(
         private socketService: SocketClientService,
         private gameService: GameService,
+        private waitingRoom: WaitingRoomManagementService,
         private hostInterfaceManagementService: HostInterfaceManagementService,
         private gameInterfaceManagementService: GameInterfaceManagementService,
         private router: Router,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private appRef: ApplicationRef,
     ) {
     }
 
-     observeGame(game: GameListItem) {
+    observeGame(game: GameListItem, firstCall: boolean) {
+        this.firstCall = firstCall;
         this.gameConfigs = game;
+        this.waitingRoom.gameType = game.gameType as "classic" | "equipe"
         this.observedPlayerId = this.gameConfigs.hostUserId;
         this.gameService.observingHost = true;
         this.gameService.observedPlayerId = this.observedPlayerId;
-        this.configureBaseSocketFeatures()
-        this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, {roomId: game.room, isFirst: true});
-        this.isHost = true;
+        // this.configureBaseSocketFeatures();
+        this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, {roomId: game.room, isFirst: firstCall});
+        this.isHost = true
+        console.log({
+            gameConfigs: this.gameConfigs,
+            observedPlayerId: this.observedPlayerId,
+            isHost: this.isHost,
+            gameService: {
+                observeMode: this.gameService.observerMode,
+                observingHost: this.gameService.observingHost,
+                observedPlayerId: this.gameService.observedPlayerId
+            },
+            playersList: this.playersList,
+            InteractiveList: this.hostInterfaceManagementService['interactiveListService'].players
+        });
     }
 
-     configureBaseSocketFeatures() {
+    configureBaseSocketFeatures() {
+        this.handleGameStateReception();
         this.handleGetQRLInteraction();
         this.handleGetQRLAnswer();
         this.handleGetQREAnswer();
         this.handleObsGetInitialQuestion();
         this.gameInterfaceManagementService.configureBaseSocketFeatures();
         this.hostInterfaceManagementService.configureBaseSocketFeatures();
-        this.handleGameStateReception();
+        this.handleGameStatusDistribution()
         this.handlePlayerGameState();
-        this.handleGameStatusDistribution();
         this.handleHostLeft();
         this.handleLastQRLAnswerReception();
-     }
+    }
 
     observeOtherPlayer(oldUserId: string, newUserId: string) {
         const data: NewObservedPlayer = {
@@ -80,18 +105,23 @@ export class ObservationService {
         this.isHost = newUserId === this.gameConfigs.hostUserId;
         this.gameService.observingHost = this.isHost;
         this.gameService.observedPlayerId = newUserId;
-        // this.observedPlayerId = newUserId;
         this.gameService.gameRealService.username = this.isHost ? HOST_USERNAME : newUserId;
         if (this.gameService.observerMode) {
             this.gameService.obs_qrl_Answer = this.translate.instant('OBSERVER.QRL_PLAYER_INACTIVE');
         }
         this.socketService.send(SocketEvent.CHANGE_OBSERVED_PLAYER, data);
-        if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, {roomId: this.gameConfigs.room, isFirst: false});
+        if (this.isHost) this.socketService.send(SocketEvent.NEW_OBSERVER_GAME, {
+            roomId: this.gameConfigs.room,
+            isFirst: false
+        });
     }
 
     private handleHostLeft() {
         this.socketService.on(SocketEvent.REMOVED_FROM_GAME, () => {
-            this.socketService.send(SocketEvent.OBS_LEFT, {roomId: this.gameConfigs.room, observedId: this.gameService.observedPlayerId})
+            this.socketService.send(SocketEvent.OBS_LEFT, {
+                roomId: this.gameConfigs.room,
+                observedId: this.gameService.observedPlayerId
+            })
             this.router.navigate(['/']);
         });
     }
@@ -117,7 +147,7 @@ export class ObservationService {
         });
     }
 
-    private handleObsGetInitialQuestion(){
+    private handleObsGetInitialQuestion() {
         this.socketService.on(SocketEvent.GET_INITIAL_QUESTION, (data: InitialQuestionData) => {
             this.gameService.gameRealService.question = data.question;
             this.gameService.gameRealService.isLast = data.numberOfQuestions === data.index;
@@ -125,10 +155,11 @@ export class ObservationService {
     }
 
     private handleGameStateReception() {
-        this.socketService.on(SocketEvent.RECEIVING_HOST_GAME_STATUS, (data: HostCurrentGameInterface) => {
+        this.socketService.on(SocketEvent.RECEIVING_HOST_GAME_STATUS,  async (data: HostCurrentGameInterface) => {
+            console.log('receiving host game status', data)
             this.setUpGameState(data);
-            const resetPlayerStatus = this.hostInterfaceManagementService.isGameOver
-            this.hostInterfaceManagementService['interactiveListService'].getPlayersList(this.gameService.gameRealService.roomId, this.hostInterfaceManagementService.leftPlayers, resetPlayerStatus)
+            const numberOfPlayer = await this.hostInterfaceManagementService['interactiveListService'].getPlayersList(this.gameService.gameRealService.roomId, this.hostInterfaceManagementService.leftPlayers, false)
+            if ((!this.hostInterfaceManagementService.isGameOver && this.firstCall)) this.hostInterfaceManagementService['initGraph'](this.gameService.question!, numberOfPlayer);
         });
     }
 
@@ -158,11 +189,14 @@ export class ObservationService {
             this.gameInterfaceManagementService.playerScore = data.playerScore;
             this.gameInterfaceManagementService.timerText = this.hostInterfaceManagementService.timerText;
             this.gameInterfaceManagementService.players = data.players;
+            console.log("player OBs init event", data.players)
             this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
             this.gameService.obs_qre_Answer = data.qreAnswer;
-            const lowerBound = Math.max(this.gameService.question!.interval!.min!, this.gameService.obs_qre_Answer - this.gameService.question!.margin!);
-            const upperBound = Math.min(this.gameService.question!.interval!.max!, this.gameService.obs_qre_Answer + this.gameService.question!.margin!);
-            this.gameService.obs_qre_interval = `${lowerBound.toString()} - ${upperBound.toString()}`;
+            if (this.gameService.question?.type === QuestionType.QRE) {
+                const lowerBound = Math.max(this.gameService.question!.interval!.min!, this.gameService.obs_qre_Answer - this.gameService.question!.margin!);
+                const upperBound = Math.min(this.gameService.question!.interval!.max!, this.gameService.obs_qre_Answer + this.gameService.question!.margin!);
+                this.gameService.obs_qre_interval = `${lowerBound.toString()} - ${upperBound.toString()}`;
+            }
             this.gameService.obs_qrl_Answer = data.qrlAnswer;
             this.gameService.qrlAnswer = data.qrlAnswer;
             this.gameInterfaceManagementService['getScore']();
@@ -178,29 +212,39 @@ export class ObservationService {
         this.hostInterfaceManagementService.isPanicMode = data.isPanicMode;
         this.hostInterfaceManagementService.isPaused = data.isPaused;
         this.hostInterfaceManagementService.leftPlayers = data.leftPlayers;
-        this.hostInterfaceManagementService['interactiveListService'].players = data.players
+        this.waitingRoom.teams = new Map(data.teams);
+        this.hostInterfaceManagementService['interactiveListService'].players = Array.from(new Set(data.players));
         this.gameInterfaceManagementService.gameStats = [];
         this.gameInterfaceManagementService['unpackStats'](this.gameInterfaceManagementService['parseGameStats'](data.gameStats));
         this.hostInterfaceManagementService.gameStats = this.gameInterfaceManagementService.gameStats
         if (!data.isGameOver) {
-            if (data.histogramDataChangingResponses.length === 2)
+
+            if (this.gameService.question?.type === QuestionType.QRL)
                 this.hostInterfaceManagementService.histogramDataChangingResponses = new Map([
                     [ACTIVE, data.histogramDataChangingResponses[ACTIVE_STATUS]],
                     [INACTIVE, data.histogramDataChangingResponses[INACTIVE_STATUS]],
                 ]);
-            else if (data.histogramDataChangingResponses.length === 3)
+            else if (this.gameService.question?.type === QuestionType.QRE) {
                 this.hostInterfaceManagementService.histogramDataChangingResponses = new Map([
-                    [WITHIN_MARGIN, data.histogramDataChangingResponses[0]],
-                    [EXACT_ANSWER, data.histogramDataChangingResponses[1]],
-                    [INCORRECT_ANSWER, data.histogramDataChangingResponses[2]]
+                    [this.WITHIN_MARGIN, data.histogramDataChangingResponses[0]],
+                    [this.EXACT_ANSWER, data.histogramDataChangingResponses[1]],
+                    [this.INCORRECT_ANSWER, data.histogramDataChangingResponses[2]]
                 ]);
+            }
             else
                 this.hostInterfaceManagementService.histogramDataChangingResponses = this.hostInterfaceManagementService['createChoicesStatsMap'](data.histogramDataChangingResponses)
+            console.log("hostInterfaceManagementService.histogramDataChangingResponses is now ", this.hostInterfaceManagementService.histogramDataChangingResponses)
         }
+        this.appRef.tick();
     }
 
     private handleLastQRLAnswerReception() {
-        this.socketService.on(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, (data: { roomId: number; lastQRLScore: number | undefined; qrlAnswer: string | undefined, userId: string}) => {
+        this.socketService.on(SocketEvent.RECEIVE_LAST_QRL_INTERACTION, (data: {
+            roomId: number;
+            lastQRLScore: number | undefined;
+            qrlAnswer: string | undefined,
+            userId: string
+        }) => {
             if (this.gameService.observedPlayerId === data.userId) {
                 this.gameService.lastQrlScore = data.lastQRLScore;
                 this.gameService.obs_qrl_Answer = data.qrlAnswer ?? "";
