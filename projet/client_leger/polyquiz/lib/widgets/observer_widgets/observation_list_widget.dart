@@ -139,7 +139,6 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
       data.forEach((player) => newList.add(player.toString()));
       newList.remove(this.observationService.observedUid);
       this.observationService.playerList.value = newList;
-      print(newList);
     });
   }
 }

@@ -137,7 +137,8 @@ class _MyWidgetState extends State<QuestionInfoWidget> {
                 )
               ],
             ),
-          )
+          ),
+          SizedBox(height: 20.0)
         ],
       ),
     );

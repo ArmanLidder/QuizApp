@@ -39,7 +39,6 @@ class ThemeStoreList extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> items = [];
     themes.forEach((item) {
-      print(item);
       ;
       Widget widget = ThemeItem.ThemeStoreItem(
         itemId: item["id"],
@@ -64,7 +63,6 @@ class ImageStoreList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(themes);
     List<Widget> items = [];
     themes.forEach((item) {
       Widget widget = ImageItem(

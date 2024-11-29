@@ -583,7 +583,8 @@ const englishTextValues = {
     "PLAYER_QRE_INTERFACE": {
       "TOLERANCE": "Tolerance",
       "YOUR_ANSWER_INTERVAL": "Your answer interval is:",
-      "GOOD_ANSWER_WAS": "The correct answer was:"
+      "GOOD_ANSWER_WAS": "The correct answer was:",
+      "CURRENT_SELECTION": "Current selection:",
     },
     "NEXT_QUESTION": "Next Question",
     "SHOW_RESULT": "Show Result",

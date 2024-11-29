@@ -12,6 +12,8 @@ import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/widgets/game_config_widget.dart';
 import 'package:polyquiz/enums/question_type.dart';
 import '../widgets/fancyAppBar.dart';
+import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/models/user.dart';
 
 class QuizListPage extends StatefulWidget {
   @override
@@ -30,6 +32,8 @@ class _QuizListPageState extends State<QuizListPage> {
   final ThemeService themeService = ThemeService.instance;
   Map get text => TranslationService.instance.text;
   Map get quizSelectText => text['QUIZ_SELECTION'];
+  final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
+  User? userData;
 
   @override
   void initState() {
@@ -40,9 +44,28 @@ class _QuizListPageState extends State<QuizListPage> {
 
   Future<void> fetchQuizzes() async {
     try {
-      List<Quiz> fetchedQuizzes = await quizService.fetchAllQuizzes();
+      // List<Quiz> fetchedQuizzes = [];
+      List<Quiz> fetchedQuizzesFirst = await quizService.fetchAllQuizzes();
+      this.loggedInUserService.reloadUser();
+      this.userData = this.loggedInUserService.getUser();
+      for (var quiz in fetchedQuizzesFirst) {
+        print('quiz tile : ${quiz.title}');
+        if(quiz.visible == false){
+          print('here 111');
+          if (quiz.owner == this.userData!.uid) {
+            print('here 222');
+            quizzes.add(quiz);
+          }
+        }
+        else{
+          print('here 333');
+          quizzes.add(quiz);
+        }
+      }
+      print('quizzes length : ${quizzes.length}');
+      // fetchedQuizzes = await quizService.fetchAllQuizzes();
       setState(() {
-        quizzes = fetchedQuizzes;
+        quizzes = quizzes;
         isLoading = false;
       });
     } catch (error) {
@@ -277,17 +300,40 @@ class _QuizListPageState extends State<QuizListPage> {
                                     final gameConfigService =
                                         Provider.of<GameConfigService>(context,
                                             listen: false);
-
-                                    await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Dialog(
-                                          child: GameConfigWidget(
-                                            quiz: selectedQuiz!,
-                                          ),
+                                    this.loggedInUserService.reloadUser();
+                                    this.userData = this.loggedInUserService.getUser();
+                                    try
+                                    {final reverification = await quizService.fetchQuizById(selectedQuiz!.id);
+                                    if(reverification != null){
+                                      if(reverification.visible == false && reverification.owner != userData!.uid){
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text(text['GAME_ADMIN']['QUIZ_INVISIBLE'])),
                                         );
-                                      },
-                                    );
+                                        return;
+                                      }
+                                      await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Dialog(
+                                            child: GameConfigWidget(
+                                              quiz: selectedQuiz!,
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }
+                                    else{
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(text['GAME_ADMIN']['QUIZ_DELETED'])),
+                                      );
+                                    }
+                                    }
+                                    catch(e){
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(text['GAME_ADMIN']['QUIZ_DELETED'])),
+                                      );
+                                      return;
+                                    }
                                   }
                                 },
                                 child: Text(text['GAME_ADMIN']['PLAY'],

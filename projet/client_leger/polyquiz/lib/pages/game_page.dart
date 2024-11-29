@@ -60,8 +60,6 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     message = gameText['PLAYER_QRL_INTERFACE']['AWAITING_EVALUATION'];
     this.isHost = this._gameService.realGameService.username == 'host';
-    print(
-        'isAlreadyInit interactive service: ${_interactiveListService.isAlreadyInit}');
     if (_socketService.isSocketAlive() &&
         !_interactiveListService.isAlreadyInit) {
       _socketService.clearAllListeners();
@@ -74,7 +72,7 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
       ObservationService.instance.observeGame(game, context);
     }
     if (_socketService.isSocketAlive()) {
-      if (!isHost) {
+      if (!isHost || this._gameService.isObserverMode) {
         this._gameInterfaceManagementService.gameService.isOfflineMode = false;
         this
             ._gameInterfaceManagementService
@@ -95,22 +93,24 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
     _interactiveListService.configureBaseSocketFeatures();
   }
 
-   @override
+  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this); // Remove observer when the widget is disposed
+    WidgetsBinding.instance
+        .removeObserver(this); // Remove observer when the widget is disposed
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.detached ||
+        state == AppLifecycleState.inactive) {
       // App is being closed
       if (isHost) {
-        _socketService.sendMessage(SocketEvent.HOST_LEFT, this._gameService.realGameService.roomId);
-        print('HOST LEFT');
+        _socketService.sendMessage(
+            SocketEvent.HOST_LEFT, this._gameService.realGameService.roomId);
       } else {
-        _socketService.sendMessage(SocketEvent.PLAYER_LEFT, this._gameService.realGameService.roomId);
-        print('PLAYER LEFT');
+        _socketService.sendMessage(
+            SocketEvent.PLAYER_LEFT, this._gameService.realGameService.roomId);
       }
     }
     super.didChangeAppLifecycleState(state);
@@ -150,8 +150,7 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
     }
     return Visibility(
         visible: !this._gameService.realGameService.isHostEvaluating,
-        child: questionWidget
-    );
+        child: questionWidget);
   }
 
   @override
@@ -161,10 +160,15 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
         //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
         // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!! (il y a qqn qui delete ces fonctions)
         //-MAXIME
-        var observationEnablerDONOTDELETE = TranslationService.instance.languageValue.value;
+        var observationEnablerDONOTDELETE =
+            TranslationService.instance.languageValue.value;
 
         return Scaffold(
-          appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
+          appBar: FancyAppBar(
+            context: context,
+            isGamePage: true,
+            isObserver: this._gameService.isObserverMode,
+          ),
           backgroundColor: themeService.mainBackground.value,
           body: Container(
             color: themeService.mainBackground.value,
@@ -175,7 +179,7 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
                     child: HostInterface(
                         interactiveListService: _interactiveListService,
                         gameInterfaceManagementService:
-                        _gameInterfaceManagementService))
+                            _gameInterfaceManagementService))
               ]),
               Positioned(bottom: 20, left: 20, child: ChatPopup())
             ]),
@@ -184,162 +188,180 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
       });
     } else {
       return Obx(() {
+        //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
+        Language ObxObservator = transService.languageValue.value;
 
-
-      //DO NOT DELETE (ca dit au obx que son rendu depend de cette variable
-      Language ObxObservator = transService.languageValue.value;
-
-      return Container(
-          color: themeService.mainBackground.value,
-          child: AnimatedBuilder(
-              animation:
-              _gameInterfaceManagementService.gameService.realGameService,
-              builder: (BuildContext context, Widget? snapshot) {
-                if (_gameInterfaceManagementService.gameService.question ==
-                    null) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          gameText["LOADING_QUESTIONS"],
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return AnimatedBuilder(
-                      animation: Listenable.merge([
-                        _gameInterfaceManagementService,
-                        _gameInterfaceManagementService.gameService
-                      ]),
-                      builder: (BuildContext context, Widget? snapshot) {
-                        if (_gameInterfaceManagementService.isResultPage) {
-                          return Scaffold(
-                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
-                            backgroundColor: themeService.mainBackground.value,
-                            body: ListView(
-                              children: [
-                                ResultPage(
-                                  gameService: _gameInterfaceManagementService
-                                      .gameService,
-                                  interactiveListService:
-                                  _interactiveListService,
-                                  gameInterfaceManagementService:
-                                  _gameInterfaceManagementService,
-                                ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          return Scaffold(
-                            appBar: FancyAppBar(context: context, isGamePage: true, isObserver: this._gameService.isObserverMode,),
-                            backgroundColor: themeService.mainBackground.value,
-                            body: Stack(children: [
-                              ListView(shrinkWrap: true, children: [
-                                Visibility(
-                                  // Vue du joueur commence ici
-                                  visible: !isHost,
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: TimerWidget(
-                                              isHost: isHost,
-                                              timeTxt:
-                                              _gameInterfaceManagementService
-                                                  .timerText,
-                                              time:
-                                              _gameInterfaceManagementService
-                                                  .gameService.timer,
+        return Container(
+            color: themeService.mainBackground.value,
+            child: AnimatedBuilder(
+                animation:
+                    _gameInterfaceManagementService.gameService.realGameService,
+                builder: (BuildContext context, Widget? snapshot) {
+                  if (_gameInterfaceManagementService.gameService.question ==
+                      null) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            gameText["LOADING_QUESTIONS"],
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return AnimatedBuilder(
+                        animation: Listenable.merge([
+                          _gameInterfaceManagementService,
+                          _gameInterfaceManagementService.gameService
+                        ]),
+                        builder: (BuildContext context, Widget? snapshot) {
+                          if (_gameInterfaceManagementService.isResultPage) {
+                            return Scaffold(
+                              appBar: FancyAppBar(
+                                context: context,
+                                isGamePage: true,
+                                isObserver: this._gameService.isObserverMode,
+                              ),
+                              backgroundColor:
+                                  themeService.mainBackground.value,
+                              body: ListView(
+                                children: [
+                                  ResultPage(
+                                    gameService: _gameInterfaceManagementService
+                                        .gameService,
+                                    interactiveListService:
+                                        _interactiveListService,
+                                    gameInterfaceManagementService:
+                                        _gameInterfaceManagementService,
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            return Scaffold(
+                              appBar: FancyAppBar(
+                                context: context,
+                                isGamePage: true,
+                                isObserver: this._gameService.isObserverMode,
+                              ),
+                              backgroundColor:
+                                  themeService.mainBackground.value,
+                              body: Stack(children: [
+                                ListView(shrinkWrap: true, children: [
+                                  Visibility(
+                                    // Vue du joueur commence ici
+                                    visible: !isHost,
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: TimerWidget(
+                                                isHost: isHost,
+                                                timeTxt:
+                                                    _gameInterfaceManagementService
+                                                        .timerText,
+                                                time:
+                                                    _gameInterfaceManagementService
+                                                        .gameService.timer,
+                                              ),
                                             ),
-                                          ),
-                                          Align(
+                                            Align(
                                               alignment: Alignment.center,
                                               child: QuestionInfoWidget(
                                                   questionNum:
-                                                  _gameInterfaceManagementService
-                                                      .gameService
-                                                      .questionNumber,
+                                                      _gameInterfaceManagementService
+                                                          .gameService
+                                                          .questionNumber,
                                                   questionPts:
-                                                  _gameInterfaceManagementService
-                                                      .gameService
-                                                      .question?.points ?? 0,
+                                                      _gameInterfaceManagementService
+                                                              .gameService
+                                                              .question
+                                                              ?.points ??
+                                                          0,
                                                   questionText:
-                                                  _gameInterfaceManagementService
-                                                      .gameService
-                                                      .question?.text ?? ''),
+                                                      _gameInterfaceManagementService
+                                                              .gameService
+                                                              .question
+                                                              ?.text ??
+                                                          ''),
                                             ),
-                                          Expanded(
-                                            child: Container(
-                                              alignment: Alignment.center,
-                                              margin: EdgeInsets.all(5.0),
-                                              padding: EdgeInsets.all(10.0),
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: themeService
-                                                          .mainAccent.value)),
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
-                                                    style: TextStyle(
-                                                        fontSize: 20,
+                                            SizedBox(height: 20),
+                                            Expanded(
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                margin: EdgeInsets.all(5.0),
+                                                padding: EdgeInsets.all(10.0),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
                                                         color: themeService
-                                                            .mainAccent.value),
-                                                  ),
-                                                  _gameInterfaceManagementService
-                                                      .isBonus && !this._gameService.isObserverMode
-                                                      ? Text(
-                                                      gameText[
-                                                      'BONUS_RECEIVED_FEEDBACK'],
+                                                            .mainAccent.value)),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
                                                       style: TextStyle(
+                                                          fontSize: 20,
                                                           color: themeService
                                                               .mainAccent
-                                                              .value))
-                                                      : SizedBox()
-                                                ],
+                                                              .value),
+                                                    ),
+                                                    _gameInterfaceManagementService
+                                                                .isBonus &&
+                                                            !this
+                                                                ._gameService
+                                                                .isObserverMode
+                                                        ? Text(
+                                                            gameText[
+                                                                'BONUS_RECEIVED_FEEDBACK'],
+                                                            style: TextStyle(
+                                                                color: themeService
+                                                                    .mainAccent
+                                                                    .value))
+                                                        : SizedBox()
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      if (getImageWidgetFromQuestion() != null)
-                                        getImageWidgetFromQuestion()!,
-                                      getPlayerQuestion(),
-                                      Visibility(
-                                        visible: _gameInterfaceManagementService
-                                            .gameService
-                                            .realGameService
-                                            .isHostEvaluating,
-                                        child: PlayerNotice(
-                                          message: message,
-                                          gameInterfaceManagementService:
-                                          _gameInterfaceManagementService,
+                                            )
+                                          ],
                                         ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [getButtons()],
-                                      )
-                                    ],
+                                        if (getImageWidgetFromQuestion() !=
+                                            null)
+                                          getImageWidgetFromQuestion()!,
+                                        getPlayerQuestion(),
+                                        Visibility(
+                                          visible:
+                                              _gameInterfaceManagementService
+                                                  .gameService
+                                                  .realGameService
+                                                  .isHostEvaluating,
+                                          child: PlayerNotice(
+                                            message: message,
+                                            gameInterfaceManagementService:
+                                                _gameInterfaceManagementService,
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [getButtons()],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                ]),
+                                Positioned(
+                                    bottom: 0, left: 20, child: ChatPopup())
                               ]),
-                              Positioned(
-                                  bottom: 0, left: 20, child: ChatPopup())
-                            ]),
-                          );
-                        }
-                      });
-                }
-              })
-      );}
-        );
+                            );
+                          }
+                        });
+                  }
+                }));
+      });
     }
   }
 
@@ -369,27 +391,32 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
             this._gameService.realGameService.isValidateActive;
 
     final validateButtonStyle = TextButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.normal, color: themeService.secondaryAccent.value),
+      textStyle: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: themeService.secondaryAccent.value),
       splashFactory: NoSplash.splashFactory,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      backgroundColor: isValidateButtonActive ? themeService.secondaryBackground.value : Colors.grey,
+      backgroundColor: isValidateButtonActive
+          ? themeService.secondaryBackground.value
+          : Colors.grey,
     );
 
     return Row(
       children: <Widget>[
-        if (!this._gameService.isObserverMode) AnimatedBuilder(
-          animation: this._gameService.realGameService,
-          builder: (BuildContext context, Widget? snapshot) => TextButton(
-              onPressed: isValidateButtonActive ? onValidate : null,
-              style: validateButtonStyle,
-              child: Text(
-                gameText['VALIDATE_BUTTON'],
-                style: TextStyle(
-                  color: themeService.secondaryAccent.value,
-                  fontSize: 20,
-                ),
-              )),
-        ),
+        if (!this._gameService.isObserverMode)
+          AnimatedBuilder(
+            animation: this._gameService.realGameService,
+            builder: (BuildContext context, Widget? snapshot) => TextButton(
+                onPressed: isValidateButtonActive ? onValidate : null,
+                style: validateButtonStyle,
+                child: Text(
+                  gameText['VALIDATE_BUTTON'],
+                  style: TextStyle(
+                    color: themeService.secondaryAccent.value,
+                    fontSize: 20,
+                  ),
+                )),
+          ),
         if (!this._gameService.isObserverMode) SizedBox(width: 100.0),
         QuitBtn(
           isHost: false,
@@ -447,9 +474,9 @@ class ResultPage extends StatelessWidget {
             PlayersDataTable(
               isHost: false,
             ),
-            if (this.gameInterfaceManagementService!.gameStats[0].question != null)
+            if (this.gameInterfaceManagementService!.gameStats.isNotEmpty)
               StatisticZone(
-              gameStats: this.gameInterfaceManagementService!.gameStats,
+                gameStats: this.gameInterfaceManagementService!.gameStats,
               ),
             QuitBtn(
               isHost: false,

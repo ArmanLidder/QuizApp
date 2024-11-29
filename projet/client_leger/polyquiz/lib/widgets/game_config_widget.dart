@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/models/user.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
+import 'package:polyquiz/services/quiz_service.dart';
 
 class GameConfigWidget extends StatefulWidget {
   final Quiz quiz;
@@ -31,6 +32,8 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
   final LoggedInUserService loggedInUserService = LoggedInUserService.instance;
   User? userData;
   Map get configText => TranslationService.instance.text['GAME_CONFIG_DIALOG'];
+  final QuizService quizService = QuizService();
+  Map get text => TranslationService.instance.text;
 
   @override
   Widget build(BuildContext context) {
@@ -250,11 +253,33 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                             borderRadius: BorderRadius.circular(5)),
                         backgroundColor:
                             themeService.secondaryBackground.value),
-                    onPressed: () {
+                    onPressed: () async {
+                      this.loggedInUserService.reloadUser();
                       this.userData = this.loggedInUserService.getUser();
+                      try{
+                        final reverification = await quizService.fetchQuizById(widget.quiz!.id);
+                        if(reverification != null){
+                          if(reverification.visible == false && reverification.owner != userData!.uid){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(text['GAME_ADMIN']['QUIZ_INVISIBLE'])),
+                            );
+                            return;
+                          }
+                        }
+                        else{
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(text['GAME_ADMIN']['QUIZ_DELETED'])),
+                          );
+                          return;
+                        }
+                      }
+                      catch(e){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(text['GAME_ADMIN']['QUIZ_DELETED'])),
+                        );
+                        return;
+                      }
                       if (_formKey.currentState!.validate()) {
-                        print('got into validate if');
-                        print(_IsAIOn);
                         gameConfigService.setIA(_IsAIOn);
                         gameConfigService.setGameType(_gameType);
                         gameConfigService.setPrice(_price);

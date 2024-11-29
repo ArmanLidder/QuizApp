@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/quiz.dart';
 import 'package:polyquiz/services/translationService.dart';
 
@@ -49,6 +50,7 @@ class QuizFileService {
 
   Future<List<Quiz>> getQuizzes() async {
     List<Quiz> quizzes = <Quiz>[];
+    String response = '';
     final Directory directory = Directory(this.path);
     try {
       final files = directory.listSync();
@@ -57,15 +59,17 @@ class QuizFileService {
           try {
             String fileContent = await file.readAsString();
             Quiz quiz = Quiz.fromJson(jsonDecode(fileContent));
-            quizzes.add(quiz);
-          } catch (e) {
-            print('ERROR WHILE TRANSFORMING JSON TO QUIZ: ${e}');
-          }
+            if (this._areAllQuestionsQCM(quiz)) {
+              quizzes.add(quiz);
+            } else {
+              response = await this.deleteQuiz(quiz);
+              print(response);
+            }
+          } catch (e) {}
         }
       }
       return quizzes;
     } catch (e) {
-      print("ERROR WHILE GETTING QUIZZES FROM DIRECTORY: ${e}");
       return quizzes;
     }
   }
@@ -83,5 +87,11 @@ class QuizFileService {
     } catch (e) {
       return "${quizSelectText['ERROR']} : ${e}";
     }
+  }
+
+  bool _areAllQuestionsQCM(Quiz quiz) {
+    bool result =
+        !quiz.questions.any((question) => question.type != QuestionType.QCM);
+    return result;
   }
 }

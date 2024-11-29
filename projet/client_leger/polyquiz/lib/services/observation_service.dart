@@ -1,13 +1,14 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:polyquiz/constants/constants.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/game_list_item.dart';
 import 'package:polyquiz/models/host_interface.dart';
 import 'package:polyquiz/models/quiz.dart';
+import 'package:polyquiz/models/typedefs.dart';
 import 'package:polyquiz/services/game_interface_management_service.dart' as gims;
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/host_interface_management_service.dart';
@@ -80,8 +81,6 @@ class ObservationService extends GetxController {
       'roomId': this.gameConfigs?.room,
       'isFirst': false,
     });
-    print("The old old observeduid: $oldUid");
-    print("The current observeduid: ${this.gameService.observedUid}");
     if (callback != null) callback!(this.isHost);
   }
 
@@ -99,7 +98,6 @@ class ObservationService extends GetxController {
 
   void handleGetQRLInteraction() {
     this.socketService.onMessage(SocketEvent.GET_QRL_INTERACTION, (isActive) {
-      print("Get qrl interaction: $isActive");
       this.gameService.qrlAnswer = isActive as bool ? observerText['QRL_PLAYER_ACTIVE'] : observerText['QRL_PLAYER_INACTIVE'];
     });
   }
@@ -150,15 +148,21 @@ class ObservationService extends GetxController {
   }
 
   TransportStatsFormat parseGameStats(String stringifyStats) {
-    final parsedData = jsonDecode(stringifyStats);
-    if (parsedData is List<List>) {
-      return parsedData;
-    } else return [];
+    List<dynamic> parsedData = jsonDecode(stringifyStats);
+    return parsedData.map((datum) {
+      return TransportStats.fromJson(datum);
+    }).toList();
   }
 
   void unpackStats(TransportStatsFormat stats) {
-    print("tried to unpack stats");
-    // TODO
+    this.hostInterfaceManagementService.gameStats = [];
+    stats.forEach((stat) {
+      Map<String, bool> values = Map<String, bool>.fromEntries(stat.values);
+      Map<String, num> responses = Map<String, num>.fromEntries(stat.responses);
+      hostInterfaceManagementService.gameStats.add(
+          QuestionStatistics(values, responses, stat.question)
+      );
+    });
   }
 
   void handlePlayerGameState() {
@@ -170,8 +174,7 @@ class ObservationService extends GetxController {
       // this.gameInterfaceManagementService.timerText = this.hostInterfaceManagementService.timerText;
       this.gameInterfaceManagementService.players = playerCGI.players;
       this.gameInterfaceManagementService.inPanicMode = this.hostInterfaceManagementService.isPanicMode;
-      print("Setting QRE value to ${playerCGI.qreAnswer}");
-      Future.delayed(Duration(milliseconds: 125), () {this.gameService.obsQreAnswer = playerCGI.qreAnswer;; print('set the qre value to ${playerCGI.qreAnswer}');});
+      Future.delayed(Duration(milliseconds: 125), () {this.gameService.obsQreAnswer = playerCGI.qreAnswer;});
       this.gameService.obsQrlAnswer = playerCGI.qrlAnswer;
       this.gameInterfaceManagementService.getScore();
     });
@@ -221,13 +224,10 @@ class ObservationService extends GetxController {
 
   void handleQCMSelection() {
     // TODO: MAKE IT WORK
-    print('Handling: QCM SELECTION');
     this.socketService.onMessage(SocketEvent.OBS_QCM_INTERACTION, (data) {
-      print("OBS QCM SELECTION EVENT RECEIVED, DOING THE STUFF");
       final roomId = data['roomId'] as int;
       final isSelected = data['isSelected'] as bool;
       final index = data['index'] as int;
-      print('Choosing: $index as $isSelected');
       this.gameService.obsUpdateChoice(index, isSelected);
     });
   }

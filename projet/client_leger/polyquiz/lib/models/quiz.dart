@@ -8,6 +8,7 @@ class Quiz {
   final String? lastModification;
   final List<QuizQuestion> questions;
   final bool? visible;
+  final String? owner;
 
   Quiz({
     required this.id,
@@ -17,6 +18,7 @@ class Quiz {
     this.lastModification,
     required this.questions,
     this.visible,
+    this.owner,
   });
 
   factory Quiz.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class Quiz {
           .map((question) => QuizQuestion.fromJson(question))
           .toList(),
       visible: json['visible'] as bool?,
+      owner: json['owner'] as String?,
     );
   }
 
@@ -44,6 +47,7 @@ class Quiz {
       'lastModification': lastModification,
       'questions': questions.map((q) => q.toJson()).toList(),
       'visible': visible,
+      'owner': owner,
     };
   }
 }

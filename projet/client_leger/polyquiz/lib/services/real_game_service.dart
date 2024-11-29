@@ -67,7 +67,6 @@ class RealGameService extends ChangeNotifier {
     }
     this.configureBaseSocket();
     this._socketService.sendMessage(SocketEvent.GET_QUESTION, this.roomId);
-    print('ROOM ID SENT: ${this.roomId}');
     this.audio.setSource(AssetSource('music.mp3'));
     this.audio.setVolume(0.1);
   }
@@ -105,7 +104,6 @@ class RealGameService extends ChangeNotifier {
 
   void configureBaseSocket() {
     this._socketService.onMessage(SocketEvent.GET_INITIAL_QUESTION, (data) {
-      print(data);
       InitialQuestionData questionData = InitialQuestionData(
         question: QuizQuestion.fromJson(data['question']),
         username: data['username'] ?? 'host',

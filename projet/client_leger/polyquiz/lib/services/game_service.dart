@@ -150,20 +150,17 @@ class GameService extends ChangeNotifier {
   }
 
   void obsUpdateChoice(int index, bool isSelected) {
-    print('value of lockedStatus: $lockedStatus');
     // if (this.lockedStatus) return;
     if (isSelected && !this.answers.containsKey(index)) {
       String? textChoice = this.question?.choices?[index].text;
       this.answers[index] = textChoice;
       notifyListeners();
-      print("After obsUpdateChoice answers are: ${this.answers}");
       return;
     }
     if (!isSelected && this.answers.containsKey(index)) {
       this.answers.remove(index);
       notifyListeners();
     }
-    print("After obsUpdateChoice answers are: ${this.answers}\nMind you, we removed a $isSelected answer");
   }
 
   void selectQREanswer(int selectedAnswer) {
@@ -193,7 +190,6 @@ class GameService extends ChangeNotifier {
       this.offlineGameService.answers = this.answers;
       this.offlineGameService.qrlAnswer = this.qrlAnswer;
       this.qrlAnswer = '';
-      print('ANSWERS: ${this.answers}');
       this.offlineGameService.sendAnswer();
     }
     this.lastQrlScore = null;

@@ -70,7 +70,6 @@ class _MessageWindowWidgetState extends State<MessageWindowWidget> {
       defaultName = channel.name;
       return channel;
     } on StateError catch (e) {
-      print('Error in getChannel(): ${e}');
       return null;
     }
   }
@@ -215,7 +214,6 @@ class MessageTile extends StatelessWidget {
   }
 
   Widget buildSentMessage() {
-    print("this is the timestamp: $timestamp");
     return ListTile(
       title: Align(
         alignment: Alignment.centerRight,

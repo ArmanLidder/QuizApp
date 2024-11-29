@@ -100,7 +100,6 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
       });
     } else {
       if (dataOfRoomValidation['isLocked']) {
-        print('I am here 2');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(roomErrorText['ROOM_LOCKED'])),
         );
@@ -270,7 +269,6 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
       });
 
       final game = await _getGame(roomId);
-      print(roomId);
 
       if (game != null) {
         await _joinRoom(game);
@@ -287,8 +285,6 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
 
   Future<GameListItem?> _getGame(String roomId) async {
     final games = await this.gameListService.games$.first;
-    print(this.gameListService.games$);
-    print(games);
     for (var game in games) {
       if (game.room == int.parse(roomId)) {
         return game;
@@ -336,6 +332,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                             color: themeService.mainAccent.value)),
                     SizedBox(height: 16),
                     TextFormField(
+                      style: TextStyle(color: themeService.mainAccent.value),
                       controller: _roomIdController,
                       decoration: InputDecoration(
                         filled: true,
@@ -349,7 +346,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a Room ID';
+                          return roomErrorText['VALIDATION_CODE_ERROR'];
                         }
                         return null;
                       },

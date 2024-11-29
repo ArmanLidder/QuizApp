@@ -604,7 +604,8 @@ const frenchTextValues = {
     "PLAYER_QRE_INTERFACE": {
       "TOLERANCE": "Tolérance",
       "YOUR_ANSWER_INTERVAL": "Votre intervalle de réponse est:",
-      "GOOD_ANSWER_WAS": "La bonne réponse était:"
+      "GOOD_ANSWER_WAS": "La bonne réponse était:",
+      "CURRENT_SELECTION": "Sélection actuelle:",
     },
     "NEXT_QUESTION": "Prochaine question",
     "SHOW_RESULT": "Montrer résultat",

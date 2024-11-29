@@ -44,9 +44,6 @@ class _HostInterfaceState extends State<HostInterface> {
   @override
   void initState() {
     super.initState();
-    print('isSocketAlive: ${_socketService.isSocketAlive()}');
-    print(
-        'isAlreadyInit host interface: ${hostInterfaceManagementService.isAlreadyInit}');
     if (_socketService.isSocketAlive() &&
         !hostInterfaceManagementService.isAlreadyInit) {
       hostInterfaceManagementService.configureBaseSocketFeatures(context);
@@ -176,11 +173,11 @@ class HostHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 5.0),
       child: Text(
-      "✅ : ${currentQuestion.answer} ± ${currentQuestion.margin}",
-      style: TextStyle(
-        fontWeight: FontWeight.normal,
-        fontSize: 16,
-        color: _themeService.mainAccent.value),
+        "✅ : ${currentQuestion.answer} ± ${currentQuestion.margin}",
+        style: TextStyle(
+            fontWeight: FontWeight.normal,
+            fontSize: 16,
+            color: _themeService.mainAccent.value),
       ),
     );
   }
@@ -191,7 +188,8 @@ class HostHeader extends StatelessWidget {
       //NE PAS DELETE LA LIGNE EN BAS JE SAIS QUE TON IDE TE DIS QUE C'EST PAS UTILISÉ
       // MAIS IL VOIT PAS QUE OBX LE SCRUTE!!!! (il y a qqn qui delete ces fonctions)
       //-MAXIME
-      var observationEnablerDONOTDELETE = TranslationService.instance.languageValue.value;
+      var observationEnablerDONOTDELETE =
+          TranslationService.instance.languageValue.value;
       return Stack(children: [
         Column(
           children: [
@@ -199,12 +197,15 @@ class HostHeader extends StatelessWidget {
               children: [
                 TimerWidget(
                   isHost: !this.gameService.isObserverMode,
-                  timeTxt: TranslationService.instance.text['GAME_INTERFACE']['TIMER_TEXT']['TIME_LEFT'],
+                  timeTxt: TranslationService.instance.text['GAME_INTERFACE']
+                      ['TIMER_TEXT']['TIME_LEFT'],
                   time: gameService.realGameService.timer,
-                  hostInterfaceManagementService: hostInterfaceManagementService,
+                  hostInterfaceManagementService:
+                      hostInterfaceManagementService,
                 )
               ],
             ),
+            SizedBox(height: 20),
             if (getQREAnswer() != null) getQREAnswer()!,
             if (getImageWidgetFromQuestion(context) != null)
               getImageWidgetFromQuestion(context)!
@@ -221,9 +222,9 @@ class HostHeader extends StatelessWidget {
                     gameService: gameService,
                     interactiveListService: interactiveListService,
                     gameInterfaceManagementService:
-                    gameInterfaceManagementService,
+                        gameInterfaceManagementService,
                     hostInterfaceManagementService:
-                    hostInterfaceManagementService),
+                        hostInterfaceManagementService),
               ],
             )
           ],
@@ -244,22 +245,23 @@ class HostHeader extends StatelessWidget {
 
   Widget getNextQuestionButton() {
     final validateButtonStyle = TextButton.styleFrom(
-      textStyle: TextStyle(fontWeight: FontWeight.normal,
+      textStyle: TextStyle(
+        fontWeight: FontWeight.normal,
         color: this.hostInterfaceManagementService.NextQuestionBtnDisabled
             ? Colors.white
-            : _themeService.secondaryAccent.value,),
+            : _themeService.secondaryAccent.value,
+      ),
       splashFactory: NoSplash.splashFactory,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       backgroundColor:
-      this.hostInterfaceManagementService.NextQuestionBtnDisabled
-          ? Colors.grey
-          : _themeService.secondaryBackground.value,
+          this.hostInterfaceManagementService.NextQuestionBtnDisabled
+              ? Colors.grey
+              : _themeService.secondaryBackground.value,
     );
     return Row(
       children: [
         TextButton(
-          onPressed:
-          this.hostInterfaceManagementService.NextQuestionBtnDisabled
+          onPressed: this.hostInterfaceManagementService.NextQuestionBtnDisabled
               ? null
               : onNextQuestion,
           child: Text(
@@ -267,9 +269,11 @@ class HostHeader extends StatelessWidget {
                 ? gameText['SHOW_RESULT']
                 : gameText['NEXT_QUESTION'],
             style: TextStyle(
-                color: this.hostInterfaceManagementService.NextQuestionBtnDisabled
-                    ? Colors.white
-                    : _themeService.secondaryAccent.value, fontSize: 20),
+                color:
+                    this.hostInterfaceManagementService.NextQuestionBtnDisabled
+                        ? Colors.white
+                        : _themeService.secondaryAccent.value,
+                fontSize: 20),
           ),
           style: validateButtonStyle,
         ),
@@ -299,7 +303,8 @@ class HostMiddleSection extends StatelessWidget {
             return Column(
               children: [
                 Visibility(
-                  visible: hostInterfaceManagementService.isHostEvaluating && !gameService.isObserverMode,
+                  visible: hostInterfaceManagementService.isHostEvaluating &&
+                      !gameService.isObserverMode,
                   child: HostGrading(
                     gameStats: hostInterfaceManagementService.gameStats,
                     qrlAnswers: hostInterfaceManagementService.responsesQRL,
@@ -354,10 +359,9 @@ class ResultPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          TranslationService.instance.languageValue.value ==
-            Language.fr
-            ? 'Le jeux est terminé! voici les résultats.'
-            : 'The game is over! Here are the results.',
+          TranslationService.instance.languageValue.value == Language.fr
+              ? 'Le jeux est terminé! voici les résultats.'
+              : 'The game is over! Here are the results.',
           style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -367,7 +371,7 @@ class ResultPage extends StatelessWidget {
         PlayersDataTable(
           isHost: true,
         ),
-        if (this.hostInterfaceManagementService.gameStats[0].question != null)
+        if (this.hostInterfaceManagementService.gameStats.isNotEmpty)
           StatisticZone(
             gameStats: this.hostInterfaceManagementService.gameStats,
           ),

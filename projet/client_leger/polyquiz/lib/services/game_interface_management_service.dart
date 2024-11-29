@@ -50,7 +50,10 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this._socketService.disconnect();
       }
     }
-    if (this.gameService.isObserverMode) return;
+    if (this.gameService.isObserverMode) {
+      this.handleFinalTimeTransition();
+      return;
+    }
     if (this._socketService.isSocketAlive()) {
       this.configureBaseSocketFeatures();
     }
@@ -256,7 +259,6 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this.unpackStats(this.parseGameStats(gameStats));
         notifyListeners();
       } catch (e) {
-        print('Error in handleGameStatusDistribution: $e');
       }
     });
   }
@@ -315,8 +317,6 @@ class GameInterfaceManagementService extends ChangeNotifier {
               100)
           .toInt();
 
-      print("I am Here 444444");
-      print(this.gameService.lastQrlScore);
       notifyListeners();
     }
   }

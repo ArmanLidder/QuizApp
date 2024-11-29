@@ -29,13 +29,10 @@ class TtsService {
             .toList();
         if (_voices.isNotEmpty) {
           this._currentVoice = _voices.first;
-          print("Voice set to: $_currentVoice");
           this.setVoice(_currentVoice);
         } else {
-          print("No voice found for language: $_currentLanguage");
         }
       } catch (e) {
-        print(e);
       }
     });
   }
@@ -48,7 +45,6 @@ class TtsService {
   void speak(String text) async {
     if (isTtsEnabled) {
       await this._flutterTts.speak(text);
-      print('SOUND SHOULD HAVE PLAYED');
     }
   }
 

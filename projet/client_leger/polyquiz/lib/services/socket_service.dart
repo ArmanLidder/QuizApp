@@ -18,7 +18,6 @@ class SocketService {
 
   void connect([String? id]) {
     if (_socket == null) {
-      print('Connecting to socket server with id: $id');
       _socket = IO.io(socketUrl, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
@@ -27,11 +26,9 @@ class SocketService {
       });
 
       _socket?.on('connect', (_) {
-        print('Connected to socket server');
       });
 
       _socket?.on('disconnect', (_) {
-        print('Disconnected from socket server');
       });
 
       _socket?.connect();

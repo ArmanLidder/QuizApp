@@ -26,11 +26,9 @@ class FriendService extends GetxService {
             {'fromUserId': currentUserId, 'toUserId': targetUserId}
           ]),
         });
-        print("goththere");
 
       }
     } catch (e) {
-      print('Error creating friend request: $e');
     }
   }
 
@@ -44,7 +42,6 @@ class FriendService extends GetxService {
         'friends': FieldValue.arrayUnion([currentUserId]),
       });
     } catch (e) {
-      print('Error accepting friend request: $e');
     }
   }
 
@@ -54,7 +51,6 @@ class FriendService extends GetxService {
         'friendRequests': FieldValue.arrayRemove([{'fromUserId': requesterId, 'toUserId': currentUserId}]),
       });
     } catch (e) {
-      print('Error refusing friend request: $e');
     }
   }
 
@@ -67,7 +63,6 @@ class FriendService extends GetxService {
         'friends': FieldValue.arrayRemove([currentUserId]),
       });
     } catch (e) {
-      print('Error deleting friendship: $e');
     }
   }
 
@@ -93,7 +88,6 @@ class FriendService extends GetxService {
         }
 
     } catch (e) {
-      print('Error checking friendship status: $e');
       return 'error';
     }
   }

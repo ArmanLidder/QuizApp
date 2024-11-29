@@ -77,9 +77,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
   Future<void> _initRoom() async {
     try {
-      print(widget.isHost);
       if (widget.isHost) {
-        print(widget.gameConfigService!.getGameConfig());
         roomId = await waitingRoomService.createRoom(
             widget.quiz.id, widget.gameConfigService!.getGameConfig());
         realGameService.username = 'host';
@@ -87,7 +85,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         realGameService.isAION = widget.gameConfigService!.getGameConfig().IA!;
         setState(() {
           waitingRoomService.gameType = widget.gameConfigService!.gameType;
-          print('HOST GAME TYPE: ${waitingRoomService.gameType}');
         });
       } else {
         roomId = widget.quiz.id;
@@ -95,10 +92,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         waitingRoomService.roomId = int.parse(roomId);
         realGameService.username = username;
         realGameService.roomId = int.parse(roomId);
-        print('Joining room $roomId as $username');
       }
       if (username == 'nothing') {
-        print('isHost : username is nothing');
       } else {
         waitingRoomService.connectToSocket(roomId,
             isHost: widget.isHost,
@@ -111,16 +106,13 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       }
       waitingRoomService.configureBaseSocketFeatures();
       setState(() {});
-    } catch (e) {
-      print('Error initializing room: $e');
-    }
+    } catch (e) {}
   }
 
   void _toggleRoomLock() {
     setState(() {
       this.waitingRoomService.isRoomLocked =
           !this.waitingRoomService.isRoomLocked;
-      print(roomState);
     });
     waitingRoomService.toggleRoomLock();
   }
@@ -508,7 +500,6 @@ class SmartAvatarWrapper extends StatelessWidget {
       userId: userId,
       hasName: true,
       interactible: true,
-      applyTheme: false,
     );
   }
 }
