@@ -26,6 +26,7 @@ export class ActiveGameListComponent implements OnInit {
     games$: Observable<GameListItem[]>;
     quizNameMap: Map<string, string> = new Map();
     joiningRoom = false;
+    observerEnteringRoom: boolean = false;
 
     constructor(
         private gameListService: GameListService,
@@ -131,12 +132,18 @@ export class ActiveGameListComponent implements OnInit {
         try {
             this.gameService.init(String(game.room), true);
             this.gameService.gameRealService.username = HOST_USERNAME;
-            this.observationService.observeGame(game);
-            await this.router.navigate([`game/${game.room}`]);
+            this.observationService.configureBaseSocketFeatures();
+            this.observationService.observeGame(game, true);
         }  catch(error:any) {
             console.error("Error joining room:", error);
         } finally {
-            this.joiningRoom = false;
+            this.observerEnteringRoom = true;
+            setTimeout(async () => {
+                this.observationService.observeGame(game, false);
+                await this.router.navigate([`game/${game.room}`]);
+                this.joiningRoom = false;
+                this.observerEnteringRoom = false;
+            }, 5000)
         }
     }
 
