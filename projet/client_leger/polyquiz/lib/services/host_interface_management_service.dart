@@ -145,8 +145,8 @@ class HostInterfaceManagementService extends ChangeNotifier {
           break;
         default:
           histogramDataChangingResponses = [
-            this.histogramDataChangingResponses['actif'] ?? 0,
-            this.histogramDataChangingResponses['inactif'] ?? 0,
+            this.histogramDataChangingResponses[transText['HISTOGRAM']['ACTIVE']] ?? 0,
+            this.histogramDataChangingResponses[transText['HISTOGRAM']['INACTIVE']] ?? 0,
           ];
           break;
       }
