@@ -210,13 +210,17 @@ export class GameCreationService {
         socket.on(SocketEvent.OBS_LEFT, (data: {roomId: number; observedId: string}) => {
             try {
                 const userId = socket.handshake.auth.userId;
+                this.printLogsServer(`handleObsLeft for ${data.observedId}`, userId,data.roomId)
                 const room = roomManager.getRoomById(data.roomId);
                 if (room) {
+                    console.log("handleObsLeft room exist")
                     const ObservedUserId = data.observedId === room.hostUserId ? HOST_USERNAME : data.observedId;
                     roomManager.updateObserverCounter(data.roomId, ObservedUserId, userId, true);
                     this.sendUpdateGameList(roomManager, sio)
                     const count = room.observersCounter.get(ObservedUserId).length
+                    console.log("handleObsLeft", count)
                     if (count >= 0) {
+                        console.log("handleObsLeft", count)
                         const socketId = roomManager.getSocketIdByUsername(data.roomId, ObservedUserId)
                         if (socketId) sio.to(socketId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
                     }
@@ -591,12 +595,19 @@ export class GameCreationService {
                 sio.to(String(roomId)).disconnectSockets(true);
             } else {
                 const userId = socket.handshake.auth.userId;
+                this.printLogsServer("HandleUserDisconnection", userId, roomId)
                 const observedPlayerId = roomManager.findAndDeleteObserver(roomId, userId);
+                this.printLogsServer("Checking If disconnect User is Observer", observedPlayerId, roomId);
                 if (observedPlayerId) {
                     const count = roomManager.getRoomById(roomId).observersCounter.get(observedPlayerId).length
+                    this.printLogsServer("Count If disconnect User is Observer", String(count), roomId);
                     if (count >= 0) {
                         const socketId = roomManager.getSocketIdByUsername(roomId, observedPlayerId)
-                        if (socketId) sio.to(socketId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
+                        this.printLogsServer("Observered player Socket Id If disconnect User is Observer", socketId, roomId);
+                        if (socketId) {
+                            this.printLogsServer("Emitting UPDATE_COUNT", socketId, roomId);
+                            sio.to(socketId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
+                        }
                     }
                 }
                 console.log(`Player Socket disconnection received event receive ${socket.handshake.auth.userId}`)

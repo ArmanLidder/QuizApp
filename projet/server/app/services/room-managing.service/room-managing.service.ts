@@ -92,6 +92,7 @@ export class RoomManagingService {
     updateObserverCounter(roomId: number, userId: string, observerId: string, decrement: boolean) {
         const roomObserverCounter = this.getRoomById(roomId).observersCounter;
         const currentObserverValue = roomObserverCounter.get(userId);
+        console.log("updateObserverCounter -- room ", roomId, " -- userId -- ", userId, " -- observerId -- ", observerId, " -- decrement -- ", decrement)
         if (decrement) {
             const observerValue = currentObserverValue.indexOf(observerId);
             currentObserverValue.splice(observerValue, 1);
@@ -108,13 +109,16 @@ export class RoomManagingService {
     findAndDeleteObserver(roomId: number, observerId: string) {
         const roomObserverCounter = this.getRoomById(roomId).observersCounter;
         let user = "";
+        console.log("findAndDeleteObserver -- room ", roomId, " -- observerId -- ", observerId);
         roomObserverCounter.forEach((observers:string[], userId:string)=> {
             if (observers.includes(observerId)) {
                 this.updateObserverCounter(roomId, userId, observerId, true);
                 user = userId;
+                console.log("findAndDeleteObserver iterations -- userId found ", user);
             }
         })
-        console.log(roomObserverCounter)
+        console.log("findAndDeleteObserver -- userId found ", user);
+        console.log("findAndDeleteObserver", roomObserverCounter)
         return user;
     }
 
@@ -176,7 +180,9 @@ export class RoomManagingService {
 
     removeUserFromRoom(roomId: number, name: string): void {
         const playerMap = this.getRoomById(roomId).players;
-        playerMap.delete(name);
+        const obsId = this.findAndDeleteObserver(roomId, name);
+        console.log("RemovingUserFromRoom method  -- ", name, " -- check if Obs -- ", name)
+        if (!obsId) playerMap.delete(name);
         // this.getRoomById(roomId).observersCounter.delete(name);
         // console.log(name, this.getRoomById(roomId).observersCounter)
         if (this.getRoomById(roomId).gameType !== 'classic') this.removeUserInTeam(roomId, name);
