@@ -264,7 +264,7 @@ class HostInterfaceManagementService extends ChangeNotifier {
     this._socketService.onMessage(SocketEvent.FINAL_TIME_TRANSITION,
         (timeValue) {
       if (this.gameService.isObserverMode) {
-        this.obsHandleEndQuestion();
+        this.obsHandleFinalTimeTransition(timeValue);
         return;
       }
       this.timerText = timerTransText['RESULT_AVAILABLE_IN'];
