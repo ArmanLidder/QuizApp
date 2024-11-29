@@ -107,19 +107,18 @@ export class GameCreationService {
                 const hostId = roomManager.getSocketIdByUsername(data.roomId, HOST_USERNAME);
                 const observerId = socket.handshake.auth.userId;
                 this.printLogsServer(SocketEvent.NEW_OBSERVER_GAME, hostId, data.roomId);
+                sio.to(String(data.roomId)).emit(SocketEvent.REQUEST_HOST_GAME_STATUS);
                 await this.addUserToRoomCanal(data.roomId, observerId);
                 if (data.isFirst) {
-                    roomManager.updateObserverCounter(data.roomId, HOST_USERNAME, false);
+                    roomManager.updateObserverCounter(data.roomId, HOST_USERNAME, observerId,false);
                     this.sendUpdateGameList(roomManager, sio)
                     socket.join(String(data.roomId));
                     socket.join(String(hostId));
-                    const count = roomManager.getRoomById(data.roomId).observersCounter.get(HOST_USERNAME)
+                    const count = roomManager.getRoomById(data.roomId).observersCounter.get(HOST_USERNAME).length
                     if (count >= 0) {
-                        console.log("sending NEW_OBSERVER_GAME");
                         sio.to(hostId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
                     }
                 }
-                sio.to(String(hostId)).emit(SocketEvent.REQUEST_HOST_GAME_STATUS);
             } catch (e) {
                 if (e instanceof Error) {
                     console.log(e)
@@ -131,15 +130,18 @@ export class GameCreationService {
     private handleGameStatusForObsReception(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.SENDING_HOST_GAME_STATUS, (data: HostCurrentGameInterface) => {
             try {
+                console.log("RECEIVING HOST GAME STATUS")
                 if (data.histogramDataChangingResponses[0] === 1000) { // To tell me it is QCM
                     const game = roomManager.getGameByRoomId(data.roomId)
                     data.histogramDataChangingResponses = Array.from(game.choicesStats.values());
                 }
-                sio.to(String(socket.id)).emit(SocketEvent.RECEIVING_HOST_GAME_STATUS, data); // pt to one socket id
+                sio.to(String(data.roomId)).emit(SocketEvent.RECEIVING_HOST_GAME_STATUS, data); // pt to one socket id
+                console.log("DATA SENT!", data.roomId);
             } catch (e) {
                 if (e instanceof Error) {
                     console.log(e)
                 }
+                console.log("error")
             }
         });
     }
@@ -147,23 +149,22 @@ export class GameCreationService {
     private handleChangeObservedPLayer(roomManager: RoomManagingService, socket: io.Socket, sio: io.Server) {
         socket.on(SocketEvent.CHANGE_OBSERVED_PLAYER, (data: NewObservedPlayer) => {
             try{
+                const observerId = socket.handshake.auth.userId;
                 const observedPlayerId = data.isHost ? HOST_USERNAME : data.oldUserId;
                 const newObservedPlayerId = data.newUserId === roomManager.getRoomById(data.roomId).hostUserId ? HOST_USERNAME : data.newUserId;
                 const observedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, observedPlayerId);
                 const newObservedPlayerSocketId = roomManager.getSocketIdByUsername(data.roomId, newObservedPlayerId);
-                roomManager.updateObserverCounter(data.roomId, observedPlayerId, true);
-                roomManager.updateObserverCounter(data.roomId, newObservedPlayerId, false);
+                roomManager.updateObserverCounter(data.roomId, observedPlayerId, observerId, true);
+                roomManager.updateObserverCounter(data.roomId, newObservedPlayerId, observerId,false);
                 const obsMapCounter = roomManager.getRoomById(data.roomId).observersCounter;
-                const inc_count = obsMapCounter.get(newObservedPlayerId);
-                const dec_count = obsMapCounter.get(observedPlayerId);
+                const inc_count = obsMapCounter.get(newObservedPlayerId).length;
+                const dec_count = obsMapCounter.get(observedPlayerId).length;
                 socket.leave(String(observedPlayerSocketId));
                 socket.join(String(newObservedPlayerSocketId));
                 if (inc_count >= 0) {
-                    console.log("sending CHANGE_OBSERVED_PLAYER");
                     sio.to(newObservedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, inc_count);
                 }
                 if (dec_count >= 0) {
-                    console.log("sending CHANGE_OBSERVED_PLAYER");
                     sio.to(observedPlayerSocketId).emit(SocketEvent.UPDATE_OBS_COUNT, dec_count);
                 }
                 const roomId = data.roomId;
@@ -191,11 +192,9 @@ export class GameCreationService {
                     }
                     sio.to(String(socket.id)).emit(SocketEvent.RECEIVE_PLAYER_GAME_STATUS, player_data);
                     if (game.currentQuizQuestion.type === QuestionType.QCM) {
-                        console.log("sending RECEIVE_PLAYER_GAME_STATUS");
                         sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_PAYER_QCM_CHOICES)
                     }
                     if (game.currentQuizQuestion.type === QuestionType.QRL) {
-                        console.log("sending RECEIVE_PLAYER_GAME_STATUS");
                         sio.to(String(newObservedPlayerSocketId)).emit(SocketEvent.REQUEST_QRL_INTERACTION, newObservedPlayerId)
                     }
                 }
@@ -212,13 +211,11 @@ export class GameCreationService {
             try {
                 const userId = socket.handshake.auth.userId;
                 const room = roomManager.getRoomById(data.roomId);
-                console.log(`Obs Left Event : ${userId} left ${room}`)
                 if (room) {
-                    console.log(`Obs Left Event handled: ${userId} left ${room}`)
                     const ObservedUserId = data.observedId === room.hostUserId ? HOST_USERNAME : data.observedId;
-                    roomManager.updateObserverCounter(data.roomId, ObservedUserId, true);
+                    roomManager.updateObserverCounter(data.roomId, ObservedUserId, userId, true);
                     this.sendUpdateGameList(roomManager, sio)
-                    const count = room.observersCounter.get(ObservedUserId)
+                    const count = room.observersCounter.get(ObservedUserId).length
                     if (count >= 0) {
                         const socketId = roomManager.getSocketIdByUsername(data.roomId, ObservedUserId)
                         if (socketId) sio.to(socketId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
@@ -240,9 +237,8 @@ export class GameCreationService {
                 const hostUserId = room.hostUserId;
                 const incomingUserId = socket.handshake.auth.userId;
                 const userId = hostUserId === incomingUserId ? HOST_USERNAME : incomingUserId;
-                const count = room.observersCounter.get(userId);
+                const count = room.observersCounter.get(userId).length;
                 if (count >= 0) {
-                    console.log("sending new GET_OBS_COUNT");
                     sio.to(socket.id).emit(SocketEvent.UPDATE_OBS_COUNT, count)
                 }
             } catch (e) {
@@ -594,7 +590,15 @@ export class GameCreationService {
                 this.sendUpdateGameList(roomManager, sio);
                 sio.to(String(roomId)).disconnectSockets(true);
             } else {
-                //This is the same code used in PLAYER_LEFT socket event above in the file
+                const userId = socket.handshake.auth.userId;
+                const observedPlayerId = roomManager.findAndDeleteObserver(roomId, userId);
+                if (observedPlayerId) {
+                    const count = roomManager.getRoomById(roomId).observersCounter.get(observedPlayerId).length
+                    if (count >= 0) {
+                        const socketId = roomManager.getSocketIdByUsername(roomId, observedPlayerId)
+                        if (socketId) sio.to(socketId).emit(SocketEvent.UPDATE_OBS_COUNT, count);
+                    }
+                }
                 console.log(`Player Socket disconnection received event receive ${socket.handshake.auth.userId}`)
                 await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
                 const userInfo = roomManager.removeUserBySocketId(socket.id);
@@ -623,7 +627,6 @@ export class GameCreationService {
                 }
             }
         }
-
     }
 
     private async addUserToRoomCanal(roomCode: number, userId: string) {
@@ -633,7 +636,6 @@ export class GameCreationService {
                 permittedUsers: this.fs.firebase.firestore.FieldValue.arrayUnion(userId),
             });
         } catch (error) {
-            console.log(error)
         }
     }
 
@@ -656,7 +658,6 @@ export class GameCreationService {
                 }
             }
         } catch (error) {
-            console.log(error);
         }
     }
 
@@ -668,11 +669,8 @@ export class GameCreationService {
             if (teams) {
                 const members = teams.get(Number(userIdOrTeamId)).members
                 if (members) {
-                    console.log(`Dispatch Update From Team ${userIdOrTeamId}`)
                     for (const userId of members) {
-                        console.log(`Trying Dispatch Update From UserID ${userId}`)
                         if (game.players.get(userId)) {
-                            console.log(`Rly Dispatch Update From UserID ${userId}`)
                             await this.updateStats(userId, game, gameType, type, amount);
                         }
                     }
@@ -717,7 +715,6 @@ export class GameCreationService {
                 currency: this.fs.firebase.firestore.FieldValue.increment(money)
             });
         } catch (error) {
-            console.log(error);
         }
     }
 
@@ -737,7 +734,6 @@ export class GameCreationService {
             const docRef = await this.getDocRef(roomCode);
             await docRef.delete();
         } catch (error) {
-            console.log(error);
         }
     }
 

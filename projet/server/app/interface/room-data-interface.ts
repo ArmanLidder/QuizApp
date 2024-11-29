@@ -20,7 +20,7 @@ export interface RoomData {
     teams?: Map<TeamId, Team>; // teams
     prestige: number;
     total_price: number; // Sum all adding price
-    observersCounter: Map<string, number>; // Map key = UserId as string and value observer count
+    observersCounter: Map<string, string[]>; // Map key = UserId as string and value observer count
     observerTotalCounter: number;
 }
 

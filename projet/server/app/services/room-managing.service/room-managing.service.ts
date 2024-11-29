@@ -69,8 +69,8 @@ export class RoomManagingService {
             teams: new Map<TeamId, Team>(),
             prestige: config.prestige,
             total_price: 0,
-            observersCounter: new Map<string, number>([[HOST_USERNAME, 0]]),
-            observerTotalCounter: 0
+            observersCounter: new Map<string, string[]>([[HOST_USERNAME, []]]),
+            observerTotalCounter: 0,
         };
         this.rooms.set(roomId, roomData);
         return roomId;
@@ -86,20 +86,36 @@ export class RoomManagingService {
         const game_price = this.getRoomById(roomId).price
         if (this.getRoomById(roomId).gameType !== 'classic' && HOST_USERNAME !== username) this.addNewUserInTeam(roomId, username)
         if (HOST_USERNAME !== username && game_price > 0) this.getRoomById(roomId).total_price += game_price
-        if (HOST_USERNAME !== username) this.getRoomById(roomId).observersCounter.set(username, 0);
+        if (HOST_USERNAME !== username) this.getRoomById(roomId).observersCounter.set(username, []);
     }
 
-    updateObserverCounter(roomId: number, userId: string, decrement: boolean) {
+    updateObserverCounter(roomId: number, userId: string, observerId: string, decrement: boolean) {
         const roomObserverCounter = this.getRoomById(roomId).observersCounter;
         const currentObserverValue = roomObserverCounter.get(userId);
         if (decrement) {
-            roomObserverCounter.set(userId, currentObserverValue - 1);
+            const observerValue = currentObserverValue.indexOf(observerId);
+            currentObserverValue.splice(observerValue, 1);
+            roomObserverCounter.set(userId, currentObserverValue);
             this.getRoomById(roomId).observerTotalCounter -= 1;
         } else {
-            roomObserverCounter.set(userId, currentObserverValue + 1);
+            currentObserverValue.push(observerId)
+            roomObserverCounter.set(userId, currentObserverValue);
             this.getRoomById(roomId).observerTotalCounter += 1;
         }
         console.log(decrement, roomObserverCounter)
+    }
+
+    findAndDeleteObserver(roomId: number, observerId: string) {
+        const roomObserverCounter = this.getRoomById(roomId).observersCounter;
+        let user = "";
+        roomObserverCounter.forEach((observers:string[], userId:string)=> {
+            if (observers.includes(observerId)) {
+                this.updateObserverCounter(roomId, userId, observerId, true);
+                user = userId;
+            }
+        })
+        console.log(roomObserverCounter)
+        return user;
     }
 
     getSocketIdByUsername(roomId: number, username: string): string {
