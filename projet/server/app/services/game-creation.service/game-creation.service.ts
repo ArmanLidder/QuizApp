@@ -366,9 +366,9 @@ export class GameCreationService {
                 console.log(`PLAYE_LEFT event receive send REMOVED FROM GAME ${socket.handshake.auth.userId}`);
                 await this.removeUserFromRoomCanal(roomId, socket.handshake.auth.userId, roomManager);
                 const userInfo = roomManager.removeUserBySocketId(socket.id);
-                const obsMap = roomManager.getRoomById(roomId)?.observersCounter;
+                // const obsMap = roomManager.getRoomById(roomId)?.observersCounter;
                 this.sendUpdateGameList(roomManager, sio);
-                if (obsMap) obsMap.delete(socket.handshake.auth.userId);
+                // if (obsMap) obsMap.delete(socket.handshake.auth.userId);
                 sio.to(String(socket.id)).emit(SocketEvent.REMOVED_FROM_GAME);
                 this.sendPlayerListToObserver(roomId, roomManager, sio);
                 this.sendTeams(roomId, roomManager, sio);
