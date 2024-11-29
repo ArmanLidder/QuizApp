@@ -63,7 +63,6 @@ class UserPageCustomisationService extends GetxService {
 
   void subscribeToStoreAccount() {
     String userId = loggedInUserService.getUid()!;
-    _ownedThemes.value = [];
     _firestore.collection('storeProfiles').doc(userId).snapshots().listen((storeAccountSnapshot) async {
       if (storeAccountSnapshot.exists) {
         // Retrieve `itemsOwned` and update cached data
@@ -80,6 +79,7 @@ class UserPageCustomisationService extends GetxService {
           }
         }
         // Update the observable list
+        _ownedThemes.value = [];
         _ownedThemes.assignAll(themes);
       }
     });
