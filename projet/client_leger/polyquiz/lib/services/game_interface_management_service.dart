@@ -50,7 +50,10 @@ class GameInterfaceManagementService extends ChangeNotifier {
         this._socketService.disconnect();
       }
     }
-    if (this.gameService.isObserverMode) return;
+    if (this.gameService.isObserverMode) {
+      this.handleFinalTimeTransition();
+      return;
+    }
     if (this._socketService.isSocketAlive()) {
       this.configureBaseSocketFeatures();
     }

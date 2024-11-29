@@ -110,7 +110,7 @@ class _HostGradingState extends State<HostGrading> {
                             TextStyle(color: _themeService.mainAccent.value)),
                   ],
                   Text(
-                      '${text['ANSWER']}: ${_qrlEvaluationService.currentAnswer}',
+                      '${text['ANSWER']} ${_qrlEvaluationService.currentAnswer}',
                       style: TextStyle(
                           fontSize: 16, color: _themeService.mainAccent.value)),
                   SizedBox(height: 20.0),

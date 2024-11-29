@@ -72,7 +72,7 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
       ObservationService.instance.observeGame(game, context);
     }
     if (_socketService.isSocketAlive()) {
-      if (!isHost) {
+      if (!isHost || this._gameService.isObserverMode) {
         this._gameInterfaceManagementService.gameService.isOfflineMode = false;
         this
             ._gameInterfaceManagementService
