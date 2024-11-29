@@ -27,6 +27,9 @@ import {TranslateService} from "@ngx-translate/core";
 import {GameConfigService} from "@app/services/game-config.service/game-config.service";
 import {OpenaiService} from "@app/services/openai.service/openai.service";
 import {QrlEvaluationService} from "@app/services/qrl-evaluation.service/qrl-evaluation.service";
+import {
+    WaitingRoomManagementService
+} from "@app/services/waiting-room-management.service/waiting-room-management.service";
 
 @Injectable({
     providedIn: 'root',
@@ -50,6 +53,7 @@ export class HostInterfaceManagementService {
     constructor(
         public gameService: GameService,
         private readonly socketService: SocketClientService,
+        private waitingRoom: WaitingRoomManagementService,
         private interactiveListService: InteractiveListSocketService,
         private translate: TranslateService,
         private gameConfig: GameConfigService,
@@ -113,7 +117,6 @@ export class HostInterfaceManagementService {
         this.handleHostPanicMode();
         this.handleHostTimerPause();
         this.handleRefreshQREStats();
-
     }
 
     private handleTimeTransition() {
@@ -154,6 +157,7 @@ export class HostInterfaceManagementService {
                 this.gameService.gameRealService.inTimeTransition = true;
                 this.resetInterface();
                 if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
+                    console.log("Get player list called End question")
                     this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
                 } else {
                     this.sendQrlAnswer();
@@ -175,6 +179,7 @@ export class HostInterfaceManagementService {
         }
         if (this.gameService.question?.type === QuestionType.QCM || this.gameService.question?.type === QuestionType.QRE) {
             if (this.gameService.observingHost) {
+                console.log("Get player list called End question Obs")
                 this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
             }
         } else {
@@ -191,6 +196,7 @@ export class HostInterfaceManagementService {
                     this.isGameOver = true;
                     this.interactiveListService.isFinal = true;
                     this.gameService.audio.pause();
+                    console.log("Get player list called final transition")
                     this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
                     this.socketService.send(SocketEvent.SAVE_FINAL_GAME_STATS, this.gameService.gameRealService.roomId);
                 }
@@ -207,6 +213,7 @@ export class HostInterfaceManagementService {
             this.isGameOver = true;
             this.interactiveListService.isFinal = true;
             this.gameService.audio.pause();
+            console.log("Get player list called final transition Obs")
             this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
         }
     }
@@ -224,18 +231,23 @@ export class HostInterfaceManagementService {
                 [this.EXACT_ANSWER, qreStatsValue[1]],
                 [this.INCORRECT_ANSWER, qreStatsValue[2]]
             ]);
+            console.log("handleRefreshQREStats called ", this.histogramDataChangingResponses)
         });
     }
 
     private handleGetInitialQuestion() {
         this.socketService.on(SocketEvent.GET_INITIAL_QUESTION, async (data: InitialQuestionData) => {
+            console.log("getPlayerList called in Initial ? Host")
             const numberOfPlayers = await this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
             this.initGraph(data.question, numberOfPlayers);
+            // const numberOfPlayers = await this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
+            // this.initGraph(data.question, numberOfPlayers);
         });
     }
 
     private handleGetNextQuestion() {
         this.socketService.on(SocketEvent.GET_NEXT_QUESTION, async (data: NextQuestionData) => {
+            console.log("getPlayerList called in Next ? Host")
             const numberOfPlayers = await this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers);
             this.initGraph(data.question, numberOfPlayers);
         });
@@ -246,6 +258,7 @@ export class HostInterfaceManagementService {
             const playerIndex = this.interactiveListService.players.findIndex((player: Player) => player[0] === username);
             if (playerIndex !== PLAYER_NOT_FOUND_INDEX) {
                 this.leftPlayers.push(this.interactiveListService.players[playerIndex]);
+                console.log("getPlayerList called in Player Left ? Host")
                 this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
             }
         });
@@ -295,6 +308,7 @@ export class HostInterfaceManagementService {
 
     private handleEvaluationOver() {
         this.socketService.on(SocketEvent.EVALUATION_OVER, () => {
+            console.log("getPlayerList called in eval over ? Host")
             this.interactiveListService.getPlayersList(this.roomId, this.leftPlayers, false);
         });
     }
@@ -310,32 +324,36 @@ export class HostInterfaceManagementService {
 
     private handleRequestHostGameStatus() {
         this.socketService.on(SocketEvent.REQUEST_HOST_GAME_STATUS, () => {
-            let histogramDataChangingResponses: [number, number] | number[];
-            if (this.gameService.gameRealService.question?.type === QuestionType.QRE)
-                histogramDataChangingResponses = [
-                    Number(this.histogramDataChangingResponses.get(this.WITHIN_MARGIN)),
-                    Number(this.histogramDataChangingResponses.get(this.EXACT_ANSWER)),
-                    Number(this.histogramDataChangingResponses.get(this.INCORRECT_ANSWER)),
+            if (!this.gameService.observerMode) {
+                let histogramDataChangingResponses: [number, number] | number[];
+                if (this.gameService.gameRealService.question?.type === QuestionType.QRE)
+                    histogramDataChangingResponses = [
+                        Number(this.histogramDataChangingResponses.get(this.WITHIN_MARGIN)),
+                        Number(this.histogramDataChangingResponses.get(this.EXACT_ANSWER)),
+                        Number(this.histogramDataChangingResponses.get(this.INCORRECT_ANSWER)),
+                    ]
+                else histogramDataChangingResponses = [
+                    Number(this.histogramDataChangingResponses.get(ACTIVE)),
+                    Number(this.histogramDataChangingResponses.get(INACTIVE))
                 ]
-            else histogramDataChangingResponses = [
-                Number(this.histogramDataChangingResponses.get(ACTIVE)),
-                Number(this.histogramDataChangingResponses.get(INACTIVE))
-            ]
-            const gameStatus: HostCurrentGameInterface = {
-                roomId: this.roomId,
-                timerText: this.timerText,
-                currentTime: this.gameService.gameRealService.timer,
-                isGameOver: this.isGameOver,
-                leftPlayers: this.leftPlayers,
-                players: this.interactiveListService.players,
-                histogramDataChangingResponses: this.gameService.gameRealService.question?.type === QuestionType.QCM ? [1000] : histogramDataChangingResponses,
-                isHostEvaluating: this.isHostEvaluating,
-                gameStats: this.stringifyStats(),
-                isPaused: this.isPaused,
-                isPanicMode: this.isPanicMode,
-                isValidated: this.gameService.gameRealService.validated
+                const gameStatus: HostCurrentGameInterface = {
+                    roomId: this.roomId,
+                    timerText: this.timerText,
+                    currentTime: this.gameService.gameRealService.timer,
+                    isGameOver: this.isGameOver,
+                    leftPlayers: this.leftPlayers,
+                    players: this.interactiveListService.players,
+                    histogramDataChangingResponses: this.gameService.gameRealService.question?.type === QuestionType.QCM ? [1000] : histogramDataChangingResponses,
+                    isHostEvaluating: this.isHostEvaluating,
+                    gameStats: this.stringifyStats(),
+                    isPaused: this.isPaused,
+                    isPanicMode: this.isPanicMode,
+                    isValidated: this.gameService.gameRealService.validated,
+                    teams: Array.from(this.waitingRoom.teams.entries()),
+                }
+                console.log('sending data to Observer', gameStatus)
+                this.socketService.send(SocketEvent.SENDING_HOST_GAME_STATUS, gameStatus);
             }
-            this.socketService.send(SocketEvent.SENDING_HOST_GAME_STATUS, gameStatus);
         });
     }
 
@@ -348,6 +366,7 @@ export class HostInterfaceManagementService {
         this.isHostEvaluating = false;
         this.histogramDataValue = new Map();
         this.histogramDataChangingResponses = new Map();
+        console.log("Initting graph to empty");
         if (this.gameService.question?.type === QuestionType.QCM) {
             question.choices?.forEach((choice: QuizChoice) => {
                 this.histogramDataValue.set(choice.text, choice.isCorrect as boolean);
@@ -432,6 +451,7 @@ export class HostInterfaceManagementService {
     reset() {
         this.timerText = this.translate.instant('GAME_INTERFACE.TIMER_TEXT.TIME_LEFT');
         this.isGameOver = false;
+        console.log("Ressettings histogrmachngainggresponse")
         this.histogramDataChangingResponses = new Map<string, number>();
         this.histogramDataValue = new Map<string, boolean>();
         this.leftPlayers = [];
