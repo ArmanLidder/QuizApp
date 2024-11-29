@@ -758,6 +758,7 @@ export class GameCreationService {
             const docRef = await this.getDocRef(roomCode);
             await docRef.delete();
         } catch (error) {
+            console.log((error as Error).message);
         }
     }
 
