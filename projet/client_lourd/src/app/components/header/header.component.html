@@ -18,7 +18,7 @@
 
     <div class="container mx-auto text-center">
         <a
-                [routerLink]="showMenu ? ['/home'] : null"
+                (click)="navigateToHome()"
                 [ngClass]="{ 'hover:underline header-animation': showMenu, 'no-underline': !showMenu }"
                 class="text-4xl font-extrabold tracking-wide"
         >
