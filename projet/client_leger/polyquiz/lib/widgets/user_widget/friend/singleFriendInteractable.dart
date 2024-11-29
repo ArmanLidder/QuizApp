@@ -17,7 +17,6 @@ class SingleFriendInteractable extends StatelessWidget {
       final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
       return doc['username'] ?? 'Unknown User';
     } catch (e) {
-      print('Error fetching username: $e');
       return 'Unknown User';
     }
   }

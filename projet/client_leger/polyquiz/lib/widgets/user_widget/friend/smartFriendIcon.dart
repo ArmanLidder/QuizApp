@@ -54,7 +54,6 @@ class _SmartFriendIconState extends State<SmartFriendIcon> {
     final status = await widget.friendService.friendshipStatus(
       widget.targetUserId,
     );
-    print("newStatus: "+ status);
     setState(() {
       _status = status;
     });

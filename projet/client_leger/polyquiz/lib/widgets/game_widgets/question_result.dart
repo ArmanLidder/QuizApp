@@ -50,7 +50,6 @@ class _StatisticZoneState extends State<StatisticZone> {
   void initGraph(QuizQuestion question, int numberOfPlayers) {
     switch (question.type) {
       case QuestionType.QCM:
-        print('INIT GRAPH GOT INTO THE IF');
         if (question.choices == null) {
           return;
         }

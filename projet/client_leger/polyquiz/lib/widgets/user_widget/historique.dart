@@ -29,7 +29,6 @@ class LoginEvenementRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(this.label);
     return Row(
       children: [
         Text(

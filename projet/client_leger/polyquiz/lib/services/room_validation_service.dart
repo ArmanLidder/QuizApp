@@ -72,7 +72,6 @@ class RoomValidationService with ChangeNotifier {
       if (data != null) {
         completer.complete(handleUsernameValidation(data));
       } else {
-        print('Failed to validate username');
         completer.completeError('Failed to validate username');
       }
     });
@@ -82,13 +81,9 @@ class RoomValidationService with ChangeNotifier {
   Future<Map<String, dynamic>> sendRoomId() async {
     final completer = Completer<Map<String, dynamic>>();
     socketService.sendMessageWithAck(SocketEvent.VALIDATE_ROOM_ID, int.parse(roomId!), (data) {
-      print('I am here 2303');
       if (data != null) {
-        print('I am here 030409');
         completer.complete(data);
-        print(data);
       } else {
-        print('Failed to validate roomID');
         completer.completeError('Failed to validate roomID');
       }
     });

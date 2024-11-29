@@ -280,8 +280,6 @@ class _GameConfigWidgetState extends State<GameConfigWidget> {
                         return;
                       }
                       if (_formKey.currentState!.validate()) {
-                        print('got into validate if');
-                        print(_IsAIOn);
                         gameConfigService.setIA(_IsAIOn);
                         gameConfigService.setGameType(_gameType);
                         gameConfigService.setPrice(_price);

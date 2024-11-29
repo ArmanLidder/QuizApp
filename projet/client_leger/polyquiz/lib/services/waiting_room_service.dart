@@ -55,17 +55,14 @@ class WaitingRoomService extends ChangeNotifier {
       this.roomId = int.parse(roomId);
     }
     if (!_socketService.isSocketAlive()) {
-      print("Socket is not connected. Attempting to connect...");
       _socketService.connect(this.userData?.uid);
     }
 
     if (isFromActiveList != null && isFromActiveList) {
-      print("Joining room from active list");
       sendJoinRoomRequest(roomId, username!);
     }
 
     _socketService.onMessage(SocketEvent.CONNECTION, (_) {
-      print('Connected to WebSocket');
       if (username != null && isHost == false) {
         sendJoinRoomRequest(roomId, username);
       }
@@ -74,10 +71,8 @@ class WaitingRoomService extends ChangeNotifier {
 
   Future<String> createRoom(String quizId, GameConfig gameConfig) async {
     final completer = Completer<String>();
-    print('Creating room for quiz: $quizId');
 
     while (!isSocketAlive()) {
-      print("Socket is not connected. Attempting to connect...");
       await connectToSocket("roomId", isHost: true);
       await Future.delayed(Duration(seconds: 1));
     }
@@ -90,11 +85,9 @@ class WaitingRoomService extends ChangeNotifier {
     _socketService.sendMessageWithAck(SocketEvent.CREATE_ROOM, data,
         (roomCode) {
       if (roomCode != null) {
-        print("Room created with ID: $roomCode");
         completer.complete(roomCode.toString());
         this.roomId = roomCode;
       } else {
-        print('Failed to create room');
         completer.completeError('Failed to create room');
       }
     });
@@ -114,12 +107,10 @@ class WaitingRoomService extends ChangeNotifier {
       'username': username,
     };
 
-    print('Joining room with data: $usernameData');
 
     _socketService.sendMessageWithAck(SocketEvent.JOIN_GAME, usernameData,
         (isLocked) {
       if (isLocked is bool) {
-        print("is joining room locked: $isLocked");
         final result = _handleJoiningRoomValidation(isLocked);
         completer.complete(result);
       } else {
@@ -127,7 +118,6 @@ class WaitingRoomService extends ChangeNotifier {
       }
     });
 
-    print("joined room with id: $roomId");
 
     return completer.future;
   }
@@ -165,7 +155,6 @@ class WaitingRoomService extends ChangeNotifier {
 
   void onRemovedPlayer(Function(dynamic) callback) {
     _socketService.onMessage(SocketEvent.REMOVED_PLAYER, (username) {
-      print('REMOVED PLAYER CALLED');
       this.removePlayer(username);
     });
   }
@@ -245,7 +234,6 @@ class WaitingRoomService extends ChangeNotifier {
   void handleNewPlayer() {
     _socketService.onMessage(SocketEvent.NEW_PLAYER, (players) {
       this.players = List<String>.from(players);
-      print('NEW PLAYERS: ${this.players}');
       notifyListeners();
     });
   }
@@ -291,7 +279,6 @@ class WaitingRoomService extends ChangeNotifier {
     this._socketService.onMessage(SocketEvent.GET_TEAMS, (teams) {
       this.teams.clear();
       teams.forEach((teamId, teamData) {
-        print('${teamId} ${teamData['members']}');
         List<String> members = List<String>.from(teamData['members']);
         this.teams[int.parse(teamId)] = members;
       });
@@ -300,9 +287,7 @@ class WaitingRoomService extends ChangeNotifier {
         return TeamsForInterface(entry.key, entry.value);
       }).toList();
 
-      print('\nTeams For Interface:');
       for (var team in teamsForInterface) {
-        print('Team ${team.name}: ${team.userIds}');
       }
       notifyListeners();
     });
@@ -313,7 +298,6 @@ class WaitingRoomService extends ChangeNotifier {
         SocketEvent.GET_ROOM_LOCK_UPDATE,
         (isLocked) => {
               this.isRoomLocked = isLocked,
-              print('ROOM LOCKED STATUS: ${this.isRoomLocked}'),
               notifyListeners()
             });
   }

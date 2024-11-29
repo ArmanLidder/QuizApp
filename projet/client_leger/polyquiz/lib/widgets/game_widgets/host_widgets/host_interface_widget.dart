@@ -44,9 +44,6 @@ class _HostInterfaceState extends State<HostInterface> {
   @override
   void initState() {
     super.initState();
-    print('isSocketAlive: ${_socketService.isSocketAlive()}');
-    print(
-        'isAlreadyInit host interface: ${hostInterfaceManagementService.isAlreadyInit}');
     if (_socketService.isSocketAlive() &&
         !hostInterfaceManagementService.isAlreadyInit) {
       hostInterfaceManagementService.configureBaseSocketFeatures(context);

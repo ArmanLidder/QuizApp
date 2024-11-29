@@ -39,7 +39,6 @@ class GameListService with ChangeNotifier {
     socketService.onMessage(SocketEvent.UPDATE_GAME_LIST, (data) {
       final games =
           (data as List).map((item) => GameListItem.fromJson(item)).toList();
-      print('Received Update GameList: $games');
       _gamesSubject.add(games);
     });
   }

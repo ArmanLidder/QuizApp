@@ -49,7 +49,6 @@ class NotificationService extends GetxController {
       if (channel.id == currentChannelId) return;
       isChannelRead[channel.id!] = false;
       notify();
-      print("New unread message in ${channel.name}");
     }
   }
 

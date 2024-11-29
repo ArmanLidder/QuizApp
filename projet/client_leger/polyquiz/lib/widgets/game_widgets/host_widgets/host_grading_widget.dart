@@ -44,7 +44,6 @@ class _HostGradingState extends State<HostGrading> {
   }
 
   String get AIcorrectionText {
-    print(hostInterfaceManagementService.correctedQrlByOpenAi);
     return hostInterfaceManagementService
             .correctedQrlByOpenAi[_qrlEvaluationService.currentUsername]?[1] ??
         "Open AI is down";
@@ -54,7 +53,6 @@ class _HostGradingState extends State<HostGrading> {
     final score = hostInterfaceManagementService
             .correctedQrlByOpenAi[_qrlEvaluationService.currentUsername]?[0] ??
         0;
-    print('${text['SCORE']}: $score');
     if (!revokeAIcorrection) _qrlEvaluationService.inputPoint = score;
     return score;
   }
@@ -150,7 +148,6 @@ class _HostGradingState extends State<HostGrading> {
                               _qrlEvaluationService
                                   .submitPoint(widget.gameStats);
                             this.revokeAIcorrection = false;
-                            print('I am here multiple times');
                           },
                           child: Text(
                             confirm['CONFIRM'],

@@ -61,7 +61,6 @@ class LoggedInUserService extends GetxController {
     if (fetchedUser != null) {
       _setUser(fetchedUser); // Set the fetched user
     } else {
-      print('User not found with email: $email');
     }
     _subscribeToUser();
     _subscribeToFriendRequests();
@@ -103,7 +102,6 @@ class LoggedInUserService extends GetxController {
       StoreService.instance.setup();
       UserPageCustomisationService.instance.subscribeToStoreAccount();
     } else {
-      print('Login failed: user not found with email $email');
     }
   }
 
@@ -126,9 +124,7 @@ class LoggedInUserService extends GetxController {
       FirebaseFirestore.instance.collection('users').doc(userId).update({
         'loginHistory': loginHistory,
       });
-      print('Logout event added successfully');
     } else {
-      print('User not found.');
     }
     this.user =null;
     this.killSubscription();
@@ -179,7 +175,6 @@ class LoggedInUserService extends GetxController {
 Future<void> killSubscription() async {
   await _userSubscribtion?.cancel();
   await _friendRequestSubscription?.cancel();
-  print("cancelled subsrciption");
 }
 
   @override
@@ -199,7 +194,6 @@ Future<void> killSubscription() async {
         .doc(userId)
         .snapshots()
         .listen((snapshot) {
-      print("userSubscription called");
 
       if (snapshot.exists) {
         User user = User.fromJson(snapshot.data()!);
@@ -208,7 +202,6 @@ Future<void> killSubscription() async {
         friends.assignAll(friendsList.map((friend) => friend.toString()).toList());
       }
     }, onError: (e) {
-      print('Error listening to friends: $e');
     });
   }
 
@@ -221,7 +214,6 @@ Future<void> killSubscription() async {
         .doc(currentUserId)
         .snapshots()
         .listen((snapshot) {
-          print("freindRequestSubscription called");
       if (snapshot.exists) {
         List<dynamic> friendRequestsList = snapshot['friendRequests'] ?? [];
         List<String> pendingRequests = friendRequestsList.map<String>((request) {
@@ -239,7 +231,6 @@ Future<void> killSubscription() async {
         friendRequests.assignAll(pendingRequests);
       }
     }, onError: (e) {
-      print('Error listening to friend requests: $e');
     });
   }
 

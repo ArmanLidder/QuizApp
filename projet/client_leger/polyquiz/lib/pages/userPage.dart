@@ -25,9 +25,7 @@ class Userpage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(this.userData);
     this.userData = this.loggedInUserService.getUser();
-    print(this.userData);
 
     return Obx(() {
       Language uselessShit = transService.languageValue.value;
