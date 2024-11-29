@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/services/observation_service.dart';
 import 'package:polyquiz/services/socket_service.dart';
+import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 import 'package:polyquiz/services/translationService.dart';
 
@@ -24,6 +25,7 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
   // SERVICES
   final observationService = ObservationService.instance;
   final socketService = SocketService();
+  final themeService = ThemeService.instance;
 
   @override
   void initState() {
@@ -36,6 +38,10 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        color: themeService.mainBackground.value,
+        borderRadius: BorderRadius.circular(20)
+      ),
       child: Column(
           children: <Widget>[
             getTitleWidget(),
@@ -52,9 +58,11 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
     return Center(
       child: Text(
       titleText,
+      textAlign: TextAlign.center,
       style: TextStyle(
-        color: Colors.blue.shade700,
+        color: themeService.secondaryBackground.value,
         fontWeight: FontWeight.bold,
+        fontSize: 35,
       ),
       ),
     );
@@ -82,10 +90,10 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
         },
       child: Text(
         observeButtonText,
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: themeService.secondaryAccent.value),
       ),
       style: TextButton.styleFrom(
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: themeService.secondaryBackground.value,
       ),
     );
 
@@ -111,10 +119,10 @@ class _ObservationListWidgetState extends State<ObservationListWidget> {
       }, 
       child: Text(
         cancelButtonText,
-        style: TextStyle(color: Colors.red),
+        style: TextStyle(color: Colors.white),
       ),
       style: TextButton.styleFrom(
-        side: BorderSide(color: Colors.red),
+        backgroundColor: Colors.red,
       ),
       ),
     );
