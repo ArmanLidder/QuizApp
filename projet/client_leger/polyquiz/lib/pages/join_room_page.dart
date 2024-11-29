@@ -332,6 +332,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                             color: themeService.mainAccent.value)),
                     SizedBox(height: 16),
                     TextFormField(
+                      style: TextStyle(color: themeService.mainAccent.value),
                       controller: _roomIdController,
                       decoration: InputDecoration(
                         labelText: roomPromptText['ENTER_CODE_LABEL'],

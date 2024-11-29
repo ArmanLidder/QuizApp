@@ -5,6 +5,7 @@ import 'package:polyquiz/services/qrl_evaluation_service.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/services/translationService.dart';
+import 'package:polyquiz/widgets/user_widget/smartAvatar.dart';
 
 class HostGrading extends StatefulWidget {
   final List<QuestionStatistics> gameStats;
@@ -109,7 +110,7 @@ class _HostGradingState extends State<HostGrading> {
                             TextStyle(color: _themeService.mainAccent.value)),
                   ],
                   Text(
-                      '${text['ANSWER']}: ${_qrlEvaluationService.currentAnswer}',
+                      '${text['ANSWER']} ${_qrlEvaluationService.currentAnswer}',
                       style: TextStyle(
                           fontSize: 16, color: _themeService.mainAccent.value)),
                   SizedBox(height: 20.0),
@@ -193,9 +194,19 @@ class _HostGradingState extends State<HostGrading> {
                           _qrlEvaluationService.points.length, (index) {
                         return DataRow(cells: [
                           DataCell(
-                              Text(_qrlEvaluationService.usernames[index])),
-                          DataCell(Text(
-                              _qrlEvaluationService.points[index].toString()))
+                                  Center(
+                                  child: RepaintBoundary(
+                                    child: SmartAvatar(
+                                            userId: _qrlEvaluationService.usernames[index],
+                                            hasName: true,
+                                            interactible: true,
+                                            applyTheme: true,
+                                          ),
+                                  ),
+                                ),),
+                          DataCell((Text(
+                                _qrlEvaluationService.points[index].toString(), style: TextStyle(
+                                    color: _themeService.mainAccent.value))))
                         ]);
                       })),
                   SizedBox(height: .0),
