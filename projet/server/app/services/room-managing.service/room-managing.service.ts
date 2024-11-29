@@ -32,6 +32,18 @@ export class RoomManagingService {
         return res.length > 0 ? res : undefined;
     }
 
+    getObserverRoomId(userId: string) {
+        for (const [roomId, roomData] of this.rooms.entries()) {
+            for (const [_, observersId] of roomData.observersCounter.entries()) {
+                if (observersId.includes(userId)) {
+                    console.log("Observer", userId, " found in ", roomId);
+                    return roomId;
+                }
+            }
+        }
+        return null;
+    }
+
 
     get roomMap() {
         return this.rooms;
