@@ -106,8 +106,7 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
       }
       waitingRoomService.configureBaseSocketFeatures();
       setState(() {});
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   void _toggleRoomLock() {
@@ -501,7 +500,6 @@ class SmartAvatarWrapper extends StatelessWidget {
       userId: userId,
       hasName: true,
       interactible: true,
-      applyTheme: false,
     );
   }
 }
