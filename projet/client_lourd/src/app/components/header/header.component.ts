@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit {
 
     openSettingsDialog() {
         this.dialog.open(SettingsDialogComponent, {
-            width: '400px',
+            width: '500px',
             height: '250px',
             panelClass: 'settingsDialogClass'
         });

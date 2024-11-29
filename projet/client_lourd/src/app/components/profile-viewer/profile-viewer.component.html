@@ -1,23 +1,23 @@
 <div class="w-full p-4 bg-white relative !bg-bgPrimary">
     <ng-container *ngIf="viewedUser$ | async as user" class="w-full">
-        <div *ngIf="!hideFriendButtons" class="absolute top-2 right-2">
-            <ng-container *ngIf="isFriend$ | async; else addOrPendingIcons">
-                <span class="text-primary font-semibold">
-                    <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.ALREADY_FRIENDS_TOOLTIP' | translate" matTooltipClass="custom-tooltip">people</mat-icon>
-                </span>
-            </ng-container>
+<!--        <div *ngIf="!hideFriendButtons" class="absolute top-2 right-2">-->
+<!--            <ng-container *ngIf="isFriend$ | async; else addOrPendingIcons">-->
+<!--                <span class="text-primary font-semibold">-->
+<!--                    <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.ALREADY_FRIENDS_TOOLTIP' | translate" matTooltipClass="custom-tooltip">people</mat-icon>-->
+<!--                </span>-->
+<!--            </ng-container>-->
 
-            <ng-template #addOrPendingIcons>
-                <ng-container *ngIf="!(hasPendingRequest$ | async); else pendingRequestIcon">
-                    <button (click)="sendFriendRequest(user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out">
-                        <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.SEND_FRIEND_REQUEST_TOOLTIP' | translate">person_add</mat-icon>
-                    </button>
-                </ng-container>
-                <ng-template #pendingRequestIcon>
-                    <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.REQUEST_PENDING_TOOLTIP' | translate" matTooltipClass="custom-tooltip">hourglass_empty</mat-icon>
-                </ng-template>
-            </ng-template>
-        </div>
+<!--            <ng-template #addOrPendingIcons>-->
+<!--                <ng-container *ngIf="!(hasPendingRequest$ | async); else pendingRequestIcon">-->
+<!--                    <button (click)="sendFriendRequest(user)" class="text-black hover:text-gray-600 font-semibold transition duration-300 ease-in-out">-->
+<!--                        <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.SEND_FRIEND_REQUEST_TOOLTIP' | translate">person_add</mat-icon>-->
+<!--                    </button>-->
+<!--                </ng-container>-->
+<!--                <ng-template #pendingRequestIcon>-->
+<!--                    <mat-icon class="!text-primary" [matTooltip]="'PROFILE_POPUP.REQUEST_PENDING_TOOLTIP' | translate" matTooltipClass="custom-tooltip">hourglass_empty</mat-icon>-->
+<!--                </ng-template>-->
+<!--            </ng-template>-->
+<!--        </div>-->
 
         <div class="flex items-start space-x-4 !text-primary">
             <div class="relative flex-shrink-0">
@@ -53,7 +53,7 @@
             </div>
             <div class="flex justify-between py-1">
                 <span>{{ 'PROFILE_POPUP.AVG_GAME_TIME' | translate }}:</span>
-                <span class="font-medium">{{ user.stats.avgGameTime || 0}} {{ 'PROFILE_POPUP.SECONDS' | translate }}</span>
+                <span class="font-medium">{{ user.stats.avgGameTime || 0}} s</span>
             </div>
         </div>
         <div class="mt-4 !text-primary">

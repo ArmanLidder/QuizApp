@@ -40,13 +40,6 @@ export class FriendsComponent {
                     request.friendRequests.some((friendRequest: FriendRequest) => friendRequest.fromUserId === currentUser?.uid)
                 );
 
-                pendingRequests.forEach(request=>{
-                    if (currentUser?.friends.includes(request.uid)) {
-                        console.log("DENY!!")
-                        this.denyFriendRequest(request.uid);
-                    }
-                })
-
                 if (matchingRequest) {
                     this.acceptFriendRequest(matchingRequest.uid);
                 }

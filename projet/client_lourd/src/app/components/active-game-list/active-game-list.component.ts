@@ -97,7 +97,8 @@ export class ActiveGameListComponent implements OnInit {
                 this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.EXCLUSIVE_FRIENDS_GAME").toPromise());
             } else {
                 const isPrestigeValid = await this.validatePrestige(game.prestige);
-                const enoughMoney = await this.validateMoney(game.price);
+                const currentUserMoney = (await firstValueFrom(this.roomValidationService.user$) as User)?.currency;
+                const enoughMoney = currentUserMoney >= game.price;
                 if (!isPrestigeValid) {
                     this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.INSUFFICIENT_PRESTIGE").toPromise());
                 } else if (!enoughMoney){
@@ -111,7 +112,10 @@ export class ActiveGameListComponent implements OnInit {
                         this.snackbarService.show(await this.translate.get("ACTIVE_GAME_LIST.ROOM_LOCKED").toPromise());
                     }
                     const isValid = !this.roomValidationService.isLocked && this.roomValidationService.isUsernameValid;
-                    if (isValid) this.sendAllDataToWaitingRoom();
+                    if (isValid) {
+                        this.sendAllDataToWaitingRoom()
+                        await this.userService.updateUser({currency: (currentUserMoney - game.price)})
+                    }
                 }
             }
         } catch(error:any) {
@@ -154,10 +158,10 @@ export class ActiveGameListComponent implements OnInit {
         return currentUserPrestige >= prestige;
     }
 
-    private async validateMoney(money: number) {
-        const currentUserMoney = (await firstValueFrom(this.roomValidationService.user$) as User)?.currency;
-        const isValid = currentUserMoney >= money;
-        if (isValid) await this.userService.updateUser({currency: (currentUserMoney - money)});
-        return isValid;
-    }
+    // private async validateMoney(money: number) {
+    //     const currentUserMoney = (await firstValueFrom(this.roomValidationService.user$) as User)?.currency;
+    //     const isValid = currentUserMoney >= money;
+    //     if (isValid) await this.userService.updateUser({currency: (currentUserMoney - money)});
+    //     return isValid;
+    // }
 }

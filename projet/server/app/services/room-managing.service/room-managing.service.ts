@@ -163,7 +163,6 @@ export class RoomManagingService {
         playerMap.delete(name);
         this.getRoomById(roomId).observersCounter.delete(name);
         console.log(name, this.getRoomById(roomId).observersCounter)
-        // new code
         if (this.getRoomById(roomId).gameType !== 'classic') this.removeUserInTeam(roomId, name);
     }
 
@@ -232,9 +231,12 @@ export class RoomManagingService {
     }
 
     private removeUserInTeam(roomId: number, name: string) {
+        const room = this.getRoomById(roomId)
+        const isOnGoing = room.onGoing;
         const teamMap = this.getRoomById(roomId).teams
         teamMap.forEach((team: Team, teamId: number) => {
-            if (team.members.includes(name)) {
+            if (team.members.includes(name) && !isOnGoing) {
+                console.log(`Remove User was called for Teams with reassignement`)
                 const isEmpty = team.removeMember(name);
                 if (isEmpty) {
                     teamMap.delete(teamId);

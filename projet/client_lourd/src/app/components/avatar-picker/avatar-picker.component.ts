@@ -29,9 +29,11 @@ export class AvatarPickerComponent {
         this.loading = true;
         this.avatarService.getDefaultAvatarUrls().subscribe((avatars: string[]) => {
             this.defaultAvatars = avatars;
+            this.selectedAvatar = this.defaultAvatars[0];
+            this.avatarSelected.emit(this.selectedAvatar);
+            this.loading = false;
         });
         if (this.showOwnedAvatars) this.ownedAvatars = await this.avatarService.getBoughtAvatars();
-        this.loading = false;
     }
 
     selectAvatar(avatarUrl: string): void {

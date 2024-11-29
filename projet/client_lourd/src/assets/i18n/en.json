@@ -570,8 +570,10 @@
   },
   "SETTINGS_POPUP" : {
     "SETTINGS": "Settings",
-    "LIGHT": "light",
-    "DARK": "dark",
+    "dark":"dark",
+    "light":"light",
+    "disco":"disco",
+    "pinkGrey":"pink-grey",
     "LANGUAGE": "Language",
     "THEME": "Theme"
   }

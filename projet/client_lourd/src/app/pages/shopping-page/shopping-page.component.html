@@ -87,7 +87,8 @@
                  class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 <div *ngFor="let item of rewardItems" class="bg-bgSecondary p-3 rounded-lg shadow-lg flex flex-col items-center">
                     <img *ngIf="item.source" [src]="item.source" alt="{{ item.name }}" class="w-16 h-16 rounded-full mb-2 object-cover" />
-                    <h3 class="text-base font-medium">{{ item.name }}</h3>
+                    <h3 *ngIf="item.name === 'pinkGrey'" class="text-base font-medium">{{ 'SETTINGS_POPUP.pinkGrey' | translate }}</h3>
+                    <h3 *ngIf="item.name != 'pinkGrey'" class="text-base font-medium">{{ item.name }}</h3>
                     <button
                             [ngClass]="{
                         'bg-gray-400 cursor-not-allowed': item.isOwned,
