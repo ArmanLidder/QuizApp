@@ -1,4 +1,10 @@
-<div class="container">
+<div
+        *ngIf="observerEnteringRoom"
+        class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-md"
+>
+    <mat-spinner [diameter]="50"></mat-spinner>
+</div>
+<div *ngIf="!observerEnteringRoom" class="container">
     <table class="games-table">
         <thead>
         <tr>
