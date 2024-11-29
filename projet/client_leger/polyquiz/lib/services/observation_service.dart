@@ -148,12 +148,10 @@ class ObservationService extends GetxController {
   }
 
   TransportStatsFormat parseGameStats(String stringifyStats) {
-    final parsedData = jsonDecode(stringifyStats);
-    if (parsedData is List<List>) {
-      return parsedData.map((datum) {
-        return TransportStats.fromJson(datum);
-      }).toList();
-    } else return [];
+    List<dynamic> parsedData = jsonDecode(stringifyStats);
+    return parsedData.map((datum) {
+      return TransportStats.fromJson(datum);
+    }).toList();
   }
 
   void unpackStats(TransportStatsFormat stats) {
