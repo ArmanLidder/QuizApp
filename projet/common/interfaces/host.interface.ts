@@ -37,6 +37,7 @@ export interface HostCurrentGameInterface {
     isPaused: boolean;
     isPanicMode: boolean;
     isValidated: boolean;
+    teams?: any;
 }
 
 
