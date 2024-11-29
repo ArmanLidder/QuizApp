@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {SocketClientService} from "@app/services/socket-client.service/socket-client.service";
 import {SocketEvent} from "@common/socket-event-name/socket-event-name";
 import {BehaviorSubject} from "rxjs";
@@ -11,12 +11,19 @@ export class ObserverCounterService {
     private obsCountSubject = new BehaviorSubject<number>(0);
     public obsCounter$ = this.obsCountSubject.asObservable();
 
-    constructor(private socketService: SocketClientService, private gameService: GameService) {
-        this.initialize();
+    // constructor(private socketService: SocketClientService, private gameService: GameService) {
+    //     this.initialize();
+    // }
+
+    constructor(private injector: Injector, private socketService: SocketClientService) {
+        setTimeout(() => {
+            const gameService = this.injector.get(GameService);
+            this.initialize(gameService);
+        });
     }
 
-    initialize() {
-        this.socketService.send(SocketEvent.GET_OBS_COUNT, this.gameService.gameRealService.roomId);
+    initialize(gameService: GameService) {
+        this.socketService.send(SocketEvent.GET_OBS_COUNT, gameService.gameRealService.roomId);
         if (this.socketService.isSocketAlive()) {
             if (!this.socketService.socket.hasListeners(SocketEvent.UPDATE_OBS_COUNT)) this.handleUpdateCounter();
         }
