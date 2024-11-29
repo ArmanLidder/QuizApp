@@ -4,6 +4,7 @@ import 'package:polyquiz/services/host_interface_management_service.dart';
 import 'package:polyquiz/services/qrl_evaluation_service.dart';
 import 'package:polyquiz/services/game_config_service.dart';
 import 'package:polyquiz/services/theme_service.dart';
+import 'package:polyquiz/services/translationService.dart';
 
 class HostGrading extends StatefulWidget {
   final List<QuestionStatistics> gameStats;
@@ -25,6 +26,10 @@ class _HostGradingState extends State<HostGrading> {
       HostInterfaceManagementService();
   ThemeService _themeService = ThemeService.instance;
   bool revokeAIcorrection = false;
+  Map get text =>
+      TranslationService.instance.text['GAME_INTERFACE']['QRL_CORRECTION'];
+  Map get textAI => TranslationService.instance.text['GAME_CONFIG_DIALOG'];
+  Map get confirm => TranslationService.instance.text['AVATAR_MODIFICATION'];
 
   @override
   void initState() {
@@ -49,7 +54,7 @@ class _HostGradingState extends State<HostGrading> {
     final score = hostInterfaceManagementService
             .correctedQrlByOpenAi[_qrlEvaluationService.currentUsername]?[0] ??
         0;
-    print('Score: $score');
+    print('${text['SCORE']}: $score');
     if (!revokeAIcorrection) _qrlEvaluationService.inputPoint = score;
     return score;
   }
@@ -71,7 +76,7 @@ class _HostGradingState extends State<HostGrading> {
               return Column(
                 children: [
                   Divider(),
-                  Text('Correction de la réponse:',
+                  Text(text['QUESTION_CORRECTION'],
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -81,7 +86,7 @@ class _HostGradingState extends State<HostGrading> {
                   if (hostInterfaceManagementService
                       .gameService.realGameService.isAION) ...[
                     Text(
-                      'Correction IA',
+                      textAI['IA_CORRECTION'],
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -89,7 +94,8 @@ class _HostGradingState extends State<HostGrading> {
                     ),
                     Row(
                       children: [
-                        Icon(Icons.smart_toy, color: _themeService.mainAccent.value),
+                        Icon(Icons.smart_toy,
+                            color: _themeService.mainAccent.value),
                         SizedBox(width: 5),
                         Flexible(
                           child: Text(AIcorrectionText,
@@ -100,32 +106,38 @@ class _HostGradingState extends State<HostGrading> {
                         ),
                       ],
                     ),
-                    Text('Points : $AIscore',
+                    Text('${text['SCORE']} : $AIscore',
                         style:
                             TextStyle(color: _themeService.mainAccent.value)),
                   ],
-                  Text('Réponse: ${_qrlEvaluationService.currentAnswer}',
+                  Text(
+                      '${text['ANSWER']}: ${_qrlEvaluationService.currentAnswer}',
                       style: TextStyle(
                           fontSize: 16, color: _themeService.mainAccent.value)),
                   SizedBox(height: 20.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                        DropdownButton<int>(
-                        value: revokeAIcorrection ? _qrlEvaluationService.inputPoint : AIscore,
+                      DropdownButton<int>(
+                        dropdownColor: _themeService.mainBackground.value,
+                        value: revokeAIcorrection
+                            ? _qrlEvaluationService.inputPoint
+                            : AIscore,
                         style: TextStyle(color: _themeService.mainAccent.value),
                         items: _qrlEvaluationService.scores.map((int score) {
                           return DropdownMenuItem<int>(
-                          value: score,
-                          child: Text(score.toString()),
+                            value: score,
+                            child: Text(score.toString(),
+                                style: TextStyle(
+                                    color: _themeService.mainAccent.value)),
                           );
                         }).toList(),
                         onChanged: (value) {
                           if (value != null) {
-                          switchScore(value);
+                            switchScore(value);
                           }
                         },
-                        ),
+                      ),
                       SizedBox(
                         width: 20.0,
                       ),
@@ -141,9 +153,9 @@ class _HostGradingState extends State<HostGrading> {
                             print('I am here multiple times');
                           },
                           child: Text(
-                            'Confirmer',
+                            confirm['CONFIRM'],
                             style: TextStyle(
-                                color: Color.fromRGBO(255, 255, 255, 1),
+                                color: _themeService.secondaryAccent.value,
                                 fontSize: 18,
                                 fontWeight: FontWeight.normal),
                           )),
@@ -153,35 +165,45 @@ class _HostGradingState extends State<HostGrading> {
                 ],
               );
             } else {
-                return Column(
-                  children: [
-                    DataTable(
-                        headingRowColor: WidgetStateProperty.all(
-                            _themeService.secondaryBackground.value),
-                        headingTextStyle: TextStyle(
-                            color: _themeService.secondaryAccent.value,
-                            fontWeight: FontWeight.bold),
-                        border: TableBorder.all(),
-                        columns: [
-                          DataColumn(
-                            label: Expanded(child: Center(child: Text('Nom'))),
-                          ),
-                          DataColumn(
-                            label: Expanded(child: Center(child: Text('Note'))),
-                          ),
-                        ],
-                        rows: List<DataRow>.generate(
-                            _qrlEvaluationService.points.length, (index) {
-                          return DataRow(cells: [
-                            DataCell(
-                                Text(_qrlEvaluationService.usernames[index])),
-                            DataCell(Text(
-                                _qrlEvaluationService.points[index].toString()))
-                          ]);
-                        })),
-                    SizedBox(height: .0),
-                  ],
-                );
+              return Column(
+                children: [
+                  DataTable(
+                      headingRowColor: WidgetStateProperty.all(
+                          _themeService.secondaryBackground.value),
+                      headingTextStyle: TextStyle(
+                          color: _themeService.secondaryAccent.value,
+                          fontWeight: FontWeight.bold),
+                      border: TableBorder.all(),
+                      columns: [
+                        DataColumn(
+                          label: Expanded(
+                              child: Center(
+                                  child: Text(text['NAME'],
+                                      style: TextStyle(
+                                          color: _themeService
+                                              .mainAccent.value)))),
+                        ),
+                        DataColumn(
+                          label: Expanded(
+                              child: Center(
+                                  child: Text(text['SCORE'],
+                                      style: TextStyle(
+                                          color: _themeService
+                                              .mainAccent.value)))),
+                        ),
+                      ],
+                      rows: List<DataRow>.generate(
+                          _qrlEvaluationService.points.length, (index) {
+                        return DataRow(cells: [
+                          DataCell(
+                              Text(_qrlEvaluationService.usernames[index])),
+                          DataCell(Text(
+                              _qrlEvaluationService.points[index].toString()))
+                        ]);
+                      })),
+                  SizedBox(height: .0),
+                ],
+              );
             }
           }),
     );
