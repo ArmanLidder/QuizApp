@@ -335,8 +335,6 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                       style: TextStyle(color: themeService.mainAccent.value),
                       controller: _roomIdController,
                       decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
                         hintText: _roomIdController.text.isEmpty
                             ? roomPromptText['ENTER_CODE_LABEL']
                             : null,
