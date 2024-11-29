@@ -16,6 +16,8 @@ export class InteractiveListSocketService {
     players: Player[] = [];
     isFinal: boolean = false;
     private actualStatus: Player[] = [];
+    private isFetchingPlayers = false;
+
 
     constructor(private socketService: SocketClientService, private gameService: GameService, private usersService: UsersService) {
         this.reset();
@@ -25,9 +27,19 @@ export class InteractiveListSocketService {
     // color to red for all remaining players and if set to false the method will keep the real in game live status.
     // This allows the programmer to refresh the list according to the situation (next question or in question);
     async getPlayersList(roomId: number, leftPlayers: Player[] = [], resetPlayerStatus: boolean = true) {
-        return new Promise<number>((resolve) => {
-            this.gatherPlayersUsername({ resetPlayerStatus, roomId }, resolve, leftPlayers);
-        });
+        // console.log("GetPlayerList left player", leftPlayers);
+        // return new Promise<number>((resolve) => {
+        //     this.gatherPlayersUsername({ resetPlayerStatus, roomId }, resolve, leftPlayers);
+        // });
+        if (this.isFetchingPlayers) return;
+        this.isFetchingPlayers = true;
+        try {
+            return await new Promise<number>((resolve) => {
+                this.gatherPlayersUsername({ resetPlayerStatus, roomId }, resolve, leftPlayers);
+            });
+        } finally {
+            this.isFetchingPlayers = false;
+        }
     }
 
     toggleChatPermission(username: string, roomId: number) {
@@ -70,13 +82,14 @@ export class InteractiveListSocketService {
     }
 
     private async addPlayer(userInfo: UserData, score: Score, leftPlayers: Player[]) {
-        const status = this.initPlayerStatus(userInfo.username, userInfo.resetPlayerStatus, leftPlayers);
-        const canChat = this.canPlayerChat(userInfo.username);
-
-        let user = await firstValueFrom(this.usersService.getUser(userInfo.username));
-        const retrievedUsername = user?.username || '';
-
-        this.players.push([userInfo.username, score.points, score.bonusCount, status, canChat, retrievedUsername]);
+        const playerExists = this.players.some(player => player[0] === userInfo.username);
+        if (!playerExists) {
+            const status = this.initPlayerStatus(userInfo.username, userInfo.resetPlayerStatus, leftPlayers);
+            const canChat = this.canPlayerChat(userInfo.username);
+            let user = await firstValueFrom(this.usersService.getUser(userInfo.username));
+            const retrievedUsername = user?.username || '';
+            this.players.push([userInfo.username, score.points, score.bonusCount, status, canChat, retrievedUsername]);
+        }
     }
 
     private canPlayerChat(username: string) {
@@ -116,7 +129,7 @@ export class InteractiveListSocketService {
 
     private initPlayerStatus(username: string, resetPlayerStatus: boolean, leftPlayers: Player[]) {
         if (this.isPlayerGone(username, leftPlayers)) return PlayerStatus.LEFT;
-        else if (!resetPlayerStatus) return this.getActualStatus(username);
+        else if (!resetPlayerStatus && this.actualStatus.length !== 0) return this.getActualStatus(username);
         else return this.isFinal ? PlayerStatus.END_GAME : PlayerStatus.NO_INTERACTION;
     }
 
