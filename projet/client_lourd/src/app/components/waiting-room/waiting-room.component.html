@@ -13,7 +13,7 @@
             <h3 *ngIf='isHost && waitingRoomManagementService.isRoomLocked && validationBeforeEntry()' style="color: red">
                 {{ setHostValidationError() }}
             </h3>
-            <h3 *ngIf='!isHost && waitingRoomManagementService.isRoomLocked && validationBeforeEntry()' style="color: red">
+            <h3 *ngIf='!isHost && waitingRoomManagementService.isRoomLocked' style="color: red">
                 {{ setPlayerValidationError() }}
             </h3>
         </div>

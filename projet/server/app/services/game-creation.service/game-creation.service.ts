@@ -751,7 +751,7 @@ export class GameCreationService {
                 for (const teamId of teamsIds) {
                     console.log(`Team Canal to be deleted ${roomCode} ${teamId}`)
                     const teamDocRef = await this.getTeamCanal(roomCode, teamId);
-                    await teamDocRef.delete();
+                    if (teamDocRef !== null) await teamDocRef.delete();
                 }
             }
             console.log(`Delete room Canal to be deleted Room ${roomCode} `)
@@ -776,7 +776,10 @@ export class GameCreationService {
             .collection('canals')
             .where('name', '==', `${roomCode} #${teamId}`)
             .get();
-        if (querySnapshot.empty) throw new Error(`No canal found with roomCode: ${roomCode}`);
+        if (querySnapshot.empty) {
+            console.log(`No Team canal found with roomCode: ${roomCode}`);
+            return null;
+        }
         return querySnapshot.docs[0].ref;
     }
 
