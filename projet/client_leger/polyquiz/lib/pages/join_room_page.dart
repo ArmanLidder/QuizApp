@@ -342,7 +342,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a Room ID';
+                          return roomErrorText['VALIDATION_CODE_ERROR'];
                         }
                         return null;
                       },
