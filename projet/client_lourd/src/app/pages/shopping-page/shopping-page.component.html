@@ -25,10 +25,10 @@
                             (click)="buyItem(item.id)">
                         <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
                         <ng-container *ngIf="!item.isOwned && !hasEnoughCurrency(item)">
-                            {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
+                            {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }}) $
                         </ng-container>
                         <ng-container *ngIf="!item.isOwned && hasEnoughCurrency(item)">
-                            {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }} $)
+                            {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }}) $
                         </ng-container>
                     </button>
                 </div>
@@ -62,10 +62,10 @@
                             (click)="buyItem(item.id)">
                         <ng-container *ngIf="item.isOwned">{{ 'SHOPPING.OWNED' | translate }}</ng-container>
                         <ng-container *ngIf="!item.isOwned && !hasEnoughCurrency(item)">
-                            {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
+                            {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }}) $
                         </ng-container>
                         <ng-container *ngIf="!item.isOwned && hasEnoughCurrency(item)">
-                            {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }})
+                            {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }}) $
                         </ng-container>
                     </button>
                 </div>
@@ -105,10 +105,10 @@
                             {{ getRequirementMessage(item) }}
                         </ng-container>
                         <ng-container *ngIf="!item.isOwned && meetsRequirements(item) && !hasEnoughCurrency(item)">
-                            {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }})
+                            {{ 'SHOPPING.NOT_ENOUGH_FUNDS' | translate }} ({{ item.cost }}) $
                         </ng-container>
                         <ng-container *ngIf="!item.isOwned && meetsRequirements(item) && hasEnoughCurrency(item)">
-                            {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }})
+                            {{ 'SHOPPING.BUY' | translate }} ({{ item.cost }}) $
                         </ng-container>
                     </button>
                 </div>
