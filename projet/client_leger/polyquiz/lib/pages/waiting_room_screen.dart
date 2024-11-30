@@ -34,7 +34,7 @@ class WaitingRoomScreen extends StatefulWidget {
 }
 
 class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
-  String roomId = "nothing";
+  String roomId = "0";
   String username = "nothing";
   bool isGameStarting = false;
   String? newPlayerName;
