@@ -249,113 +249,117 @@ class _MyWidgetState extends State<GamePage> with WidgetsBindingObserver {
                               ),
                               backgroundColor:
                                   themeService.mainBackground.value,
-                              body: Stack(children: [
-                                ListView(shrinkWrap: true, children: [
-                                  Visibility(
-                                    // Vue du joueur commence ici
-                                    visible: !isHost,
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: TimerWidget(
-                                                isHost: isHost,
-                                                timeTxt:
-                                                    _gameInterfaceManagementService
-                                                        .timerText,
-                                                time:
-                                                    _gameInterfaceManagementService
-                                                        .gameService.timer,
-                                              ),
-                                            ),
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: QuestionInfoWidget(
-                                                  questionNum:
+                              body: Container(
+                                child: Stack(children: [
+                                  ListView(children: [
+                                    //previous shrinkwrap
+                                    Visibility(
+                                      // Vue du joueur commence ici
+                                      visible: !isHost,
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: TimerWidget(
+                                                  isHost: isHost,
+                                                  timeTxt:
                                                       _gameInterfaceManagementService
-                                                          .gameService
-                                                          .questionNumber,
-                                                  questionPts:
+                                                          .timerText,
+                                                  time:
                                                       _gameInterfaceManagementService
-                                                              .gameService
-                                                              .question
-                                                              ?.points ??
-                                                          0,
-                                                  questionText:
-                                                      _gameInterfaceManagementService
-                                                              .gameService
-                                                              .question
-                                                              ?.text ??
-                                                          ''),
-                                            ),
-                                            SizedBox(height: 20),
-                                            Expanded(
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                margin: EdgeInsets.all(5.0),
-                                                padding: EdgeInsets.all(10.0),
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: themeService
-                                                            .mainAccent.value)),
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                      '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
-                                                      style: TextStyle(
-                                                          fontSize: 20,
-                                                          color: themeService
-                                                              .mainAccent
-                                                              .value),
-                                                    ),
-                                                    _gameInterfaceManagementService
-                                                                .isBonus &&
-                                                            !this
-                                                                ._gameService
-                                                                .isObserverMode
-                                                        ? Text(
-                                                            gameText[
-                                                                'BONUS_RECEIVED_FEEDBACK'],
-                                                            style: TextStyle(
-                                                                color: themeService
-                                                                    .mainAccent
-                                                                    .value))
-                                                        : SizedBox()
-                                                  ],
+                                                          .gameService.timer,
                                                 ),
                                               ),
-                                            )
-                                          ],
-                                        ),
-                                        if (getImageWidgetFromQuestion() !=
-                                            null)
-                                          getImageWidgetFromQuestion()!,
-                                        getPlayerQuestion(),
-                                        Visibility(
-                                          visible:
-                                              _gameInterfaceManagementService
-                                                  .gameService
-                                                  .realGameService
-                                                  .isHostEvaluating,
-                                          child: PlayerNotice(
-                                            message: message,
-                                            gameInterfaceManagementService:
-                                                _gameInterfaceManagementService,
+                                              Align(
+                                                alignment: Alignment.center,
+                                                child: QuestionInfoWidget(
+                                                    questionNum:
+                                                        _gameInterfaceManagementService
+                                                            .gameService
+                                                            .questionNumber,
+                                                    questionPts:
+                                                        _gameInterfaceManagementService
+                                                                .gameService
+                                                                .question
+                                                                ?.points ??
+                                                            0,
+                                                    questionText:
+                                                        _gameInterfaceManagementService
+                                                                .gameService
+                                                                .question
+                                                                ?.text ??
+                                                            ''),
+                                              ),
+                                              SizedBox(height: 20),
+                                              Expanded(
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  margin: EdgeInsets.all(5.0),
+                                                  padding: EdgeInsets.all(10.0),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: themeService
+                                                              .mainAccent
+                                                              .value)),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        '${gameText['CURRENT_POINTS']}: ${_gameInterfaceManagementService.playerScore}',
+                                                        style: TextStyle(
+                                                            fontSize: 20,
+                                                            color: themeService
+                                                                .mainAccent
+                                                                .value),
+                                                      ),
+                                                      _gameInterfaceManagementService
+                                                                  .isBonus &&
+                                                              !this
+                                                                  ._gameService
+                                                                  .isObserverMode
+                                                          ? Text(
+                                                              gameText[
+                                                                  'BONUS_RECEIVED_FEEDBACK'],
+                                                              style: TextStyle(
+                                                                  color: themeService
+                                                                      .mainAccent
+                                                                      .value))
+                                                          : SizedBox()
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [getButtons()],
-                                        )
-                                      ],
+                                          if (getImageWidgetFromQuestion() !=
+                                              null)
+                                            getImageWidgetFromQuestion()!,
+                                          getPlayerQuestion(),
+                                          Visibility(
+                                            visible:
+                                                _gameInterfaceManagementService
+                                                    .gameService
+                                                    .realGameService
+                                                    .isHostEvaluating,
+                                            child: PlayerNotice(
+                                              message: message,
+                                              gameInterfaceManagementService:
+                                                  _gameInterfaceManagementService,
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [getButtons()],
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
+                                  ]),
+                                  Positioned(
+                                      bottom: 0, left: 20, child: ChatPopup())
                                 ]),
-                                Positioned(
-                                    bottom: 0, left: 20, child: ChatPopup())
-                              ]),
+                              ),
                             );
                           }
                         });

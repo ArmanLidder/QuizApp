@@ -487,7 +487,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                       gameMode: game.gameType == 'classic'
                                           ? activeText['CLASSIC']
                                           : activeText['TEAM'],
-                                      price: game.price.toString(),
+                                      price: game.price.toInt().toString(),
                                     ),
                                   );
                                 if (game.onGoing && !game.private)
