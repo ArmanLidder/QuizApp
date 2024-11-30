@@ -3,6 +3,7 @@ import 'package:polyquiz/services/theme_service.dart';
 import 'package:polyquiz/constants/socket-event.dart';
 import 'package:polyquiz/main.dart';
 import 'package:polyquiz/pages/game_page.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:polyquiz/services/game_service.dart';
 import 'package:polyquiz/services/global_navigation_service.dart';
 import 'package:polyquiz/services/logged_in_user_service.dart';
@@ -66,8 +67,7 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     final quizService = Provider.of<QuizService>(context, listen: false);
 
     gameListService.games$.listen((games) {
-      games.forEach((game) {
-      });
+      games.forEach((game) {});
       games.where((game) => !game.private).forEach((game) {
         quizService.basicGetById(game.quizId).then((quiz) {
           setState(() {
@@ -228,15 +228,43 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
   Widget build(BuildContext context) {
     final gameListService = Provider.of<GameListService>(context);
 
-    return Scaffold(
-      appBar: FancyAppBar(context: context),
-      backgroundColor: themeService.mainBackground.value,
-      body: FutureBuilder<void>(
-        future: _initializeFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Stack(children: [
-              Column(
+    return Obx(() {
+      return Scaffold(
+        appBar: FancyAppBar(context: context),
+        backgroundColor: themeService.mainBackground.value,
+        body: FutureBuilder<void>(
+          future: _initializeFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Stack(children: [
+                Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/join');
+                        },
+                        child: Text(
+                          text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
+                          style: TextStyle(
+                            color: themeService.secondaryAccent.value,
+                            fontSize: 20,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              themeService.secondaryBackground.value,
+                        ),
+                      ),
+                    ),
+                    Center(child: CircularProgressIndicator()),
+                  ],
+                ),
+                Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
+              ]);
+            } else if (snapshot.hasError) {
+              return Column(
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
@@ -252,96 +280,19 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: themeService.secondaryBackground.value,
-                      ),
+                          backgroundColor:
+                              themeService.secondaryBackground.value),
                     ),
                   ),
-                  Center(child: CircularProgressIndicator()),
+                  Center(child: Text('Error: ${snapshot.error}')),
                 ],
-              ),
-              Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
-            ]);
-          } else if (snapshot.hasError) {
-            return Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/join');
-                    },
-                    child: Text(
-                      text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
-                      style: TextStyle(
-                        color: themeService.secondaryAccent.value,
-                        fontSize: 20,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            themeService.secondaryBackground.value),
-                  ),
-                ),
-                Center(child: Text('Error: ${snapshot.error}')),
-              ],
-            );
-          } else {
-            return StreamBuilder<List<GameListItem>>(
-              stream: gameListService.games$,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/join');
-                          },
-                          child: Text(
-                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
-                            style: TextStyle(
-                              color: themeService.secondaryAccent.value,
-                              fontSize: 20,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                themeService.secondaryBackground.value,
-                          ),
-                        ),
-                      ),
-                      Center(child: CircularProgressIndicator()),
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/join');
-                          },
-                          child: Text(
-                            text['PLAYER_WAITING_PAGE']['JOIN_PRIVATE_GAME'],
-                            style: TextStyle(
-                              color: themeService.secondaryAccent.value,
-                              fontSize: 20,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                themeService.secondaryBackground.value,
-                          ),
-                        ),
-                      ),
-                      Center(child: Text('Error: ${snapshot.error}')),
-                    ],
-                  );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Stack(children: [
-                    Column(
+              );
+            } else {
+              return StreamBuilder<List<GameListItem>>(
+                stream: gameListService.games$,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Column(
                       children: [
                         Align(
                           alignment: Alignment.centerLeft,
@@ -362,53 +313,11 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                             ),
                           ),
                         ),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 50.0,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10)),
-                                          color: themeService
-                                              .secondaryBackground.value),
-                                      child: Center(
-                                        child: Text(
-                                          activeText['PUBLIC_GAME_LIST'],
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 24,
-                                              color: themeService
-                                                  .secondaryAccent.value),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10.0),
-                              Text(activeText['NO_GAMES_AVAILABLE'],
-                                  style: TextStyle(
-                                      color: themeService.mainAccent.value)),
-                              SizedBox(height: 100),
-                              CancelBtn()
-                            ],
-                          ),
-                        ),
+                        Center(child: CircularProgressIndicator()),
                       ],
-                    ),
-                    Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
-                  ]);
-                } else {
-                  final games = snapshot.data!;
-                  return Stack(children: [
-                    Column(
+                    );
+                  } else if (snapshot.hasError) {
+                    return Column(
                       children: [
                         Align(
                           alignment: Alignment.centerLeft,
@@ -429,12 +338,39 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: games.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == 0) {
-                                return Row(
+                        Center(child: Text('Error: ${snapshot.error}')),
+                      ],
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Stack(children: [
+                      Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(
+                                    context, '/join');
+                              },
+                              child: Text(
+                                text['PLAYER_WAITING_PAGE']
+                                    ['JOIN_PRIVATE_GAME'],
+                                style: TextStyle(
+                                  color: themeService.secondaryAccent.value,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    themeService.secondaryBackground.value,
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Expanded(
@@ -459,94 +395,172 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
                                       ),
                                     ),
                                   ],
-                                );
-                              }
-                              final game = games[index - 1];
-                              if (!game.onGoing && !game.private)
-                                return GestureDetector(
-                                  onTap: () {
-                                    _joinRoom(game);
-                                  },
-                                  child: ActiveGameInfoWidget(
-                                    quizTitle: _getQuizName(game.quizId),
-                                    minRank: _minimumPrestige(game.prestige),
-                                    allowedPlayers: game.friendsOnly
-                                        ? activeText['FRIENDS_ONLY']
-                                        : activeText['FRIENDS_AND_OTHERS'],
-                                    playerNum: game.numberOfPlayers.toString(),
-                                    gameMode: game.gameType == 'classic'
-                                        ? activeText['CLASSIC']
-                                        : activeText['TEAM'],
-                                    price: game.price.toString(),
-                                  ),
-                                );
-                              if (game.onGoing && !game.private)
-                                return GestureDetector(
-                                    onTap: () {
-                                      // add method for observer
-                                      observeGame(game, context);
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(_getQuizName(game.quizId),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                        color: themeService
-                                                            .mainAccent.value)),
-                                                RichText(
-                                                  text: TextSpan(children: [
-                                                    TextSpan(
-                                                        text: game.numberOfObs
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: themeService
-                                                                .mainAccent
-                                                                .value)),
-                                                    WidgetSpan(
-                                                        child: Icon(
-                                                            Icons
-                                                                .remove_red_eye_outlined,
-                                                            color: themeService
-                                                                .mainAccent
-                                                                .value))
-                                                  ]),
-                                                ),
-                                                Text(activeText['ONGOING_GAME'],
-                                                    style: TextStyle(
-                                                        color: themeService
-                                                            .mainAccent.value))
-                                              ]),
-                                          Divider()
-                                        ],
-                                      ),
-                                    ));
-                            },
+                                ),
+                                SizedBox(height: 10.0),
+                                Text(activeText['NO_GAMES_AVAILABLE'],
+                                    style: TextStyle(
+                                        color: themeService.mainAccent.value)),
+                                SizedBox(height: 100),
+                                CancelBtn()
+                              ],
+                            ),
                           ),
-                        ),
-                        CancelBtn()
-                      ],
-                    ),
-                    Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
-                  ]);
-                }
-              },
-            );
-          }
-        },
-      ),
-    );
+                        ],
+                      ),
+                      Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
+                    ]);
+                  } else {
+                    final games = snapshot.data!;
+                    return Stack(children: [
+                      Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(
+                                    context, '/join');
+                              },
+                              child: Text(
+                                text['PLAYER_WAITING_PAGE']
+                                    ['JOIN_PRIVATE_GAME'],
+                                style: TextStyle(
+                                  color: themeService.secondaryAccent.value,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    themeService.secondaryBackground.value,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: games.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: 50.0,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight:
+                                                      Radius.circular(10)),
+                                              color: themeService
+                                                  .secondaryBackground.value),
+                                          child: Center(
+                                            child: Text(
+                                              activeText['PUBLIC_GAME_LIST'],
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 24,
+                                                  color: themeService
+                                                      .secondaryAccent.value),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                                final game = games[index - 1];
+                                if (!game.onGoing && !game.private)
+                                  return GestureDetector(
+                                    onTap: () {
+                                      _joinRoom(game);
+                                    },
+                                    child: ActiveGameInfoWidget(
+                                      quizTitle: _getQuizName(game.quizId),
+                                      minRank: _minimumPrestige(game.prestige),
+                                      allowedPlayers: game.friendsOnly
+                                          ? activeText['FRIENDS_ONLY']
+                                          : activeText['FRIENDS_AND_OTHERS'],
+                                      playerNum:
+                                          game.numberOfPlayers.toString(),
+                                      gameMode: game.gameType == 'classic'
+                                          ? activeText['CLASSIC']
+                                          : activeText['TEAM'],
+                                      price: game.price.toString(),
+                                    ),
+                                  );
+                                if (game.onGoing && !game.private)
+                                  return GestureDetector(
+                                      onTap: () {
+                                        // add method for observer
+                                        observeGame(game, context);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                      _getQuizName(game.quizId),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 16,
+                                                          color: themeService
+                                                              .mainAccent
+                                                              .value)),
+                                                  RichText(
+                                                    text: TextSpan(children: [
+                                                      TextSpan(
+                                                          text: game.numberOfObs
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color: themeService
+                                                                  .mainAccent
+                                                                  .value)),
+                                                      WidgetSpan(
+                                                          child: Icon(
+                                                              Icons
+                                                                  .remove_red_eye_outlined,
+                                                              color: themeService
+                                                                  .mainAccent
+                                                                  .value))
+                                                    ]),
+                                                  ),
+                                                  Text(
+                                                      activeText[
+                                                          'ONGOING_GAME'],
+                                                      style: TextStyle(
+                                                          color: themeService
+                                                              .mainAccent
+                                                              .value))
+                                                ]),
+                                            Divider()
+                                          ],
+                                        ),
+                                      ));
+                              },
+                            ),
+                          ),
+                          CancelBtn()
+                        ],
+                      ),
+                      Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
+                    ]);
+                  }
+                },
+              );
+            }
+          },
+        ),
+      );
+    });
   }
 
   void observeGame(GameListItem game, BuildContext context) {
