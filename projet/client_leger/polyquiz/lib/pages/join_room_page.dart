@@ -15,6 +15,7 @@ import 'package:polyquiz/services/game_list_item.dart';
 import 'package:polyquiz/services/quiz_service.dart';
 import 'package:polyquiz/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class JoinRoomPage extends StatefulWidget {
   const JoinRoomPage({Key? key}) : super(key: key);
@@ -245,7 +246,7 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   Future<bool> _validateFriendship(GameListItem game) async {
     final roomValidationService =
         Provider.of<RoomValidationService>(context, listen: false);
-    final currentUserId = roomValidationService.userData!.username;
+    final currentUserId = roomValidationService.userData!.uid;
     final hostProfile = await this.userService.getUserById(game.hostUserId);
     return hostProfile?.friends.contains(currentUserId) ?? false;
   }
@@ -295,90 +296,95 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: FancyAppBar(context: context),
-      backgroundColor: themeService.mainBackground.value,
-      body: Stack(children: [
-        Column(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/roomList');
-                },
-                child: Text(
-                  waitPageText['JOIN_PUBLIC_GAME'],
-                  style: TextStyle(
-                    color: themeService.secondaryAccent.value,
-                    fontSize: 20,
+    return Obx(() {
+      var observationEnablerDONOTDELETE =
+          TranslationService.instance.languageValue.value;
+      return Scaffold(
+        appBar: FancyAppBar(context: context),
+        backgroundColor: themeService.mainBackground.value,
+        body: Stack(children: [
+          Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/roomList');
+                  },
+                  child: Text(
+                    waitPageText['JOIN_PUBLIC_GAME'],
+                    style: TextStyle(
+                      color: themeService.secondaryAccent.value,
+                      fontSize: 20,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeService.secondaryBackground.value,
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: themeService.secondaryBackground.value,
-                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(roomPromptText['ENTER_CODE_MESSAGE'],
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: themeService.mainAccent.value)),
-                    SizedBox(height: 16),
-                    TextFormField(
-                      style: TextStyle(color: themeService.mainAccent.value),
-                      controller: _roomIdController,
-                      decoration: InputDecoration(
-                        hintStyle:
-                            TextStyle(color: themeService.mainAccent.value),
-                        hintText: _roomIdController.text.isEmpty
-                            ? roomPromptText['ENTER_CODE_LABEL']
-                            : null,
-                        labelStyle:
-                            TextStyle(color: themeService.mainAccent.value),
-                        border: OutlineInputBorder(),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(roomPromptText['ENTER_CODE_MESSAGE'],
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: themeService.mainAccent.value)),
+                      SizedBox(height: 16),
+                      TextFormField(
+                        style: TextStyle(color: themeService.mainAccent.value),
+                        controller: _roomIdController,
+                        decoration: InputDecoration(
+                          hintStyle:
+                              TextStyle(color: themeService.mainAccent.value),
+                          hintText: _roomIdController.text.isEmpty
+                              ? roomPromptText['ENTER_CODE_LABEL']
+                              : null,
+                          labelStyle:
+                              TextStyle(color: themeService.mainAccent.value),
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return roomErrorText['VALIDATION_CODE_ERROR'];
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return roomErrorText['VALIDATION_CODE_ERROR'];
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 24),
-                    _isJoining
-                        ? CircularProgressIndicator()
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              TextButton(
-                                  onPressed: _joinRoomField,
-                                  child: Text(roomPromptText['VALIDATE_BUTTON'],
-                                      style: TextStyle(
-                                          color: themeService
-                                              .secondaryAccent.value,
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 20)),
-                                  style: TextButton.styleFrom(
-                                      backgroundColor: themeService
-                                          .secondaryBackground.value)),
-                              CancelBtn()
-                            ],
-                          ),
-                  ],
+                      SizedBox(height: 24),
+                      _isJoining
+                          ? CircularProgressIndicator()
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                TextButton(
+                                    onPressed: _joinRoomField,
+                                    child: Text(
+                                        roomPromptText['VALIDATE_BUTTON'],
+                                        style: TextStyle(
+                                            color: themeService
+                                                .secondaryAccent.value,
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 20)),
+                                    style: TextButton.styleFrom(
+                                        backgroundColor: themeService
+                                            .secondaryBackground.value)),
+                                CancelBtn()
+                              ],
+                            ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
-      ]),
-    );
+            ],
+          ),
+          Positioned(child: ChatPopup(), bottom: 20.0, left: 20.0)
+        ]),
+      );
+    });
   }
 }
