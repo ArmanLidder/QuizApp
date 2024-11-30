@@ -297,6 +297,8 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      var observationEnablerDONOTDELETE =
+          TranslationService.instance.languageValue.value;
       return Scaffold(
         appBar: FancyAppBar(context: context),
         backgroundColor: themeService.mainBackground.value,

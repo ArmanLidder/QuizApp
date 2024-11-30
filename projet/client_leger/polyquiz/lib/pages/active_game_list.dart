@@ -229,6 +229,8 @@ class _ActiveGameListComponentState extends State<ActiveGameListComponent> {
     final gameListService = Provider.of<GameListService>(context);
 
     return Obx(() {
+      var observationEnablerDONOTDELETE =
+          TranslationService.instance.languageValue.value;
       return Scaffold(
         appBar: FancyAppBar(context: context),
         backgroundColor: themeService.mainBackground.value,
