@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:polyquiz/constants/socket-event.dart';
+import 'package:polyquiz/enums/question_type.dart';
 import 'package:polyquiz/models/current_game_interface.dart';
 import 'package:polyquiz/models/game_list_item.dart';
 import 'package:polyquiz/models/host_interface.dart';
@@ -195,18 +196,25 @@ class ObservationService extends GetxController {
     this.hostInterfaceManagementService.gameStats = this.gameInterfaceManagementService.gameStats;
     if (!data.isGameOver) {
       final histValue = data.histogramDataChangingResponses;
-      if (data.histogramDataChangingResponses.length == 2) {
-        this.hostInterfaceManagementService.histogramDataChangingResponses = {
-          histogramText['ACTIVE']: histValue[0],
-          histogramText['INACTIVE']: histValue[1]
-        };
-      } else if (data.histogramDataChangingResponses.length == 3) {
-        this.hostInterfaceManagementService.histogramDataChangingResponses = {
-          qreText['WITHIN_MARGIN']: histValue[0],
-          qreText['EXACT_ANSWER']: histValue[1],
-          qreText['INCORRECT_ANSWER']: histValue[2],
-        };
-      } else this.hostInterfaceManagementService.histogramDataChangingResponses = this.hostInterfaceManagementService.createChoicesStatsMap(histValue);
+      switch (gameService.question?.type) {
+        case QuestionType.QCM:
+          this.hostInterfaceManagementService.histogramDataChangingResponses = this.hostInterfaceManagementService.createChoicesStatsMap(histValue);
+          break;
+        case QuestionType.QRE:
+          this.hostInterfaceManagementService.histogramDataChangingResponses = {
+            qreText['WITHIN_MARGIN']: histValue[0],
+            qreText['EXACT_ANSWER']: histValue[1],
+            qreText['INCORRECT_ANSWER']: histValue[2],
+          };
+          break;
+        case QuestionType.QRL:
+          this.hostInterfaceManagementService.histogramDataChangingResponses = {
+            histogramText['ACTIVE']: histValue[0],
+            histogramText['INACTIVE']: histValue[1]
+          };
+          break;
+        default:
+      }
     }
   }
 
