@@ -1,1 +1,0 @@
-export const MESSAGE_MAX_CHARACTERS = 200;
