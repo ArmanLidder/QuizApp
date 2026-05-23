@@ -1,7 +1,7 @@
-# QuizApp — Interactive Real-Time Quiz Platform
+# PolyQuiz — Interactive Real-Time Quiz Platform
 > **Ranked #1 out of 20+ teams** in a university software engineering capstone project.
 
-QuizApp is a full-stack, real-time multiplayer quiz platform built by a team of 6 developers. It supports **Android (Flutter)**, **Desktop/Web (Angular + Electron)**, and a shared **Node.js/Express** back-end — enabling users to create, share, and play quizzes with friends or the public.
+PolyQuiz is a full-stack, real-time multiplayer quiz platform built by a team of 6 developers. It supports **Android (Flutter)**, **Desktop/Web (Angular + Electron)**, and a shared **Node.js/Express** back-end — enabling users to create, share, and play quizzes with friends or the public.
 
 ![Architecture](https://img.shields.io/badge/Architecture-Monorepo-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-green)
@@ -27,7 +27,7 @@ QuizApp is a full-stack, real-time multiplayer quiz platform built by a team of 
 
 ## Overview
 
-QuizApp lets players join rooms in real-time, answer timed questions (multiple-choice, free-text, or numeric), and compete solo or in teams — all while hosts manage the game flow, evaluate answers, and view live statistics. The platform also includes social features (friends, chat channels, profiles), an in-app store, AI-powered answer grading, and full internationalization (English/French).
+PolyQuiz lets players join rooms in real-time, answer timed questions (multiple-choice, free-text, or numeric), and compete solo or in teams — all while hosts manage the game flow, evaluate answers, and view live statistics. The platform also includes social features (friends, chat channels, profiles), an in-app store, AI-powered answer grading, and full internationalization (English/French).
 
 ---
 
